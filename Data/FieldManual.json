@@ -771,6 +771,50 @@
         "Shared logins",
         "Releasing on an email"
       ]
+    },
+    {
+      "id": "incident_communications",
+      "title": "When an incident goes public",
+      "topic": "viral_incident",
+      "steps": [
+        "See all the footage and read every report before any judgement.",
+        "Within the hour: a holding statement with care and action, no blame, no outcome.",
+        "Reach the person involved directly and privately.",
+        "Stand staff involved down on pay pending a fair investigation.",
+        "Preserve everything; tell the police if a crime may have been committed.",
+        "Never threaten or pressure the person who filmed it.",
+        "Communications lead the public words; LP leads the facts.",
+        "Finish the investigation and publish what changes."
+      ],
+      "why": "The first hours decide whether the public gives the hotel time to find the facts.",
+      "pitfalls": [
+        "Defending before knowing",
+        "Silence",
+        "Takedown threats",
+        "Announcing outcomes"
+      ]
+    },
+    {
+      "id": "speak_up_protection",
+      "title": "Protecting people who speak up",
+      "topic": "retaliation",
+      "steps": [
+        "Treat a report of retaliation as a new, serious complaint.",
+        "Listen first, and agree with the person what protection they want.",
+        "Gather the evidence: rotas, messages, damage, before any interview.",
+        "Reverse any detriment at once (shifts, pay, duties).",
+        "Never move or change the reporter's job without their free choice.",
+        "Investigate independently through HR.",
+        "Remind every team that retaliation is misconduct, without names.",
+        "Check in with the person afterwards."
+      ],
+      "why": "People report problems only when they have seen that reporting is safe.",
+      "pitfalls": [
+        "Moving the reporter",
+        "Exposing them in a meeting",
+        "Investigating your own team",
+        "Calling it friction"
+      ]
     }
   ]
 }

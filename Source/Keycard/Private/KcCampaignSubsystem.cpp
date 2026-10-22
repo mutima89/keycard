@@ -201,11 +201,15 @@ const kc::MissionDef* UKcCampaignSubsystem::NextCase() const
 {
 	const UKcGameSubsystem* G = Game();
 	if (!G) return nullptr;
-	for (const kc::MissionDef* M : AvailableCases())
-	{
-		if (!G->GetState().Career.HasPassed(M->Id) && !M->bOptional) return M;
-	}
 	const TArray<const kc::MissionDef*> All = AvailableCases();
+	// A level's own cases first, then its crisis or the capstone (the catalogue lists C*.json before M*.json).
+	for (bool bGates : {false, true})
+	{
+		for (const kc::MissionDef* M : All)
+		{
+			if ((M->Kind != kc::EMissionKind::Mission) == bGates && !G->GetState().Career.HasPassed(M->Id) && !M->bOptional) return M;
+		}
+	}
 	return All.IsEmpty() ? nullptr : All[0];
 }
 

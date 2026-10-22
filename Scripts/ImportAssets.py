@@ -234,7 +234,7 @@ def build_emissive():
     prop(mul, "", unreal.MaterialProperty.MP_EMISSIVE_COLOR)
     black = expr(m, unreal.MaterialExpressionConstant3Vector, -400, -150, constant=unreal.LinearColor(0.02, 0.02, 0.02, 1))
     prop(black, "", unreal.MaterialProperty.MP_BASE_COLOR)
-    rough = expr(m, unreal.MaterialExpressionConstant, -400, 250, r=0.3)
+    rough = expr(m, unreal.MaterialExpressionScalarParameter, -400, 250, parameter_name="Roughness", default_value=0.3)
     prop(rough, "", unreal.MaterialProperty.MP_ROUGHNESS)
     return finish(m)
 
@@ -490,10 +490,11 @@ instance("MI_SignGlow", EMISSIVE, {}, {"Intensity": 30.0}, {"Color": (0.29, 0.61
 instance("MI_LedGreen", EMISSIVE, {}, {"Intensity": 25.0}, {"Color": (0.1, 0.9, 0.25, 1)})
 instance("MI_LedRed", EMISSIVE, {}, {"Intensity": 25.0}, {"Color": (0.95, 0.08, 0.05, 1)})
 instance("MI_LedAmber", EMISSIVE, {}, {"Intensity": 25.0}, {"Color": (1.0, 0.55, 0.05, 1)})
-# Back-of-house ceilings: faintly self-lit so they read as bounce-lit white above the down-facing panels, not black.
-instance("MI_CeilingSoft", EMISSIVE, {}, {"Intensity": 6.0}, {"Color": (0.88, 0.89, 0.9, 1)})
+# Back-of-house ceilings: faintly self-lit so they read as bounce-lit white above the down-facing panels, not black;
+# fully rough, or the downlights streak across them like a mirror.
+instance("MI_CeilingSoft", EMISSIVE, {}, {"Intensity": 6.0, "Roughness": 1.0}, {"Color": (0.88, 0.89, 0.9, 1)})
 # CCTV room: kept dark for the screens; at 6 the exposure lifted the ceiling to a glowing white slab.
-instance("MI_CeilingDim", EMISSIVE, {}, {"Intensity": 0.8}, {"Color": (0.88, 0.89, 0.9, 1)})
+instance("MI_CeilingDim", EMISSIVE, {}, {"Intensity": 0.8, "Roughness": 1.0}, {"Color": (0.88, 0.89, 0.9, 1)})
 instance("MI_Highlight", unreal.load_asset(MAT + "/M_KcHighlight"))
 
 # Our own textures (Scripts/GenerateTextures.py): screen UIs, signs, whiteboard, prints, carpet and wallpaper patterns.
@@ -521,8 +522,9 @@ for mi, tex, rough in [("MI_Whiteboard", "T_Whiteboard", 0.5), ("MI_ArtHarbourA"
                        ("MI_ArtHarbourC", "T_ArtHarbourC", 1.5), ("MI_DndTag", "T_DndTag", 1.2), ("MI_FloorPlan", "T_FloorPlan", 0.6)]:
     if tex in gen:
         instance(mi, SURFACE, {"BaseColorMap": gen[tex]}, {"RoughnessScale": rough, "MetallicScale": 0.0})
-# Patterned guest-floor carpet and corridor wallpaper: world-aligned so the repeat stays true to scale on every wall.
-for mi, tex, tile, rough in [("MI_CorridorCarpet", "T_CorridorCarpet", 120, 2.0), ("MI_Wallpaper", "T_Wallpaper", 90, 1.3)]:
+# Patterned guest-floor carpet, corridor wallpaper and the kitchen quarry tile: world-aligned so the repeat stays true to scale on every wall.
+for mi, tex, tile, rough in [("MI_CorridorCarpet", "T_CorridorCarpet", 120, 2.0), ("MI_Wallpaper", "T_Wallpaper", 90, 1.3),
+                             ("MI_KitchenTile", "T_QuarryTile", 60, 1.6)]:
     if tex in gen:
         instance(mi, WORLD, {"BaseColorMap": gen[tex]}, {"MetallicScale": 0.0, "RoughnessScale": rough},
                  {"Tint": (1, 1, 1, 1), "TileSize": (tile, tile, tile, 0)})

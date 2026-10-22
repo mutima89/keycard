@@ -2090,7 +2090,7 @@ void AKcHotel::BuildKitchen()
 	UMaterialInterface* Tile = Mat(TEXT("MI_Tile"));
 	UMaterialInterface* Steel = Mat(TEXT("MI_Steel"));
 	UMaterialInterface* Chrome = Mat(TEXT("MI_Chrome"));
-	FloorFinish(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), Mat(TEXT("MI_FloorTile")));
+	FloorFinish(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), Mat(TEXT("MI_KitchenTile")));
 	Ceiling(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), CeilBack, Mat(TEXT("MI_CeilingWhite")));
 	AddBox(FVector(X0 + 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilBack * 0.5f)), FVector(1.0f, Y1 - Y0, CeilBack), Tile, 0.0f, false);
 	AddBox(FVector(X1 - 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilBack * 0.5f)), FVector(1.0f, Y1 - Y0, CeilBack), Tile, 0.0f, false);

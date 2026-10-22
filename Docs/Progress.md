@@ -1,7 +1,19 @@
 # Progress
 
-## Status: Phases 1-4 built and packaged on the PC; core 44/44, UE 6/6; packaged play, resume, tour (0 gaps, 35 places) and ui pass at 1920x1080 High
-Last update: 2026-10-22
+## Status: 1.0.0 release candidate built on the PC: Shipping play and full walkthrough (career and challenge) pass; portable zip and installer made, not published
+Last update: 2026-10-23
+
+- 2026-10-23 PC session round 5 (Remote Control, UE 5.8.4, MSVC). Built at 5efa383 (74c21f6 + round 4) plus the changes below. Nothing changed in C:\Downloads\Riskbound.
+  - Core tests (MSVC): `44 test cases, 0 failed, 0 failed checks`. `KeycardEditor` and `Keycard` Win64 Development: `Result: Succeeded`. `RunUnrealTests.bat`: six `Keycard.*` tests `Success`, exit 0 (before and after the NextCase fix).
+  - Polish: the main kitchen and cook line get `MI_KitchenTile`, a plain light quarry tile (new original texture `T_QuarryTile` from GenerateTextures.py, 4 x 4 15 cm tiles, world-aligned at 60 cm, roughness 1.6); ground, B1 and other rooms keep `MI_FloorTile`. The streak under downlights on `MI_CeilingSoft`/`MI_CeilingDim` was specular: `M_KcEmissive` had a fixed roughness of 0.3; it is now a `Roughness` parameter (default 0.3 for LEDs and screens) set to 1.0 on the two ceiling instances. Same material count, no new shaders on the hot path. `KcImport: done: 8 meshes, 8 materials, 0 errors`. Shots: the kitchen floor reads as light tile; fire command and executive office ceilings show soft pools, no streak.
+  - Packaged Development at 1920x1080 High: play `PASS` (39 missions, 40 cards, 0 problems), resume `PASS`, ui exit 0 (25 screens), tour `PASS`, `work_point_gaps=0`, `average_frame_ms=17.06 average_fps=58.6`.
+  - `RunWalkthrough.ps1`, first run: career `FAIL`, challenge `PASS`. FAIL lines: `M020_next: C001`, `M021_next: C001`, `M022_next: C001`, `M023_next` to `M026_next: C002`, `M027_next` to `M030_next: C003`, `M031_next` to `M034_next: C004` (15). The shift board's suggested case was the level's crisis before its own cases, because the catalogue loads `C*.json` before `M*.json` and `NextCase` took the first unpassed case. Fix (game, `UKcCampaignSubsystem::NextCase`): a level's own cases first, then its crisis or the capstone. Second run: career `PASS` (all nine ceremonies to Vice President, Global Safety & Security; X001 score 100; ending `The Veldane standard`; certificate saved), challenge `PASS` (daily 2026-10-23: M028, M033, C004 at 100, 300 points; leaderboard 1 entry); exit 0 in 6 min. Career_Ending.png and Challenge_Result.png looked at: readable, nothing clipped (the ending scrolls to the closing lines).
+  - `ProjectVersion=1.0.0` (Config/DefaultGame.ini). `BuildWindows.bat Shipping`: `BUILD SUCCESSFUL`. Shipping exe (saves in %LOCALAPPDATA%\Keycard\Saved): play `PASS`; `RunWalkthrough.ps1 -Shipping`: career `PASS`, challenge `PASS`, exit 0.
+  - Release documents were missing (MakePortableZip.ps1 and Installer/Keycard.iss read Docs/Release, which the repo did not have): wrote Keycard's own Docs/Release/README.txt, UNSIGNED-BUILD.txt, UnrealEngine-Notice.txt and Licence-and-credits.txt (controls, saves, DX11, Rocketbox MIT, Kokoro Apache 2.0, Kevin MacLeod CC BY 4.0, Inter OFL, Poly Haven CC0).
+  - `MakePortableZip.ps1 -Config Shipping -Version 1.0.0` and `BuildInstaller.bat 1.0.0 1.0.0.0` (Inno Setup 6), final run:
+    - `Release\Keycard-1.0.0-Win64-Portable.zip`, 530,095,089 bytes (505.5 MB), SHA-256 `2cdcf79a181c6e7fe03c84b3b733f3e2d997cdd7b872a0746481994802183a70` (0.63 GB unpacked).
+    - `Release\Installer\Keycard-Setup-1.0.0.exe`, 499,125,603 bytes (476 MB), SHA-256 `6113a7cc88334a3f144305de7b2d0cdf61dde7ca33d2876ebc43e19fcdf151d5`.
+    - Not uploaded; no tag or GitHub release.
 
 - 2026-10-22 PC session round 4 (Remote Control, UE 5.8.4, MSVC). Built at 278c417. Nothing changed in C:\Downloads\Riskbound.
   - Core tests (MSVC): `44 test cases, 0 failed, 0 failed checks`.
@@ -111,4 +123,4 @@ Last update: 2026-10-22
   - Pushed to github.com/mutima89/keycard `main` (repo created by the owner); core tests re-run after the rebase onto the owner's initial commit: `27 test cases, 0 failed, 0 failed checks`.
 
 ### Next action
-Kitchen floor finish; glossy downlight streaks on the dim ceilings; hands-on playtest; LP office wall-top dark band.
+Hands-on playtest of the 1.0.0 build (installer install/uninstall on a clean account); publish the zip and installer if the owner approves; LP office wall-top dark band.

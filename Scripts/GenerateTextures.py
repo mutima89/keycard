@@ -1,6 +1,6 @@
 """Draws Keycard's own textures for the Veldane Grand Harbourfront: CCTV wall feeds, the LP office
 shift board, the front office system, the incident report and clip export screens, the fire panel,
-the LP whiteboard, harbour art prints, the exit sign, the corridor carpet, the wallpaper, the
+the LP whiteboard, harbour art prints, the exit sign, the corridor carpet, the wallpaper, the kitchen quarry tile, the
 do-not-disturb hanger and the floor 14 evacuation plan.
 
 Everything is invented (Docs/FictionalNames.md); nothing on a screen hints at a case's rubric.
@@ -319,6 +319,26 @@ def wallpaper():
     return im
 
 
+def quarry_tile():
+    """Kitchen floor repeat: 4 x 4 plain 15 cm quarry tiles, light warm grey, each a shade apart, in dark grout."""
+    w = h = 512
+    grout = (92, 88, 82)
+    im = Image.new("RGB", (w, h), grout)
+    d = ImageDraw.Draw(im)
+    rnd = random.Random(17)
+    for ty in range(4):
+        for tx in range(4):
+            c = rnd.randint(-7, 7)
+            d.rectangle([tx * 128 + 3, ty * 128 + 3, tx * 128 + 124, ty * 128 + 124], fill=(188 + c, 180 + c, 168 + c))
+    px = im.load()
+    for y in range(h):
+        for x in range(w):
+            n = rnd.randint(-5, 5)
+            r, g, b = px[x, y]
+            px[x, y] = (max(0, r + n), max(0, g + n), max(0, b + n))
+    return im
+
+
 def dnd_tag():
     w, h = 256, 640
     im = Image.new("RGB", (w, h), (120, 30, 40))
@@ -384,7 +404,7 @@ def main():
         "T_ScreenShiftBoard": shift_board(), "T_ScreenFrontOffice": front_office(), "T_ScreenReport": report_screen(),
         "T_ScreenExport": export_screen(), "T_ScreenPanel": fire_panel(), "T_Whiteboard": whiteboard(),
         "T_ArtHarbourA": harbour_art(11), "T_ArtHarbourB": harbour_art(29), "T_ArtHarbourC": harbour_art(53),
-        "T_ExitSign": exit_sign(), "T_CorridorCarpet": corridor_carpet(), "T_Wallpaper": wallpaper(),
+        "T_ExitSign": exit_sign(), "T_CorridorCarpet": corridor_carpet(), "T_Wallpaper": wallpaper(), "T_QuarryTile": quarry_tile(),
         "T_DndTag": dnd_tag(), "T_FloorPlan": floor_plan(),
     }
     for name, im in items.items():

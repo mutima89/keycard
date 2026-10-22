@@ -286,6 +286,33 @@
       "lang": "en-gb",
       "speed": 1.1,
       "note": "Mother of a missing child: frightened, fast"
+    },
+    "airport_lp": {
+      "voice": {
+        "bf_isabella": 0.6,
+        "af_kore": 0.4
+      },
+      "lang": "en-gb",
+      "speed": 1.0,
+      "note": "Airport LP Manager: warm, guarded"
+    },
+    "credit_manager": {
+      "voice": {
+        "bf_alice": 0.55,
+        "af_nova": 0.45
+      },
+      "lang": "en-gb",
+      "speed": 0.98,
+      "note": "Credit Manager: precise, persistent"
+    },
+    "officer_pennant": {
+      "voice": {
+        "bm_lewis": 0.5,
+        "am_liam": 0.5
+      },
+      "lang": "en-gb",
+      "speed": 1.04,
+      "note": "Evening LP officer: easy-going, defensive"
     }
   },
   "passing": {

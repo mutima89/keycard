@@ -438,6 +438,39 @@
       "avatar": "Female_Adult_17",
       "outfit": "guest",
       "staff": false
+    },
+    {
+      "id": "airport_lp",
+      "name": "Rhosyn Calder",
+      "role": "LP Manager, Veldane Airport Port Avener",
+      "department": "Loss Prevention",
+      "bio": "Runs LP at the airport hotel with three officers and a lot of goodwill. Proud of her team, wary of the flagship telling her how.",
+      "location": "boardroom",
+      "avatar": "Business_Female_05",
+      "outfit": "lp",
+      "staff": true
+    },
+    {
+      "id": "credit_manager",
+      "name": "Anneliese Thorburn",
+      "role": "Credit Manager",
+      "department": "Finance",
+      "bio": "Fights every chargeback line by line and keeps a spreadsheet of the ones she lost.",
+      "location": "exec_offices",
+      "avatar": "Female_Adult_18",
+      "outfit": "executive",
+      "staff": true
+    },
+    {
+      "id": "officer_pennant",
+      "name": "Rory Pennant",
+      "role": "LP Officer, evenings",
+      "department": "Loss Prevention",
+      "bio": "Four years on evenings, Colm Brady's oldest friend on the team. Easy company, and lately easy on his patrols.",
+      "location": "lp_office",
+      "avatar": "Security_Male_02",
+      "outfit": "lp",
+      "staff": true
     }
   ]
 }

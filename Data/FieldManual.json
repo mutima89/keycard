@@ -516,6 +516,26 @@
         "Forgetting the fire pump",
         "Silence while guests wait"
       ]
+    },
+    {
+      "id": "cluster_standards",
+      "title": "One standard across sites",
+      "topic": "cluster_standards",
+      "steps": [
+        "Compare sites on rates per 1,000 occupied room nights, not counts.",
+        "Check your own site against the standard first.",
+        "Agree a short list of non-negotiable outcomes with every site.",
+        "Let each site meet them with methods its staffing can run.",
+        "Fund the gaps you require them to close.",
+        "Review together, monthly, on the same measures."
+      ],
+      "why": "Guests deserve the same protection at every Veldane hotel. Outcomes travel between sites; procedures written for one team often don't.",
+      "pitfalls": [
+        "Comparing raw counts",
+        "Copying the flagship manual",
+        "Public league tables",
+        "Exempting the flagship"
+      ]
     }
   ]
 }

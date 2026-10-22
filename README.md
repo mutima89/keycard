@@ -4,7 +4,13 @@ A first-person career simulator about hotel Loss Prevention. You join the LP dep
 
 Offline and single-player. Unreal Engine 5.8, Windows x64. Sister game to [Riskbound](https://github.com/mutima89/riskbound).
 
-**Status:** Phase 0 (project skeleton, simulation core, design documents). Not playable yet. See [Docs/Progress.md](Docs/Progress.md).
+**Status:** content complete through Phase 4: 34 ladder cases, four career crises and the capstone across ten career levels, 47 Field Manual cards, 11 endings, and challenge modes (survival, daily, classroom) with a local leaderboard. Phase 5 (full walkthrough, polish, installer, 1.0.0) is in progress. See [Docs/Progress.md](Docs/Progress.md).
+
+## Running the walkthrough
+```
+powershell -ExecutionPolicy Bypass -File Scripts\RunWalkthrough.ps1 -Exe Release\Development\Windows\Keycard.exe
+```
+Plays the whole career to the capstone and its ending, then a daily challenge, without input, and writes `KcSelfTest_career.txt` and `KcSelfTest_challenge.txt` to the build's Saved folder.
 
 ## Building the simulation core
 ```

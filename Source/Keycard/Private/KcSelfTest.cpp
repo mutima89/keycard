@@ -18,6 +18,7 @@
 #include "KcHUD.h"
 #include "KcHotel.h"
 #include "KcInteractable.h"
+#include "KcLearning.h"
 #include "KcLog.h"
 #include "KcPerson.h"
 #include "KcSaveSubsystem.h"
@@ -235,7 +236,7 @@ void AddCase(TSharedRef<FScript> S, TSharedRef<FReport> R, UWorld* World, AKcHUD
 		R->Check(MissionId + TEXT("_debrief"), D && D->bPassed && D->Score >= 90 && H->IsScreenOpen(),
 			D ? FString::Printf(TEXT("score %d, passed %d, cards %d, promoted %d"), D->Score, D->bPassed ? 1 : 0, static_cast<int32>(D->CardsEarned.size()), D->bPromoted ? 1 : 0)
 			  : FString(TEXT("none")));
-		H->CloseScreen(); // the debrief's Close button
+		H->AfterDebrief(MissionId); // the debrief's Close button
 		return true;
 	});
 }
@@ -301,6 +302,112 @@ void RunPlay(TSharedRef<FReport> R, AKcHUD* Hud, UWorld* World)
 		FPlatformMisc::RequestExit(false, TEXT("KcSelfTest"));
 	};
 	RunScript(S, 0.7f);
+}
+
+// The whole career, level 1 to the capstone, each case played the expert's way through the hotel, each
+// promotion with its ceremony; then the ending screen and the certificate (Saved/KcSelfTest_career.txt).
+void RunCareer(TSharedRef<FReport> R, AKcHUD* Hud, UWorld* World)
+{
+	TSharedRef<FScript> S = MakeShared<FScript>();
+	TWeakObjectPtr<AKcHUD> H(Hud);
+	S->Steps.Add([R, H]()
+	{
+		if (!H.IsValid()) return true;
+		H->StartNewGame(EKcDifficulty::Professional, TEXT("front_office"));
+		UKcCampaignSubsystem* C = H->Campaign();
+		R->Check(TEXT("content"), C->GetLoadErrors().IsEmpty() && C->Find(TEXT("X001")) != nullptr,
+			FString::Printf(TEXT("%d missions, %d cards, %d endings, %d problems"), static_cast<int32>(C->GetCatalogue().Missions.size()),
+				static_cast<int32>(C->GetCards().size()), static_cast<int32>(C->GetEndings().size()), C->GetLoadErrors().Num()));
+		return true;
+	});
+	S->Steps.Add([]() { return true; });
+	// The promotion each group earns (Tests/Core Campaign_BestPlayToTheTop plays the same order).
+	struct FGroup
+	{
+		TArray<const TCHAR*> Cases;
+		int32 Level;
+	};
+	const FGroup Groups[] = {
+		{{TEXT("M001"), TEXT("M002"), TEXT("M003")}, 2},
+		{{TEXT("M004"), TEXT("M005"), TEXT("M006"), TEXT("M007")}, 3},
+		{{TEXT("M008"), TEXT("M009"), TEXT("M010"), TEXT("M011")}, 4},
+		{{TEXT("M012"), TEXT("M013"), TEXT("M014"), TEXT("M015")}, 5},
+		{{TEXT("M016"), TEXT("M017"), TEXT("M018"), TEXT("M019")}, 6},
+		{{TEXT("M020"), TEXT("M021"), TEXT("M022"), TEXT("C001")}, 7},
+		{{TEXT("M023"), TEXT("M024"), TEXT("M025"), TEXT("M026"), TEXT("C002")}, 8},
+		{{TEXT("M027"), TEXT("M028"), TEXT("M029"), TEXT("M030"), TEXT("C003")}, 9},
+		{{TEXT("M031"), TEXT("M032"), TEXT("M033"), TEXT("M034"), TEXT("C004")}, 10},
+	};
+	for (const FGroup& G : Groups)
+	{
+		for (const TCHAR* Id : G.Cases) AddCase(S, R, World, Hud, Id);
+		AddCeremony(S, R, Hud, G.Level);
+	}
+	AddCase(S, R, World, Hud, TEXT("X001"));
+	// Closing the capstone's debrief opens the ending.
+	S->Steps.Add([R, H]()
+	{
+		if (!H.IsValid()) return true;
+		if (!H->IsScreenOpen()) return false;
+		const kc::GameState& G = H->Game()->GetState();
+		const kc::EndingDef* E = kc::ChooseEnding(G, H->Campaign()->GetEndings());
+		R->Check(TEXT("ending"), E && E->Id == "the_standard", E ? ToFString(E->Title) : FString(TEXT("none")));
+		const FString Path = H->SaveCertificate(); // the ending's Save certificate button
+		R->Check(TEXT("certificate"), !Path.IsEmpty() && FPaths::FileExists(Path), Path);
+		FScreenshotRequest::RequestScreenshot(TEXT("Career_Ending"), true, false);
+		return true;
+	});
+	S->Steps.Add([R, H]()
+	{
+		if (!H.IsValid()) return true;
+		H->CloseScreen();
+		const kc::GameState& G = H->Game()->GetState();
+		R->Check(TEXT("top"), G.Career.Level == kc::TopLevel && G.Career.HasPassed("X001"), FString::Printf(TEXT("level %d %s"), G.Career.Level, *H->Game()->GetLevelTitle()));
+		R->Check(TEXT("field_manual"), G.FieldManual.size() >= H->Campaign()->GetCards().size(), FString::Printf(TEXT("%d of %d cards"), static_cast<int32>(G.FieldManual.size()), static_cast<int32>(H->Campaign()->GetCards().size())));
+		FString Message;
+		R->Check(TEXT("save"), H->SaveNow(Message), H->Saves()->GetSlotPath());
+		return true;
+	});
+	S->OnEnd = [R]()
+	{
+		R->Write(TEXT("career"), TEXT("KcSelfTest_career.txt"));
+		FPlatformMisc::RequestExit(false, TEXT("KcSelfTest"));
+	};
+	RunScript(S, 0.5f);
+}
+
+// A daily challenge from the Challenges menu: three cases, the result screen and the leaderboard
+// (Saved/KcSelfTest_challenge.txt). Uses the self-test slot's challenge save.
+void RunChallenge(TSharedRef<FReport> R, AKcHUD* Hud, UWorld* World)
+{
+	Hud->StartChallenge(kc::EGameMode::Daily); // the Challenges screen's Daily cases button
+	const kc::GameState& G = Hud->Game()->GetState();
+	R->Check(TEXT("started"), Hud->Game()->IsChallenge() && G.Challenge.Sequence.size() == 3, Hud->Game()->GetChallengeTitle());
+	TSharedRef<FScript> S = MakeShared<FScript>();
+	TWeakObjectPtr<AKcHUD> H(Hud);
+	S->Steps.Add([]() { return true; });
+	for (const std::string& Id : G.Challenge.Sequence) AddCase(S, R, World, Hud, ToFString(Id));
+	S->Steps.Add([R, H]()
+	{
+		if (!H.IsValid()) return true;
+		if (!H->IsScreenOpen()) return false;
+		const kc::ChallengeState& Ch = H->Game()->GetState().Challenge;
+		R->Check(TEXT("over"), Ch.bOver, FString::Printf(TEXT("%d points"), Ch.Points));
+		const std::vector<kc::LeaderboardEntry> Board = H->Saves()->LoadLeaderboard();
+		bool bListed = false;
+		for (const kc::LeaderboardEntry& E : Board) bListed |= E.Mode == "daily" && E.Points == Ch.Points;
+		R->Check(TEXT("leaderboard"), bListed, FString::Printf(TEXT("%d entries"), static_cast<int32>(Board.size())));
+		R->Check(TEXT("own_save"), FPaths::FileExists(H->Saves()->GetChallengePath()), H->Saves()->GetChallengePath());
+		FScreenshotRequest::RequestScreenshot(TEXT("Challenge_Result"), true, false);
+		return true;
+	});
+	S->Steps.Add([]() { return true; });
+	S->OnEnd = [R]()
+	{
+		R->Write(TEXT("challenge"), TEXT("KcSelfTest_challenge.txt"));
+		FPlatformMisc::RequestExit(false, TEXT("KcSelfTest"));
+	};
+	RunScript(S, 0.6f);
 }
 
 void RunResume(FReport& R, AKcHUD* Hud)
@@ -437,6 +544,9 @@ static void RunUiTour(UWorld* World, AKcHUD* Hud)
 	Steps->Add({TEXT("MainMenu"), [](AKcHUD* H) { H->ShowMainMenu(); }});
 	Steps->Add({TEXT("Difficulty"), [](AKcHUD* H) { H->ShowDifficultyPicker(); }});
 	Steps->Add({TEXT("Background"), [](AKcHUD* H) { H->ShowBackgroundPicker(EKcDifficulty::Professional); }});
+	Steps->Add({TEXT("Challenges"), [](AKcHUD* H) { H->ShowChallengePicker(); }});
+	Steps->Add({TEXT("Classroom"), [](AKcHUD* H) { H->ShowClassroomPicker(); }});
+	Steps->Add({TEXT("Leaderboard"), [](AKcHUD* H) { H->OpenLeaderboard([H]() { H->ShowMainMenu(); }); }});
 	Steps->Add({TEXT("Hud"), [](AKcHUD* H) { H->StartNewGame(EKcDifficulty::Professional); }});
 	Steps->Add({TEXT("ShiftBoard"), [](AKcHUD* H) { H->OpenTerminal(TEXT("lp_office")); }});
 	Steps->Add({TEXT("CaseCall"), [](AKcHUD* H) { H->StartCase(TEXT("M001")); }}); // the call shows on the next tick
@@ -479,6 +589,7 @@ static void RunUiTour(UWorld* World, AKcHUD* Hud)
 	Steps->Add({TEXT("FieldManual"), [](AKcHUD* H) { H->CloseScreen(); H->OpenFieldManual([H]() { H->CloseScreen(); }); }});
 	Steps->Add({TEXT("Career"), [](AKcHUD* H) { H->CloseScreen(); H->OpenCareer([H]() { H->CloseScreen(); }); }});
 	Steps->Add({TEXT("Inbox"), [](AKcHUD* H) { H->CloseScreen(); H->OpenInbox(); }});
+	Steps->Add({TEXT("Ending"), [](AKcHUD* H) { H->CloseScreen(); H->OpenEnding(); }});
 	Steps->Add({TEXT("Pause"), [](AKcHUD* H) { H->CloseScreen(); H->OpenPauseMenu(); }});
 	Steps->Add({TEXT("Settings"), [](AKcHUD* H) { H->OpenSettings([H]() { H->CloseScreen(); }); }});
 	Steps->Add({TEXT("Credits"), [](AKcHUD* H) { H->OpenCredits([H]() { H->CloseScreen(); }); }});
@@ -532,6 +643,14 @@ void Run(UWorld* World)
 		RunTour(World, Hud);
 		return;
 	}
+	if (Mode == TEXT("career") || Mode == TEXT("challenge"))
+	{
+		TSharedRef<FReport> R = MakeShared<FReport>();
+		R->Check(TEXT("hud"), true, Hud->GetName());
+		if (Mode == TEXT("career")) RunCareer(R, Hud, World);
+		else RunChallenge(R, Hud, World);
+		return;
+	}
 	if (Mode == TEXT("play"))
 	{
 		TSharedRef<FReport> R = MakeShared<FReport>();
@@ -542,7 +661,7 @@ void Run(UWorld* World)
 	FReport R;
 	R.Check(TEXT("hud"), true, Hud->GetName());
 	if (Mode == TEXT("resume")) RunResume(R, Hud);
-	else R.Check(TEXT("mode"), false, TEXT("expected play, resume, tour or ui"));
+	else R.Check(TEXT("mode"), false, TEXT("expected play, resume, career, challenge, tour or ui"));
 	R.Write(Mode, TEXT("KcSelfTest.txt"));
 	FPlatformMisc::RequestExit(false, TEXT("KcSelfTest"));
 }

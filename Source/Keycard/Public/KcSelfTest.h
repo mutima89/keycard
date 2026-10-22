@@ -4,6 +4,9 @@
 //                       in the hotel; files each report, checks the debrief, the first promotion and its ceremony,
 //                       saves and quits (Saved/KcSelfTest_play.txt).
 //   -KcSelfTest=resume  loads that save the way Continue does, checks it, writes Saved/KcSelfTest.txt, quits.
+//   -KcSelfTest=career  the whole career, M001 to the capstone X001, every promotion and ceremony, then the ending
+//                       screen and the certificate (Saved/KcSelfTest_career.txt).
+//   -KcSelfTest=challenge  a daily challenge: three cases, the result screen and the leaderboard (KcSelfTest_challenge.txt).
 //   -KcSelfTest=tour    visits every place without player input, renders a screenshot per place
 //                       (Saved/Screenshots/<platform>/Tour_<place>.png) and writes frame timings to Saved/KcTour.txt.
 //   -KcSelfTest=ui      opens every screen through the HUD and captures each with the UI (Ui_<n>_<screen>.png).

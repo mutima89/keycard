@@ -78,6 +78,8 @@ public:
 	void OpenEnding();
 	// A challenge's result once it is over (recorded on the leaderboard).
 	void OpenChallengeResult();
+	// The debrief's Close: the ending after the capstone, the result when a challenge is over.
+	void AfterDebrief(const FString& MissionId);
 	// Writes the career certificate (Markdown) to Saved/Certificates; the path, or "" on failure.
 	FString SaveCertificate();
 	// The lift: choose a floor; the ride fades out, chimes and arrives on the other floor.
@@ -133,8 +135,6 @@ private:
 	void TickCaseCall();
 	// The promotion ceremony plays once the debrief is closed.
 	void TickCeremony();
-	// Closing a debrief: the ending after the capstone, the result when a challenge is over.
-	void AfterDebrief(const FString& MissionId);
 
 	TSharedPtr<SWidget> CeremonyRoot;
 	double CeremonyEnds = 0.0;

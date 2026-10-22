@@ -62,5 +62,7 @@ Each full name was web-searched for a public figure, hotel executive or security
 | Anneliese Thorburn | Credit Manager | Clear |
 | Rory Pennant | LP Officer, evenings | Clear |
 | Dorian Vessey | Former Front Office Systems Administrator (M024, not in the cast) | Clear (Denmark Vessey, a musician, shares only the surname) |
+| Harriet Oyelaran | Environmental Health Officer, Port Avener Health Department | Clear |
+| Garrick Tamsett | Guest claiming an injury | Clear (rejected first choice Garrick Holmwood: Arthur Holmwood is a character in Dracula) |
 
 Equipment names in missions (encoders E-01 to E-03, camera ids, evidence numbers) are generic codes, not brands.

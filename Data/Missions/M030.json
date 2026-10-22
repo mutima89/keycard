@@ -1,0 +1,445 @@
+{
+  "schema": 1,
+  "id": "M030",
+  "title": "Fraudulent Claim Spotted from Evidence",
+  "kind": "mission",
+  "topic": "claim_fraud",
+  "minLevel": 8,
+  "opening": {
+    "channel": "email",
+    "from": "adjuster",
+    "at": "exec_offices",
+    "text": "A solicitor's letter for a Mr Garrick Tamsett: says he fell at the lobby bar step on 14 September at about 22:40 and broke his right wrist. He's claiming 48,000. I'd like your evidence before I set the reserve. He's also asked to come in and 'see the step' this afternoon. Odile."
+  },
+  "briefing": [
+    "11:00, Tuesday. A claim arrives five weeks after the date of a fall nobody reported at the time. The claimant asks to visit the hotel today.",
+    "Veldane claims method: gather and preserve the hotel's own evidence before anyone reaches a view; compare it with the claim, fact by fact; give it all to the insurer, who decides whether a claim is genuine or not; treat the claimant courteously, discuss nothing about liability or the evidence with him, and refer him to the insurer; never accuse anyone of fraud yourself. Your authority is 1,000,000."
+  ],
+  "context": [
+    {
+      "ifFlag": "guests_accused",
+      "text": "After the couple accused of fraud at the desk, counsel has reminded every manager: the hotel never calls anyone a fraudster."
+    }
+  ],
+  "learningObjectives": [
+    "Preserve and compare the evidence, fact by fact",
+    "The insurer decides; you never accuse",
+    "Setting the reserve on what is claimed"
+  ],
+  "start": "11:00",
+  "actions": [
+    {
+      "id": "incident_log",
+      "label": "Check the incident log for 14 September",
+      "kind": "check",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 3,
+      "required": true,
+      "findingTitle": "Nothing reported",
+      "finding": "No incident, first aid or guest complaint on 14 September or the days after. The night LP officer's daily report for the lobby bar shows a quiet night. The first the hotel heard of a fall is the solicitor's letter, five weeks later."
+    },
+    {
+      "id": "cctv_bar",
+      "label": "Review the lobby bar cameras for the time of the fall",
+      "kind": "cctvReview",
+      "at": "cctv_room",
+      "spot": "cctv_console",
+      "minutes": 6,
+      "requires": [
+        "incident_log"
+      ],
+      "required": true,
+      "evidence": "KC-3001",
+      "findingTitle": "L-07, 22:20 to 23:10",
+      "finding": "L-07 covers the bar step. 22:20 to 23:10: Mr Tamsett walks down the step twice and up it once without stumbling. Nobody falls. His right forearm is in a dark support from the first frame. The 30-day footage is exported, hashed and logged as KC-3001: the date was only just inside retention."
+    },
+    {
+      "id": "checkin_record",
+      "label": "Pull his check-in record and the bar receipts",
+      "kind": "check",
+      "at": "front_desk",
+      "spot": "front_office_pc",
+      "minutes": 3,
+      "requires": [
+        "incident_log"
+      ],
+      "required": true,
+      "findingTitle": "Before the fall",
+      "finding": "Checked in 14 September at 15:12. The registration card signature is shaky; the desk agent's note: 'guest has wrist in support, helped with bags'. The bar receipt at 22:44, signed, four minutes after the time of the fall, is for two drinks and has no note of anything unusual."
+    },
+    {
+      "id": "accuse",
+      "label": "Tell his solicitor the claim is fraudulent",
+      "kind": "other",
+      "at": "lp_office",
+      "minutes": 1,
+      "requires": [
+        "cctv_bar"
+      ],
+      "findingTitle": "Accused",
+      "finding": "You email the solicitor that the footage proves fraud. Odile learns of it from the solicitor's reply, which threatens defamation and asks for all footage 'the hotel has selectively relied on'.",
+      "effects": {
+        "InsurerConfidence": -4
+      },
+      "schedules": [
+        {
+          "id": "defamation_threat",
+          "description": "The claimant's solicitor turns your email into a counter-claim for defamation. Tarrowby's lawyers take over and the claim takes a year longer to close.",
+          "delayWeeks": 4,
+          "probability": 0.6,
+          "effects": {
+            "IncidentCosts": 10000,
+            "InsurerConfidence": -3
+          },
+          "flagIfOccurs": "claimant_defamation"
+        }
+      ]
+    },
+    {
+      "id": "visit",
+      "label": "Meet Mr Tamsett when he comes to see the step",
+      "kind": "interview",
+      "at": "lobby",
+      "person": "claimant_tamsett",
+      "minutes": 4,
+      "requires": [
+        "cctv_bar",
+        "checkin_record"
+      ],
+      "required": true,
+      "findingTitle": "Courteous, and nothing more",
+      "finding": "You show him the step, ask if he needs anything, and explain that the hotel's insurer is handling his claim and will be in touch through his solicitor. He asks whether there are cameras. You tell him the insurer has all the hotel's information. He photographs the step and leaves.",
+      "lines": [
+        {
+          "speaker": "claimant_tamsett",
+          "text": "So you've got cameras on this, have you? Shame nobody was watching when I went down."
+        }
+      ]
+    },
+    {
+      "id": "show_footage",
+      "label": "Show him the footage to settle it",
+      "kind": "other",
+      "at": "lobby",
+      "minutes": 2,
+      "requires": [
+        "cctv_bar"
+      ],
+      "findingTitle": "Footage shown",
+      "finding": "He watches without a word, then says the fall was 'just off camera, by the pillar'. By the end of the week his solicitor's letter has a new location and a witness.",
+      "effects": {
+        "InsurerConfidence": -3
+      },
+      "schedules": [
+        {
+          "id": "story_changed",
+          "description": "The claim is re-pleaded with a new location and a witness, now shaped around the footage the hotel showed. It costs more to defend.",
+          "delayWeeks": 3,
+          "probability": 0.7,
+          "effects": {
+            "IncidentCosts": 7000
+          },
+          "flagIfOccurs": "claim_reshaped"
+        }
+      ]
+    },
+    {
+      "id": "to_insurer",
+      "label": "Give Odile the evidence, fact by fact",
+      "kind": "interview",
+      "at": "exec_offices",
+      "person": "adjuster",
+      "minutes": 4,
+      "requires": [
+        "cctv_bar",
+        "checkin_record"
+      ],
+      "required": true,
+      "findingTitle": "With the insurer",
+      "finding": "A table for Odile: each fact in the claim against the hotel's evidence. Time and place of the fall: no fall on KC-3001. Injury from the fall: support visible from 15:12 and in every frame. Reported at the time: nothing. Signed receipt four minutes later. She refers it to Tarrowby's claims investigation unit and sets the reserve on what is claimed until they decide.",
+      "lines": [
+        {
+          "speaker": "adjuster",
+          "text": "Facts side by side and no adjectives. That's how a claim like this gets declined properly, if it should be."
+        }
+      ]
+    },
+    {
+      "id": "case_record",
+      "label": "File the claim record",
+      "kind": "logEvidence",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 3,
+      "requires": [
+        "to_insurer"
+      ],
+      "required": true,
+      "findingTitle": "Filed",
+      "finding": "The claim, the evidence table, KC-3001 with its custody log, the check-in note and the receipt, the visit (who was present, what was said), and the insurer's reference. Footage for any claimed incident date is held until the claim closes."
+    }
+  ],
+  "questions": [
+    {
+      "id": "q_reserve",
+      "kind": "numeric",
+      "prompt": "Until the insurer decides, the reserve is set on what is claimed: medical 6,000, indemnity 38,000, expenses 4,000, with 1,200 paid for a medical report. What is the reserve?",
+      "dimension": "Cost",
+      "competency": "FinancialAcumen",
+      "weight": 11,
+      "formula": {
+        "name": "ClaimReserve",
+        "inputs": {
+          "medical": 6000,
+          "indemnity": 38000,
+          "expense": 4000,
+          "paid": 1200
+        }
+      },
+      "tolerance": 0.02,
+      "unit": "",
+      "explanation": "Reserve = medical + indemnity + expense - paid = 6,000 + 38,000 + 4,000 - 1,200 = 46,800. Doubts about a claim are for the investigation; the reserve still reflects what is claimed until it is decided.",
+      "mistakes": [
+        {
+          "value": 48000,
+          "feedback": "That is the total claimed. The 1,200 already paid comes off the reserve."
+        },
+        {
+          "value": 49200,
+          "feedback": "Paid to date is subtracted from the reserve, not added."
+        }
+      ]
+    },
+    {
+      "id": "d_who",
+      "prompt": "The evidence doesn't support the claim. Who decides it is fraudulent?",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 10,
+      "options": [
+        {
+          "id": "insurer",
+          "label": "The insurer, through its claims investigation, with the hotel's evidence.",
+          "score": 100,
+          "feedback": "Your job is a complete, honest evidence file. The decision, and any accusation, belong to the insurer and, if it comes to it, a court."
+        },
+        {
+          "id": "you",
+          "label": "You: the footage is clear.",
+          "score": 10,
+          "critical": true,
+          "feedback": "Calling a claimant a fraudster is how a hotel ends up defending a defamation claim. Let the evidence speak through the insurer."
+        },
+        {
+          "id": "nobody",
+          "label": "Nobody: pay it, it's cheaper than a fight.",
+          "score": 25,
+          "feedback": "Paying claims the evidence doesn't support raises everyone's premiums and invites the next one."
+        }
+      ]
+    },
+    {
+      "id": "d_visit",
+      "prompt": "Mr Tamsett asks to see the footage when he visits. What do you say?",
+      "dimension": "Communication",
+      "competency": "GuestServiceDeescalation",
+      "weight": 13,
+      "options": [
+        {
+          "id": "insurer",
+          "label": "That the insurer has all the hotel's information and will deal with him through his solicitor.",
+          "score": 100,
+          "feedback": "Courteous, true, and it keeps the evidence where it belongs."
+        },
+        {
+          "id": "show",
+          "label": "Show him: it'll make him drop it.",
+          "score": 20,
+          "feedback": "It tells him exactly what the hotel has, so the story can change to fit."
+        },
+        {
+          "id": "refuse",
+          "label": "Refuse to meet him.",
+          "score": 40,
+          "feedback": "Turning a claimant away looks like something to hide. Meet him, be kind, and say nothing about the claim."
+        }
+      ]
+    },
+    {
+      "id": "d_compare",
+      "kind": "multi",
+      "prompt": "Which evidence belongs in the comparison for the insurer?",
+      "dimension": "Evidence",
+      "competency": "Investigation",
+      "weight": 8,
+      "options": [
+        {
+          "id": "cctv",
+          "label": "The footage of the step at the claimed time, with its custody log",
+          "correct": true
+        },
+        {
+          "id": "log",
+          "label": "The incident log showing nothing reported",
+          "correct": true
+        },
+        {
+          "id": "checkin",
+          "label": "The check-in note of the wrist support before the fall",
+          "correct": true
+        },
+        {
+          "id": "receipt",
+          "label": "The signed bar receipt four minutes after",
+          "correct": true
+        },
+        {
+          "id": "opinion",
+          "label": "The bartender's view that he 'seemed like a chancer'",
+          "feedback": "Opinion isn't evidence. It would undermine the facts beside it."
+        }
+      ]
+    },
+    {
+      "id": "r_what",
+      "prompt": "Claim record, summary (one line)",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 7,
+      "section": "what",
+      "options": [
+        {
+          "id": "facts",
+          "label": "Claim for a fall at the lobby bar step 14 Sep 22:40; nothing reported at the time; L-07 (KC-3001) shows no fall; wrist support noted at check-in 15:12; signed receipt 22:44; evidence to insurer, who has referred it for investigation; reserve 46,800.",
+          "score": 100,
+          "feedback": "The claim, each fact against it, who decides and the reserve."
+        },
+        {
+          "id": "fraud",
+          "label": "Fraudulent claim by Mr Tamsett, declined.",
+          "score": 15,
+          "feedback": "Not yours to decide, and not yet decided."
+        },
+        {
+          "id": "fall",
+          "label": "Guest claims he fell in the lobby bar.",
+          "score": 25,
+          "feedback": "Only the claim. The evidence is what the record is for."
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "c_preserve",
+      "label": "Footage in time",
+      "kind": "done",
+      "action": "cctv_bar",
+      "dimension": "Evidence",
+      "competency": "EvidenceReporting",
+      "weight": 9,
+      "pass": "The footage was saved days before it would have overwritten.",
+      "fail": "The only footage of the step was left to overwrite."
+    },
+    {
+      "id": "c_records",
+      "label": "The hotel's own records",
+      "kind": "done",
+      "action": "checkin_record",
+      "dimension": "Evidence",
+      "competency": "Investigation",
+      "weight": 7,
+      "pass": "The check-in note and the receipt were found.",
+      "fail": "The records that dated the injury were missed."
+    },
+    {
+      "id": "c_no_accuse",
+      "label": "Never accuse",
+      "kind": "notDone",
+      "action": "accuse",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 9,
+      "pass": "Nobody from the hotel called it fraud.",
+      "fail": "You accused the claimant yourself."
+    },
+    {
+      "id": "c_no_show",
+      "label": "Keep the evidence",
+      "kind": "notDone",
+      "action": "show_footage",
+      "dimension": "Evidence",
+      "competency": "Investigation",
+      "weight": 7,
+      "pass": "The claimant learned nothing about the evidence from you.",
+      "fail": "You showed the claimant the hotel's evidence."
+    },
+    {
+      "id": "c_insurer",
+      "label": "To the insurer",
+      "kind": "done",
+      "action": "to_insurer",
+      "dimension": "Communication",
+      "competency": "ComplianceAudit",
+      "weight": 7,
+      "pass": "The insurer had every fact side by side.",
+      "fail": "The insurer never had the hotel's evidence."
+    },
+    {
+      "id": "c_visit",
+      "label": "Courteous visit",
+      "kind": "done",
+      "action": "visit",
+      "dimension": "Care",
+      "competency": "GuestServiceDeescalation",
+      "weight": 6,
+      "pass": "The claimant was treated courteously and told nothing about the claim.",
+      "fail": "The claimant's visit was left to chance."
+    },
+    {
+      "id": "c_record",
+      "label": "File it",
+      "kind": "done",
+      "action": "case_record",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 6,
+      "pass": "The claim record is complete.",
+      "fail": "The claim record was never filed."
+    }
+  ],
+  "bestOrder": [
+    "incident_log",
+    "cctv_bar",
+    "checkin_record",
+    "to_insurer",
+    "visit",
+    "case_record"
+  ],
+  "debrief": {
+    "whatHappened": "A claim for a fall nobody saw. You saved the footage days before it overwrote, found the check-in note and the receipt, gave the insurer every fact side by side, met the claimant courteously and told him nothing, and left the decision to the insurer's investigators.",
+    "bestPractice": [
+      "Preserve the footage and records for any claimed date at once.",
+      "Compare the claim with the evidence, fact by fact.",
+      "Give everything to the insurer; they decide, and they accuse if anyone does.",
+      "Meet the claimant courteously; discuss nothing about liability or evidence.",
+      "Set the reserve on what is claimed until the investigation decides."
+    ],
+    "why": "Most claims are genuine and deserve a fair hearing; a few aren't. The same disciplined evidence file protects the honest claimant and exposes the dishonest one, without the hotel ever having to call anyone a liar.",
+    "commonMistakes": [
+      "Accusing the claimant.",
+      "Showing him the footage.",
+      "Letting footage overwrite.",
+      "Paying to avoid a fight."
+    ]
+  },
+  "procedureCards": [
+    "claim_fraud"
+  ],
+  "reportAt": "lp_office",
+  "passMark": 60,
+  "xp": 420,
+  "weeks": 2,
+  "lesson": "Preserve, compare fact by fact, give it to the insurer, never accuse."
+}

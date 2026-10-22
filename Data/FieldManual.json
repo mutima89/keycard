@@ -664,6 +664,48 @@
         "Punishing ill staff",
         "Guessing in public"
       ]
+    },
+    {
+      "id": "trafficking_awareness",
+      "title": "Trafficking awareness",
+      "topic": "trafficking_awareness",
+      "steps": [
+        "Train every employee and contractor in the signs for their role.",
+        "Signs are behaviours: control by another person, someone else holding ID, rooms refusing service with many visitors, agency staff without their own documents or paying fees.",
+        "One route: tell LP or the duty manager; LP contacts the police or the hotline.",
+        "Anyone in immediate danger: call the police at once.",
+        "Observe and note; never confront, question, follow or try to rescue anyone.",
+        "Never profile by nationality, ethnicity or appearance.",
+        "Measure training completion and reporting, not cases found."
+      ],
+      "why": "Staff are often the only people who notice. A safe, simple route turns what they notice into information the police can use.",
+      "pitfalls": [
+        "Staff intervening",
+        "Profiling",
+        "Leaving out contractors",
+        "Counting cases"
+      ]
+    },
+    {
+      "id": "claim_fraud",
+      "title": "A claim the evidence doesn't support",
+      "topic": "claim_fraud",
+      "steps": [
+        "Preserve footage and records for the claimed date at once, before retention runs out.",
+        "Check the incident log, first aid and complaints for the date.",
+        "Compare each fact in the claim with the hotel's evidence, side by side.",
+        "Give the whole file to the insurer; they decide whether it is genuine.",
+        "Meet the claimant courteously; say nothing about liability or the evidence.",
+        "Never accuse anyone of fraud yourself.",
+        "Hold the evidence until the claim closes."
+      ],
+      "why": "A disciplined evidence file is fair to honest claimants and fatal to dishonest ones, without the hotel making an accusation it can be sued for.",
+      "pitfalls": [
+        "Accusing",
+        "Showing the evidence",
+        "Footage overwritten",
+        "Paying to avoid a fight"
+      ]
     }
   ]
 }

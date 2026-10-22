@@ -1,0 +1,460 @@
+{
+  "schema": 1,
+  "id": "M029",
+  "title": "Human Trafficking Awareness Programme",
+  "kind": "mission",
+  "topic": "trafficking_awareness",
+  "minLevel": 8,
+  "opening": {
+    "channel": "email",
+    "from": "gm",
+    "at": "gm_office",
+    "text": "The owners want a human trafficking awareness programme across our hotels by the spring, and they want it to be real, not a poster. You own it. Come and see me when you have a plan. Marguerite."
+  },
+  "briefing": [
+    "09:00, Monday. You are asked to design and launch a trafficking awareness programme for the Harbourfront and the airport, covering every employee and the contract staff.",
+    "Veldane awareness method: teach every employee the general signs of possible trafficking and exploitation in their own role; one simple reporting route (tell LP or the duty manager; LP contacts the police or the national hotline, at once if anyone is in immediate danger); staff observe and report, and never confront, question or try to rescue anyone; no profiling by nationality, ethnicity or appearance; include contractors and agency staff, where labour exploitation hides; measure training and reporting, not 'cases found'. Training-style fiction, not legal advice: follow local law and the police's guidance. Your authority is 1,000,000."
+  ],
+  "learningObjectives": [
+    "Signs by role, one reporting route",
+    "Observe and report, never confront or rescue",
+    "Contractors and agency staff included"
+  ],
+  "start": "09:00",
+  "actions": [
+    {
+      "id": "hr_scope",
+      "label": "Scope the programme with Priyanka Venn",
+      "kind": "interview",
+      "at": "exec_offices",
+      "spot": "hr_office",
+      "person": "hr_director",
+      "minutes": 4,
+      "required": true,
+      "findingTitle": "Everyone, by role",
+      "finding": "1,140 employees at the two hotels, plus about 160 contract and agency staff (guards, night cleaners, banquet agency). A 45-minute module by role: front office, housekeeping, food and beverage, LP and security, engineering, management. Completion tracked in the HR system; a refresher every year; new starters in their first month.",
+      "lines": [
+        {
+          "speaker": "hr_director",
+          "text": "If it's in the HR system, it gets done. If it's a poster in the canteen, it gets ignored."
+        }
+      ]
+    },
+    {
+      "id": "housekeeping_signs",
+      "label": "Ask Lucia what her room attendants see",
+      "kind": "interview",
+      "at": "housekeeping",
+      "person": "exec_housekeeper",
+      "minutes": 4,
+      "requires": [
+        "hr_scope"
+      ],
+      "required": true,
+      "findingTitle": "What housekeeping sees",
+      "finding": "Lucia's list of things her team have noticed over the years: a room refusing service for days with many visitors; someone who seems controlled by another person, who answers for them; a young person with an older adult who doesn't seem to be family; few personal belongings. She warns: any one of these has an innocent explanation. Her team should notice, write it down and tell someone, not decide.",
+      "lines": [
+        {
+          "speaker": "exec_housekeeper",
+          "text": "My girls see everything. What they need is to know who to tell, and that they won't get in trouble for being wrong."
+        }
+      ]
+    },
+    {
+      "id": "desk_signs",
+      "label": "Work through the front office signs with Gideon",
+      "kind": "interview",
+      "at": "front_desk",
+      "person": "front_office_manager",
+      "minutes": 3,
+      "requires": [
+        "hr_scope"
+      ],
+      "findingTitle": "What the desk sees",
+      "finding": "At the desk: someone else holding a guest's ID and doing all the talking; several rooms paid in cash by one person for others; a guest who seems not to know where they are. Gideon agrees the desk notes and reports, and never refuses a room or questions the guest about it."
+    },
+    {
+      "id": "contractors",
+      "label": "Include the contract and agency staff with Callum",
+      "kind": "call",
+      "at": "loading_dock",
+      "person": "guard_lead",
+      "minutes": 3,
+      "requires": [
+        "hr_scope"
+      ],
+      "required": true,
+      "findingTitle": "Contractors in",
+      "finding": "Tessmore's officers take the same module; the night cleaning and banquet agencies are asked, by contract, to show that their staff are paid directly, keep their own ID documents and pay no recruitment fees. Callum adds the hotel's reporting route to his officers' briefing card."
+    },
+    {
+      "id": "reporting_route",
+      "label": "Agree the reporting route with DS Calloway",
+      "kind": "call",
+      "at": "lp_office",
+      "spot": "lp_desk",
+      "person": "police_liaison",
+      "minutes": 3,
+      "requires": [
+        "housekeeping_signs"
+      ],
+      "required": true,
+      "findingTitle": "One route",
+      "finding": "Staff tell LP or the duty manager. LP records what was seen and contacts the police's specialist unit or the national hotline. Anyone in immediate danger: call the police at once. Staff never confront, question, follow or try to rescue anyone; the police decide what happens next.",
+      "lines": [
+        {
+          "speaker": "police_liaison",
+          "text": "What we need is good notes, early. What we don't need is a well-meaning porter knocking on the door."
+        }
+      ]
+    },
+    {
+      "id": "rescue_training",
+      "label": "Train staff to step in and get victims out",
+      "kind": "other",
+      "at": "lp_office",
+      "minutes": 1,
+      "requires": [
+        "hr_scope"
+      ],
+      "findingTitle": "Rescue training",
+      "finding": "The module tells staff to separate a possible victim from the person with them and bring them to the office. In a pilot role-play, a porter blocks a guest at the lift. In real life that puts the possible victim, the staff member and any police operation at risk.",
+      "effects": {
+        "SafetyCompliance": -4
+      },
+      "schedules": [
+        {
+          "id": "staff_intervention",
+          "description": "A trained employee confronts a man at the lifts over a 'suspicious' young woman with him. She is his daughter; he complains, and the press asks what the hotel is training its staff to do.",
+          "delayWeeks": 4,
+          "probability": 0.65,
+          "effects": {
+            "Reputation": -4,
+            "GuestSatisfaction": -3
+          },
+          "flagIfOccurs": "trafficking_confrontation"
+        }
+      ]
+    },
+    {
+      "id": "profile_poster",
+      "label": "Put up a poster of nationalities to watch for",
+      "kind": "other",
+      "at": "back_of_house",
+      "minutes": 1,
+      "requires": [
+        "hr_scope"
+      ],
+      "findingTitle": "A list of nationalities",
+      "finding": "The poster in the staff corridor lists the nationalities 'most often trafficked'. Staff start watching guests by where they seem to be from. A complaint of discrimination follows within the week.",
+      "effects": {
+        "Reputation": -3,
+        "StaffMorale": -2
+      },
+      "schedules": [
+        {
+          "id": "discrimination_claim",
+          "description": "A guest who was watched and reported because of his nationality brings a discrimination complaint. Counsel advises settlement.",
+          "delayWeeks": 3,
+          "probability": 0.6,
+          "effects": {
+            "IncidentCosts": 8000,
+            "Reputation": -3
+          },
+          "flagIfOccurs": "profiling_complaint"
+        }
+      ]
+    },
+    {
+      "id": "programme_plan",
+      "label": "Write the programme and how it will be measured",
+      "kind": "logEvidence",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 5,
+      "requires": [
+        "reporting_route",
+        "contractors"
+      ],
+      "required": true,
+      "findingTitle": "The programme",
+      "finding": "Module by role; everyone trained in 90 days, then yearly; the reporting route on every staff ID card and in every back-of-house area; contractor clauses; LP logs every report and the police reference. Measures: training completion by department, reports made, how fast they reached LP, and the police's view of their quality. Not 'cases found'."
+    },
+    {
+      "id": "gm_signoff",
+      "label": "Present the programme to Marguerite",
+      "kind": "interview",
+      "at": "gm_office",
+      "person": "gm",
+      "minutes": 3,
+      "requires": [
+        "programme_plan"
+      ],
+      "required": true,
+      "findingTitle": "Signed off",
+      "finding": "Marguerite signs it off and asks to open the first session herself. The owners get the same plan for the other Veldane hotels.",
+      "lines": [
+        {
+          "speaker": "gm",
+          "text": "Observe, write it down, tell LP. Simple enough that a night porter remembers it at three in the morning. Good."
+        }
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "d_role",
+      "prompt": "A room attendant thinks a young guest is being controlled by the man with her. What should she do?",
+      "dimension": "Procedure",
+      "competency": "IncidentResponse",
+      "weight": 11,
+      "options": [
+        {
+          "id": "report",
+          "label": "Note what she saw and tell LP or the duty manager straight away; call the police if anyone is in immediate danger.",
+          "score": 100,
+          "feedback": "Observe and report. The people trained to act are the police, and early notes are what help them."
+        },
+        {
+          "id": "ask",
+          "label": "Ask the young guest quietly if she is all right.",
+          "score": 30,
+          "feedback": "Well meant, but it can put her at risk if the man notices. Report it and let the police decide."
+        },
+        {
+          "id": "rescue",
+          "label": "Bring the young guest to the office away from the man.",
+          "score": 10,
+          "critical": true,
+          "feedback": "Staff never try to rescue or separate anyone. It can endanger the person, the employee and any police operation."
+        }
+      ]
+    },
+    {
+      "id": "d_signs",
+      "kind": "multi",
+      "prompt": "Which belong in the training as possible signs to report?",
+      "dimension": "Evidence",
+      "competency": "Investigation",
+      "weight": 10,
+      "options": [
+        {
+          "id": "control",
+          "label": "A guest who seems controlled by another person, who answers for them",
+          "correct": true
+        },
+        {
+          "id": "id",
+          "label": "Someone else holding a guest's ID documents",
+          "correct": true
+        },
+        {
+          "id": "service",
+          "label": "A room refusing service for days with many short visits",
+          "correct": true
+        },
+        {
+          "id": "fees",
+          "label": "Agency staff paying recruitment fees or not holding their own ID",
+          "correct": true
+        },
+        {
+          "id": "nationality",
+          "label": "Guests of particular nationalities",
+          "feedback": "Never. Profiling is discrimination, and it sends attention away from the real signs."
+        }
+      ]
+    },
+    {
+      "id": "d_measure",
+      "prompt": "How will you know the programme works?",
+      "dimension": "Report",
+      "competency": "ComplianceAudit",
+      "weight": 9,
+      "options": [
+        {
+          "id": "measures",
+          "label": "Training completion, reports made and how quickly they reach LP, and the police's view of their quality.",
+          "score": 100,
+          "feedback": "These measure whether staff know and use the route. The hotel can't and shouldn't count 'cases found'."
+        },
+        {
+          "id": "cases",
+          "label": "The number of trafficking cases the hotel uncovers.",
+          "score": 20,
+          "feedback": "It sets a target for suspicion, and the hotel isn't the investigator."
+        },
+        {
+          "id": "posters",
+          "label": "Posters up in every hotel.",
+          "score": 25,
+          "feedback": "Posters are inputs. Nothing tells you anyone read them."
+        }
+      ]
+    },
+    {
+      "id": "r_what",
+      "prompt": "Programme summary for the owners (one line)",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 7,
+      "section": "what",
+      "options": [
+        {
+          "id": "facts",
+          "label": "Role-based awareness module for 1,140 employees and 160 contract staff within 90 days, yearly refresher; one route (LP, then police or hotline); observe and report, never confront; contractor clauses; measured on completion and reporting.",
+          "score": 100,
+          "feedback": "Who, how, the route, the rule, the contractors and the measures."
+        },
+        {
+          "id": "posters",
+          "label": "Posters and a video for all staff.",
+          "score": 20,
+          "feedback": "That is an awareness campaign, not a programme."
+        },
+        {
+          "id": "catch",
+          "label": "Staff trained to spot and stop traffickers.",
+          "score": 10,
+          "feedback": "Staff observe and report. Stopping anyone is for the police."
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "c_hr",
+      "label": "In the HR system",
+      "kind": "done",
+      "action": "hr_scope",
+      "dimension": "Procedure",
+      "competency": "PeopleLeadership",
+      "weight": 6,
+      "pass": "Training is assigned, tracked and refreshed through HR.",
+      "fail": "There's no way to know who was trained."
+    },
+    {
+      "id": "c_route",
+      "label": "One reporting route",
+      "kind": "done",
+      "action": "reporting_route",
+      "dimension": "Communication",
+      "competency": "CrisisLeadership",
+      "weight": 9,
+      "pass": "Staff have one route, agreed with the police.",
+      "fail": "Staff don't know who to tell."
+    },
+    {
+      "id": "c_contractors",
+      "label": "Contractors in",
+      "kind": "done",
+      "action": "contractors",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 8,
+      "pass": "Contract and agency staff are covered, and their employers checked.",
+      "fail": "The people most at risk of labour exploitation were left out."
+    },
+    {
+      "id": "c_no_rescue",
+      "label": "Observe, don't intervene",
+      "kind": "notDone",
+      "action": "rescue_training",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 10,
+      "pass": "Staff are taught to report, never to intervene.",
+      "fail": "Staff were taught to step in."
+    },
+    {
+      "id": "c_no_profile",
+      "label": "No profiling",
+      "kind": "notDone",
+      "action": "profile_poster",
+      "dimension": "Care",
+      "competency": "GuestServiceDeescalation",
+      "weight": 9,
+      "pass": "Signs are behaviours, not nationalities.",
+      "fail": "Staff were taught to watch nationalities."
+    },
+    {
+      "id": "c_housekeeping",
+      "label": "Hear from the front line",
+      "kind": "done",
+      "action": "housekeeping_signs",
+      "dimension": "Evidence",
+      "competency": "Investigation",
+      "weight": 6,
+      "pass": "The module is built on what the front line actually sees.",
+      "fail": "The module was written without the people who'll use it."
+    },
+    {
+      "id": "c_plan",
+      "label": "Write it down",
+      "kind": "done",
+      "action": "programme_plan",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 6,
+      "pass": "The programme, its route and its measures are written down.",
+      "fail": "The programme was never written up."
+    },
+    {
+      "id": "c_desk",
+      "label": "The desk's signs",
+      "kind": "done",
+      "action": "desk_signs",
+      "dimension": "Evidence",
+      "competency": "Investigation",
+      "weight": 4,
+      "pass": "Front office signs came from front office.",
+      "fail": "The desk's module was guessed."
+    },
+    {
+      "id": "c_signoff",
+      "label": "Leadership owns it",
+      "kind": "done",
+      "action": "gm_signoff",
+      "dimension": "Communication",
+      "competency": "PeopleLeadership",
+      "weight": 5,
+      "pass": "The GM signed off and opens the training.",
+      "fail": "The programme has no visible owner."
+    }
+  ],
+  "bestOrder": [
+    "hr_scope",
+    "housekeeping_signs",
+    "desk_signs",
+    "contractors",
+    "reporting_route",
+    "programme_plan",
+    "gm_signoff"
+  ],
+  "debrief": {
+    "whatHappened": "You built a trafficking awareness programme that every employee and contractor will take: signs by role, from the people who see them, one reporting route agreed with the police, a rule to observe and report and never intervene, contractor clauses, and measures that show whether staff use it.",
+    "bestPractice": [
+      "Signs by role, built with the front line.",
+      "One reporting route: LP or the duty manager, then the police or hotline; police at once for immediate danger.",
+      "Observe, note and report; never confront, question, follow or rescue.",
+      "Behaviours, never nationality or appearance.",
+      "Include contractors and agency staff, with contract checks on how they are employed.",
+      "Measure training and reporting, not cases found."
+    ],
+    "why": "Hotels are where exploitation is sometimes visible to people who aren't trained to see it. Awareness with a safe, simple reporting route gives the police early, accurate information, without putting anyone at risk.",
+    "commonMistakes": [
+      "Training staff to intervene.",
+      "Profiling.",
+      "Leaving out contractors.",
+      "Measuring 'cases found'."
+    ]
+  },
+  "procedureCards": [
+    "trafficking_awareness"
+  ],
+  "reportAt": "lp_office",
+  "passMark": 60,
+  "xp": 400,
+  "weeks": 2,
+  "lesson": "Signs by role, one route, observe and report, no profiling, contractors included."
+}

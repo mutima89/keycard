@@ -3476,8 +3476,8 @@ void AKcHotel::RefreshScenes()
 	if (bRoomFire)
 	{
 		const float DoorX = 3960.0f;
-		const int32 Layers = bSmokeOut ? 6 : 3;
-		for (int32 i = 0; i < Layers; ++i)
+		const int32 SmokeLayers = bSmokeOut ? 6 : 3;
+		for (int32 i = 0; i < SmokeLayers; ++i)
 		{
 			const float Spread = 260.0f + i * 220.0f;
 			SceneBox(FVector(DoorX, 20.0f, Zf(TopFloor, Ceil14 - 18.0f - i * (bSmokeOut ? 22.0f : 8.0f))), FVector(Spread, 2.0f * CorrY - 20.0f, 30.0f), Mat(TEXT("MI_Sheer")), 0.0f);

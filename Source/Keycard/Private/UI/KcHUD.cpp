@@ -750,8 +750,8 @@ void AKcHUD::TickCaseCall()
 	UKcAudioSubsystem::Cue(this, EKcCue::Incident);
 	const FString Channel = Call.Channel == TEXT("FrontDesk") ? TEXT("Front desk") : (Call.Channel.IsEmpty() ? TEXT("Radio") : Call.Channel);
 	FString Who = C->PersonName(ToStd(Call.FromId));
-	const FString Role = C->PersonRole(ToStd(Call.FromId));
-	if (!Role.IsEmpty()) Who += TEXT(", ") + Role;
+	const FString CallerRole = C->PersonRole(ToStd(Call.FromId));
+	if (!CallerRole.IsEmpty()) Who += TEXT(", ") + CallerRole;
 	Speak(Call.FromId, Call.Text);
 	auto Done = [this]()
 	{

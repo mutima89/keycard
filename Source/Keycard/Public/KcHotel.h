@@ -77,7 +77,7 @@ private:
 	UMaterialInterface* Mat(const TCHAR* Name);
 	UStaticMesh* Model(const TCHAR* Id);
 	UStaticMeshComponent* AddMesh(UStaticMesh* Mesh, const FVector& Location, float Yaw, const FVector& Scale, UMaterialInterface* Override = nullptr, bool bCollision = true);
-	bool AddInstance(UStaticMesh* Mesh, const FTransform& T, UMaterialInterface* Override = nullptr, bool bCollision = true, bool bHidden = false);
+	bool AddInstance(UStaticMesh* Mesh, const FTransform& T, UMaterialInterface* Override = nullptr, bool bCollision = true, bool bHide = false);
 	bool AddInstance(UStaticMesh* Mesh, const FVector& Location, float Yaw, const FVector& Scale, UMaterialInterface* Override = nullptr, bool bCollision = true);
 	void AddBox(const FVector& Center, const FVector& Size, UMaterialInterface* Material, float Yaw = 0.0f, bool bCollision = true);
 	void AddCollider(const FVector& Center, const FVector& Size, const FRotator& Rotation);

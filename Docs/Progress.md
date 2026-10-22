@@ -1,7 +1,21 @@
 # Progress
 
-## Status: Phase 1 in progress (core, content and UE layer written; PC build next)
+## Status: Phase 1 built and packaged on the PC (self-test play, resume and tour pass); voices and UE automation tests missing
 Last update: 2026-10-22
+
+- 2026-10-22 Phase 1 PC build, PC session (Remote Control, UE 5.8.4, MSVC). Nothing changed in C:\Downloads\Riskbound.
+  - Branch `claude/project-thread-mjihsh` at b53fa7b.
+  - `FetchAssets.py --resolve`: all 22 Poly Haven ids resolved, no MISSING slot (`white_bathroom_tiles` and `bathroom_tiles` 404, fell back to `square_tiles_02`); Inter fonts installed; AssetManifest.json, AssetCredits.md and KcAssetCredits.inl written. `GenerateTextures.py` and `BuildAudio.py` exit 0. `FetchCharacters.py` done with one gap: `missing anim f_cell_phone_listen_01`.
+  - `BuildVoices.py` FAILED: `FileNotFoundError: Data\VoiceCast.json` - the voice cast file was never written. No voice clips in this build.
+  - Logo check: contact sheet of the 22 `*_diff_1k.jpg` maps, no brand text or logo (one white mark on sofa_02 checked at full size: UV islands).
+  - `KeycardEditor Win64 Development`: first compile of the UE layer. Fixed C4458 (`Role` local in KcHUD and `bHidden` parameter of `AKcHotel::AddInstance` hid AActor members; renamed `CallerRole`, `bHide`), C2397 (double Yaw narrowed to float in `AKcHotel::SpotFor`), LNK2019 `GGameThreadTime`/`GRenderThreadTime` (added private `RenderCore` dependency, as Riskbound does). Third pass: `Result: Succeeded`, no warnings.
+  - Core tests (MSVC, `Scripts\RunCoreTests.bat`): `42 test cases, 0 failed, 0 failed checks`.
+  - Imports, headless: `KcImport: done: 8 meshes, 7 materials, 0 errors`; Saved/KcImportReport.json `errors: []`; `KcAudio: imported 28 sounds, 0 errors`. ImportCharacters: 32 avatars, 49 anims, exit 1 from one editor error on an upstream stray file `m003_head_normal - wr.png` (spaces in the name; the real `m003_head_normal.png` imported). CreateMap: exit 0, `Content/Maps/L_Harbourfront.umap` written.
+  - `RunUnrealTests.bat`: `No automation tests matched 'Keycard.'`, exit 255 - the Keycard module has no UE automation tests yet.
+  - `BuildWindows.bat Development`: `BUILD SUCCESSFUL`, `AutomationTool exiting with ExitCode=0 (Success)`.
+  - Packaged `Keycard.exe -KcSelfTest=play`: `PASS` (M001, M002, M003 each score 100; ceremony Senior LP Officer; level 2; 4 cards; 28 sounds). `-KcSelfTest=resume`: `PASS` (M001-M003 passed, level Senior LP Officer, ceremony not pending, 3 records). `-KcSelfTest=tour`: `PASS`, 17 places at 1280x720, `average_frame_ms=17.09 average_fps=58.5`; lowest LP office 41.8 fps (first place, warm-up); Floor 14 corridor (east) render 30.14 ms.
+  - Tour screenshots looked at: lobby ceiling blown out to white, a potted plant in the lobby renders as spheres, LP office ceiling pure black and room flat, wardrobe veneer in 1412 stretched. People at the front desk render.
+  - Not done: voice cast and clips, UE automation tests, 1920x1080 High performance check, hands-on playtest.
 
 - 2026-10-22 Phase 1 UE layer, cloud session (not compiled yet: no UE in the container).
   - Hotel (`AKcHotel`): one building, B1 back of house (LP office, CCTV room, dock), ground floor (lobby, front desk, lounge, bar, street doors), floor 14 (corridor, rooms incl. 1412), stairs A and B, two lifts; floors 1-13 listed in the lift but not fitted. People and case points placed per mission step.
@@ -29,4 +43,4 @@ Last update: 2026-10-22
   - Pushed to github.com/mutima89/keycard `main` (repo created by the owner); core tests re-run after the rebase onto the owner's initial commit: `27 test cases, 0 failed, 0 failed checks`.
 
 ### Next action
-On the PC (Remote Control): FetchAssets --resolve, GenerateTextures, BuildAudio, FetchCharacters, BuildVoices, imports, CreateMap, build the editor target and fix compile errors, UE automation tests, package, then the packaged self-test play, resume and tour. Record the real output here.
+Write Data/VoiceCast.json and run BuildVoices; add UE automation tests; fix the lighting and plant issues seen in the tour; check 1920x1080 High; hands-on playtest.

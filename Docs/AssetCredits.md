@@ -21,7 +21,33 @@ Screen interfaces (CCTV wall, shift board, Port Avener room rack, incident repor
 
 ## Art assets
 <!-- generated:assets begin -->
-Filled in by `python Scripts/FetchAssets.py --resolve` (Poly Haven, CC0 1.0). Not resolved yet: the container cannot reach the Poly Haven API, so this runs on the PC.
+Generated from Data/AssetManifest.json by `Scripts/FetchAssets.py --resolve`.
+
+| Asset | Source | Licence | Use | Notes |
+|---|---|---|---|---|
+| [Herringbone Parquet](https://polyhaven.com/a/herringbone_parquet) by Jenelle van Heerden, Sergej Majboroda | Poly Haven | CC0 1.0 | Parquet: LP office, manager's office | Logo check: see below |
+| [Marble 01](https://polyhaven.com/a/marble_01) by Rob Tuytel | Poly Haven | CC0 1.0 | Lobby floor; dark-tinted for the front desk and bar tops | Logo check: see below |
+| [Square Tiles 02](https://polyhaven.com/a/square_tiles_02) by Charlotte Baglioni | Poly Haven | CC0 1.0 | Guest bathrooms, staff toilets | Logo check: see below |
+| [Concrete Floor 02](https://polyhaven.com/a/concrete_floor_02) by Rob Tuytel | Poly Haven | CC0 1.0 | B1 back of house, loading dock | Logo check: see below |
+| [Concrete Wall 008](https://polyhaven.com/a/concrete_wall_008) by Charlotte Baglioni, Dario Barresi | Poly Haven | CC0 1.0 | Stair shafts, B1 walls, facade | Logo check: see below |
+| [Asphalt 02](https://polyhaven.com/a/asphalt_02) by Rob Tuytel | Poly Haven | CC0 1.0 | Street and garage ramp | Logo check: see below |
+| [Grey Cartago 02](https://polyhaven.com/a/grey_cartago_02) by Jenelle van Heerden, Lucas Sánchez Ros | Poly Haven | CC0 1.0 | Quay Promenade paving | Logo check: see below |
+| [Poly Wool Herringbone](https://polyhaven.com/a/poly_wool_herringbone) by Rico Cilliers, colormass | Poly Haven | CC0 1.0 | Carpets, upholstery, acoustic panels | Logo check: see below |
+| [Fabric Pattern 07](https://polyhaven.com/a/fabric_pattern_07) by Rob Tuytel | Poly Haven | CC0 1.0 | Bed linen and towels | Logo check: see below |
+| [Fabric Leather 02](https://polyhaven.com/a/fabric_leather_02) by Rob Tuytel | Poly Haven | CC0 1.0 | Bar stools, lobby chairs | Logo check: see below |
+| [Plastered Wall 04](https://polyhaven.com/a/plastered_wall_04) by Rob Tuytel | Poly Haven | CC0 1.0 | Interior walls | Logo check: see below |
+| [Oak Veneer 01](https://polyhaven.com/a/oak_veneer_01) by Jenelle van Heerden | Poly Haven | CC0 1.0 | Light oak: desks, guest-room doors | Logo check: see below |
+| [Black Walnut Veneer 01](https://polyhaven.com/a/black_walnut_veneer_01) by Jenelle van Heerden | Poly Haven | CC0 1.0 | Walnut: front desk, manager's desk | Logo check: see below |
+| [Chandelier 03](https://polyhaven.com/a/Chandelier_03) by Kirill Sannikov | Poly Haven | CC0 1.0 | Lobby chandelier | Logo check: see below |
+| [Bar Chair Round 01](https://polyhaven.com/a/bar_chair_round_01) by Dairon Sanchez | Poly Haven | CC0 1.0 | Lobby bar stools | Logo check: see below |
+| [Modern Coffee Table 01](https://polyhaven.com/a/modern_coffee_table_01) by Amin | Poly Haven | CC0 1.0 | Lobby lounge table | Logo check: see below |
+| [Sofa 02](https://polyhaven.com/a/sofa_02) by Kirill Sannikov | Poly Haven | CC0 1.0 | Lobby lounge and guest-room sofas | Logo check: see below |
+| [Modern Arm Chair 01](https://polyhaven.com/a/modern_arm_chair_01) by Vibrant Nordic | Poly Haven | CC0 1.0 | Task and lounge chairs | Logo check: see below |
+| [Dining Chair 02](https://polyhaven.com/a/dining_chair_02) by James Ray Cock | Poly Haven | CC0 1.0 | Guest-room desk chairs, LP office | Logo check: see below |
+| [Potted Plant 02](https://polyhaven.com/a/potted_plant_02) by Rico Cilliers | Poly Haven | CC0 1.0 | Large plants | Logo check: see below |
+| [Potted Plant 04](https://polyhaven.com/a/potted_plant_04) by James Ray Cock | Poly Haven | CC0 1.0 | Desk plants | Logo check: see below |
+| [Shanghai Bund](https://polyhaven.com/a/shanghai_bund) by Greg Zaal | Poly Haven | CC0 1.0 | Night harbour city through the windows | Logo check: see below |
+| [Inter 4.1](https://rsms.me/inter/) by Rasmus Andersson | rsms/inter (Rasmus Andersson) | SIL Open Font License 1.1 | UI typeface | Logo check: see below |
 <!-- generated:assets end -->
 
 ## Logo and brand check

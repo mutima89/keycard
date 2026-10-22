@@ -295,12 +295,12 @@ UStaticMeshComponent* AKcHotel::AddMesh(UStaticMesh* Mesh, const FVector& Locati
 	return C;
 }
 
-bool AKcHotel::AddInstance(UStaticMesh* Mesh, const FTransform& T, UMaterialInterface* Override, bool bCollision, bool bHidden)
+bool AKcHotel::AddInstance(UStaticMesh* Mesh, const FTransform& T, UMaterialInterface* Override, bool bCollision, bool bHide)
 {
 	// One instanced component per (mesh, material, collision, visibility): a few hundred draws for the building.
 	if (!Mesh) return false;
 	const FString Key = Mesh->GetPathName() + TEXT("|") + (Override ? Override->GetPathName() : FString()) + (bCollision ? TEXT("|c") : TEXT("|n")) +
-		(bHidden ? TEXT("|h") : TEXT(""));
+		(bHide ? TEXT("|h") : TEXT(""));
 	TObjectPtr<UInstancedStaticMeshComponent>& Pool = Pools.FindOrAdd(Key);
 	if (!Pool)
 	{
@@ -309,7 +309,7 @@ bool AKcHotel::AddInstance(UStaticMesh* Mesh, const FTransform& T, UMaterialInte
 		Pool->SetStaticMesh(Mesh);
 		Pool->SetupAttachment(RootComponent);
 		if (!bCollision) Pool->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		if (bHidden)
+		if (bHide)
 		{
 			Pool->SetHiddenInGame(true);
 			Pool->SetVisibility(false);
@@ -2201,7 +2201,7 @@ AKcHotel::FPersonSpot AKcHotel::SpotFor(const FString& Location, const FString& 
 	const FVector Fwd = A.GetRotation().Vector();
 	const FVector Side = FVector(-Fwd.Y, Fwd.X, 0.0f);
 	const FVector At = A.GetLocation() + Fwd * 170.0f + Side * (Index - 1) * 80.0f;
-	return {FVector(At.X, At.Y, At.Z - 10.0f), A.Rotator().Yaw + 180.0f};
+	return {FVector(At.X, At.Y, At.Z - 10.0f), static_cast<float>(A.Rotator().Yaw + 180.0)};
 }
 
 static const TCHAR* FallbackOutfit(const FString& Outfit)

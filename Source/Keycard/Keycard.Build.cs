@@ -10,6 +10,8 @@ public class Keycard : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 		PublicDependencyModuleNames.AddRange(new string[] {
 			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "Slate", "SlateCore", "RHI", "KeycardSim" });
+		// RenderCore: the self-test tour reads GGameThreadTime/GRenderThreadTime.
+		PrivateDependencyModuleNames.AddRange(new string[] { "RenderCore" });
 
 		// Content read from disk at startup (validated on load): missions, people, story, events,
 		// the Field Manual, the glossary, endings, the audio manifest, and the UI fonts when present.

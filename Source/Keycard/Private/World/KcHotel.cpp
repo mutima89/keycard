@@ -64,6 +64,11 @@ constexpr float CeilB1 = 280.0f;
 constexpr float CeilLobby = 380.0f;
 constexpr float CeilBack = 280.0f;
 constexpr float Ceil14 = 270.0f;
+constexpr float CeilBallroom = 360.0f;
+constexpr float CeilExec = 270.0f;
+// Floors that are built inside (B1, G, the ballroom floor, the executive floor, 14). Keep in step with
+// AKcHotel::IsFittedFloor.
+constexpr int32 FittedFloors[] = {-1, 0, 1, 4, 14};
 constexpr float RoomDepth = 840.0f;      // corridor wall to facade
 // Poly Haven models face +Y in UE after import; this turns "facing yaw" into mesh yaw.
 constexpr float ModelYawOffset = -90.0f;
@@ -127,6 +132,10 @@ const FPost Posts[] = {
 	{TEXT("partner"), TEXT("f14_corridor"), 14, FVector2D(2470.0f, -70.0f), 160.0f},
 	{TEXT("guest_ashcombe"), TEXT("lobby"), 0, FVector2D(540.0f, -120.0f), 160.0f},
 	{TEXT("contractor_fenner"), TEXT("kitchen"), 0, FVector2D(3620.0f, -720.0f), -100.0f},
+	{TEXT("banquet_manager"), TEXT("ballroom"), 1, FVector2D(4060.0f, -830.0f), 0.0f},
+	{TEXT("hr_director"), TEXT("exec_offices"), 4, FVector2D(1150.0f, 760.0f), -150.0f},
+	{TEXT("finance_director"), TEXT("exec_offices"), 4, FVector2D(350.0f, 880.0f), -90.0f},
+	{TEXT("gm"), TEXT("gm_office"), 4, FVector2D(400.0f, -860.0f), 90.0f},
 };
 
 // A guest behind a closed door: their face-to-face work is offered at the door's spot until the
@@ -171,6 +180,10 @@ const TArray<AKcHotel::FZone>& AKcHotel::Zones()
 		{TEXT("fire_command"), 0, FBox2D(FVector2D(2700, 160), FVector2D(3500, 1000))},
 		{TEXT("kitchen"), 0, FBox2D(FVector2D(2700, -1000), FVector2D(4800, -160))},
 		{TEXT("lobby"), 0, FBox2D(FVector2D(0, -1000), FVector2D(2700, 1000))},
+		{TEXT("ballroom"), 1, FBox2D(FVector2D(0, -1000), FVector2D(4800, 1000))},
+		{TEXT("gm_office"), 4, FBox2D(FVector2D(0, -1000), FVector2D(800, -160))},
+		{TEXT("boardroom"), 4, FBox2D(FVector2D(800, -1000), FVector2D(2100, -160))},
+		{TEXT("exec_offices"), 4, FBox2D(FVector2D(0, -1000), FVector2D(4800, 1000))},
 		{TEXT("room_1412"), 14, FBox2D(FVector2D(750, -1000), FVector2D(1200, -160))},
 		{TEXT("guest_room"), 14, FBox2D(FVector2D(2700, 160), FVector2D(3120, 1000))},
 		{TEXT("f14_service"), 14, FBox2D(FVector2D(0, -1000), FVector2D(300, -160))},
@@ -254,6 +267,10 @@ FTransform AKcHotel::GetArrival(const FString& Location) const
 		{TEXT("lobby_bar"), 0, FVector2D(1050.0f, -480.0f), -90.0f},
 		{TEXT("bell_stand"), 0, FVector2D(420.0f, 380.0f), 135.0f},
 		{TEXT("fire_command"), 0, FVector2D(3100.0f, 300.0f), 90.0f},
+		{TEXT("ballroom"), 1, FVector2D(3200.0f, 0.0f), 0.0f},
+		{TEXT("exec_offices"), 4, FVector2D(1000.0f, 245.0f), 90.0f},
+		{TEXT("gm_office"), 4, FVector2D(400.0f, -300.0f), -90.0f},
+		{TEXT("boardroom"), 4, FVector2D(1450.0f, -260.0f), -90.0f},
 		{TEXT("f14_corridor"), 14, FVector2D(2400.0f, -40.0f), 180.0f},
 		{TEXT("room_1412"), 14, FVector2D(825.0f, -120.0f), -90.0f},
 		{TEXT("guest_room"), 14, FVector2D(2775.0f, 60.0f), 90.0f},
@@ -306,6 +323,15 @@ void AKcHotel::GetTourViewpoints(TArray<FString>& OutNames, TArray<FTransform>& 
 	Add(TEXT("Room 1412 (desk and safe)"), 14, FVector2D(1150.0f, -800.0f), FVector(790.0f, -480.0f, 90.0f));
 	Add(TEXT("Room 1406 from the door"), 14, FVector2D(2775.0f, 40.0f), FVector(2850.0f, 800.0f, 120.0f));
 	Add(TEXT("Floor 14 closet"), 14, FVector2D(150.0f, -190.0f), FVector(150.0f, -900.0f, 80.0f));
+	Add(TEXT("Floor 1 foyer"), 1, FVector2D(300.0f, 0.0f), FVector(2400.0f, 0.0f, 150.0f));
+	Add(TEXT("Harbour Ballroom"), 1, FVector2D(2800.0f, 60.0f), FVector(4700.0f, -100.0f, 120.0f));
+	Add(TEXT("Banquet service corridor"), 1, FVector2D(2760.0f, -870.0f), FVector(3900.0f, -870.0f, 140.0f));
+	Add(TEXT("Banquet office and bar store"), 1, FVector2D(3960.0f, -820.0f), FVector(4700.0f, -930.0f, 110.0f));
+	Add(TEXT("Executive offices"), 4, FVector2D(1750.0f, 200.0f), FVector(1500.0f, 900.0f, 110.0f));
+	Add(TEXT("HR interview room"), 4, FVector2D(1000.0f, 380.0f), FVector(1000.0f, 850.0f, 90.0f));
+	Add(TEXT("Finance office"), 4, FVector2D(350.0f, 390.0f), FVector(350.0f, 900.0f, 100.0f));
+	Add(TEXT("General Manager's office"), 4, FVector2D(400.0f, -230.0f), FVector(400.0f, -900.0f, 100.0f));
+	Add(TEXT("Boardroom"), 4, FVector2D(850.0f, -250.0f), FVector(2000.0f, -700.0f, 100.0f));
 	Add(TEXT("Stair A, floor 14 (sprinkler valve)"), 14, FVector2D(2220.0f, -200.0f), FVector(2134.0f, -400.0f, 120.0f));
 	Add(TEXT("Stair A, floor 7"), 7, FVector2D(2185.0f, -220.0f), FVector(2120.0f, -320.0f, 190.0f));
 }
@@ -491,6 +517,8 @@ void AKcHotel::Build()
 	BuildOutside();
 	BuildBasement();
 	BuildGround();
+	BuildBallroomFloor();
+	BuildExecutiveFloor();
 	BuildGuestFloor();
 	BuildLighting();
 	PlaceFixedInteractables();
@@ -548,7 +576,7 @@ void AKcHotel::BuildSlabs()
 	{
 		AddBox(FVector((X0 + X1) * 0.5f, (Y0 + Y1) * 0.5f, Zf(Floor, -10.0f)), FVector(X1 - X0, Y1 - Y0, 20.0f), Concrete);
 	};
-	for (int32 Floor : {-1, 0, 14})
+	for (int32 Floor : FittedFloors)
 	{
 		if (Floor == LowestFloor)
 		{
@@ -571,6 +599,7 @@ void AKcHotel::BuildSlabs()
 	// Floors 1-13: only the stair landings exist inside the shaft.
 	for (int32 Floor = 1; Floor < TopFloor; ++Floor)
 	{
+		if (IsFittedFloor(Floor)) continue;
 		Slab(Floor, StairIn0, StairLandX1, StairY0, StairY1);
 	}
 	// Mid landings, half a storey up from every floor below the top.
@@ -843,11 +872,11 @@ void AKcHotel::FireExtinguisher(int32 Floor, const FVector& WallPoint, float Yaw
 
 void AKcHotel::BuildCore()
 {
-	for (int32 Floor : {-1, 0, 14})
+	for (int32 Floor : FittedFloors)
 	{
-		const float Ceil = Floor == 14 ? Ceil14 : Floor == 0 ? 300.0f : CeilB1;
-		const float BlockH = Floor == 0 ? CeilLobby : Ceil;
-		UMaterialInterface* Finish = Mat(Floor == 14 ? TEXT("MI_Wallpaper") : Floor == 0 ? TEXT("MI_WallPlaster") : TEXT("MI_WallPaint"));
+		const float Ceil = Floor == 14 ? Ceil14 : Floor == 4 ? CeilExec : (Floor == 0 || Floor == 1) ? 300.0f : CeilB1;
+		const float BlockH = Floor == 0 ? CeilLobby : Floor == 1 ? CeilBallroom : Ceil;
+		UMaterialInterface* Finish = Mat((Floor == 14 || Floor == 4) ? TEXT("MI_Wallpaper") : (Floor == 0 || Floor == 1) ? TEXT("MI_WallPlaster") : TEXT("MI_WallPaint"));
 		UMaterialInterface* Concrete = Mat(TEXT("MI_Concrete"));
 		// Lift wall with two landing doors; the shafts and risers are solid behind it.
 		WallX(Floor, CorrY, CoreX0, CoreX1, {FVector2D(LiftDoorX[0], 110.0f), FVector2D(LiftDoorX[1], 110.0f)}, Finish, Ceil);
@@ -882,7 +911,7 @@ void AKcHotel::BuildCore()
 		if (AKcLiftPanel* Panel = GetWorld()->SpawnActor<AKcLiftPanel>(FVector(LiftPanelX, FaceY - 0.8f, Zf(Floor, 115.0f)), FRotator(0.0f, -90.0f, 0.0f), Params))
 		{
 			Panel->Floor = Floor;
-			Panel->Location = Floor == -1 ? TEXT("back_of_house") : Floor == 0 ? TEXT("lobby") : TEXT("f14_corridor");
+			Panel->Location = Floor == -1 ? TEXT("back_of_house") : Floor == 0 ? TEXT("lobby") : Floor == 1 ? TEXT("ballroom") : Floor == 4 ? TEXT("exec_offices") : TEXT("f14_corridor");
 			Panel->SetAppearance(Cube, FVector(0.016f, 0.13f, 0.3f), Mat(TEXT("MI_Steel")));
 		}
 		for (float Dz : {8.0f, -8.0f})
@@ -925,6 +954,15 @@ void AKcHotel::BuildCore()
 			ArtPrint(FVector(2470.0f, SouthFace, Zf(Floor, 160.0f)), 90.0f, TEXT("MI_ArtHarbourB"), FVector2D(90.0f, 60.0f));
 			Plant(FVector(2640.0f, -110.0f, Zf(Floor, 0.0f)), true);
 			CctvDome(Floor, FVector(LiftPanelX, 40.0f, Zf(Floor, Ceil)), TEXT("L-04"));
+		}
+		else if (Floor == 1 || Floor == 4)
+		{
+			const FVector D(2470.0f, SouthFace + 0.8f, Zf(Floor, 158.0f));
+			AddBox(D, FVector(1.6f, 96.0f, 54.0f), Mat(TEXT("MI_WoodWalnut")), 0.0f, false);
+			AddLabel(FloorLabel(Floor), D + FVector(0, 1.2f, 17.0f), 90.0f, 13.0f, Cream, Floor);
+			AddLabel(Floor == 1 ? TEXT("Harbour Ballroom  >") : TEXT("< Executive offices   Boardroom"), D + FVector(0, 1.2f, -2.0f), 90.0f, 3.4f, Cream, Floor);
+			AddLabel(Floor == 1 ? TEXT("< Quay Suite   Harbour Rooms") : TEXT("< General Manager   Sales  >"), D + FVector(0, 1.2f, -12.0f), 90.0f, 3.4f, Cream, Floor);
+			FireExtinguisher(Floor, FVector(2640.0f, SouthFace - 0.5f, 0.0f), 90.0f);
 		}
 		else
 		{
@@ -2112,6 +2150,282 @@ void AKcHotel::BuildKitchen()
 		AddLight(F, FVector(X, -480.0f, Zf(F, CeilBack - 16.0f)), 900.0f, 750.0f, Neutral, X == 3600.0f);
 	}
 	CeilingLight(F, FVector(3900.0f, CanY + 30.0f, Zf(F, 210.0f)), DownLumens, Neutral, 300.0f);
+}
+
+// ---------------------------------------------------------------------------- 1: ballroom floor
+
+void AKcHotel::BuildBallroomFloor()
+{
+	// Floor 1: the pre-function foyer west of the core, the Harbour Ballroom east of it, and the banquet
+	// back of house along the ballroom's south side: service corridor, banquet office, bar store (M016, M017).
+	const int32 F = 1;
+	const float CeilFoyer = 300.0f, ServiceY = -760.0f;
+	UMaterialInterface* Plaster = Mat(TEXT("MI_WallPlaster"));
+	UMaterialInterface* Paint = Mat(TEXT("MI_WallPaint"));
+	UMaterialInterface* Steel = Mat(TEXT("MI_Steel"));
+
+	// The foyer: carpet, two function rooms closed tonight, sofas and the event screen.
+	FloorFinish(F, FBox2D(FVector2D(15.0f, -CorrY), FVector2D(CoreX1, CorrY)), Mat(TEXT("MI_CorridorCarpet")));
+	Ceiling(F, FBox2D(FVector2D(0.0f, -CorrY), FVector2D(CoreX0, CorrY)), CeilFoyer, Mat(TEXT("MI_CeilingWhite")));
+	WallX(F, CorrY, 15.0f, CoreX0, {FVector2D(1000.0f, 200.0f)}, Plaster, CeilFoyer);
+	WallX(F, -CorrY, 15.0f, CoreX0, {FVector2D(1000.0f, 200.0f)}, Plaster, CeilFoyer);
+	for (float Side : {-1.0f, 1.0f})
+	{
+		DoorLeaf(F, FVector(1000.0f + Side * 50.0f, CorrY, 0.0f), -90.0f, 100.0f, Side < 0.0f ? TEXT("QUAY SUITE") : FString(), false, false, TEXT("Quay Suite"),
+			TEXT("Quay Suite: no event tonight. Set for a breakfast meeting at 07:30."), TEXT("ballroom"), Side > 0.0f);
+		DoorLeaf(F, FVector(1000.0f + Side * 50.0f, -CorrY, 0.0f), 90.0f, 100.0f, Side < 0.0f ? TEXT("HARBOUR ROOMS") : FString(), false, false, TEXT("Harbour Rooms"),
+			TEXT("Harbour Rooms 1-3: meeting rooms, locked overnight. Housekeeping resets them at 06:00."), TEXT("ballroom"), Side > 0.0f);
+	}
+	Sofa(FVector(450.0f, 95.0f, Zf(F, 0.0f)), -90.0f);
+	Sofa(FVector(1600.0f, -95.0f, Zf(F, 0.0f)), 90.0f);
+	Plant(FVector(80.0f, -100.0f, Zf(F, 0.0f)), true);
+	Plant(FVector(2020.0f, 110.0f, Zf(F, 0.0f)), false);
+	const FVector Screen(1400.0f, CorrY - Wall * 0.5f - 1.0f, Zf(F, 170.0f));
+	AddBox(Screen, FVector(110.0f, 2.0f, 64.0f), Mat(TEXT("MI_ScreenPanel")), 0.0f, false);
+	AddLabel(TEXT("TONIGHT"), Screen + FVector(0, -1.4f, 20.0f), -90.0f, 4.0f, Cream, F);
+	AddLabel(TEXT("Harbour Ballroom: private event"), Screen + FVector(0, -1.4f, 4.0f), -90.0f, 3.0f, Cream, F);
+	AddLabel(TEXT("Quay Suite: breakfast 07:30"), Screen + FVector(0, -1.4f, -8.0f), -90.0f, 2.6f, Cream, F);
+	for (float X = 300.0f; X < CoreX0; X += 450.0f) CeilingLight(F, FVector(X, 0.0f, Zf(F, CeilFoyer)), DownLumens, Warm);
+	Sconce(F, FVector(600.0f, -CorrY + Wall * 0.5f + 1.0f, Zf(F, 200.0f)), 90.0f);
+	SmokeDetector(F, FVector2D(700.0f, 0.0f), CeilFoyer);
+	SmokeDetector(F, FVector2D(1600.0f, 0.0f), CeilFoyer);
+	CctvDome(F, FVector(1800.0f, 0.0f, Zf(F, CeilFoyer)), TEXT("1-03"));
+	FireExtinguisher(F, FVector(1300.0f, -CorrY + Wall * 0.5f, 0.0f), 90.0f);
+
+	// The Harbour Ballroom: sixteen rounds of eight, a dance floor, the stage, a portable bar.
+	const float X0 = CoreX1, X1 = MaxX - 15.0f, Y0 = ServiceY + Wall * 0.5f, Y1 = HalfY - 15.0f;
+	FloorFinish(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), Mat(TEXT("MI_Carpet")));
+	Ceiling(F, FBox2D(FVector2D(X0, Y0), FVector2D(MaxX, HalfY)), CeilBallroom, Mat(TEXT("MI_CeilingWhite")));
+	// The west wall is the core's face, lined; the doors from the lift lobby stand open.
+	AddBox(FVector(X0 + 0.5f, (Y0 - 110.0f) * 0.5f, Zf(F, CeilBallroom * 0.5f)), FVector(1.0f, -110.0f - Y0, CeilBallroom), Plaster);
+	AddBox(FVector(X0 + 0.5f, (110.0f + Y1) * 0.5f, Zf(F, CeilBallroom * 0.5f)), FVector(1.0f, Y1 - 110.0f, CeilBallroom), Plaster);
+	AddBox(FVector(X0 + 0.5f, 0.0f, Zf(F, (DoorH + CeilBallroom) * 0.5f)), FVector(Wall, 220.0f, CeilBallroom - DoorH), Plaster);
+	for (float Side : {-1.0f, 1.0f})
+	{
+		DoorLeaf(F, FVector(X0, Side * 55.0f, 0.0f), 180.0f, 110.0f, Side < 0.0f ? TEXT("HARBOUR BALLROOM") : FString(), false, true, FString(), FString(), FString(), Side > 0.0f);
+	}
+	AddBox(FVector(X1 - 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilBallroom * 0.5f)), FVector(1.0f, Y1 - Y0, CeilBallroom), Plaster, 0.0f, false);
+	FloorFinish(F, FBox2D(FVector2D(4150.0f, -350.0f), FVector2D(4550.0f, 350.0f)), Mat(TEXT("MI_FloorParquet")), 1.0f);
+	AddBox(FVector(4672.0f, 0.0f, Zf(F, 30.0f)), FVector(226.0f, 800.0f, 60.0f), Mat(TEXT("MI_WoodWalnut")));
+	AddBox(FVector(X1 - 4.0f, 0.0f, Zf(F, 200.0f)), FVector(4.0f, 820.0f, 280.0f), Mat(TEXT("MI_Sheer")), 0.0f, false);
+	AddBox(FVector(4620.0f, 260.0f, Zf(F, 60.0f + 55.0f)), FVector(40.0f, 50.0f, 110.0f), Mat(TEXT("MI_WoodWalnut")));
+	struct FRound { float X, Y; };
+	TArray<FRound> Rounds;
+	for (float X : {3000.0f, 3350.0f, 3700.0f}) for (float Y : {-560.0f, -250.0f, 250.0f, 560.0f}) Rounds.Add({X, Y});
+	for (float X : {4100.0f, 4450.0f}) for (float Y : {-560.0f, 560.0f}) Rounds.Add({X, Y});
+	for (const FRound& R : Rounds)
+	{
+		AddInstance(Cylinder, FVector(R.X, R.Y, Zf(F, 37.0f)), 0.0f, FVector(1.8f, 1.8f, 0.74f), Mat(TEXT("MI_Linen")), true);
+		AddInstance(Sphere, FVector(R.X, R.Y, Zf(F, 86.0f)), 0.0f, FVector(0.24f, 0.24f, 0.2f), Mat(TEXT("MI_Blossom")), false);
+		for (int32 k = 0; k < 8; ++k)
+		{
+			const float A = k * 45.0f;
+			const FVector Dir = FRotator(0.0f, A, 0.0f).Vector();
+			Chair(FVector(R.X, R.Y, Zf(F, 0.0f)) + Dir * 125.0f, A + 180.0f, TEXT("dining_chair_02"));
+		}
+	}
+	// The portable bar by the doors (the bartenders draw from the store and return to it, M017).
+	AddBox(FVector(3000.0f, 900.0f, Zf(F, 55.0f)), FVector(320.0f, 60.0f, 110.0f), Mat(TEXT("MI_WoodWalnut")));
+	AddBox(FVector(3000.0f, 900.0f, Zf(F, 111.0f)), FVector(330.0f, 66.0f, 3.0f), Mat(TEXT("MI_StoneCounter")), 0.0f, false);
+	for (int32 i = 0; i < 8; ++i)
+	{
+		static const TCHAR* const B[] = {TEXT("MI_BottleGreen"), TEXT("MI_BottleAmber"), TEXT("MI_Glass")};
+		AddInstance(Cylinder, FVector(2880.0f + i * 34.0f, 950.0f, Zf(F, 126.0f)), 0.0f, FVector(0.07f, 0.07f, 0.28f), Mat(B[i % 3]), false);
+	}
+	SpawnCasePoint(TEXT("ballroom"), FString(), TEXT("Event order, Harbour Ballroom"), FVector(3080.0f, 890.0f, Zf(F, 113.0f)), 8.0f, Cube, FVector(0.22f, 0.3f, 0.02f),
+		Mat(TEXT("MI_Paper")), EKcUseStyle::PickUp);
+	// Chandeliers: glowing drums on chains, one light each.
+	for (float X : {3175.0f, 3875.0f})
+	{
+		for (float Y : {-400.0f, 400.0f})
+		{
+			AddInstance(Cylinder, FVector(X, Y, Zf(F, CeilBallroom - 25.0f)), 0.0f, FVector(0.02f, 0.02f, 0.5f), Mat(TEXT("MI_Brass")), false);
+			AddInstance(Cylinder, FVector(X, Y, Zf(F, CeilBallroom - 70.0f)), 0.0f, FVector(1.1f, 1.1f, 0.4f), Mat(TEXT("MI_LampWarm")), false);
+			AddLight(F, FVector(X, Y, Zf(F, CeilBallroom - 100.0f)), 2400.0f, 1100.0f, Warm);
+		}
+	}
+	CeilingLight(F, FVector(4500.0f, 0.0f, Zf(F, CeilBallroom)), DownLumens * 1.5f, Warm, 900.0f);
+	for (float X : {3200.0f, 4200.0f}) for (float Y : {-400.0f, 500.0f}) SmokeDetector(F, FVector2D(X, Y), CeilBallroom);
+	CctvDome(F, FVector(2800.0f, 900.0f, Zf(F, CeilBallroom)), TEXT("1-01"));
+	ExitSign(F, FVector(X0 + 2.0f, 0.0f, Zf(F, DoorH + 30.0f)), 0.0f);
+	FireExtinguisher(F, FVector(X0 + 1.0f, -300.0f, 0.0f), 0.0f);
+
+	// Banquet back of house: the service corridor from the kitchen lift, the banquet office, the bar store.
+	const float SY0 = -HalfY + 15.0f, SY1 = ServiceY - Wall * 0.5f;
+	WallX(F, ServiceY, X0, X1, {FVector2D(3000.0f, 120.0f), FVector2D(3600.0f, 120.0f)}, Plaster, CeilBallroom);
+	for (float X : {3000.0f, 3600.0f})
+	{
+		DoorLeaf(F, FVector(X, ServiceY, 0.0f), -90.0f, 120.0f, FString(), false, true);
+		ExitSign(F, FVector(X, ServiceY + Wall * 0.5f + 1.5f, Zf(F, DoorH + 22.0f)), -90.0f);
+	}
+	FloorFinish(F, FBox2D(FVector2D(X0, SY0), FVector2D(X1, SY1)), Mat(TEXT("MI_FloorTile")));
+	Ceiling(F, FBox2D(FVector2D(X0, SY0 - 15.0f), FVector2D(MaxX, SY1)), CeilBack, Mat(TEXT("MI_CeilingSoft")));
+	AddBox(FVector(X0 + 0.5f, (SY0 + SY1) * 0.5f, Zf(F, CeilBack * 0.5f)), FVector(1.0f, SY1 - SY0, CeilBack), Paint, 0.0f, false);
+	// The kitchen service lift (it serves the main kitchen; not one you ride tonight).
+	for (float Side : {-1.0f, 1.0f}) AddBox(FVector(X0 + 2.0f, -870.0f + Side * 30.0f, Zf(F, 105.0f)), FVector(3.0f, 58.0f, 210.0f), Steel, 0.0f, false);
+	AddLabel(TEXT("SERVICE LIFT  KITCHEN"), FVector(X0 + 4.0f, -870.0f, Zf(F, 225.0f)), 0.0f, 2.6f, Ink, F);
+	const float OfficeX = 3900.0f, StoreX = 4350.0f;
+	WallY(F, OfficeX, SY0, SY1, {FVector2D(-870.0f, 100.0f)}, Paint, CeilBack);
+	WallY(F, StoreX, SY0, SY1, {FVector2D(-870.0f, 100.0f)}, Paint, CeilBack);
+	DoorLeaf(F, FVector(OfficeX, -870.0f, 0.0f), 180.0f, 100.0f, TEXT("BANQUET OFFICE"), false, true);
+	DoorLeaf(F, FVector(StoreX, -870.0f, 0.0f), 180.0f, 100.0f, TEXT("BAR STORE"), false, true);
+	// The corridor: banquet trolleys, stacked chairs, a plate warmer.
+	for (int32 i = 0; i < 3; ++i) AddBox(FVector(3150.0f + i * 160.0f, SY0 + 40.0f, Zf(F, 50.0f)), FVector(120.0f, 60.0f, 100.0f), Steel, 0.0f, true);
+	for (int32 h = 0; h < 6; ++h) AddBox(FVector(3700.0f, SY0 + 40.0f, Zf(F, 10.0f + h * 18.0f)), FVector(46.0f, 46.0f, 4.0f), Mat(TEXT("MI_FabricAccent")), h * 2.0f, false);
+	AddBox(FVector(3700.0f, SY0 + 40.0f, Zf(F, 55.0f)), FVector(40.0f, 40.0f, 110.0f), Mat(TEXT("MI_Graphite")), 0.0f, true);
+	AddBox(FVector(3350.0f, SY1 - 30.0f, Zf(F, 80.0f)), FVector(100.0f, 50.0f, 160.0f), Steel, 0.0f, true);
+	AddLabel(TEXT("PLATE WARMER"), FVector(3350.0f, SY1 - 56.0f, Zf(F, 140.0f)), -90.0f, 2.0f, Ink, F);
+	for (float X : {3100.0f, 3700.0f})
+	{
+		AddBox(FVector(X, -870.0f, Zf(F, CeilBack - 3.0f)), FVector(124.0f, 14.0f, 6.0f), Mat(TEXT("MI_LedStrip")), 0.0f, false);
+		AddLight(F, FVector(X, -870.0f, Zf(F, CeilBack - 16.0f)), 700.0f, 600.0f, Cool);
+	}
+	CctvDome(F, FVector(3300.0f, -870.0f, Zf(F, CeilBack)), TEXT("1-02"));
+	SmokeDetector(F, FVector2D(3500.0f, -870.0f), CeilBack);
+	// The banquet office: Celia's desk, the event sheets, the roster on the wall.
+	Desk(FVector(4125.0f, SY0 + 45.0f, Zf(F, 0.0f)), 0.0f, FVector(200.0f, 75.0f, DeskH), Mat(TEXT("MI_WoodOak")));
+	Monitor(FVector(4080.0f, SY0 + 30.0f, Zf(F, DeskH)), 90.0f, Mat(TEXT("MI_ScreenFrontOffice")));
+	TaskChair(FVector(4125.0f, SY0 + 120.0f, Zf(F, 0.0f)), -90.0f);
+	SpawnCasePoint(TEXT("ballroom"), TEXT("banquet_office"), FString(), FVector(4170.0f, SY0 + 50.0f, Zf(F, DeskH + 3.0f)), 4.0f, Cube, FVector(0.24f, 0.32f, 0.05f),
+		Mat(TEXT("MI_SuitNavy")), EKcUseStyle::PickUp);
+	AddBox(FVector(4125.0f, SY1 - 1.0f, Zf(F, 160.0f)), FVector(120.0f, 1.0f, 70.0f), Mat(TEXT("MI_Whiteboard")), 0.0f, false);
+	AddLabel(TEXT("BANQUET ROSTER"), FVector(4125.0f, SY1 - 1.7f, Zf(F, 186.0f)), -90.0f, 2.8f, Ink, F);
+	CeilingLight(F, FVector(4125.0f, -870.0f, Zf(F, CeilBack)), DownLumens, Neutral, 400.0f);
+	// The bar store: shelves of spirits and cases, no par levels, no camera on the door.
+	for (int32 r = 0; r < 2; ++r)
+	{
+		const float Y = SY0 + 25.0f + r * 150.0f;
+		for (float Z : {5.0f, 55.0f, 105.0f, 155.0f}) AddBox(FVector(4570.0f, Y, Zf(F, Z)), FVector(400.0f, 40.0f, 2.0f), Steel, 0.0f, false);
+		for (float X : {4380.0f, 4760.0f}) AddBox(FVector(X, Y, Zf(F, 85.0f)), FVector(3.0f, 40.0f, 170.0f), Steel, 0.0f, true);
+		for (int32 i = 0; i < 12; ++i)
+		{
+			static const TCHAR* const B[] = {TEXT("MI_BottleAmber"), TEXT("MI_BottleGreen"), TEXT("MI_Glass")};
+			AddInstance(Cylinder, FVector(4400.0f + i * 30.0f, Y, Zf(F, 70.0f + (i % 2) * 50.0f)), 0.0f, FVector(0.08f, 0.08f, 0.28f), Mat(B[(i + r) % 3]), false);
+		}
+		AddBox(FVector(4520.0f, Y, Zf(F, 22.0f)), FVector(40.0f, 30.0f, 30.0f), Mat(TEXT("MI_Cardboard")), 0.0f, false);
+		AddBox(FVector(4640.0f, Y, Zf(F, 22.0f)), FVector(40.0f, 30.0f, 30.0f), Mat(TEXT("MI_Cardboard")), 6.0f, false);
+	}
+	SpawnCasePoint(TEXT("ballroom"), TEXT("banquet_bar"), FString(), FVector(4570.0f, SY0 + 175.0f, Zf(F, 108.0f)), 0.0f, Cube, FVector(0.24f, 0.16f, 0.03f),
+		Mat(TEXT("MI_Paper")), EKcUseStyle::Screen, FVector(4570.0f, -820.0f, Zf(F, 120.0f)));
+	AddBox(FVector(StoreX - Wall * 0.5f - 1.0f, -800.0f, Zf(F, 110.0f)), FVector(1.0f, 12.0f, 8.0f), Mat(TEXT("MI_Brass")), 0.0f, false);
+	CeilingLight(F, FVector(4570.0f, -870.0f, Zf(F, CeilBack)), DownLumens * 0.8f, Cool, 400.0f);
+}
+
+// ---------------------------------------------------------------------------- 4: executive floor
+
+void AKcHotel::BuildExecutiveFloor()
+{
+	// Floor 4: the executive offices with HR and finance off a private passage, the GM's office and the
+	// boardroom across the corridor; sales and revenue east of the core, closed tonight (M016-M019).
+	const int32 F = 4;
+	const float Ceil = CeilExec;
+	UMaterialInterface* Paper = Mat(TEXT("MI_Wallpaper"));
+	UMaterialInterface* Paint = Mat(TEXT("MI_WallPaint"));
+	UMaterialInterface* Carpet = Mat(TEXT("MI_Carpet"));
+	FloorFinish(F, FBox2D(FVector2D(15.0f, -CorrY), FVector2D(MaxX - 15.0f, CorrY)), Mat(TEXT("MI_CorridorCarpet")));
+	Ceiling(F, FBox2D(FVector2D(0.0f, -CorrY), FVector2D(CoreX0, CorrY)), Ceil, Mat(TEXT("MI_CeilingWhite")));
+	Ceiling(F, FBox2D(FVector2D(CoreX1, -CorrY), FVector2D(MaxX, CorrY)), Ceil, Mat(TEXT("MI_CeilingWhite")));
+	WallX(F, CorrY, 15.0f, CoreX0, {FVector2D(1700.0f, 180.0f)}, Paper, Ceil);
+	WallX(F, CorrY, CoreX1, MaxX - 15.0f, {FVector2D(3700.0f, 100.0f)}, Paper, Ceil);
+	WallX(F, -CorrY, 15.0f, CoreX0, {FVector2D(400.0f, 100.0f), FVector2D(1450.0f, 180.0f)}, Paper, Ceil);
+	WallX(F, -CorrY, CoreX1, MaxX - 15.0f, {FVector2D(3700.0f, 100.0f)}, Paper, Ceil);
+	for (float Side : {-1.0f, 1.0f})
+	{
+		DoorLeaf(F, FVector(1700.0f + Side * 45.0f, CorrY, 0.0f), -90.0f, 90.0f, Side < 0.0f ? TEXT("EXECUTIVE OFFICES") : FString(), false, true, FString(), FString(), FString(), Side > 0.0f);
+		DoorLeaf(F, FVector(1450.0f + Side * 45.0f, -CorrY, 0.0f), 90.0f, 90.0f, Side < 0.0f ? TEXT("BOARDROOM") : FString(), false, true, FString(), FString(), FString(), Side > 0.0f);
+	}
+	DoorLeaf(F, FVector(400.0f, -CorrY, 0.0f), 90.0f, 100.0f, TEXT("GENERAL MANAGER"), false, true);
+	DoorLeaf(F, FVector(3700.0f, CorrY, 0.0f), -90.0f, 100.0f, TEXT("SALES AND EVENTS"), false, false, TEXT("Sales and events"),
+		TEXT("Sales and events: dark until the team arrives at 08:30."), TEXT("exec_offices"));
+	DoorLeaf(F, FVector(3700.0f, -CorrY, 0.0f), 90.0f, 100.0f, TEXT("REVENUE AND IT"), false, false, TEXT("Revenue and IT"),
+		TEXT("Revenue and IT: the server room is on B1. Nobody here until morning."), TEXT("exec_offices"));
+	for (float X = 300.0f; X < MaxX; X += 600.0f)
+	{
+		if (X > CoreX0 - 100.0f && X < CoreX1 + 100.0f) continue;
+		CeilingLight(F, FVector(X, 0.0f, Zf(F, Ceil)), DownLumens, Warm);
+	}
+	for (float X : {800.0f, 3500.0f}) SmokeDetector(F, FVector2D(X, 0.0f), Ceil);
+	CctvDome(F, FVector(1600.0f, 0.0f, Zf(F, Ceil)), TEXT("4-01"));
+	ArtPrint(FVector(900.0f, CorrY - Wall * 0.5f - 1.0f, Zf(F, 160.0f)), -90.0f, TEXT("MI_ArtHarbourC"), FVector2D(120.0f, 80.0f));
+
+	// Executive offices (north-west): reception and open plan, a passage to finance and HR.
+	const float PassY = 330.0f, Y1 = HalfY - 15.0f;
+	FloorFinish(F, FBox2D(FVector2D(15.0f, CorrY + Wall * 0.5f), FVector2D(CoreX0, Y1)), Carpet);
+	Ceiling(F, FBox2D(FVector2D(0.0f, CorrY), FVector2D(CoreX0, HalfY)), Ceil, Mat(TEXT("MI_CeilingSoft")));
+	AddBox(FVector(CoreX0 - 0.5f, (CorrY + Y1) * 0.5f, Zf(F, Ceil * 0.5f)), FVector(1.0f, Y1 - CorrY, Ceil), Paint, 0.0f, false);
+	WallX(F, PassY, 15.0f, 1300.0f, {FVector2D(350.0f, 90.0f), FVector2D(1000.0f, 90.0f)}, Paint, Ceil);
+	WallY(F, 700.0f, PassY + Wall * 0.5f, Y1, {}, Paint, Ceil);
+	WallY(F, 1300.0f, PassY - Wall * 0.5f, Y1, {}, Paint, Ceil);
+	DoorLeaf(F, FVector(350.0f, PassY, 0.0f), -90.0f, 90.0f, TEXT("FINANCE"), false, true);
+	DoorLeaf(F, FVector(1000.0f, PassY, 0.0f), -90.0f, 90.0f, TEXT("HR  PLEASE KNOCK"), false, true);
+	// Reception desk and the visitors' book (the floor's own case point).
+	Desk(FVector(1750.0f, 420.0f, Zf(F, 0.0f)), 0.0f, FVector(220.0f, 70.0f, 100.0f), Mat(TEXT("MI_WoodWalnut")));
+	SpawnCasePoint(TEXT("exec_offices"), FString(), TEXT("Executive offices reception"), FVector(1700.0f, 400.0f, Zf(F, 101.5f)), -6.0f, Cube, FVector(0.26f, 0.2f, 0.03f),
+		Mat(TEXT("MI_SuitNavy")), EKcUseStyle::PickUp);
+	TaskChair(FVector(1750.0f, 500.0f, Zf(F, 0.0f)), -90.0f);
+	for (int32 i = 0; i < 4; ++i)
+	{
+		const FVector D(1500.0f + (i % 2) * 380.0f, 720.0f + (i / 2) * 170.0f, Zf(F, 0.0f));
+		Desk(D, 0.0f, FVector(160.0f, 75.0f, DeskH), Mat(TEXT("MI_WoodOak")));
+		Monitor(D + FVector(-20.0f, 20.0f, DeskH), -90.0f, Mat(TEXT("MI_ScreenFrontOffice")));
+		TaskChair(D + FVector(0.0f, -70.0f, 0.0f), 90.0f);
+	}
+	Plant(FVector(2040.0f, 230.0f, Zf(F, 0.0f)), true);
+	for (float X : {1500.0f, 1880.0f}) CeilingLight(F, FVector(X, 650.0f, Zf(F, Ceil)), DownLumens, Neutral);
+	CeilingLight(F, FVector(650.0f, 245.0f, Zf(F, Ceil)), DownLumens * 0.7f, Warm, 450.0f);
+	// Finance: Hamish's desk, the budget pack, binders.
+	Desk(FVector(350.0f, 780.0f, Zf(F, 0.0f)), 180.0f, FVector(180.0f, 80.0f, DeskH), Mat(TEXT("MI_WoodWalnut")));
+	Monitor(FVector(330.0f, 760.0f, Zf(F, DeskH)), 90.0f, Mat(TEXT("MI_ScreenFrontOffice")));
+	SpawnCasePoint(TEXT("exec_offices"), TEXT("finance_office"), FString(), FVector(400.0f, 760.0f, Zf(F, DeskH + 2.0f)), 10.0f, Cube, FVector(0.22f, 0.3f, 0.04f),
+		Mat(TEXT("MI_Paper")), EKcUseStyle::PickUp);
+	Chair(FVector(350.0f, 620.0f, Zf(F, 0.0f)), 90.0f);
+	Shelf(FVector(30.0f, 650.0f, Zf(F, 0.0f)), 0.0f, 160.0f, 44);
+	CeilingLight(F, FVector(350.0f, 680.0f, Zf(F, Ceil)), DownLumens, Neutral, 500.0f);
+	// HR interview room: a round table for four, water and tissues, nothing on the walls to read.
+	AddInstance(Cylinder, FVector(1000.0f, 680.0f, Zf(F, 37.0f)), 0.0f, FVector(1.1f, 1.1f, 0.74f), Mat(TEXT("MI_WoodOak")), true);
+	for (int32 k = 0; k < 4; ++k)
+	{
+		const float A = 45.0f + k * 90.0f;
+		Chair(FVector(1000.0f, 680.0f, Zf(F, 0.0f)) + FRotator(0.0f, A, 0.0f).Vector() * 90.0f, A + 180.0f, TEXT("dining_chair_02"));
+	}
+	AddInstance(Cylinder, FVector(980.0f, 700.0f, Zf(F, 84.0f)), 0.0f, FVector(0.1f, 0.1f, 0.2f), Mat(TEXT("MI_Glass")), false);
+	AddBox(FVector(1030.0f, 660.0f, Zf(F, 78.0f)), FVector(20.0f, 12.0f, 8.0f), Mat(TEXT("MI_Linen")), 15.0f, false);
+	SpawnCasePoint(TEXT("exec_offices"), TEXT("hr_office"), FString(), FVector(1010.0f, 640.0f, Zf(F, 74.6f)), -8.0f, Cube, FVector(0.21f, 0.29f, 0.01f),
+		Mat(TEXT("MI_Paper")), EKcUseStyle::PickUp);
+	Plant(FVector(1240.0f, 930.0f, Zf(F, 0.0f)), false);
+	CeilingLight(F, FVector(1000.0f, 680.0f, Zf(F, Ceil)), DownLumens, Warm, 500.0f);
+
+	// The GM's office (south-west) and the boardroom.
+	const float SY0 = -HalfY + 15.0f;
+	FloorFinish(F, FBox2D(FVector2D(15.0f, SY0), FVector2D(CoreX0, -CorrY - Wall * 0.5f)), Carpet);
+	Ceiling(F, FBox2D(FVector2D(0.0f, -HalfY), FVector2D(CoreX0, -CorrY)), Ceil, Mat(TEXT("MI_CeilingSoft")));
+	AddBox(FVector(CoreX0 - 0.5f, (SY0 - CorrY) * 0.5f, Zf(F, Ceil * 0.5f)), FVector(1.0f, -CorrY - SY0, Ceil), Paint, 0.0f, false);
+	WallY(F, 800.0f, SY0, -CorrY - Wall * 0.5f, {}, Paint, Ceil);
+	Desk(FVector(400.0f, -760.0f, Zf(F, 0.0f)), 0.0f, FVector(200.0f, 90.0f, DeskH), Mat(TEXT("MI_WoodWalnut")));
+	Monitor(FVector(360.0f, -735.0f, Zf(F, DeskH)), -90.0f, Mat(TEXT("MI_ScreenFrontOffice")));
+	SpawnCasePoint(TEXT("gm_office"), FString(), TEXT("The GM's desk"), FVector(440.0f, -740.0f, Zf(F, DeskH + 1.5f)), 4.0f, Cube, FVector(0.22f, 0.3f, 0.02f),
+		Mat(TEXT("MI_Paper")), EKcUseStyle::PickUp);
+	Chair(FVector(340.0f, -600.0f, Zf(F, 0.0f)), -90.0f);
+	Chair(FVector(460.0f, -600.0f, Zf(F, 0.0f)), -90.0f);
+	Sofa(FVector(110.0f, -400.0f, Zf(F, 0.0f)), 0.0f);
+	Plant(FVector(740.0f, -930.0f, Zf(F, 0.0f)), true);
+	ArtPrint(FVector(15.0f + 2.0f, -650.0f, Zf(F, 160.0f)), 0.0f, TEXT("MI_ArtHarbourA"), FVector2D(130.0f, 90.0f));
+	Lamp(F, FVector(150.0f, -900.0f, Zf(F, 0.0f)), true);
+	CeilingLight(F, FVector(400.0f, -600.0f, Zf(F, Ceil)), DownLumens, Warm, 550.0f);
+	// Boardroom: a long table for twelve, the screen on the core wall.
+	Desk(FVector(1450.0f, -570.0f, Zf(F, 0.0f)), 0.0f, FVector(800.0f, 160.0f, DeskH), Mat(TEXT("MI_WoodWalnut")));
+	for (int32 i = 0; i < 5; ++i)
+	{
+		for (float Side : {-1.0f, 1.0f}) Chair(FVector(1130.0f + i * 160.0f, -570.0f + Side * 120.0f, Zf(F, 0.0f)), Side > 0.0f ? -90.0f : 90.0f);
+	}
+	Chair(FVector(960.0f, -570.0f, Zf(F, 0.0f)), 0.0f);
+	Chair(FVector(1940.0f, -570.0f, Zf(F, 0.0f)), 180.0f);
+	AddBox(FVector(CoreX0 - 3.0f, -570.0f, Zf(F, 150.0f)), FVector(4.0f, 180.0f, 100.0f), Mat(TEXT("MI_ScreenPanel")), 0.0f, false);
+	SpawnCasePoint(TEXT("boardroom"), FString(), TEXT("Boardroom"), FVector(1450.0f, -570.0f, Zf(F, DeskH + 1.5f)), 0.0f, Cube, FVector(0.22f, 0.3f, 0.02f),
+		Mat(TEXT("MI_Paper")), EKcUseStyle::PickUp);
+	for (float X : {1150.0f, 1750.0f}) CeilingLight(F, FVector(X, -570.0f, Zf(F, Ceil)), DownLumens, Neutral, 550.0f);
+	SmokeDetector(F, FVector2D(1450.0f, -400.0f), Ceil);
+	SmokeDetector(F, FVector2D(1000.0f, 800.0f), Ceil);
 }
 
 // ---------------------------------------------------------------------------- 14: the guest floor

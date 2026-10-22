@@ -180,10 +180,10 @@
       "requires": [
         "meet_hr"
       ],
-      "findingTitle": "M-02 service corridor, Saturday",
+      "findingTitle": "1-02 service corridor, Saturday",
       "finding": "22:14:31: Keziah enters from the kitchen lift carrying plates, Sunniva behind her. Duncan steps into her path, his right hand on her waist for about three seconds; she turns away and walks on. There is no trolley in the corridor. No audio. Exported to KC-1601 with its hash.",
       "evidence": "KC-1601",
-      "custody": "Clip M-02 Saturday 22:10-22:20 exported by you under your own login to write-once USB KC-1601, SHA-256 recorded."
+      "custody": "Clip 1-02 Saturday 22:10-22:20 exported by you under your own login to write-once USB KC-1601, SHA-256 recorded."
     },
     {
       "id": "tell_names",
@@ -216,7 +216,7 @@
       "findingTitle": "Duncan's response",
       "finding": [
         "Told each allegation in writing in advance, accompanied by a colleague of his choice as the policy allows. He denies anything sexual: the hand was \"guiding her past a trolley\". He admits the nicknames (\"banter, everyone has one\") and the texts (\"just being friendly\").",
-        "Shown the still from M-02, he says he does not remember it that way. He is told not to discuss the case with anyone in the team, and that retaliation is a separate disciplinary matter."
+        "Shown the still from 1-02, he says he does not remember it that way. He is told not to discuss the case with anyone in the team, and that retaliation is a separate disciplinary matter."
       ],
       "lines": [
         {

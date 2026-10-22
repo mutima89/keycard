@@ -1088,12 +1088,16 @@ FKcScreenParts Lift(AKcHUD* Hud, int32 FromFloor)
 	{
 		if (!AKcHotel::IsFittedFloor(F))
 		{
-			// Guest floors 1-13: one disabled row.
-			if (F == 13) Items.Add({LOCTEXT("LiftGuestFloors", "1 - 13  Guest floors"), nullptr, false, false, LOCTEXT("LiftGuestNote", "No calls on these floors tonight.")});
+			// Unfitted floors: one disabled row for each run.
+			if (F == 13) Items.Add({LOCTEXT("LiftGuestFloors", "5 - 13  Guest floors"), nullptr, false, false, LOCTEXT("LiftGuestNote", "No calls on these floors tonight.")});
+			if (F == 3) Items.Add({LOCTEXT("LiftLowFloors", "2 - 3  Guest floors, pool and spa"), nullptr, false, false, LOCTEXT("LiftLowNote", "No calls on these floors tonight.")});
 			continue;
 		}
 		const bool bHere = F == FromFloor;
-		const FString Name = F == 14 ? TEXT("14  Guest rooms 1401-1420") : (F == 0 ? TEXT("G  Lobby, front desk, lobby bar") : TEXT("B1  LP office, CCTV room, back of house"));
+		const FString Name = F == 14 ? TEXT("14  Guest rooms 1401-1420")
+			: F == 4 ? TEXT("4  Executive offices, GM, boardroom")
+			: F == 1 ? TEXT("1  Harbour Ballroom, banquets")
+			: F == 0 ? TEXT("G  Lobby, front desk, lobby bar, kitchen") : TEXT("B1  LP office, CCTV room, back of house");
 		Items.Add({FText::FromString(Name + (bHere ? TEXT("  (you are here)") : TEXT(""))), [Hud, F]() { Hud->RideLift(F); }, false, !bHere, FText::GetEmpty()});
 	}
 	Items.Add({LOCTEXT("LiftCancel", "Stay on this floor"), [Hud]() { Hud->CloseScreen(); }, false, true, FText::GetEmpty()});

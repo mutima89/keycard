@@ -46,8 +46,8 @@ public:
 	static constexpr int32 TopFloor = 14;
 	static float FloorZ(int32 Floor) { return Floor * FloorHeight; }
 	static int32 FloorAt(float Z) { return FMath::FloorToInt((Z + 60.0f) / FloorHeight); }
-	// Floors with work tonight (lift buttons that light): B1, G, 14.
-	static bool IsFittedFloor(int32 Floor) { return Floor == -1 || Floor == 0 || Floor == 14; }
+	// Floors with work tonight (lift buttons that light): B1, G, 1 (ballroom), 4 (executive), 14.
+	static bool IsFittedFloor(int32 Floor) { return Floor == -1 || Floor == 0 || Floor == 1 || Floor == 4 || Floor == 14; }
 	static FString FloorLabel(int32 Floor); // "B1", "G", "14"
 
 	// The location (KnownLocations id) at a world point, "" outside every zone.
@@ -130,6 +130,8 @@ private:
 	// ---- floors ----
 	void BuildBasement();
 	void BuildGround();
+	void BuildBallroomFloor();
+	void BuildExecutiveFloor();
 	void BuildGuestFloor();
 	void GuestRoom(const FString& Number, const FBox2D& Area, bool bNorth, bool bWalkable);
 	// Fits out a walkable room: bathroom, wardrobe and safe, bed, desk, window and balcony door.

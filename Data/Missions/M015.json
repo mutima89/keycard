@@ -1,0 +1,523 @@
+{
+  "schema": 1,
+  "id": "M015",
+  "title": "Hot Work in the Kitchen",
+  "kind": "mission",
+  "topic": "fire",
+  "minLevel": 4,
+  "opening": {
+    "channel": "phone",
+    "from": "contractor_fenner",
+    "at": "lp_office",
+    "text": "Evening, Declan Fenner, kitchen equipment. Your chef wants the cracked bracket on the main canopy welded tonight so it's ready for breakfast. Can you switch off the fire alarms on the ground floor so I don't set them off? Twenty minutes and I'm gone."
+  },
+  "briefing": [
+    "23:30. The main kitchen has closed after dinner service. A contractor wants to weld a cracked bracket on the cooking extract canopy, above the fryers, with grease still on the filters.",
+    "Veldane hot work procedure: no flame, sparks or grinding without a signed hot work permit issued by LP. Walk the area first, check the contractor's insurance and competence, isolate only the detectors the work needs, keep a fire watch during the work and for at least 60 minutes after it, then restore and test the detectors and close the permit. Your authority is 10,000."
+  ],
+  "learningObjectives": [
+    "Issuing a hot work permit that controls the real hazards",
+    "Isolating only what the work needs, and restoring it",
+    "Why the fire watch carries on after the torch goes off"
+  ],
+  "start": "23:30",
+  "actions": [
+    {
+      "id": "talk_contractor",
+      "label": "Meet Declan at the canopy",
+      "kind": "interview",
+      "at": "kitchen",
+      "spot": "kitchen_line",
+      "person": "contractor_fenner",
+      "minutes": 4,
+      "required": true,
+      "findingTitle": "The job",
+      "finding": "The rear hanging bracket of the main canopy has cracked at the weld; the canopy has dropped about 5 mm at that corner. Declan wants to MIG-weld a plate over it from a stepladder, directly above the fryers. The baffle filters are still in and greasy from service.",
+      "lines": [
+        {
+          "speaker": "contractor_fenner",
+          "text": "It's a twenty-minute job. I've done hundreds. If you just knock the alarms off for the ground floor I'll be out of your hair."
+        }
+      ]
+    },
+    {
+      "id": "walk_area",
+      "label": "Walk the work area with Declan",
+      "kind": "check",
+      "at": "kitchen",
+      "spot": "kitchen_line",
+      "minutes": 6,
+      "requires": [
+        "talk_contractor"
+      ],
+      "required": true,
+      "findingTitle": "The area, made safe",
+      "finding": [
+        "Baffle filters out and taken to the dish area; the canopy section around the bracket degreased. Fryers drained, cooled and covered with a fire blanket. Cardboard and paper stock moved more than 11 m away. The floor gully and the gap behind the canopy covered with a welding blanket.",
+        "A charged CO2 and a wet chemical extinguisher placed at the foot of the ladder. The extract fan stays off during the work so sparks are not drawn into the duct."
+      ]
+    },
+    {
+      "id": "check_insurance",
+      "label": "Check Declan's insurance and hot work card",
+      "kind": "check",
+      "at": "kitchen",
+      "spot": "permit_board",
+      "minutes": 2,
+      "requires": [
+        "talk_contractor"
+      ],
+      "findingTitle": "Contractor checks",
+      "finding": "Public liability certificate in date and naming hot work; Declan holds a current hot work safety card. His company is on the approved contractor list in the permit file.",
+      "columns": [
+        "Item",
+        "Status"
+      ],
+      "rows": [
+        [
+          "Public liability (hot work)",
+          "In date"
+        ],
+        [
+          "Hot work safety card",
+          "Current"
+        ],
+        [
+          "Approved contractor list",
+          "Listed"
+        ]
+      ]
+    },
+    {
+      "id": "issue_permit",
+      "label": "Issue the hot work permit",
+      "kind": "logEvidence",
+      "at": "kitchen",
+      "spot": "permit_board",
+      "minutes": 3,
+      "requires": [
+        "walk_area"
+      ],
+      "required": true,
+      "findingTitle": "Permit HW-0418",
+      "finding": "Permit HW-0418 issued for 23:45 to 00:30: welding one bracket plate on the main canopy. Precautions listed and initialled, detector zone K2 only to be isolated, fire watch named, and the post-work watch until at least 01:30. One copy on the permit board, one in the LP office."
+    },
+    {
+      "id": "front_office",
+      "label": "Tell the front desk",
+      "kind": "interview",
+      "at": "front_desk",
+      "person": "night_manager",
+      "minutes": 2,
+      "requires": [
+        "issue_permit"
+      ],
+      "findingTitle": "Front office",
+      "finding": "Felix Amadi notes that kitchen detector zone K2 will be isolated under HW-0418, and that any smell of burning or smoke call from the ground floor goes straight to LP."
+    },
+    {
+      "id": "isolate_zone",
+      "label": "Isolate kitchen zone K2 at the fire panel",
+      "kind": "secure",
+      "at": "fire_command",
+      "spot": "fire_panel",
+      "minutes": 2,
+      "requires": [
+        "issue_permit"
+      ],
+      "required": true,
+      "findingTitle": "Zone K2 isolated, 23:4x",
+      "finding": "Only the two heat detectors over the canopy (zone K2) are isolated, logged against HW-0418 with your name and the time. Every other detector in the kitchen and on the ground floor stays live, and the manual call points still work."
+    },
+    {
+      "id": "isolate_all",
+      "label": "Isolate every ground floor detector, as Declan asked",
+      "kind": "other",
+      "at": "fire_command",
+      "spot": "fire_panel",
+      "minutes": 1,
+      "requires": [
+        "talk_contractor"
+      ],
+      "findingTitle": "Ground floor isolated",
+      "finding": "The lobby, the restaurants, the kitchen and the back corridors stop detecting. A fire anywhere on the ground floor would now go unannounced until someone saw it.",
+      "effects": {
+        "SafetyCompliance": -6
+      }
+    },
+    {
+      "id": "brief_watch",
+      "label": "Brief Ines as fire watch",
+      "kind": "call",
+      "at": "lp_office",
+      "spot": "lp_radio",
+      "person": "partner",
+      "minutes": 3,
+      "requires": [
+        "issue_permit"
+      ],
+      "required": true,
+      "findingTitle": "Fire watch",
+      "finding": "Ines stands at the work with the extinguishers for the whole job, then stays for 60 minutes after the welding stops: above and behind the canopy, the duct access panel, the floor and the gully, every 15 minutes, logged on the permit. No other duties.",
+      "lines": [
+        {
+          "speaker": "partner",
+          "text": "With him while he welds, then an hour after, every fifteen minutes, behind the canopy and at the duct panel. Logged on the permit."
+        }
+      ]
+    },
+    {
+      "id": "after_watch",
+      "label": "Check the post-work fire watch at 00:50",
+      "kind": "check",
+      "at": "kitchen",
+      "spot": "kitchen_line",
+      "minutes": 3,
+      "requires": [
+        "brief_watch"
+      ],
+      "required": true,
+      "findingTitle": "What the watch found",
+      "finding": "Welding finished 00:22. At 00:47, behind the canopy, Ines smelled hot grease and found a strip of duct wrap smouldering where spatter had landed. She put it out with the CO2, called you and stayed on it. No flame, no smoke detector involved.",
+      "columns": [
+        "Time",
+        "Check",
+        "Notes"
+      ],
+      "rows": [
+        [
+          "00:22",
+          "Work ends",
+          "Area checked, warm"
+        ],
+        [
+          "00:37",
+          "Round",
+          "-"
+        ],
+        [
+          "00:47",
+          "Round",
+          "Duct wrap smouldering behind canopy: CO2, out"
+        ],
+        [
+          "00:50",
+          "LP attends",
+          "Cold, photographed"
+        ]
+      ]
+    },
+    {
+      "id": "restore_zone",
+      "label": "Restore zone K2 and test it",
+      "kind": "secure",
+      "at": "fire_command",
+      "spot": "fire_panel",
+      "minutes": 3,
+      "requires": [
+        "after_watch"
+      ],
+      "required": true,
+      "findingTitle": "Zone K2 restored",
+      "finding": "At 01:35, after a final check of the canopy, zone K2 is de-isolated. Both heat detectors are tested and report to the panel; the restoration is logged against HW-0418."
+    },
+    {
+      "id": "close_permit",
+      "label": "Sign the permit closed and file it",
+      "kind": "logEvidence",
+      "at": "kitchen",
+      "spot": "permit_board",
+      "minutes": 2,
+      "requires": [
+        "restore_zone"
+      ],
+      "findingTitle": "Permit closed",
+      "finding": "HW-0418 signed off by Declan, Ines and you, with the watch log and the smouldering duct wrap noted, the photos attached, and a request to engineering to replace that section of wrap. Filed in the LP permit file."
+    }
+  ],
+  "questions": [
+    {
+      "id": "d_isolate",
+      "prompt": "Declan asks you to switch off the ground floor detectors. What do you isolate?",
+      "dimension": "Procedure",
+      "competency": "FireLifeSafety",
+      "weight": 9,
+      "options": [
+        {
+          "id": "zone",
+          "label": "Only zone K2, the heat detectors over the canopy, through the permit and logged, for the work and the watch.",
+          "score": 100,
+          "feedback": "Isolate only what the work will set off, for as short a time as possible, and record it."
+        },
+        {
+          "id": "floor",
+          "label": "The whole ground floor, so nothing goes off by accident.",
+          "score": 20,
+          "feedback": "That blinds the lobby, the restaurants and the corridors to a fire that has nothing to do with the welding."
+        },
+        {
+          "id": "panel",
+          "label": "Put the whole panel in test mode until he has gone.",
+          "score": 0,
+          "critical": true,
+          "feedback": "A building full of sleeping guests with no working fire alarm. Never."
+        }
+      ]
+    },
+    {
+      "id": "d_before",
+      "kind": "multi",
+      "prompt": "Which must be done before the first spark?",
+      "dimension": "Procedure",
+      "competency": "FireLifeSafety",
+      "weight": 8,
+      "options": [
+        {
+          "id": "filters",
+          "label": "Remove the greasy filters and degrease the canopy around the bracket",
+          "correct": true
+        },
+        {
+          "id": "combust",
+          "label": "Move combustibles more than 11 m away or cover them with fire blankets",
+          "correct": true
+        },
+        {
+          "id": "gaps",
+          "label": "Cover the floor gully and the gaps behind the canopy",
+          "correct": true
+        },
+        {
+          "id": "ext",
+          "label": "Put charged extinguishers at the work",
+          "correct": true
+        },
+        {
+          "id": "fans",
+          "label": "Run the extract fans on full to carry the sparks away",
+          "feedback": "That pulls sparks into a duct lined with grease, where nobody can see them."
+        }
+      ]
+    },
+    {
+      "id": "d_watch",
+      "prompt": "Declan stops welding at 00:22. When can the fire watch stand down?",
+      "dimension": "Care",
+      "competency": "FireLifeSafety",
+      "weight": 8,
+      "options": [
+        {
+          "id": "hour",
+          "label": "After at least 60 minutes of checks with nothing found, and a final check before the detectors go back on.",
+          "score": 100,
+          "feedback": "Hot work fires smoulder unseen for an hour or more. Tonight's was found 25 minutes after the torch went off."
+        },
+        {
+          "id": "leave",
+          "label": "When Declan packs up and leaves.",
+          "score": 15,
+          "feedback": "The fire risk does not leave with the contractor."
+        },
+        {
+          "id": "ten",
+          "label": "After a quick ten-minute look round.",
+          "score": 30,
+          "feedback": "Ten minutes would have missed the duct wrap."
+        }
+      ]
+    },
+    {
+      "id": "r_what",
+      "prompt": "Permit report, what happened (one line)",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 7,
+      "section": "what",
+      "options": [
+        {
+          "id": "facts",
+          "label": "Hot work under HW-0418 23:45-00:22 on the main canopy; zone K2 isolated only; fire watch found and extinguished smouldering duct wrap at 00:47; K2 restored and tested 01:35.",
+          "score": 100,
+          "feedback": "The permit, what was isolated, what the watch found and the restoration: everything an inspector or an insurer will look for."
+        },
+        {
+          "id": "done",
+          "label": "Canopy bracket welded, no issues.",
+          "score": 15,
+          "feedback": "There was a smouldering fire behind the canopy. That is the most important line in the report."
+        },
+        {
+          "id": "blame",
+          "label": "Contractor's welding nearly set the kitchen on fire.",
+          "score": 30,
+          "feedback": "Opinion, not fact. Record what was found, where and when, and what was done."
+        }
+      ]
+    },
+    {
+      "id": "r_facts",
+      "kind": "multi",
+      "prompt": "Permit report, which of these belong in it?",
+      "dimension": "Report",
+      "competency": "ComplianceAudit",
+      "weight": 8,
+      "section": "facts",
+      "options": [
+        {
+          "id": "f_checks",
+          "label": "Contractor insurance and hot work card checked before the permit was issued.",
+          "correct": true
+        },
+        {
+          "id": "f_iso",
+          "label": "Zone K2 isolated 23:4x and restored and tested 01:35; all other zones live.",
+          "correct": true
+        },
+        {
+          "id": "f_watch",
+          "label": "Fire watch rounds every 15 minutes to 01:30; duct wrap smouldering at 00:47, put out with CO2.",
+          "correct": true
+        },
+        {
+          "id": "f_action",
+          "label": "Engineering asked to replace the damaged section of duct wrap.",
+          "correct": true
+        },
+        {
+          "id": "o_chef",
+          "label": "The chef should not have booked the work at night.",
+          "feedback": "Out of scope for the permit report. If scheduling is a problem, raise it separately."
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "c_contractor",
+      "label": "Check the contractor first",
+      "kind": "before",
+      "action": "check_insurance",
+      "other": "issue_permit",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 7,
+      "pass": "You checked insurance and competence before issuing the permit.",
+      "fail": "The permit was issued before anyone checked the contractor."
+    },
+    {
+      "id": "c_walk",
+      "label": "Walk the area",
+      "kind": "done",
+      "action": "walk_area",
+      "dimension": "Procedure",
+      "competency": "FireLifeSafety",
+      "weight": 8,
+      "pass": "Combustibles, grease, gaps and extinguishers were dealt with before the work.",
+      "fail": "Nobody looked at the area before the work."
+    },
+    {
+      "id": "c_narrow",
+      "label": "Isolate only what the work needs",
+      "kind": "notDone",
+      "action": "isolate_all",
+      "dimension": "Compliance",
+      "competency": "FireLifeSafety",
+      "weight": 10,
+      "pass": "Only zone K2 was isolated; the rest of the building could still detect a fire.",
+      "fail": "You isolated the whole ground floor for one weld."
+    },
+    {
+      "id": "c_watch",
+      "label": "Fire watch",
+      "kind": "done",
+      "action": "brief_watch",
+      "dimension": "Care",
+      "competency": "FireLifeSafety",
+      "weight": 9,
+      "pass": "A dedicated fire watch stood with the work and stayed after it.",
+      "fail": "No fire watch."
+    },
+    {
+      "id": "c_after",
+      "label": "Watch after the work",
+      "kind": "done",
+      "action": "after_watch",
+      "dimension": "Evidence",
+      "competency": "FireLifeSafety",
+      "weight": 9,
+      "pass": "You checked the post-work watch and recorded what it found.",
+      "fail": "Nobody checked the area after the torch went off."
+    },
+    {
+      "id": "c_restore",
+      "label": "Restore and test",
+      "kind": "done",
+      "action": "restore_zone",
+      "dimension": "Procedure",
+      "competency": "FireLifeSafety",
+      "weight": 8,
+      "pass": "Zone K2 is back on and tested.",
+      "fail": "The kitchen heat detectors were left isolated."
+    },
+    {
+      "id": "c_close",
+      "label": "Close the permit",
+      "kind": "done",
+      "action": "close_permit",
+      "dimension": "Report",
+      "competency": "ComplianceAudit",
+      "weight": 5,
+      "pass": "The permit is signed closed with the watch log and filed.",
+      "fail": "The permit was never closed."
+    },
+    {
+      "id": "c_desk",
+      "label": "Tell the front desk",
+      "kind": "done",
+      "action": "front_office",
+      "dimension": "Communication",
+      "competency": "PeopleLeadership",
+      "weight": 4,
+      "pass": "The desk knew zone K2 was isolated and where to route a burning smell.",
+      "fail": "The desk did not know part of the alarm was off."
+    }
+  ],
+  "bestOrder": [
+    "talk_contractor",
+    "walk_area",
+    "check_insurance",
+    "issue_permit",
+    "front_office",
+    "isolate_zone",
+    "brief_watch",
+    "after_watch",
+    "restore_zone",
+    "close_permit"
+  ],
+  "debrief": {
+    "whatHappened": "A late-night weld above the fryers. You walked the area, checked the contractor, issued a permit, isolated only the canopy detectors and kept a fire watch going after the work. That watch found smouldering duct wrap 25 minutes after the torch went off.",
+    "bestPractice": [
+      "No permit, no flame.",
+      "Walk the area: grease, combustibles within 11 m, gaps and drains, extinguishers at the work.",
+      "Check the contractor's insurance and competence before signing.",
+      "Isolate only the detectors the work will set off, logged against the permit.",
+      "Fire watch during the work and for at least 60 minutes after it.",
+      "Restore and test the detectors, then close and file the permit."
+    ],
+    "why": "Hot work is one of the most common causes of serious fires in buildings, and most of those fires start after the work has finished, in places nobody can see.",
+    "commonMistakes": [
+      "Isolating a whole floor of detectors for one weld.",
+      "Ending the fire watch when the torch goes off.",
+      "Letting work start while the permit is being written.",
+      "Leaving detectors isolated overnight."
+    ]
+  },
+  "procedureCards": [
+    "hot_work_permit"
+  ],
+  "reportAt": "lp_office",
+  "passMark": 60,
+  "xp": 260,
+  "weeks": 1,
+  "lesson": "No permit, no flame, and the watch outlasts the flame."
+}

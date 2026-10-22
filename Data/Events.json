@@ -333,6 +333,24 @@
         "InsurerConfidence": -2,
         "IncidentCosts": 1600
       }
+    },
+    {
+      "topic": "fire",
+      "description": "The fire authority reviews the night of \"{mission}\" ({choice}) and writes to the GM asking for the hotel's fire procedures and training records.",
+      "effects": {
+        "SafetyCompliance": -4,
+        "InsurerConfidence": -3,
+        "Reputation": -2
+      }
+    },
+    {
+      "topic": "claims",
+      "description": "The claimant's solicitor quotes the scene from \"{mission}\" ({choice}). The insurer reserves its position and the excess goes up.",
+      "effects": {
+        "InsurerConfidence": -4,
+        "IncidentCosts": 4800,
+        "Reputation": -1
+      }
     }
   ]
 }

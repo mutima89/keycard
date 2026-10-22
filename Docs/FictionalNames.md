@@ -44,5 +44,8 @@ Each full name was web-searched for a public figure, hotel executive or security
 | Owen Tremlett | Bell captain | Clear (Tremlett cricketers share only the surname) |
 | Hattie Coombe | Receiving clerk | Clear |
 | Mara Lindgren | Departing guest | Clear |
+| Idris Kellaway | Station Officer, Port Avener Fire & Rescue | Clear |
+| Gwendolyn Ashcombe | Guest, slipped in the lobby | Clear |
+| Declan Fenner | Contractor, kitchen equipment | Clear (rejected first choice Anton Castellane: too close to Antoine de Castellane) |
 
 Equipment names in missions (encoders E-01 to E-03, camera ids, evidence numbers) are generic codes, not brands.

@@ -1,0 +1,515 @@
+{
+  "schema": 1,
+  "id": "M012",
+  "title": "Fire Alarm, Floor 14",
+  "kind": "mission",
+  "topic": "fire",
+  "minLevel": 4,
+  "opening": {
+    "channel": "firePanel",
+    "from": "partner",
+    "at": "lp_office",
+    "text": "FIRE ALARM. ZONE 14 SOUTH. SMOKE DETECTOR, ROOM 1416. 03:12:40."
+  },
+  "briefing": [
+    "03:12. The fire alarm panel goes into alarm: one smoke detector, room 1416. The hotel is 88 per cent full. You are the Assistant LP Manager on duty and the fire plan makes you the incident lead until the fire authority arrives.",
+    "Veldane fire plan: on any fire alarm, call the fire authority at once (never investigate first), send a trained person to the zone, sound the evacuation for the alarm zone, and meet the fire crew at the fire command centre with the plans, the master keys and the facts. Silencing or resetting the panel is the fire authority's decision."
+  ],
+  "learningObjectives": [
+    "Order of actions: call, investigate, evacuate the zone, meet the crew",
+    "Running the fire command centre: the panel, the plans, the keys",
+    "Handing over to the fire authority, and accounting for the floor"
+  ],
+  "start": "03:12",
+  "actions": [
+    {
+      "id": "read_panel",
+      "label": "Read the fire panel",
+      "kind": "check",
+      "at": "fire_command",
+      "spot": "fire_panel",
+      "minutes": 1,
+      "required": true,
+      "findingTitle": "Fire panel, 03:13",
+      "finding": "One device in alarm: optical smoke detector, room 1416, zone 14 south. No sprinkler flow, no second device yet. The panel's sounders are on in zone 14 only, as programmed: the rest of the hotel is on alert.",
+      "columns": [
+        "Time",
+        "Device",
+        "State"
+      ],
+      "rows": [
+        [
+          "03:12:40",
+          "SD 14-16 Room 1416",
+          "Fire"
+        ],
+        [
+          "03:12:41",
+          "Sounders zone 14",
+          "On"
+        ],
+        [
+          "03:12:41",
+          "Sounders other zones",
+          "Alert"
+        ]
+      ]
+    },
+    {
+      "id": "call_fire",
+      "label": "Call the fire authority",
+      "kind": "call",
+      "at": "fire_command",
+      "spot": "fire_panel",
+      "person": "fire_officer",
+      "minutes": 2,
+      "required": true,
+      "findingTitle": "Fire authority called, 03:1x",
+      "finding": "Port Avener Fire & Rescue control takes the call: fire alarm, one smoke detector, room 1416 on floor 14, hotel occupied, investigating. Two pumps and the ladder are sent; the station officer will report to the fire command centre.",
+      "lines": [
+        {
+          "speaker": "fire_officer",
+          "text": "Control has it. Two pumps and the aerial on the way. Meet us at your fire command centre with the plans."
+        }
+      ]
+    },
+    {
+      "id": "send_partner",
+      "label": "Radio Ines to investigate 1416 with the floor key",
+      "kind": "call",
+      "at": "fire_command",
+      "spot": "fire_panel",
+      "person": "partner",
+      "minutes": 1,
+      "required": true,
+      "findingTitle": "Investigation on 14",
+      "finding": "Ines takes Stair A, not the lift. At 1416 the door is warm at the top, the smell of burning is strong in the corridor and the detector in the room is sounding. She does not open the door wide; she knocks, gets no answer, and reports.",
+      "lines": [
+        {
+          "speaker": "partner",
+          "text": "On fourteen. Smoke smell at 1416, door's warm at the top. Nobody answering. I'm not opening it."
+        }
+      ]
+    },
+    {
+      "id": "evacuate_zone",
+      "label": "Sound the evacuation for floor 14 and announce it",
+      "kind": "secure",
+      "at": "fire_command",
+      "spot": "fire_panel",
+      "minutes": 2,
+      "requires": [
+        "send_partner"
+      ],
+      "findingTitle": "Floor 14 evacuating",
+      "finding": "Evacuate signal on zone 14, the recorded message on the floor and a live announcement: \"Floor fourteen, please leave by the stairs now. Do not use the lifts.\" The lifts go to the ground floor and park with their doors open, as programmed."
+    },
+    {
+      "id": "brief_night_manager",
+      "label": "Brief the night manager: rooming list and assembly point",
+      "kind": "interview",
+      "at": "fire_command",
+      "person": "night_manager",
+      "minutes": 2,
+      "requires": [
+        "call_fire"
+      ],
+      "findingTitle": "Front office role",
+      "finding": "Felix Amadi prints the floor 14 rooming list and the guests needing help to evacuate (1408: a guest who uses a wheelchair), sends the desk agent to the assembly point on the quay with the list, and takes the lobby.",
+      "lines": [
+        {
+          "speaker": "night_manager",
+          "text": "Rooming list printing. 1408 has the wheelchair. I'll have Tariq at the assembly point with the list in two minutes."
+        }
+      ]
+    },
+    {
+      "id": "refuge_1408",
+      "label": "Send Ines to 1408 and the refuge in Stair A",
+      "kind": "call",
+      "at": "fire_command",
+      "spot": "fire_panel",
+      "person": "partner",
+      "minutes": 2,
+      "requires": [
+        "brief_night_manager"
+      ],
+      "findingTitle": "1408",
+      "finding": "Ines helps the guest from 1408 to the refuge point on the Stair A landing, with its intercom, and reports her position to you. You pass it to the fire crew on arrival: the crew bring her down."
+    },
+    {
+      "id": "plans_keys",
+      "label": "Get the building plans and the fire master keys ready",
+      "kind": "check",
+      "at": "fire_command",
+      "minutes": 2,
+      "requires": [
+        "call_fire"
+      ],
+      "findingTitle": "Plans and keys",
+      "finding": "Floor 14 plan, the stair and riser drawing, and the fire master keys signed out of the key box to you. Sprinkler valves and the fire pump are marked on the plan."
+    },
+    {
+      "id": "meet_crew",
+      "label": "Meet the station officer and hand over",
+      "kind": "interview",
+      "at": "fire_command",
+      "person": "fire_officer",
+      "minutes": 3,
+      "requires": [
+        "call_fire",
+        "evacuate_zone"
+      ],
+      "required": true,
+      "findingTitle": "Handover to the fire authority, 03:2x",
+      "finding": [
+        "You give it in order: one detector in 1416 at 03:12, door warm, smell of burning, no answer; floor 14 evacuating by both stairs; one guest at the Stair A refuge from 1408; the guest in 1416 has not been seen; plans and master keys here.",
+        "The crew enter 1416 with a hose line: a hair straightener left on a towel, a smouldering bed throw, the guest asleep in the bathroom with earplugs. They wake him, put it out, ventilate the floor. At 03:41 the station officer declares the floor safe and resets the panel."
+      ],
+      "lines": [
+        {
+          "speaker": "fire_officer",
+          "text": "That's the handover I like. Plans, keys, who's where. We'll take 1416. Keep the floor clear until I say."
+        }
+      ]
+    },
+    {
+      "id": "check_1416_guest",
+      "label": "Account for the floor at the assembly point",
+      "kind": "interview",
+      "at": "lobby",
+      "person": "desk_agent",
+      "minutes": 4,
+      "requires": [
+        "meet_crew"
+      ],
+      "findingTitle": "Roll call, floor 14",
+      "finding": "Tariq has ticked 61 of 64 guests on the rooming list. The three missing are 1416 (with the fire crew), 1408 (at the refuge, being brought down) and 1403 (checked out late, room empty). Everyone is accounted for.",
+      "columns": [
+        "Rooms",
+        "Guests",
+        "Status"
+      ],
+      "rows": [
+        [
+          "Floor 14",
+          "64",
+          "61 at the assembly point"
+        ],
+        [
+          "1416",
+          "1",
+          "With the fire crew"
+        ],
+        [
+          "1408",
+          "1",
+          "Refuge, brought down by the crew"
+        ],
+        [
+          "1403",
+          "1",
+          "Room empty, checked out 23:50"
+        ]
+      ]
+    },
+    {
+      "id": "silence_panel",
+      "label": "Silence and reset the panel yourself",
+      "kind": "other",
+      "at": "fire_command",
+      "spot": "fire_panel",
+      "minutes": 1,
+      "requires": [
+        "read_panel"
+      ],
+      "findingTitle": "Panel reset",
+      "finding": "The sounders stop. Two minutes later the detector in 1416 goes back into alarm and the panel has lost the first event's time on its display.",
+      "effects": {
+        "SafetyCompliance": -8
+      }
+    },
+    {
+      "id": "debrief_team",
+      "label": "Debrief the team and log the event",
+      "kind": "logEvidence",
+      "at": "fire_command",
+      "minutes": 4,
+      "requires": [
+        "meet_crew"
+      ],
+      "findingTitle": "Fire log",
+      "finding": "Fire log entry with the panel print-out, the times, the fire authority's incident number, the roll call and the cause. A detector head replacement and a room damage report are raised; the guest in 1416 is seen by the duty manager in the morning."
+    }
+  ],
+  "questions": [
+    {
+      "id": "d_first",
+      "kind": "order",
+      "prompt": "Put the first actions on a fire alarm in order",
+      "dimension": "Procedure",
+      "competency": "FireLifeSafety",
+      "weight": 12,
+      "explanation": "Call first: a false alarm costs the fire authority a trip; a real fire found after five minutes of investigating costs lives. Then investigate, evacuate the zone, and meet the crew.",
+      "options": [
+        {
+          "id": "o1",
+          "label": "Call the fire authority"
+        },
+        {
+          "id": "o2",
+          "label": "Send a trained person to investigate the device"
+        },
+        {
+          "id": "o3",
+          "label": "Evacuate the alarm zone"
+        },
+        {
+          "id": "o4",
+          "label": "Meet the crew at the fire command centre with plans and keys"
+        }
+      ]
+    },
+    {
+      "id": "d_open",
+      "prompt": "Ines says the door of 1416 is warm and nobody answers. What do you tell her?",
+      "dimension": "Care",
+      "competency": "FireLifeSafety",
+      "weight": 9,
+      "options": [
+        {
+          "id": "hold",
+          "label": "Don't open it. Clear the rooms either side, keep the corridor door shut behind you, and wait for the crew at the stair.",
+          "score": 100,
+          "feedback": "A warm door means fire behind it. Opening it feeds the fire air and fills the corridor with smoke. The crew have breathing apparatus; Ines does not."
+        },
+        {
+          "id": "open",
+          "label": "Open it with the master key and get the guest out.",
+          "score": 15,
+          "critical": true,
+          "feedback": "Brave and wrong. Opening a warm door can turn a smouldering room into a fire in the corridor, with an untrained officer in it."
+        },
+        {
+          "id": "extinguisher",
+          "label": "Open it a crack and use the corridor extinguisher.",
+          "score": 30,
+          "feedback": "Extinguishers are for a small fire you can see and escape from. Behind a warm door you can do neither."
+        }
+      ]
+    },
+    {
+      "id": "d_whole",
+      "prompt": "A guest on floor 9 calls the desk: should they leave too?",
+      "dimension": "Communication",
+      "competency": "GuestServiceDeescalation",
+      "weight": 7,
+      "options": [
+        {
+          "id": "plan",
+          "label": "\"The alarm is on floor 14 and the fire service is here. Stay in your room unless you hear the alarm on your floor or are told to leave. We'll call you if that changes.\"",
+          "score": 100,
+          "feedback": "The phased plan, explained calmly. Evacuating 600 rooms at 03:00 for one detector puts people on stairs and pavements for nothing, and slows the crew."
+        },
+        {
+          "id": "all",
+          "label": "\"Yes, everyone out, just to be safe.\"",
+          "score": 40,
+          "feedback": "Not your call under a phased plan, and a full evacuation brings its own injuries and blocks the stairs the crew need."
+        },
+        {
+          "id": "nothing",
+          "label": "\"It's nothing, go back to sleep.\"",
+          "score": 15,
+          "feedback": "You don't know that, and the guest will remember you said it."
+        }
+      ]
+    },
+    {
+      "id": "r_what",
+      "prompt": "Fire log, what happened (one line)",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 7,
+      "section": "what",
+      "options": [
+        {
+          "id": "facts",
+          "label": "03:12:40 smoke detector 1416; fire authority called 03:1x; floor 14 evacuated; small fire (hair straightener on a towel) put out by the crew; all guests accounted for; panel reset by the fire authority at 03:41.",
+          "score": 100,
+          "feedback": "Times, actions, cause, roll call and who reset the panel."
+        },
+        {
+          "id": "false",
+          "label": "False alarm in 1416.",
+          "score": 10,
+          "feedback": "It was a fire. Calling it false hides a real risk and the response that worked."
+        },
+        {
+          "id": "guest",
+          "label": "Guest in 1416 caused a fire through carelessness.",
+          "score": 30,
+          "feedback": "Judgement first, facts missing. Record what happened and let the cause speak."
+        }
+      ]
+    },
+    {
+      "id": "r_facts",
+      "kind": "multi",
+      "prompt": "Fire log, which of these belong in it?",
+      "dimension": "Report",
+      "competency": "FireLifeSafety",
+      "weight": 9,
+      "section": "facts",
+      "options": [
+        {
+          "id": "f_panel",
+          "label": "Panel print-out: SD 14-16 in fire at 03:12:40; zone 14 sounders on.",
+          "correct": true
+        },
+        {
+          "id": "f_call",
+          "label": "Fire authority called 03:1x; incident number; station officer's arrival time.",
+          "correct": true
+        },
+        {
+          "id": "f_roll",
+          "label": "Roll call: 64 guests on floor 14, all accounted for; 1408 brought down from the Stair A refuge by the crew.",
+          "correct": true
+        },
+        {
+          "id": "f_reset",
+          "label": "Panel silenced and reset by the station officer at 03:41.",
+          "correct": true
+        },
+        {
+          "id": "o_bill",
+          "label": "The guest in 1416 will be charged for the fire service.",
+          "feedback": "Not a fact of the event, and not LP's decision. Charges, if any, are for management and the fire authority."
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "c_call_fast",
+      "label": "Call at once",
+      "kind": "byMinute",
+      "action": "call_fire",
+      "by": "03:21",
+      "dimension": "Procedure",
+      "competency": "FireLifeSafety",
+      "weight": 12,
+      "pass": "The fire authority had the call within minutes of the alarm.",
+      "fail": "The call waited. In a real fire those minutes decide how far it spreads."
+    },
+    {
+      "id": "c_call_first",
+      "label": "Call before investigating",
+      "kind": "before",
+      "action": "call_fire",
+      "other": "send_partner",
+      "dimension": "Procedure",
+      "competency": "FireLifeSafety",
+      "weight": 8,
+      "pass": "You called before you knew; that is the plan.",
+      "fail": "You waited to see if it was real before calling."
+    },
+    {
+      "id": "c_no_reset",
+      "label": "Leave the panel to the fire authority",
+      "kind": "notDone",
+      "action": "silence_panel",
+      "dimension": "Compliance",
+      "competency": "FireLifeSafety",
+      "weight": 9,
+      "pass": "Only the fire authority silenced and reset the panel.",
+      "fail": "You reset the panel during a live alarm: the evidence and the warning went with it."
+    },
+    {
+      "id": "c_refuge",
+      "label": "Nobody left behind",
+      "kind": "done",
+      "action": "refuge_1408",
+      "dimension": "Care",
+      "competency": "CrisisLeadership",
+      "weight": 8,
+      "pass": "The guest who could not use the stairs was helped to the refuge and the crew knew where she was.",
+      "fail": "The guest in 1408 was not helped out."
+    },
+    {
+      "id": "c_roll",
+      "label": "Account for everyone",
+      "kind": "done",
+      "action": "check_1416_guest",
+      "dimension": "Care",
+      "competency": "FireLifeSafety",
+      "weight": 7,
+      "pass": "Every guest on floor 14 was accounted for.",
+      "fail": "Nobody checked who was out and who was not."
+    },
+    {
+      "id": "c_plans",
+      "label": "Ready for the crew",
+      "kind": "before",
+      "action": "plans_keys",
+      "other": "meet_crew",
+      "dimension": "Communication",
+      "competency": "FireLifeSafety",
+      "weight": 6,
+      "pass": "Plans and keys were in your hand when the crew walked in.",
+      "fail": "The crew waited while you found the plans and keys."
+    },
+    {
+      "id": "c_log",
+      "label": "Log it",
+      "kind": "done",
+      "action": "debrief_team",
+      "dimension": "Evidence",
+      "competency": "ComplianceAudit",
+      "weight": 6,
+      "pass": "The fire log holds the panel print-out, times and the incident number.",
+      "fail": "No fire log entry: the next inspection will ask for it."
+    }
+  ],
+  "bestOrder": [
+    "read_panel",
+    "call_fire",
+    "send_partner",
+    "brief_night_manager",
+    "evacuate_zone",
+    "plans_keys",
+    "refuge_1408",
+    "meet_crew",
+    "check_1416_guest",
+    "debrief_team"
+  ],
+  "debrief": {
+    "whatHappened": "A hair straightener left on a towel in 1416 smouldered while the guest slept with earplugs. One detector saw it. You called at once, kept the door shut, evacuated the floor, got the guest from 1408 to the refuge and had the plans and keys ready. The crew put it out in minutes.",
+    "bestPractice": [
+      "Call the fire authority on every alarm, before you investigate.",
+      "Investigate with a trained person using the stairs; never open a warm door.",
+      "Evacuate the alarm zone under the phased plan; tell other floors what is happening.",
+      "Get the rooming list and the guests who need help; use refuges and tell the crew.",
+      "Meet the crew at the fire command centre with plans, master keys and facts.",
+      "Only the fire authority silences and resets the panel.",
+      "Account for everyone and log the event with the panel print-out."
+    ],
+    "why": "Fires double in minutes. A hotel at night is full of sleeping strangers who do not know the building. The fire plan's order exists so nobody spends those minutes deciding.",
+    "commonMistakes": [
+      "Investigating before calling.",
+      "Opening a warm door.",
+      "Resetting the panel to stop the noise.",
+      "Evacuating everyone, or no one.",
+      "Forgetting the guests who need help."
+    ]
+  },
+  "procedureCards": [
+    "fire_alarm_response"
+  ],
+  "reportAt": "lp_office",
+  "passMark": 60,
+  "xp": 260,
+  "weeks": 1,
+  "lesson": "Call first. Never open a warm door. Plans, keys and facts for the crew."
+}

@@ -187,6 +187,33 @@
       "lang": "en-us",
       "speed": 1.0,
       "note": "Departing guest: controlled, worried about a flight"
+    },
+    "fire_officer": {
+      "voice": {
+        "bm_george": 0.6,
+        "am_onyx": 0.4
+      },
+      "lang": "en-gb",
+      "speed": 1.0,
+      "note": "Station officer: low, steady, used to noise"
+    },
+    "guest_ashcombe": {
+      "voice": {
+        "bf_emma": 0.6,
+        "af_sarah": 0.4
+      },
+      "lang": "en-gb",
+      "speed": 0.98,
+      "note": "Guest who fell: shaken, then sharp about the floor"
+    },
+    "contractor_fenner": {
+      "voice": {
+        "bm_lewis": 0.6,
+        "am_puck": 0.4
+      },
+      "lang": "en-gb",
+      "speed": 1.08,
+      "note": "Contractor: quick, cheerful, defensive about paperwork"
     }
   },
   "passing": {

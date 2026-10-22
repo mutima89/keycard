@@ -317,6 +317,39 @@
       "avatar": "Female_Adult_12",
       "outfit": "guest",
       "staff": false
+    },
+    {
+      "id": "fire_officer",
+      "name": "Idris Kellaway",
+      "role": "Station Officer, Port Avener Fire & Rescue",
+      "department": "Fire authority",
+      "bio": "Runs the night watch at the harbour station. Wants plans, keys and facts, in that order.",
+      "location": "fire_command",
+      "avatar": "Fire_Male_01",
+      "outfit": "fire",
+      "staff": false
+    },
+    {
+      "id": "guest_ashcombe",
+      "name": "Gwendolyn Ashcombe",
+      "role": "Guest, slipped in the lobby",
+      "department": "Guest",
+      "bio": "In town for a conference. Came in out of the rain and went down on the marble.",
+      "location": "lobby",
+      "avatar": "Female_Adult_03",
+      "outfit": "guest",
+      "staff": false
+    },
+    {
+      "id": "contractor_fenner",
+      "name": "Declan Fenner",
+      "role": "Contractor, kitchen equipment",
+      "department": "Contractor",
+      "bio": "Fixes the kitchen's extract and gas lines overnight. Fast, good, and short on paperwork.",
+      "location": "kitchen",
+      "avatar": "Construction_Male_01",
+      "outfit": "contractor",
+      "staff": false
     }
   ]
 }

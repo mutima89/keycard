@@ -254,6 +254,95 @@
         "Leaving a rogue device live to catch someone",
         "Naming a suspect in an audit report"
       ]
+    },
+    {
+      "id": "fire_alarm_response",
+      "title": "Fire alarm: the first ten minutes",
+      "topic": "fire",
+      "steps": [
+        "Read the panel: which device, which zone, what time.",
+        "Call the fire authority at once. Do not wait to find out whether it is real.",
+        "Send a trained person to the device by the stairs. Never open a warm door; feel it with the back of the hand.",
+        "Evacuate the alarm zone under the phased plan; tell other floors what is happening and what to do.",
+        "Get the rooming list and the list of guests who need help; use refuges and tell the crew where people are.",
+        "Meet the crew at the fire command centre with the plans, the fire master keys and the facts.",
+        "Only the fire authority silences and resets the panel.",
+        "Account for every guest, then log the event with the panel print-out and the incident number."
+      ],
+      "why": "Fire spreads in minutes and hotel guests are sleeping strangers in an unfamiliar building. The plan's order means nobody spends those minutes deciding.",
+      "pitfalls": [
+        "Investigating before calling",
+        "Opening a warm door",
+        "Resetting the panel to stop the noise",
+        "Evacuating everyone, or no one",
+        "Forgetting guests who need help"
+      ]
+    },
+    {
+      "id": "sprinkler_impairment",
+      "title": "Sprinkler impairment and fire watch",
+      "topic": "fire",
+      "steps": [
+        "Treat every impairment as a permit LP owns: what, where, how long, who.",
+        "Before the valve is closed, notify the fire authority and the insurer, and tell the front office.",
+        "Tag the closed valve and the panel with the permit number. Acknowledge the supervisory signal; never isolate the alarm.",
+        "Suspend hot work in the impaired area and stage extra extinguishers.",
+        "Set a dedicated fire watch: the whole area, at least hourly, logged, with nothing else to do.",
+        "If the job runs long, tell everyone the new time and keep the watch going with relief.",
+        "Restore: valve open and locked, main drain test witnessed, tags removed.",
+        "Tell everyone you told at the start; file the permit, the watch log and the test result."
+      ],
+      "why": "Fire losses cluster around protection that was out of service. A few quiet hours without sprinklers is exactly when nobody expects a fire.",
+      "pitfalls": [
+        "Closing the valve first and telling people later",
+        "A fire watch with three other jobs",
+        "Forgetting the insurer",
+        "Leaving the valve shut or untested"
+      ]
+    },
+    {
+      "id": "guest_injury_claim",
+      "title": "Guest injury and the claim that follows",
+      "topic": "claims",
+      "steps": [
+        "Person first: go to the guest, ask what hurts, give first aid and offer an ambulance. Record the offer and the answer.",
+        "Make the area safe with cones straight away, but photograph it before anyone cleans or moves anything.",
+        "Photograph wide, medium and close, with a scale in the frame; note lighting, mats, signage and footwear without judging.",
+        "Take signed statements from witnesses and staff in their own words, before they talk among themselves.",
+        "Preserve the CCTV for the whole approach, the fall and the response, and log the export.",
+        "Pull the cleaning and inspection logs for that area and that hour.",
+        "Show care without admitting fault: no promises to pay, no blame, no guesses about cause.",
+        "Give the insurer first notice the same day with the facts, the photos and the statements.",
+        "Fix the cause, and record what you changed and when."
+      ],
+      "why": "Most injury claims are won or lost on what was recorded in the first hour. Care for the guest and good evidence are the same job, and a careless promise at the scene can cost more than the injury.",
+      "pitfalls": [
+        "Mopping before the photos",
+        "Promising the hotel will pay",
+        "Statements taken days later",
+        "Forgetting the inspection log"
+      ]
+    },
+    {
+      "id": "hot_work_permit",
+      "title": "Hot work permit",
+      "topic": "fire",
+      "steps": [
+        "No permit, no flame: welding, cutting, brazing and grinding need a signed permit before work starts.",
+        "Walk the area with the contractor: combustibles moved 11 m away or covered with fire blankets, openings and drains covered.",
+        "Check the contractor's insurance, competence and a charged extinguisher at the work point.",
+        "Isolate only the detectors in that zone, through the permit, with the fire panel log and the front office told. Never isolate more than the work needs.",
+        "Post a trained fire watch during the work and for at least 30 to 60 minutes after it ends, with a final check later.",
+        "Restore the detectors when the watch ends, test them and sign the permit closed.",
+        "File the permit and the watch log."
+      ],
+      "why": "Hot work fires often start in hidden places and smoulder long after the contractor has packed up, which is why the watch continues after the flame stops.",
+      "pitfalls": [
+        "Isolating a whole floor of detectors",
+        "Ending the fire watch when the torch goes off",
+        "No extinguisher at the work",
+        "Leaving detectors isolated overnight"
+      ]
     }
   ]
 }

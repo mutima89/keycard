@@ -133,7 +133,7 @@ TEST(Campaign_FirstThreeCasesEarnThePromotionAndItsCeremony)
 	CHECK_EQ(static_cast<int>(S.Campaign.Records.size()), 3);
 }
 
-TEST(Campaign_BestPlayThroughLevelThreeReachesLevelFour)
+TEST(Campaign_BestPlayThroughLevelFour)
 {
 	GameState S = Fresh();
 	for (const char* Id : {"M001", "M002", "M003", "M004", "M005", "M006", "M007", "M008", "M009", "M010", "M011"})
@@ -154,6 +154,16 @@ TEST(Campaign_BestPlayThroughLevelThreeReachesLevelFour)
 		if (!bFired) std::printf("    %s never arrived\n", Event);
 		CHECK(bFired);
 	}
+	// Level 4: fire, impairment, claims and hot work, all at the best play.
+	for (const char* Id : {"M012", "M013", "M014", "M015"})
+	{
+		S.bCeremonyPending = false;
+		const MissionDebrief D = PlayBest(S, Id);
+		if (!D.bPassed || D.Score != 100) std::printf("    %s scored %d\n", Id, D.Score);
+		CHECK(D.bPassed && D.Score == 100);
+	}
+	for (const char* Card : {"fire_alarm_response", "sprinkler_impairment", "guest_injury_claim", "hot_work_permit"}) CHECK(HasCard(S, Card));
+	CHECK_EQ(static_cast<int>(S.Campaign.Records.size()), 15);
 }
 
 TEST(Campaign_SameSeedSameCareer)

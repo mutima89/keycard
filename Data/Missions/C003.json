@@ -1,0 +1,537 @@
+{
+  "schema": 1,
+  "id": "C003",
+  "title": "Major Fire on a Guest Floor",
+  "kind": "crisis",
+  "topic": "major_fire",
+  "minLevel": 8,
+  "opening": {
+    "channel": "radio",
+    "from": "partner",
+    "at": "fire_command",
+    "text": "Fire command, Ines. Panel's showing two heads on 14 and a sprinkler flow switch, floor 14. I can smell smoke from the lift lobby on 13. This one's real."
+  },
+  "briefing": [
+    "02:14, Sunday. The hotel is 92% occupied. The fire alarm panel shows two smoke detectors and the sprinkler flow switch on floor 14: a confirmed fire. You are the area's most senior safety lead and you're on site tonight.",
+    "Veldane fire strategy for the tower: call the fire authority at once on any confirmed fire, without investigating first; evacuate the fire floor and the floor below immediately, alert every other floor to be ready, and evacuate further on the fire authority's instruction; lifts return to ground and are for firefighters only; nobody enters a room on fire or a smoke-filled corridor; people who can't use the stairs wait with a member of staff in the stair refuge and the fire authority is told exactly where; account for every guest against the in-house list; hand over command to the fire authority on arrival and support them; nobody goes back until they say so; preserve the scene for the fire investigation. Your authority is 1,000,000."
+  ],
+  "context": [
+    {
+      "ifFlag": "panel_silenced_finding",
+      "text": "The fire authority still has the floor 14 silenced-panel finding on file. Nothing gets silenced or reset tonight."
+    },
+    {
+      "ifFlag": "dark_evacuation",
+      "text": "Some regulars still talk about the night of the dark evacuation. Tonight the words on the PA matter."
+    },
+    {
+      "ifFlag": "m022_oversold",
+      "text": "The fire marshal who found the ballroom oversold is the duty officer tonight."
+    }
+  ],
+  "learningObjectives": [
+    "Call at once, evacuate fire floor and below, alert the rest",
+    "Nobody into smoke; refuge and the stairs",
+    "Account for everyone and hand over command"
+  ],
+  "start": "02:15",
+  "actions": [
+    {
+      "id": "read_panel",
+      "label": "Read the fire alarm panel",
+      "kind": "check",
+      "at": "fire_command",
+      "spot": "fire_panel",
+      "minutes": 1,
+      "required": true,
+      "findingTitle": "Confirmed fire, 14",
+      "finding": "FIRE ZONE 14-3: detectors 14-3-07 (corridor outside 1409) and 14-3-08 (inside 1409), SPRINKLER FLOW FLOOR 14. Lifts recalled to ground automatically. Two detectors and a flow switch: a confirmed fire. No investigating first."
+    },
+    {
+      "id": "call_fire",
+      "label": "Call the fire authority now",
+      "kind": "call",
+      "at": "fire_command",
+      "person": "fire_officer",
+      "minutes": 1,
+      "requires": [
+        "read_panel"
+      ],
+      "required": true,
+      "findingTitle": "Called, 02:16",
+      "finding": "The fire authority control room takes it: confirmed fire, room 1409, floor 14 of 14, sprinkler operating, hotel 92% occupied, evacuation of 14 and 13 under way. Idris Kellaway's watch is four minutes out with an aerial ladder."
+    },
+    {
+      "id": "evacuate",
+      "label": "Evacuate 14 and 13 now; alert every other floor",
+      "kind": "call",
+      "at": "fire_command",
+      "person": "partner",
+      "minutes": 2,
+      "requires": [
+        "read_panel"
+      ],
+      "required": true,
+      "findingTitle": "Phased evacuation",
+      "finding": "The evacuation tone on 13 and 14; the alert tone and a recorded message on every other floor: \"Please get ready to leave if asked. Do not use the lifts.\" Ines and a porter go up Stair A to 13, never above it, to help guests down. Stair B is the main route for 14."
+    },
+    {
+      "id": "full_alarm_now",
+      "label": "Sound the evacuation on all floors at once",
+      "kind": "other",
+      "at": "fire_command",
+      "spot": "fire_panel",
+      "minutes": 1,
+      "requires": [
+        "read_panel"
+      ],
+      "findingTitle": "Everyone at once",
+      "finding": "Eleven hundred people try to use two stairs at once. The guests from 14 and 13, closest to the fire, are stuck behind the people from floors 2 to 12. A woman falls on Stair B at floor 6.",
+      "effects": {
+        "SafetyCompliance": -4,
+        "GuestSatisfaction": -3
+      },
+      "schedules": [
+        {
+          "id": "stair_crush_claim",
+          "description": "The guest who fell on Stair B during the all-floor evacuation claims; the fire authority's report says the hotel's own phased plan wasn't followed.",
+          "delayWeeks": 4,
+          "probability": 0.6,
+          "effects": {
+            "IncidentCosts": 15000,
+            "InsurerConfidence": -3
+          },
+          "flagIfOccurs": "stair_fall_claim"
+        }
+      ]
+    },
+    {
+      "id": "guest_list",
+      "label": "Print the in-house list and the assistance list",
+      "kind": "check",
+      "at": "front_desk",
+      "spot": "front_office_pc",
+      "minutes": 2,
+      "requires": [
+        "evacuate"
+      ],
+      "required": true,
+      "findingTitle": "Who is on 13 and 14",
+      "finding": "Floors 13 and 14: 61 guests in 34 rooms. On the assistance list: a wheelchair user in 1418 and a deaf guest in 1315 (the flashing alarm and vibrating pad are fitted in her room). 1409: one guest, checked in at 19:40, key last used at 23:52."
+    },
+    {
+      "id": "refuge",
+      "label": "Get a staff member to the Stair A refuge on 14",
+      "kind": "call",
+      "at": "fire_command",
+      "person": "night_manager",
+      "minutes": 2,
+      "requires": [
+        "guest_list"
+      ],
+      "required": true,
+      "findingTitle": "Refuge on 14",
+      "finding": "Felix sends a porter up Stair A to 14, to the refuge on the landing behind the fire door, where the wheelchair user from 1418 is waiting with her husband. The porter stays with them with a radio. Fire command notes it for the fire authority: two people, Stair A refuge, floor 14."
+    },
+    {
+      "id": "into_smoke",
+      "label": "Go up to 14 with an extinguisher and open 1409",
+      "kind": "other",
+      "at": "f14_corridor",
+      "spot": "door_1409",
+      "minutes": 2,
+      "requires": [
+        "read_panel"
+      ],
+      "findingTitle": "Door opened",
+      "finding": "The door is hot. When it opens, the smoke that the sprinkler was holding in the room rolls into the corridor at head height. You fall back to Stair B coughing; two guests behind you are turned back by smoke and wait in their rooms for the fire crew.",
+      "effects": {
+        "SafetyCompliance": -7
+      },
+      "schedules": [
+        {
+          "id": "smoke_injury",
+          "description": "The smoke released into the corridor when 1409 was opened injures a guest and the fire investigation names the opened door. The hotel is criticised and the insurer reviews the claim.",
+          "delayWeeks": 3,
+          "probability": 0.75,
+          "effects": {
+            "IncidentCosts": 25000,
+            "InsurerConfidence": -5,
+            "Reputation": -4
+          },
+          "flagIfOccurs": "door_opened_smoke"
+        }
+      ]
+    },
+    {
+      "id": "handover",
+      "label": "Hand over command to the fire authority",
+      "kind": "interview",
+      "at": "lobby",
+      "person": "fire_officer",
+      "minutes": 3,
+      "requires": [
+        "call_fire",
+        "refuge"
+      ],
+      "required": true,
+      "findingTitle": "Handed over, 02:2x",
+      "finding": "At the front doors, the premises information box open: Station Officer Kellaway gets the panel printout, the fire in 1409 with the sprinkler running, the evacuation of 14 and 13, two people in the Stair A refuge on 14, the 1409 guest not yet accounted for, the master keys and the floor plans. He takes command; you stay with him as the hotel's liaison.",
+      "lines": [
+        {
+          "speaker": "fire_officer",
+          "text": "Refuge on 14, Stair A, two people; one unknown in 1409. That's what I needed. Lifts are mine. Keep your people on the stairs and the list."
+        }
+      ]
+    },
+    {
+      "id": "account",
+      "label": "Account for every guest at the assembly point",
+      "kind": "check",
+      "at": "lobby",
+      "minutes": 4,
+      "requires": [
+        "guest_list",
+        "handover"
+      ],
+      "required": true,
+      "findingTitle": "All accounted for",
+      "finding": "The roll call against the in-house list at the quay assembly point: 58 of 61 from 13 and 14, plus the two in the refuge brought down by the crew. The 1409 guest walks in from the street: he had gone out at midnight leaving a phone charger and a hair dryer plugged in on the bed. Everyone accounted for at 02:51; the fire authority is told at once."
+    },
+    {
+      "id": "casualty",
+      "label": "Get the guest from 1408 to the paramedics",
+      "kind": "call",
+      "at": "lobby",
+      "person": "paramedic_sethna",
+      "minutes": 2,
+      "requires": [
+        "account"
+      ],
+      "findingTitle": "Smoke inhalation",
+      "finding": "The guest in 1408 came out through the corridor smoke and is coughing. Ravi Sethna's crew give oxygen and take her to hospital as a precaution. She is discharged by morning."
+    },
+    {
+      "id": "early_return",
+      "label": "Let the floor 13 guests back to their rooms once the fire is out",
+      "kind": "other",
+      "at": "lobby",
+      "minutes": 1,
+      "requires": [
+        "account"
+      ],
+      "findingTitle": "Sent back early",
+      "finding": "The fire is out, so you send floor 13 back upstairs. The fire authority hasn't finished ventilating or checking the floor below for water and smoke; a crew finds guests in the corridor and sends them down again, furious.",
+      "effects": {
+        "SafetyCompliance": -4,
+        "GuestSatisfaction": -2
+      }
+    },
+    {
+      "id": "welfare",
+      "label": "Rooms, blankets and a place for the displaced guests",
+      "kind": "call",
+      "at": "front_desk",
+      "spot": "desk_phone",
+      "person": "front_office_manager",
+      "minutes": 3,
+      "requires": [
+        "account"
+      ],
+      "required": true,
+      "findingTitle": "Looked after",
+      "finding": "Blankets and hot drinks at the assembly point, then the ballroom opened as a rest area. Thirty-four rooms on 13 and 14 out of use: guests moved to empty rooms on lower floors and the airport hotel; medicines and belongings recovered later by staff with the fire authority's agreement. One statement for every guest."
+    },
+    {
+      "id": "preserve",
+      "label": "Preserve the scene and tell the insurer",
+      "kind": "call",
+      "at": "exec_offices",
+      "person": "adjuster",
+      "minutes": 3,
+      "requires": [
+        "handover"
+      ],
+      "required": true,
+      "findingTitle": "Scene held",
+      "finding": "1409 and the corridor sealed for the fire authority's investigator; CCTV from 14-01 and 14-02 and the panel event log exported; Tarrowby's out-of-hours line notified at 03:40 and a loss adjuster appointed. Nothing in 1409 is touched until the investigator releases it."
+    },
+    {
+      "id": "after_action",
+      "label": "Write the crisis log and after-action review",
+      "kind": "logEvidence",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 5,
+      "requires": [
+        "account",
+        "preserve"
+      ],
+      "findingTitle": "After action",
+      "finding": "The log becomes the review: call at 02:16, phased evacuation, refuge reported, handover in six minutes, everyone accounted for in 37. The sprinkler held the fire to one room. Actions: chargers and appliances on beds in the guest safety card, refuge intercoms checked monthly, and a drill with the fire authority on the tower floors."
+    }
+  ],
+  "questions": [
+    {
+      "id": "d_first",
+      "kind": "order",
+      "prompt": "Put the first minutes in order",
+      "dimension": "Procedure",
+      "competency": "FireLifeSafety",
+      "weight": 9,
+      "explanation": "Two detectors and a flow switch is a confirmed fire, so the call goes at once. The people closest to it go first while the rest are alerted, and the people who can't use the stairs need someone with them before the crew arrives to hear where they are.",
+      "options": [
+        {
+          "id": "o1",
+          "label": "Read the panel: two detectors and a flow switch"
+        },
+        {
+          "id": "o2",
+          "label": "Call the fire authority"
+        },
+        {
+          "id": "o3",
+          "label": "Evacuate floors 14 and 13; alert the rest"
+        },
+        {
+          "id": "o4",
+          "label": "Staff to the refuge; tell the fire authority on arrival"
+        }
+      ]
+    },
+    {
+      "id": "d_phased",
+      "prompt": "Why evacuate 14 and 13 first instead of every floor at once?",
+      "dimension": "Compliance",
+      "competency": "FireLifeSafety",
+      "weight": 9,
+      "options": [
+        {
+          "id": "phased",
+          "label": "The people nearest the fire get clear stairs; the rest are ready to go and leave on the fire authority's instruction.",
+          "score": 100,
+          "feedback": "A tower's stairs are sized for phased evacuation. Everyone at once puts the people in most danger behind the people in least."
+        },
+        {
+          "id": "cheap",
+          "label": "It disturbs fewer guests.",
+          "score": 25,
+          "feedback": "A side effect, never the reason. The reason is getting the right people out first."
+        },
+        {
+          "id": "all",
+          "label": "It's wrong: always evacuate everyone at once.",
+          "score": 15,
+          "feedback": "Not in a building designed and approved for phased evacuation, and not before the fire authority says so."
+        }
+      ]
+    },
+    {
+      "id": "d_smoke",
+      "kind": "multi",
+      "prompt": "What do LP and staff never do in a guest floor fire?",
+      "dimension": "Care",
+      "competency": "IncidentResponse",
+      "weight": 9,
+      "options": [
+        {
+          "id": "door",
+          "label": "Open the door of the room on fire",
+          "correct": true
+        },
+        {
+          "id": "smoke",
+          "label": "Go into a smoke-filled corridor",
+          "correct": true
+        },
+        {
+          "id": "lift",
+          "label": "Use the lifts",
+          "correct": true
+        },
+        {
+          "id": "return",
+          "label": "Let guests back before the fire authority says so",
+          "correct": true
+        },
+        {
+          "id": "refuge",
+          "label": "Leave a staff member with the people in the refuge",
+          "feedback": "That is exactly what you do: someone stays with them, with a radio, and the fire authority is told where they are."
+        }
+      ]
+    },
+    {
+      "id": "r_what",
+      "prompt": "Crisis log, summary (one line)",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 7,
+      "section": "what",
+      "options": [
+        {
+          "id": "facts",
+          "label": "Fire in 1409 02:14 (charger on bed, guest out), held by the sprinkler; fire authority 02:16; 14 and 13 evacuated, rest alerted; refuge on 14 reported; command handed over 02:2x; all accounted 02:51; one guest to hospital, discharged; scene held; 34 rooms out of use.",
+          "score": 100,
+          "feedback": "The times, the decisions, the people and the state of the building."
+        },
+        {
+          "id": "small",
+          "label": "Small room fire, put out by sprinklers.",
+          "score": 20,
+          "feedback": "It was a fire on a full tower. The decisions that kept it small belong in the record."
+        },
+        {
+          "id": "blame",
+          "label": "Guest's charger started a fire; guest liable.",
+          "score": 15,
+          "feedback": "Cause and liability are for the fire investigation and the insurer."
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "c_call_fast",
+      "label": "Call at once",
+      "kind": "byMinute",
+      "action": "call_fire",
+      "by": "02:18",
+      "dimension": "Communication",
+      "competency": "CrisisLeadership",
+      "weight": 8,
+      "pass": "The fire authority was called within minutes.",
+      "fail": "The call waited for someone to look."
+    },
+    {
+      "id": "c_phased",
+      "label": "Phased evacuation",
+      "kind": "notDone",
+      "action": "full_alarm_now",
+      "dimension": "Compliance",
+      "competency": "FireLifeSafety",
+      "weight": 7,
+      "pass": "The fire floor and the floor below went first.",
+      "fail": "Every floor was sent at once."
+    },
+    {
+      "id": "c_no_smoke",
+      "label": "Nobody into smoke",
+      "kind": "notDone",
+      "action": "into_smoke",
+      "dimension": "Compliance",
+      "competency": "IncidentResponse",
+      "weight": 10,
+      "pass": "Nobody opened the room or went into smoke.",
+      "fail": "The door of the room on fire was opened."
+    },
+    {
+      "id": "c_refuge",
+      "label": "Refuge reported",
+      "kind": "before",
+      "action": "refuge",
+      "other": "handover",
+      "dimension": "Care",
+      "competency": "CrisisLeadership",
+      "weight": 8,
+      "pass": "The fire authority knew where the refuge occupants were on arrival.",
+      "fail": "The crew arrived not knowing who was in the refuge."
+    },
+    {
+      "id": "c_handover",
+      "label": "Hand over",
+      "kind": "done",
+      "action": "handover",
+      "dimension": "Communication",
+      "competency": "CrisisLeadership",
+      "weight": 6,
+      "pass": "The fire authority took command with everything it needed.",
+      "fail": "There was no handover."
+    },
+    {
+      "id": "c_account",
+      "label": "Everyone accounted for",
+      "kind": "done",
+      "action": "account",
+      "dimension": "Care",
+      "competency": "CrisisLeadership",
+      "weight": 8,
+      "pass": "Every guest was accounted for against the list.",
+      "fail": "Nobody knew who was still inside."
+    },
+    {
+      "id": "c_no_return",
+      "label": "Back only when told",
+      "kind": "notDone",
+      "action": "early_return",
+      "dimension": "Compliance",
+      "competency": "FireLifeSafety",
+      "weight": 5,
+      "pass": "Nobody went back before the fire authority said so.",
+      "fail": "Guests were sent back too early."
+    },
+    {
+      "id": "c_welfare",
+      "label": "Look after them",
+      "kind": "done",
+      "action": "welfare",
+      "dimension": "Care",
+      "competency": "GuestServiceDeescalation",
+      "weight": 6,
+      "pass": "Displaced guests were warm, informed and rehoused.",
+      "fail": "Displaced guests were left on the quay."
+    },
+    {
+      "id": "c_preserve",
+      "label": "Preserve the scene",
+      "kind": "done",
+      "action": "preserve",
+      "dimension": "Evidence",
+      "competency": "EvidenceReporting",
+      "weight": 8,
+      "pass": "The scene and records were held for the investigation; the insurer knew the same night.",
+      "fail": "The scene was disturbed or the insurer wasn't told."
+    }
+  ],
+  "bestOrder": [
+    "read_panel",
+    "call_fire",
+    "evacuate",
+    "guest_list",
+    "refuge",
+    "handover",
+    "account",
+    "casualty",
+    "welfare",
+    "preserve",
+    "after_action"
+  ],
+  "debrief": {
+    "whatHappened": "A charger left on a bed set 1409 alight at 02:14. You called the fire authority at once, evacuated the fire floor and the one below while the rest stood ready, put staff with the guests in the refuge and told the crew where they were, handed over command in minutes, accounted for every guest and looked after the displaced. The sprinkler held the fire to one room.",
+    "bestPractice": [
+      "Confirmed fire: call at once, no investigating first.",
+      "Phased evacuation: fire floor and below first, the rest alerted, more on the fire authority's word.",
+      "Lifts for firefighters; nobody into smoke or the room on fire.",
+      "Staff with refuge occupants; their location to the fire authority on arrival.",
+      "Hand over command with the panel, plans, keys and who is unaccounted for.",
+      "Account for everyone against the in-house list.",
+      "Preserve the scene; insurer the same night; look after the displaced."
+    ],
+    "why": "In a tower fire the building, the sprinklers and the plan do most of the work. The job is to start the plan in seconds, keep people out of the smoke, and give the fire authority what they need to finish it.",
+    "commonMistakes": [
+      "Investigating before calling.",
+      "Everyone at once on the stairs.",
+      "Opening the door.",
+      "Forgetting the refuge.",
+      "Letting guests back early."
+    ]
+  },
+  "procedureCards": [
+    "guest_floor_fire"
+  ],
+  "reportAt": "lp_office",
+  "passMark": 60,
+  "xp": 560,
+  "weeks": 2,
+  "lesson": "Call at once; phased evacuation; nobody into smoke; refuge reported; hand over; account for everyone."
+}

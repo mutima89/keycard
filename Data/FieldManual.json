@@ -706,6 +706,28 @@
         "Footage overwritten",
         "Paying to avoid a fight"
       ]
+    },
+    {
+      "id": "guest_floor_fire",
+      "title": "Fire on a guest floor",
+      "topic": "major_fire",
+      "steps": [
+        "Two detectors, a flow switch or a sighting is a confirmed fire: call the fire authority at once.",
+        "Evacuate the fire floor and the floor below; alert every other floor to be ready.",
+        "Lifts return to ground and are for firefighters only.",
+        "Nobody opens the room on fire or enters smoke.",
+        "Put a member of staff with anyone in a refuge; tell the fire authority exactly where.",
+        "Hand over command with the panel, plans, keys and who is unaccounted for.",
+        "Account for every guest against the in-house list.",
+        "Nobody goes back until the fire authority says so; preserve the scene; tell the insurer."
+      ],
+      "why": "Sprinklers, fire doors and a phased plan contain most hotel fires. The plan only works if it starts at once and nobody makes the smoke worse.",
+      "pitfalls": [
+        "Investigating first",
+        "Everyone at once",
+        "Opening the door",
+        "Forgetting the refuge"
+      ]
     }
   ]
 }

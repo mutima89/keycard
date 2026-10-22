@@ -3243,6 +3243,8 @@ void AKcHotel::RefreshScenes()
 	SetBlackout(bOutage);
 	const bool bThreat = Has(TEXT("search_ballroom")) && Has(TEXT("cordon")) && !Done(TEXT("all_clear"));
 	const bool bCordoned = Done(TEXT("cordon")), bOpened = Done(TEXT("open_bag"));
+	const bool bRoomFire = Has(TEXT("refuge")) && Has(TEXT("call_fire")) && !Done(TEXT("preserve"));
+	const bool bSmokeOut = Done(TEXT("into_smoke"));
 
 	// Guests behind doors: the door offers their work until they open it.
 	for (AKcCasePoint* P : CasePoints)
@@ -3259,9 +3261,9 @@ void AKcHotel::RefreshScenes()
 		}
 	}
 
-	const FString Key = FString::Printf(TEXT("%s|%d%d%d%d%d%d%d%d|%d%d%d%d%d|%d%d%d%d%d%d%d%d%d%d|%d%d%d%d%d|%d%d%d"), M ? *KcConvert::ToFString(M->Id) : TEXT(""), bParty, bKnocked, bCapOff, bQuiet, bReturned,
+	const FString Key = FString::Printf(TEXT("%s|%d%d%d%d%d%d%d%d|%d%d%d%d%d|%d%d%d%d%d%d%d%d%d%d|%d%d%d%d%d|%d%d%d%d%d"), M ? *KcConvert::ToFString(M->Id) : TEXT(""), bParty, bKnocked, bCapOff, bQuiet, bReturned,
 		b1412, bCloset, G && G->HasGame(), bBag, bCodeBlue, bAed, bPropped, bLuggage, bFireAlarm, bSilenced, bImpaired, bSlip, bConed, bMopped, bHotWork, bPrepped, bK2Off,
-		bAllOff, bTheo, bDeath, bSecured, bChairs, bOutage, bThreat, bCordoned, bOpened);
+		bAllOff, bTheo, bDeath, bSecured, bChairs, bOutage, bThreat, bCordoned, bOpened, bRoomFire, bSmokeOut);
 	if (Key == SceneKey) return;
 	SceneKey = Key;
 	for (UPrimitiveComponent* S : SceneProps)
@@ -3457,6 +3459,19 @@ void AKcHotel::RefreshScenes()
 				SceneBox(FVector(CoreX1 - 6.0f, 0.0f, Zf(F1, H)), FVector(1.0f, 230.0f, 6.0f), Mat(TEXT("MI_SafetyYellow")), 0.0f);
 			}
 		}
+	}
+	// C003: smoke from 1409 lying under the corridor ceiling, thicker by the door, and the glow and
+	// haze under the door; a dense bank down to head height if the door was opened.
+	if (bRoomFire)
+	{
+		const float DoorX = 3960.0f;
+		const int32 Layers = bSmokeOut ? 6 : 3;
+		for (int32 i = 0; i < Layers; ++i)
+		{
+			const float Spread = 260.0f + i * 220.0f;
+			SceneBox(FVector(DoorX, 20.0f, Zf(TopFloor, Ceil14 - 18.0f - i * (bSmokeOut ? 22.0f : 8.0f))), FVector(Spread, 2.0f * CorrY - 20.0f, 30.0f), Mat(TEXT("MI_Sheer")), 0.0f);
+		}
+		SceneBox(FVector(DoorX, CorrY - Wall * 0.5f - 1.5f, Zf(TopFloor, 1.0f)), FVector(90.0f, 2.0f, 1.5f), Mat(TEXT("MI_LedAmber")), 0.0f);
 	}
 	// M009: the dock door wedged open with the pallet jack; otherwise the jack is parked by the pallets.
 	{

@@ -216,13 +216,24 @@ TArray<FString> AKcHotel::MissingWorkPoints(const kc::MissionCatalogue& Catalogu
 		for (const FZone& Zn : Zones()) if (Zn.Location == Location) return true;
 		return false;
 	};
+	// A step with a person and no spot is done by talking to them: RefreshScenes stands them at their post
+	// or by the place's arrival point (SpotFor). A place with no arrival would put them in the LP office.
+	auto CanStand = [this](const FString& Location, const FString& PersonId)
+	{
+		for (const FPost& P : Posts) if (P.PersonId == PersonId && P.Location == Location) return true;
+		return Location == TEXT("lp_office") || !GetArrival(Location).Equals(GetPlayerStart());
+	};
 	for (const kc::MissionDef& M : Catalogue.Missions)
 	{
 		for (const kc::ActionDef& A : M.Actions)
 		{
-			const FString Where = KcConvert::ToFString(A.At), Spot = KcConvert::ToFString(A.Spot);
+			const FString Where = KcConvert::ToFString(A.At), Spot = KcConvert::ToFString(A.Spot), Person = KcConvert::ToFString(A.Person);
 			const FString Name = KcConvert::ToFString(M.Id) + TEXT(" ") + KcConvert::ToFString(A.Id);
 			if (!HasZone(Where)) Out.Add(Name + TEXT(": no zone for ") + Where);
+			else if (!Person.IsEmpty() && Spot.IsEmpty())
+			{
+				if (!CanStand(Where, Person)) Out.Add(Name + TEXT(": nowhere for ") + Person + TEXT(" to stand at ") + Where);
+			}
 			else if (!HasPoint(Where, Spot)) Out.Add(Name + TEXT(": no case point ") + (Spot.IsEmpty() ? Where : Where + TEXT("/") + Spot));
 		}
 	}
@@ -2037,7 +2048,7 @@ void AKcHotel::BuildFireCommand()
 	const int32 F = 0;
 	const float X0 = CoreX1, X1 = 3500.0f - Wall * 0.5f, Y0 = CorrY + Wall * 0.5f, Y1 = HalfY - 15.0f;
 	FloorFinish(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), Mat(TEXT("MI_FloorTile")));
-	Ceiling(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), CeilBack, Mat(TEXT("MI_CeilingSoft")));
+	Ceiling(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), CeilBack, Mat(TEXT("MI_CeilingDim")));
 	AddBox(FVector(X0 + 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilBack * 0.5f)), FVector(1.0f, Y1 - Y0, CeilBack), Mat(TEXT("MI_WallPaint")), 0.0f, false);
 	AddBox(FVector((X0 + X1) * 0.5f, Y1 - 0.5f, Zf(F, CeilBack * 0.5f)), FVector(X1 - X0, 1.0f, CeilBack), Mat(TEXT("MI_WallPaint")), 0.0f, false);
 	// Fire alarm control panel: a quiet night reads SYSTEM NORMAL.
@@ -3013,7 +3024,7 @@ void AKcHotel::PlaceFixedInteractables()
 		AddInstance(Cylinder, FVector(Vx, Vy, Zf(F, Ceil14 * 0.5f)), 0.0f, FVector(0.1f, 0.1f, Ceil14 / 100.0f), Mat(TEXT("MI_FireRed")), false);
 		AddInstance(Cylinder, FTransform(FRotator(0.0f, 0.0f, 90.0f), FVector(Vx, Vy + 18.0f, Zf(F, 120.0f)), FVector(0.06f, 0.06f, 0.3f)), Mat(TEXT("MI_FireRed")), false, false);
 		AddInstance(Cylinder, FVector(Vx + 6.0f, Vy, Zf(F, 160.0f)), 0.0f, FVector(0.06f, 0.06f, 0.02f), Mat(TEXT("MI_Ceramic")), false);
-		AddBox(FVector(Vx + 10.0f, Vy - 14.0f, Zf(F, 120.0f)), FVector(6.0f, 8.0f, 10.0f), Mat(TEXT("MI_PlasticGrey")), 0.0f, false);
+		AddBox(FVector(Vx, Vy - 9.0f, Zf(F, 120.0f)), FVector(6.0f, 8.0f, 10.0f), Mat(TEXT("MI_PlasticGrey")), 0.0f, false); // on the riser, opposite the wheel
 		AddBox(FVector(StairIn0 + 1.0f, Vy, Zf(F, 200.0f)), FVector(1.0f, 40.0f, 14.0f), Mat(TEXT("MI_Paper")), 0.0f, false);
 		AddLabel(TEXT("SPRINKLER VALVE  FLOOR 14"), FVector(StairIn0 + 1.6f, Vy, Zf(F, 202.0f)), 0.0f, 1.8f, FColor(170, 30, 30), F);
 		AddLabel(TEXT("Keep open and locked"), FVector(StairIn0 + 1.6f, Vy, Zf(F, 197.0f)), 0.0f, 1.3f, Ink, F);
@@ -3362,9 +3373,9 @@ void AKcHotel::RefreshScenes()
 		{
 			for (int32 i = 0; i < 4; ++i)
 			{
-				const FVector C = FVector(420.0f, -45.0f, Zf(0, 0.0f)) + FRotator(0.0f, 45.0f + i * 90.0f, 0.0f).Vector() * 85.0f;
-				SceneBox(C + FVector(0, 0, 1.0f), FVector(30.0f, 30.0f, 2.0f), Mat(TEXT("MI_SafetyYellow")), 0.0f);
-				SceneBox(C + FVector(0, 0, 32.0f), FVector(16.0f, 16.0f, 60.0f), Mat(TEXT("MI_SafetyYellow")), 0.0f, Cylinder);
+				const FVector ConeAt = FVector(420.0f, -45.0f, Zf(0, 0.0f)) + FRotator(0.0f, 45.0f + i * 90.0f, 0.0f).Vector() * 85.0f;
+				SceneBox(ConeAt + FVector(0, 0, 1.0f), FVector(30.0f, 30.0f, 2.0f), Mat(TEXT("MI_SafetyYellow")), 0.0f);
+				SceneBox(ConeAt + FVector(0, 0, 32.0f), FVector(16.0f, 16.0f, 60.0f), Mat(TEXT("MI_SafetyYellow")), 0.0f, Cylinder);
 			}
 		}
 	}

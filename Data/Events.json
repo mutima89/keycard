@@ -715,6 +715,144 @@
           "m024_called_suspect"
         ]
       }
+    },
+    {
+      "id": "tarrowby_engineer",
+      "category": "request",
+      "from": "adjuster",
+      "subject": "Risk engineer's visit",
+      "body": "Tarrowby's risk engineer wants to see the kitchen suppression upgrade in progress before the six-month condition date. Can you host him next month?",
+      "when": {
+        "passed": [
+          "M027"
+        ],
+        "notFlags": [
+          "m027_nondisclosure"
+        ]
+      },
+      "deadlineWeeks": 2,
+      "defaultChoice": "later",
+      "choices": [
+        {
+          "id": "host",
+          "label": "Host him with Tomasz and the contractor's schedule",
+          "outcome": "He signs off the progress and notes the hotel as a 'well-managed risk' in his report.",
+          "relations": {
+            "adjuster": 4,
+            "chief_engineer": 2
+          },
+          "effects": {
+            "InsurerConfidence": 3
+          }
+        },
+        {
+          "id": "later",
+          "label": "Ask to wait until it's finished",
+          "outcome": "He comes anyway, unannounced, and finds it two weeks behind.",
+          "relations": {
+            "adjuster": -2
+          },
+          "effects": {
+            "InsurerConfidence": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "oyelaran_thanks",
+      "category": "team",
+      "from": "health_officer",
+      "subject": "Rice cooling",
+      "body": "For your records: the follow-up visit found the new cooling procedure in use and logged. I've used your kitchen's response as an example at our trade briefing, without naming you.",
+      "when": {
+        "passed": [
+          "M028"
+        ],
+        "notFlags": [
+          "m028_evidence_destroyed"
+        ]
+      }
+    },
+    {
+      "id": "first_report",
+      "category": "team",
+      "from": "exec_housekeeper",
+      "subject": "We used it",
+      "body": "One of my team used the reporting route on Saturday. LP took it, the police came quietly, and the guest who needed help got it. She asked me to tell you she wasn't scared to report.",
+      "when": {
+        "passed": [
+          "M029"
+        ],
+        "minLevel": 8
+      },
+      "deadlineWeeks": 1,
+      "defaultChoice": "thank",
+      "choices": [
+        {
+          "id": "thank",
+          "label": "Thank the room attendant through Lucia, privately",
+          "outcome": "Lucia passes it on. Two more departments ask for the training early.",
+          "relations": {
+            "exec_housekeeper": 4
+          },
+          "effects": {
+            "StaffMorale": 2
+          }
+        },
+        {
+          "id": "announce",
+          "label": "Announce it as a success at the next all-staff meeting",
+          "outcome": "Lucia asks you not to: it could identify the guest and her colleague. You drop it, but the moment has passed.",
+          "relations": {
+            "exec_housekeeper": -3
+          }
+        }
+      ]
+    },
+    {
+      "id": "tamsett_withdrawn",
+      "category": "team",
+      "from": "adjuster",
+      "subject": "Tamsett claim",
+      "body": "Mr Tamsett's solicitor has withdrawn the claim after our investigators put the evidence to them. Your evidence table did the work. Reserve released.",
+      "when": {
+        "passed": [
+          "M030"
+        ],
+        "notFlags": [
+          "claimant_defamation"
+        ]
+      }
+    },
+    {
+      "id": "kellaway_report",
+      "category": "team",
+      "from": "fire_officer",
+      "subject": "1409",
+      "body": "Our investigation into the 1409 fire is closed: accidental, a charger on bedding. The sprinkler did its job and so did your people. I've asked our community team to borrow your guest safety card wording.",
+      "when": {
+        "passed": [
+          "C003"
+        ],
+        "notFlags": [
+          "door_opened_smoke"
+        ]
+      }
+    },
+    {
+      "id": "cliffside_reopens",
+      "category": "team",
+      "from": "resort_gm",
+      "subject": "We reopen on the 1st",
+      "body": "Spa roof on, villas cleaned, every member of staff back who wanted to come back. The wedding couple are coming for their first anniversary. Thank you for making me close.",
+      "when": {
+        "passed": [
+          "C004"
+        ],
+        "notFlags": [
+          "c004_stayed_open"
+        ]
+      }
     }
   ],
   "fallout": [
@@ -907,6 +1045,81 @@
       "effects": {
         "SecurityPosture": -3,
         "LossExposure": 3
+      }
+    },
+    {
+      "topic": "insurance_renewal",
+      "description": "Tarrowby's mid-term review of \"{mission}\" ({choice}) finds the renewal file thinner than it looked.",
+      "effects": {
+        "InsurerConfidence": -3
+      }
+    },
+    {
+      "topic": "food_illness",
+      "description": "The health department's follow-up on \"{mission}\" ({choice}) finds the cooling logs slipping.",
+      "effects": {
+        "SafetyCompliance": -2,
+        "Reputation": -2
+      }
+    },
+    {
+      "topic": "trafficking_awareness",
+      "description": "An audit of \"{mission}\" ({choice}) finds a department that never completed the training.",
+      "effects": {
+        "SecurityPosture": -2
+      }
+    },
+    {
+      "topic": "claim_fraud",
+      "description": "The claim from \"{mission}\" ({choice}) is reopened with new evidence from the claimant's side.",
+      "effects": {
+        "IncidentCosts": 4000,
+        "InsurerConfidence": -2
+      }
+    },
+    {
+      "topic": "major_fire",
+      "description": "The fire authority's report on \"{mission}\" ({choice}) is published.",
+      "effects": {
+        "SafetyCompliance": -3,
+        "Reputation": -2
+      }
+    },
+    {
+      "topic": "lock_business_case",
+      "description": "The owners' quarterly review of \"{mission}\" ({choice}) questions the benefits.",
+      "effects": {
+        "OwnerTrust": -3
+      }
+    },
+    {
+      "topic": "cctv_privacy",
+      "description": "A data subject request after \"{mission}\" ({choice}) shows gaps in the access log.",
+      "effects": {
+        "Reputation": -2,
+        "SecurityPosture": -2
+      }
+    },
+    {
+      "topic": "viral_incident",
+      "description": "A follow-up story on \"{mission}\" ({choice}) asks what changed.",
+      "effects": {
+        "Reputation": -3
+      }
+    },
+    {
+      "topic": "retaliation",
+      "description": "The staff survey after \"{mission}\" ({choice}) shows people still afraid to speak up.",
+      "effects": {
+        "StaffMorale": -3
+      }
+    },
+    {
+      "topic": "hurricane",
+      "description": "Staff and guests from \"{mission}\" ({choice}) talk to the local press about the storm.",
+      "effects": {
+        "Reputation": -2,
+        "StaffMorale": -2
       }
     }
   ]

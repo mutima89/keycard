@@ -815,6 +815,28 @@
         "Investigating your own team",
         "Calling it friction"
       ]
+    },
+    {
+      "id": "severe_weather",
+      "title": "Hurricane and severe weather",
+      "topic": "hurricane",
+      "steps": [
+        "Set decision points against the official forecast (72, 48, 24 hours) and say what is decided at each.",
+        "Follow any official evacuation order at once.",
+        "Stop arrivals and help guests leave early without penalty; rehouse at sister hotels.",
+        "Pay staff through the closure and release them in time to protect their families.",
+        "Shelter only trained volunteers, in designated rooms, with supplies for 72 hours and a satellite phone.",
+        "Secure the property before the wind: shutters, loose items, fuel, generator, water, backups.",
+        "Nobody goes outside during the storm, the eye included.",
+        "Account for every guest and staff member before and after; tell the insurer before landfall; return only on the all-clear."
+      ],
+      "why": "Severe weather gives warning. A plan with fixed decision points turns that warning into time for people to get safe.",
+      "pitfalls": [
+        "Waiting for certainty",
+        "Staying open for an event",
+        "Keeping staff",
+        "Going out in the eye"
+      ]
     }
   ]
 }

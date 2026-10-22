@@ -133,7 +133,7 @@ TEST(Campaign_FirstThreeCasesEarnThePromotionAndItsCeremony)
 	CHECK_EQ(static_cast<int>(S.Campaign.Records.size()), 3);
 }
 
-TEST(Campaign_BestPlayToLevelEight)
+TEST(Campaign_BestPlayToTheTop)
 {
 	GameState S = Fresh();
 	for (const char* Id : {"M001", "M002", "M003", "M004", "M005", "M006", "M007", "M008", "M009", "M010", "M011"})
@@ -225,6 +225,26 @@ TEST(Campaign_BestPlayToLevelEight)
 		for (int i = 0; i < kc::CompetencyCount; ++i) std::printf("    competency %d = %d\n", i, S.Career.Competencies[static_cast<size_t>(i)].Score);
 	}
 	CHECK_EQ(S.Career.Level, 8);
+	// Levels 8 and 9: insurers, health, awareness, claims, the guest floor fire; then locks, cameras,
+	// the viral video, retaliation and the hurricane.
+	for (const char* Id : {"M027", "M028", "M029", "M030", "C003", "M031", "M032", "M033", "M034", "C004"})
+	{
+		S.bCeremonyPending = false;
+		const MissionDebrief D = PlayBest(S, Id);
+		if (!D.bPassed || D.Score != 100) std::printf("    %s scored %d\n", Id, D.Score);
+		CHECK(D.bPassed && D.Score == 100);
+	}
+	for (const char* Card : {"insurance_renewal", "food_illness", "trafficking_awareness", "claim_fraud", "guest_floor_fire", "security_business_case",
+			 "cctv_privacy", "incident_communications", "speak_up_protection", "severe_weather"})
+	{
+		CHECK(HasCard(S, Card));
+	}
+	CHECK_EQ(static_cast<int>(S.Campaign.Records.size()), 38);
+	if (S.Career.Level != 10)
+	{
+		for (int i = 0; i < kc::CompetencyCount; ++i) std::printf("    competency %d = %d\n", i, S.Career.Competencies[static_cast<size_t>(i)].Score);
+	}
+	CHECK_EQ(S.Career.Level, 10);
 }
 
 TEST(Campaign_SameSeedSameCareer)

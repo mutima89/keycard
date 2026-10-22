@@ -68,6 +68,9 @@
       ],
       "findingTitle": "Keziah moved",
       "finding": "Keziah loses her section, her weekend tips and her daytime hours, for reporting a complaint. Word travels: the banqueting team now knows something happened, and who it happened to.",
+      "setsFlags": [
+        "m016_moved"
+      ],
       "effects": {
         "StaffMorale": -4
       }

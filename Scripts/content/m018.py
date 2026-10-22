@@ -33,7 +33,7 @@ M = {
   {"id": "backfill_logs", "label": "Ask the night team to add the missed scans to the log by hand", "kind": "other", "at": "lp_office", "spot": "lp_desk", "minutes": 2, "requires": ["patrol_records"],
    "findingTitle": "Records altered",
    "finding": "The patrol log now shows rounds that were never walked. Henrike compares it with the scanner export in ten minutes. An audit finding becomes an integrity finding about the LP department.",
-   "effects": {"OwnerTrust": -4, "SecurityPosture": -3}},
+   "setsFlags": ["m018_backfilled"], "effects": {"OwnerTrust": -4, "SecurityPosture": -3}},
   {"id": "incident_reports", "label": "Sample the incident reports", "kind": "check", "at": "lp_office", "spot": "report_terminal", "minutes": 5, "requires": ["opening_meeting"],
    "findingTitle": "Incident reports",
    "finding": "58 reports this quarter: 55 filed within 24 hours, 3 filed after 30 to 40 hours, all on weekends when the evening supervisor was off. Content quality good. Item partly met."},

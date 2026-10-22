@@ -145,6 +145,9 @@
       ],
       "findingTitle": "Records altered",
       "finding": "The patrol log now shows rounds that were never walked. Henrike compares it with the scanner export in ten minutes. An audit finding becomes an integrity finding about the LP department.",
+      "setsFlags": [
+        "m018_backfilled"
+      ],
       "effects": {
         "OwnerTrust": -4,
         "SecurityPosture": -3

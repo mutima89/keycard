@@ -21,7 +21,7 @@ M = {
   {"id": "move_complainant", "label": "Move Keziah to nights in room service for now", "kind": "other", "at": "exec_offices", "spot": "hr_office", "minutes": 1, "requires": ["meet_hr"],
    "findingTitle": "Keziah moved",
    "finding": "Keziah loses her section, her weekend tips and her daytime hours, for reporting a complaint. Word travels: the banqueting team now knows something happened, and who it happened to.",
-   "effects": {"StaffMorale": -4}},
+   "setsFlags": ["m016_moved"], "effects": {"StaffMorale": -4}},
   {"id": "interview_complainant", "label": "Interview Keziah with Priyanka", "kind": "interview", "at": "exec_offices", "spot": "hr_office", "person": "complainant_morland", "minutes": 12, "requires": ["meet_hr"], "required": True,
    "findingTitle": "Keziah's account",
    "finding": ["In her own words, signed: since July Duncan has called her \"the pocket rocket\" and commented on her uniform being tight, usually in front of the section. On Saturday at about 22:15, carrying plates in the service corridor, he put his hand on her waist and said \"careful, gorgeous\". She stepped away. Sunniva Haig was behind her.",

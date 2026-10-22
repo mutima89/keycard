@@ -179,6 +179,14 @@ TEST(Campaign_BestPlayThroughLevelFive)
 		for (int i = 0; i < kc::CompetencyCount; ++i) std::printf("    competency %d = %d\n", i, S.Career.Competencies[static_cast<size_t>(i)].Score);
 	}
 	CHECK_EQ(S.Career.Level, 6);
+	CHECK(HasClue(S, "airport_clones"));
+	for (const char* Event : {"fire_officer_visit", "insurer_impairments", "ashcombe_claim", "chef_permits", "hr_followup", "shrink_writeoff", "reaudit_pass",
+			 "calloway_airport", "tessmore_officers"})
+	{
+		const bool bFired = std::find(S.World.FiredEvents.begin(), S.World.FiredEvents.end(), Event) != S.World.FiredEvents.end();
+		if (!bFired) std::printf("    %s never arrived\n", Event);
+		CHECK(bFired);
+	}
 }
 
 TEST(Campaign_SameSeedSameCareer)

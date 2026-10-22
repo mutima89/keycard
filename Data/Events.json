@@ -241,6 +241,274 @@
         ],
         "minClues": 3
       }
+    },
+    {
+      "id": "fire_officer_visit",
+      "category": "team",
+      "from": "fire_officer",
+      "subject": "Floor 14, the other night",
+      "body": [
+        "The call came in fast and you met us at the panel with plans and keys. Holding the warm door shut was the right call: the room was well alight behind it.",
+        "We'd like to walk the building with you for a pre-incident plan. Thursdays suit the watch."
+      ],
+      "when": {
+        "passed": [
+          "M012"
+        ]
+      }
+    },
+    {
+      "id": "insurer_impairments",
+      "category": "request",
+      "from": "adjuster",
+      "subject": "Impairment notices",
+      "body": "Our property engineers were pleased with the floor 14 impairment notice and the drain test result. Could you send us the hotel's impairment procedure, so we can agree it applies to every floor?",
+      "when": {
+        "passed": [
+          "M013"
+        ]
+      },
+      "deadlineWeeks": 2,
+      "defaultChoice": "ignore",
+      "choices": [
+        {
+          "id": "send",
+          "label": "Send the procedure and the last fire watch log, through Desmond Okafor",
+          "outcome": "Tarrowby's engineers accept the procedure as written and note it on the hotel's risk file.",
+          "relations": {
+            "adjuster": 4,
+            "mentor": 2
+          },
+          "effects": {
+            "InsurerConfidence": 2
+          }
+        },
+        {
+          "id": "ignore",
+          "label": "Leave it",
+          "outcome": "The request is repeated at the renewal meeting, in front of the GM.",
+          "relations": {
+            "adjuster": -4
+          },
+          "effects": {
+            "InsurerConfidence": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "ashcombe_claim",
+      "category": "incident",
+      "from": "adjuster",
+      "subject": "Claim TM-61840 (Ashcombe)",
+      "body": [
+        "Mrs Ashcombe's solicitor has written. Your photographs with the scale, the cleaning log and the L-01 clip of the rain coming in on the guests' coats answer most of their questions.",
+        "We expect to settle the medical costs quickly and without dispute. Thank you for not promising anything at the scene."
+      ],
+      "when": {
+        "passed": [
+          "M014"
+        ],
+        "notFlags": [
+          "m014_promised"
+        ]
+      }
+    },
+    {
+      "id": "chef_permits",
+      "category": "politics",
+      "from": "fnb_director",
+      "subject": "Hot work permits",
+      "body": "Chef says the permit process cost him a night's work on the canopy and he wants contractors to sign their own permits in future. They're professionals. Can we agree that?",
+      "when": {
+        "passed": [
+          "M015"
+        ]
+      },
+      "deadlineWeeks": 1,
+      "defaultChoice": "ignore",
+      "choices": [
+        {
+          "id": "hold",
+          "label": "Keep LP-issued permits, and offer to pre-approve planned jobs the day before",
+          "outcome": "Rafael accepts once he hears about the duct wrap. Planned jobs now get their permit at 17:00 the day before.",
+          "relations": {
+            "fnb_director": 2
+          },
+          "effects": {
+            "SafetyCompliance": 2
+          }
+        },
+        {
+          "id": "relent",
+          "label": "Let contractors sign their own permits",
+          "outcome": "Within a month a contractor grinds in the dish area with the detectors still live and no fire watch. Two engines attend.",
+          "relations": {
+            "fnb_director": 4,
+            "mentor": -5
+          },
+          "effects": {
+            "SafetyCompliance": -4,
+            "IncidentCosts": 1500
+          }
+        },
+        {
+          "id": "ignore",
+          "label": "Leave it",
+          "outcome": "Rafael takes it to the GM as LP being difficult.",
+          "relations": {
+            "fnb_director": -3,
+            "gm": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "hr_followup",
+      "category": "team",
+      "from": "hr_director",
+      "subject": "Two weeks on",
+      "body": [
+        "The outcome has been decided and both parties told. I checked in with Keziah and Sunniva as you suggested; both are still on section B and say the briefings have changed.",
+        "Thank you for keeping the findings to the evidence. It made my decision easier to defend."
+      ],
+      "when": {
+        "passed": [
+          "M016"
+        ],
+        "notFlags": [
+          "m016_moved"
+        ]
+      }
+    },
+    {
+      "id": "shrink_writeoff",
+      "category": "request",
+      "from": "finance_director",
+      "subject": "The 2,208",
+      "body": "Do I write off the banquet store gap in September's accounts, or is there anything we can recover?",
+      "when": {
+        "passed": [
+          "M017"
+        ]
+      },
+      "deadlineWeeks": 2,
+      "defaultChoice": "ignore",
+      "choices": [
+        {
+          "id": "claim",
+          "label": "Notify Tarrowby under the employee dishonesty cover for the proven night, with the evidence pack; write off the rest",
+          "outcome": "Tarrowby accepts the proven loss less the excess. The rest is written off with the new controls noted.",
+          "relations": {
+            "finance_director": 3,
+            "adjuster": 2
+          },
+          "effects": {
+            "IncidentCosts": -600,
+            "InsurerConfidence": 1
+          }
+        },
+        {
+          "id": "all",
+          "label": "Claim the whole 2,208 as theft",
+          "outcome": "Tarrowby asks for evidence for the other two events and there is none. The claim is cut back and the adjuster notes it.",
+          "relations": {
+            "adjuster": -3
+          },
+          "effects": {
+            "InsurerConfidence": -2
+          }
+        },
+        {
+          "id": "ignore",
+          "label": "Leave it to finance",
+          "outcome": "Hamish writes it all off.",
+          "relations": {
+            "finance_director": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "reaudit_pass",
+      "category": "team",
+      "from": "auditor_solberg",
+      "subject": "Re-audit",
+      "body": "Re-audit complete: 96.2%, no critical items failed. The laundry staging bay works and the B1 route was clear on both of my unannounced visits. A good corrective action plan, properly closed out.",
+      "when": {
+        "passed": [
+          "M018"
+        ],
+        "notFlags": [
+          "m018_backfilled"
+        ]
+      }
+    },
+    {
+      "id": "calloway_airport",
+      "category": "story",
+      "from": "police_liaison",
+      "subject": "E-77, again",
+      "clue": "airport_clones",
+      "body": [
+        "The encoder batch E-77 came from was sold through a lock-hardware reseller that has since closed. One of its other customers is your own company's airport hotel, the Veldane Airport Port Avener, which has had eleven rooms entered with valid keys this year.",
+        "Same shared-login trick, same timing. Whoever this is knows Veldane systems from the inside. Can you find out who had that login before it was taped under a keyboard?"
+      ],
+      "when": {
+        "passed": [
+          "M015"
+        ],
+        "minLevel": 5,
+        "minClues": 3
+      }
+    },
+    {
+      "id": "tessmore_officers",
+      "category": "politics",
+      "from": "guard_lead",
+      "subject": "My night lads",
+      "body": "I hear you're taking nights in-house. Two of my officers are the best you've had. Will you see them right?",
+      "when": {
+        "passed": [
+          "M019"
+        ]
+      },
+      "deadlineWeeks": 1,
+      "defaultChoice": "ignore",
+      "choices": [
+        {
+          "id": "apply",
+          "label": "Tell him they are welcome to apply and will be assessed like everyone else",
+          "outcome": "Both apply. One is hired on merit; Callum thanks you for being straight with him.",
+          "relations": {
+            "guard_lead": 2,
+            "hr_director": 2
+          }
+        },
+        {
+          "id": "promise",
+          "label": "Promise both of them jobs",
+          "outcome": "HR has to explain to twelve other applicants why two posts were never open. Priyanka is not pleased.",
+          "relations": {
+            "guard_lead": 4,
+            "hr_director": -6
+          },
+          "effects": {
+            "StaffMorale": -2
+          }
+        },
+        {
+          "id": "ignore",
+          "label": "Leave it",
+          "outcome": "The officers hear nothing and assume the worst. One leaves Tessmore early, and nights are short-handed for a week.",
+          "relations": {
+            "guard_lead": -3
+          },
+          "effects": {
+            "SecurityPosture": -1
+          }
+        }
+      ]
     }
   ],
   "fallout": [
@@ -350,6 +618,41 @@
         "InsurerConfidence": -4,
         "IncidentCosts": 4800,
         "Reputation": -1
+      }
+    },
+    {
+      "topic": "workplace",
+      "description": "The handling of \"{mission}\" ({choice}) reaches an employment tribunal claim. The hotel's process is criticised in the hearing.",
+      "effects": {
+        "StaffMorale": -4,
+        "Reputation": -2,
+        "IncidentCosts": 6500
+      }
+    },
+    {
+      "topic": "shrink",
+      "description": "After \"{mission}\" ({choice}), the banquet store keeps losing stock. Finance flags LP in the month-end pack.",
+      "effects": {
+        "LossExposure": 3,
+        "OwnerTrust": -2,
+        "IncidentCosts": 1800
+      }
+    },
+    {
+      "topic": "audit",
+      "description": "The re-audit finds the same gap as \"{mission}\" ({choice}). The regional office puts the hotel on its watch list.",
+      "effects": {
+        "OwnerTrust": -4,
+        "SafetyCompliance": -2
+      }
+    },
+    {
+      "topic": "budget",
+      "description": "The staffing decision in \"{mission}\" ({choice}) shows: nights are thin when an incident needs two people.",
+      "effects": {
+        "SecurityPosture": -3,
+        "StaffMorale": -2,
+        "IncidentCosts": 2400
       }
     }
   ]

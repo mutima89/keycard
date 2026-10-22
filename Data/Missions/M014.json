@@ -224,6 +224,9 @@
       ],
       "findingTitle": "A promise",
       "finding": "She thanks you and writes down your name. The insurer will read it in her lawyer's letter.",
+      "setsFlags": [
+        "m014_promised"
+      ],
       "effects": {
         "InsurerConfidence": -4
       }

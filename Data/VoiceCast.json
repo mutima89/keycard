@@ -214,6 +214,69 @@
       "lang": "en-gb",
       "speed": 1.08,
       "note": "Contractor: quick, cheerful, defensive about paperwork"
+    },
+    "complainant_morland": {
+      "voice": {
+        "af_nicole": 0.6,
+        "bf_lily": 0.4
+      },
+      "lang": "en-gb",
+      "speed": 1.0,
+      "note": "Banquet server: steady, choosing her words"
+    },
+    "captain_pellmore": {
+      "voice": {
+        "bm_daniel": 0.6,
+        "am_eric": 0.4
+      },
+      "lang": "en-gb",
+      "speed": 0.98,
+      "note": "Banquet captain: warm, jokey, then defensive"
+    },
+    "witness_haig": {
+      "voice": {
+        "af_river": 0.5,
+        "bf_isabella": 0.5
+      },
+      "lang": "en-gb",
+      "speed": 0.96,
+      "note": "Banquet server: quiet, precise"
+    },
+    "banquet_manager": {
+      "voice": {
+        "bf_alice": 0.6,
+        "af_kore": 0.4
+      },
+      "lang": "en-gb",
+      "speed": 1.06,
+      "note": "Banquet manager: brisk, busy"
+    },
+    "bartender_albury": {
+      "voice": {
+        "am_liam": 0.6,
+        "bm_lewis": 0.4
+      },
+      "lang": "en-gb",
+      "speed": 1.04,
+      "note": "Banquet bartender: easy-going"
+    },
+    "auditor_solberg": {
+      "voice": {
+        "bf_emma": 0.5,
+        "af_aoede": 0.5
+      },
+      "lang": "en-gb",
+      "speed": 0.92,
+      "note": "Regional auditor: exact, unhurried"
+    },
+    "finance_director": {
+      "voice": {
+        "bm_george": 0.5,
+        "bm_fable": 0.5
+      },
+      "lang": "en-gb",
+      "speed": 0.97,
+      "note": "Director of Finance: dry, numerate"
     }
   },
   "passing": {

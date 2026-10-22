@@ -1,0 +1,522 @@
+{
+  "schema": 1,
+  "id": "M016",
+  "title": "A Complaint About the Captain",
+  "kind": "mission",
+  "topic": "workplace",
+  "minLevel": 5,
+  "opening": {
+    "channel": "email",
+    "from": "hr_director",
+    "at": "lp_office",
+    "text": "Morning. A banquet server has made a written complaint of sexual harassment against her captain. I'd like LP to run the fact-finding with me: interviews, evidence, a report I can decide on. Can you come up to HR at 09:45? Please keep this to the two of us for now. Priyanka"
+  },
+  "briefing": [
+    "09:30, Tuesday. Keziah Morland, a banquet server, has complained in writing about Duncan Pellmore, the banquet captain she works under: comments about her body, a hand on her waist in the ballroom service corridor during Saturday's dinner, and texts late at night.",
+    "Veldane policy: HR owns workplace complaints and the decision; LP carries out fact-finding with HR when asked. Confidential, prompt and fair: interim measures that protect the complainant without penalising her, every party heard, the respondent told the allegations and given a full chance to answer, evidence preserved, findings based on evidence, no retaliation. LP does not decide the sanction. Your authority is 50,000."
+  ],
+  "learningObjectives": [
+    "Supporting an HR-led workplace investigation",
+    "Interim measures that do not punish the complainant",
+    "Findings on the evidence: substantiated, not substantiated, or inconclusive"
+  ],
+  "start": "09:30",
+  "actions": [
+    {
+      "id": "meet_hr",
+      "label": "Meet Priyanka in HR",
+      "kind": "interview",
+      "at": "exec_offices",
+      "spot": "hr_office",
+      "person": "hr_director",
+      "minutes": 6,
+      "required": true,
+      "findingTitle": "Terms of reference",
+      "finding": [
+        "Three allegations: repeated comments about Keziah's body since July; a hand on her waist in the service corridor about 22:15 on Saturday; texts after midnight on four nights. HR leads and decides. LP runs the interviews with HR present, gathers and preserves the evidence, and writes the findings.",
+        "Keziah has asked that her name is kept as private as the process allows. The GM knows a complaint exists, not the names."
+      ],
+      "lines": [
+        {
+          "speaker": "hr_director",
+          "text": "I decide what happens. I need you to tell me what the evidence shows, and only that."
+        }
+      ]
+    },
+    {
+      "id": "interim_measures",
+      "label": "Agree interim measures with HR",
+      "kind": "other",
+      "at": "exec_offices",
+      "spot": "hr_office",
+      "minutes": 4,
+      "requires": [
+        "meet_hr"
+      ],
+      "findingTitle": "Interim measures",
+      "finding": "Until the outcome: Duncan runs the Quay Suite events and has no supervisory contact with Keziah; Celia Wrenfield supervises her section directly. Keziah keeps her shifts, section and hours. Both are told the measures are not a finding and that retaliation is itself a disciplinary matter."
+    },
+    {
+      "id": "move_complainant",
+      "label": "Move Keziah to nights in room service for now",
+      "kind": "other",
+      "at": "exec_offices",
+      "spot": "hr_office",
+      "minutes": 1,
+      "requires": [
+        "meet_hr"
+      ],
+      "findingTitle": "Keziah moved",
+      "finding": "Keziah loses her section, her weekend tips and her daytime hours, for reporting a complaint. Word travels: the banqueting team now knows something happened, and who it happened to.",
+      "effects": {
+        "StaffMorale": -4
+      }
+    },
+    {
+      "id": "interview_complainant",
+      "label": "Interview Keziah with Priyanka",
+      "kind": "interview",
+      "at": "exec_offices",
+      "spot": "hr_office",
+      "person": "complainant_morland",
+      "minutes": 12,
+      "requires": [
+        "meet_hr"
+      ],
+      "required": true,
+      "findingTitle": "Keziah's account",
+      "finding": [
+        "In her own words, signed: since July Duncan has called her \"the pocket rocket\" and commented on her uniform being tight, usually in front of the section. On Saturday at about 22:15, carrying plates in the service corridor, he put his hand on her waist and said \"careful, gorgeous\". She stepped away. Sunniva Haig was behind her.",
+        "Texts on four nights after midnight, which she has kept. She has not replied. She wants it to stop and does not want to lose her section."
+      ],
+      "lines": [
+        {
+          "speaker": "complainant_morland",
+          "text": "I'm not trying to get anyone sacked. I just want to be able to do my job without it."
+        }
+      ]
+    },
+    {
+      "id": "preserve_texts",
+      "label": "Photograph the texts on Keziah's phone, with her consent",
+      "kind": "photograph",
+      "at": "exec_offices",
+      "spot": "hr_office",
+      "minutes": 4,
+      "requires": [
+        "interview_complainant"
+      ],
+      "findingTitle": "Texts preserved",
+      "finding": "With Keziah's consent, the four message threads are photographed with the sender's number, dates and times visible; she keeps her phone. The number matches Duncan's on the staff contact list.",
+      "evidence": "LP-PH-1601",
+      "columns": [
+        "Date",
+        "Time",
+        "Message (summary)"
+      ],
+      "rows": [
+        [
+          "12 Sep",
+          "00:48",
+          "\"Still thinking about you in that waistcoat\""
+        ],
+        [
+          "19 Sep",
+          "01:12",
+          "\"You up? x\""
+        ],
+        [
+          "26 Sep",
+          "00:31",
+          "\"My favourite server x\""
+        ],
+        [
+          "Sat",
+          "01:40",
+          "\"Sorry if I spooked you tonight ;)\""
+        ]
+      ]
+    },
+    {
+      "id": "interview_witness",
+      "label": "Interview Sunniva Haig",
+      "kind": "interview",
+      "at": "ballroom",
+      "spot": "banquet_office",
+      "person": "witness_haig",
+      "minutes": 10,
+      "requires": [
+        "interview_complainant"
+      ],
+      "findingTitle": "Sunniva's account",
+      "finding": [
+        "Signed: on Saturday she was behind Keziah in the service corridor and saw Duncan put his hand on Keziah's waist and say something she didn't hear; Keziah moved away fast. She has heard him call Keziah \"pocket rocket\" at briefings, more than once.",
+        "She adds that \"a girl who left in the spring said he did the same to her\". She did not see that herself."
+      ]
+    },
+    {
+      "id": "check_roster",
+      "label": "Check Saturday's banquet roster",
+      "kind": "check",
+      "at": "ballroom",
+      "spot": "banquet_office",
+      "minutes": 3,
+      "requires": [
+        "meet_hr"
+      ],
+      "findingTitle": "Roster",
+      "finding": "Saturday's Harbourside dinner: Duncan captain 16:00-01:30, Keziah and Sunniva servers 17:00-01:00, section B, served through the ballroom's east service corridor."
+    },
+    {
+      "id": "cctv_corridor",
+      "label": "Review the service corridor camera for Saturday",
+      "kind": "cctvReview",
+      "at": "cctv_room",
+      "spot": "cctv_console",
+      "minutes": 8,
+      "requires": [
+        "meet_hr"
+      ],
+      "findingTitle": "M-02 service corridor, Saturday",
+      "finding": "22:14:31: Keziah enters from the kitchen lift carrying plates, Sunniva behind her. Duncan steps into her path, his right hand on her waist for about three seconds; she turns away and walks on. There is no trolley in the corridor. No audio. Exported to KC-1601 with its hash.",
+      "evidence": "KC-1601",
+      "custody": "Clip M-02 Saturday 22:10-22:20 exported by you under your own login to write-once USB KC-1601, SHA-256 recorded."
+    },
+    {
+      "id": "tell_names",
+      "label": "Tell Duncan who complained and what Sunniva said",
+      "kind": "other",
+      "at": "ballroom",
+      "spot": "banquet_office",
+      "minutes": 1,
+      "requires": [
+        "interview_witness"
+      ],
+      "findingTitle": "Confidentiality broken",
+      "finding": "Before he has been interviewed, Duncan knows who complained and who backed her up. By the evening Sunniva has been left off the weekend roster \"by mistake\".",
+      "effects": {
+        "StaffMorale": -3
+      }
+    },
+    {
+      "id": "interview_respondent",
+      "label": "Interview Duncan with Priyanka",
+      "kind": "interview",
+      "at": "exec_offices",
+      "spot": "hr_office",
+      "person": "captain_pellmore",
+      "minutes": 14,
+      "requires": [
+        "interview_complainant"
+      ],
+      "required": true,
+      "findingTitle": "Duncan's response",
+      "finding": [
+        "Told each allegation in writing in advance, accompanied by a colleague of his choice as the policy allows. He denies anything sexual: the hand was \"guiding her past a trolley\". He admits the nicknames (\"banter, everyone has one\") and the texts (\"just being friendly\").",
+        "Shown the still from M-02, he says he does not remember it that way. He is told not to discuss the case with anyone in the team, and that retaliation is a separate disciplinary matter."
+      ],
+      "lines": [
+        {
+          "speaker": "captain_pellmore",
+          "text": "Twelve years I've run that room. Ask anyone. It was a joke, that's all it ever is."
+        }
+      ]
+    },
+    {
+      "id": "write_findings",
+      "label": "Write the fact-finding report",
+      "kind": "logEvidence",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 10,
+      "requires": [
+        "interview_respondent"
+      ],
+      "required": true,
+      "findingTitle": "Findings to HR",
+      "finding": "Each allegation, the evidence for and against, and a finding: touching substantiated (CCTV, witness, no trolley); nicknames substantiated (witness, admitted); texts substantiated (photos, admitted). The spring leaver's story recorded as unverified hearsay. No sanction recommended: that is HR's decision."
+    },
+    {
+      "id": "brief_hr",
+      "label": "Hand the report to Priyanka",
+      "kind": "interview",
+      "at": "exec_offices",
+      "spot": "hr_office",
+      "person": "hr_director",
+      "minutes": 5,
+      "requires": [
+        "write_findings"
+      ],
+      "findingTitle": "Handover",
+      "finding": "Priyanka takes the report and the evidence log, will decide the outcome under the disciplinary policy, and asks LP to check in with Keziah and Sunniva in a fortnight, and to watch the rosters for anything that looks like payback."
+    }
+  ],
+  "questions": [
+    {
+      "id": "d_lead",
+      "prompt": "Who runs this complaint?",
+      "dimension": "Procedure",
+      "competency": "PeopleLeadership",
+      "weight": 8,
+      "options": [
+        {
+          "id": "hr",
+          "label": "HR leads and decides; LP carries out the fact-finding with HR present and reports the evidence.",
+          "score": 100,
+          "feedback": "The roles are separate on purpose: the people gathering evidence are not the people deciding the sanction."
+        },
+        {
+          "id": "lp",
+          "label": "LP investigates, decides and tells HR the outcome.",
+          "score": 30,
+          "feedback": "LP has no authority to decide employment outcomes, and doing both undermines the fairness of each."
+        },
+        {
+          "id": "informal",
+          "label": "Celia has a quiet word with Duncan and it goes no further.",
+          "score": 10,
+          "feedback": "A written complaint of harassment needs a proper process. An informal word leaves Keziah unprotected and the hotel exposed."
+        }
+      ]
+    },
+    {
+      "id": "d_interim",
+      "prompt": "What interim measures do you agree with HR?",
+      "dimension": "Care",
+      "competency": "PeopleLeadership",
+      "weight": 9,
+      "options": [
+        {
+          "id": "respondent",
+          "label": "Duncan moves to other events with no supervisory contact with Keziah; she keeps her shifts and section.",
+          "score": 100,
+          "feedback": "Separate them without punishing the person who complained, and tell both that this is not a finding."
+        },
+        {
+          "id": "complainant",
+          "label": "Move Keziah to nights until it is sorted out.",
+          "score": 15,
+          "feedback": "That penalises her for complaining, which looks like retaliation and discourages everyone else from speaking up."
+        },
+        {
+          "id": "suspend",
+          "label": "Suspend Duncan without pay today.",
+          "score": 40,
+          "feedback": "Suspension can be right in serious cases, under the policy and usually on full pay. Without pay, before he has been heard, it prejudges the outcome."
+        }
+      ]
+    },
+    {
+      "id": "d_order",
+      "kind": "order",
+      "prompt": "Put the fact-finding in order",
+      "dimension": "Procedure",
+      "competency": "Investigation",
+      "weight": 8,
+      "explanation": "Hear the complainant first so you know what is alleged, then the witnesses and the records while they are fresh, and put everything to the respondent last so he can answer all of it.",
+      "options": [
+        {
+          "id": "o1",
+          "label": "Interview the complainant"
+        },
+        {
+          "id": "o2",
+          "label": "Interview the witness"
+        },
+        {
+          "id": "o3",
+          "label": "Preserve and review the CCTV and the texts"
+        },
+        {
+          "id": "o4",
+          "label": "Interview the respondent with the allegations and the evidence"
+        }
+      ]
+    },
+    {
+      "id": "d_finding",
+      "prompt": "What do you find on the evidence?",
+      "dimension": "Evidence",
+      "competency": "Investigation",
+      "weight": 9,
+      "options": [
+        {
+          "id": "evidence",
+          "label": "Touching, nicknames and texts substantiated; the spring leaver's story noted as unverified hearsay.",
+          "score": 100,
+          "feedback": "Each finding rests on evidence: the clip and a witness for the corridor, a witness and his admission for the nicknames, the photos and his admission for the texts."
+        },
+        {
+          "id": "denied",
+          "label": "Not substantiated: he denies anything sexual.",
+          "score": 10,
+          "feedback": "A denial is not evidence against the clip, a witness and his own admissions."
+        },
+        {
+          "id": "pattern",
+          "label": "Substantiated, and he has done it to other staff before.",
+          "score": 30,
+          "feedback": "Nobody has seen or reported another case. Hearsay can prompt a separate inquiry; it cannot be a finding here."
+        }
+      ]
+    },
+    {
+      "id": "r_what",
+      "prompt": "Findings report, summary (one line)",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 6,
+      "section": "what",
+      "options": [
+        {
+          "id": "facts",
+          "label": "Three allegations against D. Pellmore examined with HR; all three substantiated on CCTV KC-1601, a witness statement, photos LP-PH-1601 and his admissions; sanction for HR.",
+          "score": 100,
+          "feedback": "What was examined, what was found, on what evidence, and whose decision comes next."
+        },
+        {
+          "id": "guilty",
+          "label": "Duncan Pellmore is guilty of sexual harassment and should be dismissed.",
+          "score": 25,
+          "feedback": "Fact-finding reports findings on the evidence. Labels and sanctions are for the decision-maker."
+        },
+        {
+          "id": "vague",
+          "label": "Concerns raised about banqueting behaviour; under review.",
+          "score": 20,
+          "feedback": "Too vague to decide on."
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "c_interim",
+      "label": "Protect early",
+      "kind": "before",
+      "action": "interim_measures",
+      "other": "interview_respondent",
+      "dimension": "Care",
+      "competency": "PeopleLeadership",
+      "weight": 8,
+      "pass": "Interim measures were in place before Duncan was told of the complaint.",
+      "fail": "Duncan learned of the complaint while still supervising Keziah."
+    },
+    {
+      "id": "c_no_move",
+      "label": "Don't punish the complainant",
+      "kind": "notDone",
+      "action": "move_complainant",
+      "dimension": "Compliance",
+      "competency": "PeopleLeadership",
+      "weight": 9,
+      "pass": "Keziah kept her shifts and her section.",
+      "fail": "Keziah lost her section for making a complaint."
+    },
+    {
+      "id": "c_confidential",
+      "label": "Confidentiality",
+      "kind": "notDone",
+      "action": "tell_names",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 9,
+      "pass": "Names and statements were shared only within the process.",
+      "fail": "You told the respondent who complained and what the witness said."
+    },
+    {
+      "id": "c_evidence_first",
+      "label": "Evidence before the respondent",
+      "kind": "before",
+      "action": "cctv_corridor",
+      "other": "interview_respondent",
+      "dimension": "Evidence",
+      "competency": "Investigation",
+      "weight": 8,
+      "pass": "You had the clip before you put the allegations to Duncan.",
+      "fail": "You interviewed Duncan without the CCTV, so he answered an allegation you could not test."
+    },
+    {
+      "id": "c_witness",
+      "label": "Hear the witness",
+      "kind": "done",
+      "action": "interview_witness",
+      "dimension": "Evidence",
+      "competency": "Investigation",
+      "weight": 7,
+      "pass": "The named witness gave a signed account.",
+      "fail": "Nobody asked the witness Keziah named."
+    },
+    {
+      "id": "c_texts",
+      "label": "Preserve the texts",
+      "kind": "done",
+      "action": "preserve_texts",
+      "dimension": "Evidence",
+      "competency": "EvidenceReporting",
+      "weight": 5,
+      "pass": "The texts were photographed with consent, with the number and times visible.",
+      "fail": "The texts were never preserved."
+    },
+    {
+      "id": "c_roster",
+      "label": "Check the roster",
+      "kind": "done",
+      "action": "check_roster",
+      "dimension": "Procedure",
+      "competency": "Investigation",
+      "weight": 7,
+      "pass": "The roster puts all three in the corridor's section on Saturday.",
+      "fail": "You never confirmed who was working where."
+    },
+    {
+      "id": "c_handover",
+      "label": "Hand over to the decision-maker",
+      "kind": "done",
+      "action": "brief_hr",
+      "dimension": "Communication",
+      "competency": "PeopleLeadership",
+      "weight": 7,
+      "pass": "HR has the findings and the evidence log, and LP is watching for retaliation.",
+      "fail": "The findings never reached the person who decides."
+    }
+  ],
+  "bestOrder": [
+    "meet_hr",
+    "interim_measures",
+    "check_roster",
+    "interview_complainant",
+    "preserve_texts",
+    "interview_witness",
+    "cctv_corridor",
+    "interview_respondent",
+    "write_findings",
+    "brief_hr"
+  ],
+  "debrief": {
+    "whatHappened": "A written harassment complaint against a long-serving captain. You and HR protected the complainant without moving her, heard her, the witness and the CCTV, put everything to the respondent, and reported findings on the evidence. HR decides what happens next.",
+    "bestPractice": [
+      "HR leads and decides; LP gathers the facts when asked.",
+      "Interim measures protect the complainant and do not penalise her.",
+      "Keep it confidential: names and statements stay inside the process.",
+      "Complainant, witnesses and records first; then the respondent, with every allegation and a fair chance to answer.",
+      "Findings rest on evidence. Hearsay can start a new inquiry, never end this one.",
+      "Watch for retaliation after the outcome."
+    ],
+    "why": "Workplace investigations are judged on fairness as much as on findings. A process that punishes the complainant or ambushes the respondent fails both, and fails everyone who is deciding whether to speak up next time.",
+    "commonMistakes": [
+      "Moving the complainant \"for her own good\".",
+      "Telling the respondent who said what.",
+      "Interviewing the respondent before the evidence is in.",
+      "Writing conclusions and sanctions instead of findings."
+    ]
+  },
+  "procedureCards": [
+    "workplace_investigation"
+  ],
+  "reportAt": "lp_office",
+  "passMark": 60,
+  "xp": 300,
+  "weeks": 2,
+  "lesson": "Protect, hear everyone, test it against the evidence, and let HR decide."
+}

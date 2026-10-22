@@ -343,6 +343,28 @@
         "No extinguisher at the work",
         "Leaving detectors isolated overnight"
       ]
+    },
+    {
+      "id": "workplace_investigation",
+      "title": "Workplace investigation with HR",
+      "topic": "workplace",
+      "steps": [
+        "HR owns the complaint and the decision; LP gathers the facts when asked, with HR present.",
+        "Agree written terms of reference: each allegation, who is involved, who decides.",
+        "Put interim measures in place that protect the complainant without penalising them.",
+        "Keep it confidential: names and statements stay inside the process.",
+        "Interview the complainant, then the witnesses, and preserve records (CCTV, messages, rosters) while they exist.",
+        "Give the respondent every allegation and the evidence, a companion as the policy allows, and a full chance to answer.",
+        "Write findings for each allegation on the evidence: substantiated, not substantiated or inconclusive. No sanctions.",
+        "Hand over to the decision-maker, then check for retaliation."
+      ],
+      "why": "A fair process protects the complainant, the respondent and the hotel. People decide whether to report the next problem by watching how this one was handled.",
+      "pitfalls": [
+        "Moving the complainant",
+        "Revealing who said what",
+        "Interviewing the respondent before the evidence",
+        "Treating hearsay as a finding"
+      ]
     }
   ]
 }

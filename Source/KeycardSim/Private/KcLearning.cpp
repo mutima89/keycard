@@ -275,6 +275,52 @@ const EndingDef* ChooseEnding(const GameState& State, const std::vector<EndingDe
 	return nullptr;
 }
 
+// ---------------------------------------------------------------- classroom sets
+
+bool ClassroomFromJson(const std::string& Text, const std::string& SourceName, std::vector<ClassroomSet>& Out, std::vector<std::string>& OutErrors)
+{
+	const size_t Before = OutErrors.size();
+	JsonValue Doc;
+	if (!json::ParseDoc(Text, SourceName, Doc, OutErrors)) return false;
+	std::vector<ClassroomSet> Sets;
+	{
+		Reader R(Doc, SourceName, OutErrors);
+		json::Schema(R);
+		for (const JsonValue& V : R.Items("sets", true))
+		{
+			ClassroomSet C;
+			Reader CR(V, SourceName + " set", OutErrors);
+			CR.Str("id", C.Id, true);
+			CR.Str("title", C.Title, true);
+			CR.Text("description", C.Description, true);
+			CR.Strings("missions", C.Missions);
+			Sets.push_back(C);
+		}
+	}
+	Out = std::move(Sets);
+	return OutErrors.size() == Before;
+}
+
+std::vector<std::string> ValidateClassroom(const std::vector<ClassroomSet>& Sets, const MissionCatalogue* Missions)
+{
+	std::vector<std::string> Out;
+	std::set<std::string> Ids;
+	for (const ClassroomSet& C : Sets)
+	{
+		const std::string P = "Classroom.json '" + C.Id + "'";
+		if (!json::IsLowerId(C.Id) || !Ids.insert(C.Id).second) Out.push_back(P + ": id missing, not lower-case or duplicated");
+		if (C.Missions.empty()) Out.push_back(P + ": needs at least one mission");
+		std::set<std::string> Seen;
+		for (const std::string& M : C.Missions)
+		{
+			if (Missions && !Missions->Find(M)) Out.push_back(P + ": unknown mission '" + M + "'");
+			if (!Seen.insert(M).second) Out.push_back(P + ": mission '" + M + "' listed twice");
+		}
+	}
+	if (Sets.empty()) Out.push_back("Classroom.json: needs at least one set");
+	return Out;
+}
+
 // ---------------------------------------------------------------- review and certificate
 
 PerformanceReview MakeReview(const GameState& State, const PeopleCatalogue& People)

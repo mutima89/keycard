@@ -36,6 +36,11 @@ FKcScreenParts BackgroundPicker(AKcHUD* Hud, EKcDifficulty Difficulty);
 FKcScreenParts PauseMenu(AKcHUD* Hud);
 FKcScreenParts Settings(AKcHUD* Hud, TFunction<void()> OnBack);
 FKcScreenParts Credits(AKcHUD* Hud, TFunction<void()> OnBack);
+FKcScreenParts ChallengePicker(AKcHUD* Hud);
+FKcScreenParts ClassroomPicker(AKcHUD* Hud);
+FKcScreenParts Leaderboard(AKcHUD* Hud, TFunction<void()> OnBack);
+FKcScreenParts Ending(AKcHUD* Hud);
+FKcScreenParts ChallengeResult(AKcHUD* Hud);
 
 // ---- General ----
 FKcScreenParts Document(const FText& Title, const FText& Subtitle, const FText& Body, TFunction<void()> OnClose);

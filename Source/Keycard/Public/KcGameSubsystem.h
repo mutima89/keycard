@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "KcGameState.h"
+#include "KcLearning.h"
 #include "KcTypes.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "KcGameSubsystem.generated.h"
@@ -28,6 +29,14 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Keycard")
 	bool HasGame() const { return bHasGame; }
+
+	// ---- Challenge modes: survival, daily, classroom (a set from Data/Classroom.json) ----
+	// Starts one with full authority. It saves beside the career (<slot>_challenge), never over it.
+	bool NewChallenge(kc::EGameMode Mode, const FString& ClassroomSetId = FString());
+	bool IsChallenge() const { return bHasGame && State.Challenge.Mode != kc::EGameMode::Career; }
+	FString GetChallengeTitle() const { return ChallengeTitle; }
+	// Once the challenge is over, adds it to the leaderboard (once) and returns true.
+	bool RecordChallengeIfOver();
 
 	UFUNCTION(BlueprintPure, Category = "Keycard")
 	EKcDifficulty GetDifficulty() const;
@@ -74,4 +83,6 @@ private:
 
 	kc::GameState State;
 	bool bHasGame = false;
+	FString ChallengeTitle;
+	bool bChallengeRecorded = false;
 };

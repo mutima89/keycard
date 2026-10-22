@@ -44,9 +44,70 @@ void UKcGameSubsystem::NewGame(EKcDifficulty Difficulty, const FString& ProfileN
 		Campaign->InitWorldFor(State);
 	}
 	bHasGame = true;
+	ChallengeTitle.Empty();
 	ApplySettings(false);
 	UE_LOG(LogKeycard, Display, TEXT("New game: %s, seed %llu"), *ProfileName, UseSeed);
 	AfterAction(true);
+}
+
+bool UKcGameSubsystem::NewChallenge(kc::EGameMode Mode, const FString& ClassroomSetId)
+{
+	const UKcCampaignSubsystem* Campaign = GetGameInstance()->GetSubsystem<UKcCampaignSubsystem>();
+	if (!Campaign || Campaign->GetCatalogue().Missions.empty() || Mode == kc::EGameMode::Career) return false;
+	const kc::ClassroomSet* Set = nullptr;
+	if (Mode == kc::EGameMode::Classroom)
+	{
+		for (const kc::ClassroomSet& C : Campaign->GetClassroom())
+		{
+			if (ToFString(C.Id) == ClassroomSetId) Set = &C;
+		}
+		if (!Set) return false;
+	}
+	// The player's settings carry over; the career save is not touched (Save writes the challenge slot).
+	const kc::PlayerSettings Settings = State.Settings;
+	const bool bKeepSettings = bHasGame;
+	const FString Date = FDateTime::Now().ToString(TEXT("%Y-%m-%d"));
+	State = kc::NewGame("Challenger", kc::EBackground::FrontOffice, kc::EDifficulty::Professional, static_cast<uint64>(FDateTime::UtcNow().GetTicks()));
+	if (bKeepSettings) State.Settings = Settings;
+	Campaign->InitWorldFor(State);
+	if (Set)
+	{
+		kc::StartCustomChallenge(State, Set->Missions);
+		State.Challenge.Date = ToStd(Date);
+		ChallengeTitle = ToFString(Set->Title);
+	}
+	else
+	{
+		kc::StartChallenge(State, Campaign->GetCatalogue(), Mode, ToStd(Date));
+		ChallengeTitle = Mode == kc::EGameMode::Daily ? FString::Printf(TEXT("Daily cases, %s"), *Date) : FString(TEXT("Survival night shift"));
+	}
+	bHasGame = true;
+	bChallengeRecorded = false;
+	ApplySettings(false);
+	UE_LOG(LogKeycard, Display, TEXT("Challenge: %s, %d cases"), *ChallengeTitle, static_cast<int32>(State.Challenge.Sequence.size()));
+	AfterAction(true);
+	return true;
+}
+
+bool UKcGameSubsystem::RecordChallengeIfOver()
+{
+	if (!IsChallenge() || !State.Challenge.bOver) return false;
+	if (bChallengeRecorded) return true;
+	bChallengeRecorded = true;
+	if (UKcSaveSubsystem* Save = GetGameInstance()->GetSubsystem<UKcSaveSubsystem>())
+	{
+		std::vector<kc::LeaderboardEntry> Entries = Save->LoadLeaderboard();
+		kc::LeaderboardEntry E;
+		E.Mode = kc::ToString(State.Challenge.Mode);
+		E.Profile = State.ProfileName;
+		E.Detail = ToStd(ChallengeTitle);
+		E.Points = State.Challenge.Points;
+		E.Weeks = static_cast<int>(State.Campaign.Records.size());
+		E.When = State.Challenge.Date;
+		kc::AddToLeaderboard(Entries, E);
+		Save->SaveLeaderboard(Entries);
+	}
+	return true;
 }
 
 EKcLoadOutcome UKcGameSubsystem::Continue(FString& OutMessage)

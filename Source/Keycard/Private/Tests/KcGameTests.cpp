@@ -12,8 +12,10 @@
 #include "KcCampaignSubsystem.h"
 #include "KcConvert.h"
 #include "KcGameSubsystem.h"
+#include "KcLearning.h"
 #include "KcSaveSubsystem.h"
 #include "KcVoice.h"
+#include "Misc/Paths.h"
 
 using namespace KcConvert;
 
@@ -174,6 +176,44 @@ bool FKcVoiceTest::RunTest(const FString& Parameters)
 	TestEqual(TEXT("key"), ToFString(kc::VoiceLineKey("priya", "Two cases in. How are you?")), FString(TEXT("priya_4001ff99")));
 	TestNull(TEXT("missing clip"), UKcAudioSubsystem::FindVoice(TEXT("nobody_00000000")));
 	TestNull(TEXT("empty key"), UKcAudioSubsystem::FindVoice(FString()));
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FKcChallengeTest, "Keycard.Challenge.ClassroomSavesBesideTheCareer", GameFlags)
+bool FKcChallengeTest::RunTest(const FString& Parameters)
+{
+	FString CareerPath, ChallengePath;
+	{
+		FGameSession S; // a new career, autosaved to the test slot
+		if (!TestTrue(TEXT("classroom sets loaded"), S.Campaign && !S.Campaign->GetClassroom().empty())) return false;
+		const kc::ClassroomSet& Set = S.Campaign->GetClassroom().front();
+		if (!TestTrue(TEXT("classroom challenge starts"), S.Game->NewChallenge(kc::EGameMode::Classroom, ToFString(Set.Id)))) return false;
+		TestTrue(TEXT("in a challenge"), S.Game->IsChallenge());
+		TestEqual(TEXT("the set's cases, in order"), static_cast<int32>(S.Game->GetState().Challenge.Sequence.size()), static_cast<int32>(Set.Missions.size()));
+		for (const std::string& Id : Set.Missions)
+		{
+			TestFalse(TEXT("not over before the last case"), S.Game->RecordChallengeIfOver());
+			if (!S.PlayBest(*this, *ToFString(Id))) return false;
+		}
+		TestTrue(TEXT("over after the last case, and recorded"), S.Game->RecordChallengeIfOver());
+		const std::vector<kc::LeaderboardEntry> Board = S.Saves->LoadLeaderboard();
+		TestTrue(TEXT("leaderboard has the result"), !Board.empty() && Board.front().Mode == "classroom" && Board.front().Points > 0);
+		CareerPath = S.Saves->GetSlotPath();
+		ChallengePath = S.Saves->GetChallengePath();
+		TestTrue(TEXT("challenge saved to its own slot"), IFileManager::Get().FileExists(*ChallengePath));
+	}
+	{
+		FGameSession S(false);
+		FString Message;
+		const EKcLoadOutcome Outcome = S.Saves->Load(Message);
+		TestTrue(TEXT("career still loads: ") + Message, Outcome == EKcLoadOutcome::Ok || Outcome == EKcLoadOutcome::RecoveredFromBackup);
+		TestFalse(TEXT("the career is not the challenge"), S.Game->IsChallenge());
+		TestEqual(TEXT("career untouched at level 1"), S.Game->GetLevel(), 1);
+	}
+	// The test's own slot only.
+	IFileManager::Get().Delete(*CareerPath);
+	IFileManager::Get().Delete(*ChallengePath);
+	IFileManager::Get().Delete(*FPaths::Combine(FPaths::GetPath(CareerPath), TEXT("uetest_leaderboard.txt")));
 	return true;
 }
 

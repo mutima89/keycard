@@ -14,6 +14,7 @@
 #include "KcGameSubsystem.h"
 #include "KcHUD.h"
 #include "KcHotel.h"
+#include "KcLearning.h"
 #include "KcSaveSubsystem.h"
 #include "Styling/CoreStyle.h"
 #include "Widgets/Input/SButton.h"
@@ -465,6 +466,7 @@ FKcScreenParts MainMenu(AKcHUD* Hud)
 		}), &First, true, true), 8.0f);
 	}
 	AddRow(Box, MakeButton(LOCTEXT("NewGame", "New career"), Click([Hud]() { Hud->ShowDifficultyPicker(); }), bHasSave ? nullptr : &First, true, !bHasSave), 8.0f);
+	AddRow(Box, MakeButton(LOCTEXT("Challenges", "Challenges"), Click([Hud]() { Hud->ShowChallengePicker(); })), 8.0f);
 	AddRow(Box, MakeButton(LOCTEXT("Settings", "Settings"), Click([Hud]() { Hud->OpenSettings([Hud]() { Hud->ShowMainMenu(); }); })), 8.0f);
 	AddRow(Box, MakeButton(LOCTEXT("MenuCredits", "Credits"), Click([Hud]() { Hud->OpenCredits([Hud]() { Hud->ShowMainMenu(); }); })), 8.0f);
 	AddRow(Box, MakeButton(LOCTEXT("Quit", "Quit"), Click([Hud]() { Hud->QuitToDesktop(); })), 16.0f);
@@ -626,6 +628,149 @@ FKcScreenParts Credits(AKcHUD* Hud, TFunction<void()> OnBack)
 	Root->AddSlot().FillHeight(1.0f)[Scrolling(Box)];
 	Root->AddSlot().AutoHeight().Padding(0.0f, Space3, 0.0f, 0.0f).HAlign(HAlign_Right)[MakeButton(LOCTEXT("CreditsBack", "Back"), Click(OnBack), &Back, true, true)];
 	return {MakeModalFrame(Root, 900.0f), Back};
+}
+
+// ---------------------------------------------------------------- challenges and the ending
+
+static FString ModeLabel(const std::string& Mode)
+{
+	FString M = ToFString(Mode);
+	if (!M.IsEmpty()) M[0] = FChar::ToUpper(M[0]);
+	return M;
+}
+
+FKcScreenParts ChallengePicker(AKcHUD* Hud)
+{
+	TSharedPtr<SButton> First;
+	TSharedRef<SVerticalBox> Box = Column();
+	AddRow(Box, MakeEyebrow(LOCTEXT("ChEyebrow", "Challenges")), Space1);
+	AddRow(Box, MakeHeading(LOCTEXT("ChTitle", "Play a challenge")), 4.0f);
+	AddRow(Box, MakeBody(LOCTEXT("ChNote", "Challenges are played with full authority and scored the same way as the career. They save separately: your career is never touched."), 14, TextMuted), 16.0f);
+	AddRow(Box, MakeButton(LOCTEXT("ChSurvival", "Survival night shift"), Click([Hud]() { Hud->StartChallenge(kc::EGameMode::Survival); }), &First, true, true), 2.0f);
+	AddRow(Box, MakeBody(LOCTEXT("ChSurvivalHelp", "A busy night: incident after incident, early cases and crises in a random order, until three are failed. One point for each case passed."), 13, TextMuted), 12.0f);
+	AddRow(Box, MakeButton(LOCTEXT("ChDaily", "Daily cases"), Click([Hud]() { Hud->StartChallenge(kc::EGameMode::Daily); })), 2.0f);
+	AddRow(Box, MakeBody(LOCTEXT("ChDailyHelp", "Three cases chosen by today's date: everyone playing today gets the same three. Points are the scores added up."), 13, TextMuted), 12.0f);
+	const bool bClassroom = CampaignOf(Hud) && !CampaignOf(Hud)->GetClassroom().empty();
+	AddRow(Box, MakeButton(LOCTEXT("ChClassroom", "Classroom"), Click([Hud]() { Hud->ShowClassroomPicker(); }), nullptr, bClassroom), 2.0f);
+	AddRow(Box, MakeBody(LOCTEXT("ChClassroomHelp", "A trainer's set of cases on one subject, in order, the same for everyone in the room. Compare scores in the debrief afterwards."), 13, TextMuted), 12.0f);
+	AddRow(Box, MakeButton(LOCTEXT("ChBoard", "Leaderboard"), Click([Hud]() { Hud->OpenLeaderboard([Hud]() { Hud->ShowChallengePicker(); }); })), 8.0f);
+	AddRow(Box, MakeButton(LOCTEXT("ChBack", "Back"), Click([Hud]() { Hud->ShowMainMenu(); })), 0.0f);
+	return {MakeModalFrame(Box, 680.0f), First};
+}
+
+FKcScreenParts ClassroomPicker(AKcHUD* Hud)
+{
+	TSharedPtr<SButton> First;
+	TSharedRef<SVerticalBox> Box = Column();
+	AddRow(Box, MakeEyebrow(LOCTEXT("ClEyebrow", "Challenges  /  Classroom")), Space1);
+	AddRow(Box, MakeHeading(LOCTEXT("ClTitle", "Choose the set")), 16.0f);
+	if (const UKcCampaignSubsystem* C = CampaignOf(Hud))
+	{
+		for (const kc::ClassroomSet& Set : C->GetClassroom())
+		{
+			const FString Id = ToFString(Set.Id);
+			AddRow(Box, MakeButton(FText::FromString(FString::Printf(TEXT("%s  (%d cases)"), *ToFString(Set.Title), static_cast<int32>(Set.Missions.size()))),
+				Click([Hud, Id]() { Hud->StartChallenge(kc::EGameMode::Classroom, Id); }), First.IsValid() ? nullptr : &First, true, !First.IsValid()), 2.0f);
+			AddRow(Box, MakeBody(FText::FromString(ToFString(Set.Description)), 13, TextMuted), 12.0f);
+		}
+	}
+	AddRow(Box, MakeButton(LOCTEXT("ClBack", "Back"), Click([Hud]() { Hud->ShowChallengePicker(); })), 0.0f);
+	TSharedRef<SVerticalBox> Root = Column();
+	Root->AddSlot().FillHeight(1.0f)[Scrolling(Box)];
+	return {MakeModalFrame(Root, 720.0f), First};
+}
+
+FKcScreenParts Leaderboard(AKcHUD* Hud, TFunction<void()> OnBack)
+{
+	TSharedPtr<SButton> Back;
+	TSharedRef<SVerticalBox> Box = Column();
+	AddRow(Box, MakeEyebrow(LOCTEXT("LbEyebrow", "Challenges")), Space1);
+	AddRow(Box, MakeHeading(LOCTEXT("LbTitle", "Leaderboard")), 4.0f);
+	AddRow(Box, MakeBody(LOCTEXT("LbNote", "Your best results on this PC, by mode. Nothing is sent anywhere."), 14, TextMuted), Space4);
+	const std::vector<kc::LeaderboardEntry> Entries = Hud->Saves()->LoadLeaderboard();
+	if (Entries.empty())
+	{
+		AddRow(Box, MakeBody(LOCTEXT("LbEmpty", "No challenges finished yet."), 14, TextMuted), Space4);
+	}
+	else
+	{
+		std::vector<std::vector<std::string>> Rows;
+		for (const kc::LeaderboardEntry& E : Entries)
+		{
+			Rows.push_back({ToStd(ModeLabel(E.Mode)), std::to_string(E.Points), E.Detail, std::to_string(E.Weeks), E.When});
+		}
+		AddRow(Box, Table({"Mode", "Points", "Challenge", "Cases played", "Date"}, Rows), Space4);
+	}
+	TSharedRef<SVerticalBox> Root = Column();
+	Root->AddSlot().FillHeight(1.0f)[Scrolling(Box)];
+	Root->AddSlot().AutoHeight().Padding(0.0f, Space3, 0.0f, 0.0f).HAlign(HAlign_Right)[MakeButton(LOCTEXT("LbBack", "Back"), Click(OnBack), &Back, true, true)];
+	return {MakeModalFrame(Root, 860.0f), Back};
+}
+
+FKcScreenParts ChallengeResult(AKcHUD* Hud)
+{
+	const kc::GameState& S = Hud->Game()->GetState();
+	const kc::ChallengeState& Ch = S.Challenge;
+	TSharedPtr<SButton> First;
+	TSharedRef<SVerticalBox> Box = Column();
+	AddRow(Box, MakeEyebrow(FText::FromString(FString::Printf(TEXT("Challenge over  /  %s"), *ModeLabel(kc::ToString(Ch.Mode))))), Space1);
+	AddRow(Box, MakeHeading(FText::FromString(Hud->Game()->GetChallengeTitle())), 4.0f);
+	const FString Line = Ch.Mode == kc::EGameMode::Survival
+		? FString::Printf(TEXT("%d cases passed before the third failure."), Ch.Points)
+		: FString::Printf(TEXT("%d points from %d cases."), Ch.Points, static_cast<int32>(Ch.Sequence.size()));
+	AddRow(Box, WrappedLine(Line, 18, TextPrimary), Space4);
+	std::vector<std::vector<std::string>> Rows;
+	for (const kc::MissionRecord& R : S.Campaign.Records)
+	{
+		Rows.push_back({R.MissionId, std::to_string(R.Score), R.bPassed ? "Passed" : "Not passed"});
+	}
+	if (!Rows.empty()) AddRow(Box, Table({"Case", "Score", "Result"}, Rows), Space4);
+	AddRow(Box, MakeBody(LOCTEXT("ResNote", "Saved to the leaderboard. Each debrief explains what best practice looked like and why."), 13, TextMuted), Space4);
+	AddRow(Box, MakeButton(LOCTEXT("ResBoard", "Leaderboard"), Click([Hud]() { Hud->OpenLeaderboard([Hud]() { Hud->CloseScreen(); Hud->OpenChallengeResult(); }); })), 8.0f);
+	AddRow(Box, MakeButton(LOCTEXT("ResMenu", "Main menu"), Click([Hud]() { Hud->CloseScreen(); Hud->ShowMainMenu(); }), &First, true, true), 0.0f);
+	TSharedRef<SVerticalBox> Root = Column();
+	Root->AddSlot().FillHeight(1.0f)[Scrolling(Box)];
+	return {MakeModalFrame(Root, 760.0f), First};
+}
+
+FKcScreenParts Ending(AKcHUD* Hud)
+{
+	const UKcCampaignSubsystem* C = CampaignOf(Hud);
+	const kc::GameState& S = Hud->Game()->GetState();
+	const kc::PerformanceReview R = kc::MakeReview(S, C->GetWorldContent().People);
+	const kc::EndingDef* E = kc::ChooseEnding(S, C->GetEndings());
+	TSharedPtr<SButton> First;
+	TSharedRef<SVerticalBox> Box = Column();
+	AddRow(Box, MakeEyebrow(LOCTEXT("EndEyebrow", "Your career  /  the ending you earned")), Space1);
+	AddRow(Box, MakeHeading(FText::FromString(E ? ToFString(E->Title) : FString(TEXT("The end of the shift"))), 30), Space3);
+	if (E)
+	{
+		TArray<FString> Paragraphs;
+		ToFString(E->Epilogue).ParseIntoArray(Paragraphs, TEXT("\n\n"));
+		for (const FString& P : Paragraphs) AddRow(Box, WrappedLine(P, 16, P.StartsWith(TEXT("Lesson:")) ? Accent : TextPrimary, 780.0f), Space3);
+	}
+	AddGap(Box, Space3);
+	AddRow(Box, MakeHeading(LOCTEXT("EndReview", "Performance review"), 18), Space2);
+	AddRow(Box, WrappedLine(FString::Printf(TEXT("%s.  %d cases passed, average score %d.  %d Field Manual cards.  %d incidents came back, %d were headed off."),
+		*ToFString(R.Title), R.MissionsPassed, R.AverageScore, R.CardsEarned, R.IncidentsOccurred, R.IncidentsAvoided), 14, TextMuted, 780.0f), Space3);
+	if (!R.Summary.empty()) AddRow(Box, WrappedLine(ToFString(R.Summary), 14, TextPrimary, 780.0f), Space3);
+	AddBullets(Box, LOCTEXT("EndStrengths", "Strengths"), ToLines(R.Strengths), Good);
+	AddBullets(Box, LOCTEXT("EndGrowth", "To keep working on"), ToLines(R.Growth), TextPrimary);
+	if (!R.Ally.empty()) AddRow(Box, MakeBody(FText::FromString(TEXT("Closest ally: ") + ToFString(R.Ally)), 14, TextMuted), Space1);
+	if (!R.Strained.empty()) AddRow(Box, MakeBody(FText::FromString(TEXT("Most strained: ") + ToFString(R.Strained)), 14, TextMuted), Space1);
+	TSharedRef<SVerticalBox> Root = Column();
+	Root->AddSlot().FillHeight(1.0f)[Scrolling(Box)];
+	Root->AddSlot().AutoHeight().Padding(0.0f, Space3, 0.0f, 0.0f).HAlign(HAlign_Right)
+	[
+		SNew(SHorizontalBox)
+		+ SHorizontalBox::Slot().AutoWidth().Padding(0.0f, 0.0f, Space2, 0.0f)[MakeButton(LOCTEXT("EndCert", "Save certificate"), Click([Hud]()
+		{
+			const FString Path = Hud->SaveCertificate();
+			Hud->Notice(Path.IsEmpty() ? FString(TEXT("The certificate could not be saved.")) : FString::Printf(TEXT("Certificate saved: %s"), *Path));
+		}))]
+		+ SHorizontalBox::Slot().AutoWidth()[MakeButton(LOCTEXT("EndKeep", "Keep working"), Click([Hud]() { Hud->CloseScreen(); }), &First, true, true)]
+	];
+	return {MakeModalFrame(Root, 900.0f), First};
 }
 
 // ---------------------------------------------------------------- general

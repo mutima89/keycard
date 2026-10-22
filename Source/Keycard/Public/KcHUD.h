@@ -18,7 +18,7 @@ class SWidget;
 class UKcCampaignSubsystem;
 class UKcGameSubsystem;
 class UKcSaveSubsystem;
-namespace kc { struct ActionDef; struct QuestionDef; struct DialogueLine; }
+namespace kc { struct ActionDef; struct QuestionDef; struct DialogueLine; enum class EGameMode; }
 
 UCLASS()
 class KEYCARD_API AKcHUD : public AHUD
@@ -37,6 +37,11 @@ public:
 	// Background: "ex_police", "front_office", "military", "criminology". Starts on B1 in the LP office.
 	void StartNewGame(EKcDifficulty Difficulty, const FString& Background = TEXT("front_office"));
 	EKcLoadOutcome ContinueGame(FString& OutMessage);
+	// Challenge modes from the main menu: survival, daily, a classroom set; and the local leaderboard.
+	void ShowChallengePicker();
+	void ShowClassroomPicker();
+	void StartChallenge(kc::EGameMode Mode, const FString& ClassroomSetId = FString());
+	void OpenLeaderboard(TFunction<void()> OnBack);
 	void OpenPauseMenu();
 	void OpenSettings(TFunction<void()> OnBack);
 	void OpenCredits(TFunction<void()> OnBack);
@@ -69,6 +74,12 @@ public:
 	void OpenReport(const FString& Where);
 	EKcCaseResult FileReport(const FString& Where);
 	void OpenDebrief();
+	// After the capstone: the ending the career earned, the performance review and the certificate.
+	void OpenEnding();
+	// A challenge's result once it is over (recorded on the leaderboard).
+	void OpenChallengeResult();
+	// Writes the career certificate (Markdown) to Saved/Certificates; the path, or "" on failure.
+	FString SaveCertificate();
 	// The lift: choose a floor; the ride fades out, chimes and arrives on the other floor.
 	void OpenLift(int32 FromFloor);
 	void RideLift(int32 ToFloor);
@@ -122,6 +133,8 @@ private:
 	void TickCaseCall();
 	// The promotion ceremony plays once the debrief is closed.
 	void TickCeremony();
+	// Closing a debrief: the ending after the capstone, the result when a challenge is over.
+	void AfterDebrief(const FString& MissionId);
 
 	TSharedPtr<SWidget> CeremonyRoot;
 	double CeremonyEnds = 0.0;

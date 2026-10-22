@@ -64,6 +64,7 @@ bool UKcCampaignSubsystem::LoadFromDisk()
 	std::vector<kc::ProcedureCard> LoadedCards;
 	std::vector<kc::GlossaryTerm> LoadedTerms;
 	std::vector<kc::EndingDef> LoadedEndings;
+	std::vector<kc::ClassroomSet> LoadedClassroom;
 	std::string Text;
 	if (Read(TEXT("People.json"), Text)) kc::PeopleFromJson(Text, "People.json", LoadedWorld.People, Errors);
 	if (Read(TEXT("Story.json"), Text)) kc::StoryFromJson(Text, "Story.json", LoadedWorld.Story, Errors);
@@ -71,10 +72,12 @@ bool UKcCampaignSubsystem::LoadFromDisk()
 	if (Read(TEXT("FieldManual.json"), Text)) kc::FieldManualFromJson(Text, "FieldManual.json", LoadedCards, Errors);
 	if (Read(TEXT("Glossary.json"), Text)) kc::GlossaryFromJson(Text, "Glossary.json", LoadedTerms, Errors);
 	if (Read(TEXT("Endings.json"), Text)) kc::EndingsFromJson(Text, "Endings.json", LoadedEndings, Errors);
+	if (Read(TEXT("Classroom.json"), Text)) kc::ClassroomFromJson(Text, "Classroom.json", LoadedClassroom, Errors);
 	for (const std::string& E : kc::ValidateWorld(LoadedWorld, &LoadedMissions)) Errors.push_back(E);
 	for (const std::string& E : kc::ValidateFieldManual(LoadedCards, &LoadedMissions)) Errors.push_back(E);
 	for (const std::string& E : kc::ValidateGlossary(LoadedTerms, &LoadedMissions)) Errors.push_back(E);
 	for (const std::string& E : kc::ValidateEndings(LoadedEndings)) Errors.push_back(E);
+	for (const std::string& E : kc::ValidateClassroom(LoadedClassroom, &LoadedMissions)) Errors.push_back(E);
 	LoadErrors.Append(ToFStrings(Errors));
 	for (const FString& E : LoadErrors) UE_LOG(LogKeycard, Error, TEXT("Content: %s"), *E);
 
@@ -85,6 +88,7 @@ bool UKcCampaignSubsystem::LoadFromDisk()
 	Cards = bOk ? MoveTemp(LoadedCards) : std::vector<kc::ProcedureCard>();
 	Glossary = bOk ? MoveTemp(LoadedTerms) : std::vector<kc::GlossaryTerm>();
 	Endings = bOk ? MoveTemp(LoadedEndings) : std::vector<kc::EndingDef>();
+	Classroom = bOk ? MoveTemp(LoadedClassroom) : std::vector<kc::ClassroomSet>();
 	KcCast::SetPeople(World.People);
 	UE_LOG(LogKeycard, Display, TEXT("Content: %d missions, %d people, %d cards, %d problems"), static_cast<int32>(Catalogue.Missions.size()),
 		static_cast<int32>(World.People.People.size()), static_cast<int32>(Cards.size()), LoadErrors.Num());

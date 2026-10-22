@@ -1,6 +1,7 @@
 #include "KcSaveSubsystem.h"
 
 #include "HAL/FileManager.h"
+#include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "KcConvert.h"
 #include "KcGameSubsystem.h"
@@ -20,6 +21,32 @@ FString UKcSaveSubsystem::GetSlotPath() const
 	return FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir() / TEXT("SaveGames") / (SlotName + TEXT(".kcsave")));
 }
 
+FString UKcSaveSubsystem::GetChallengePath() const
+{
+	return FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir() / TEXT("SaveGames") / (SlotName + TEXT("_challenge.kcsave")));
+}
+
+static FString LeaderboardPath(const FString& SlotName)
+{
+	return FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir() / TEXT("SaveGames") / (SlotName + TEXT("_leaderboard.txt")));
+}
+
+std::vector<kc::LeaderboardEntry> UKcSaveSubsystem::LoadLeaderboard() const
+{
+	FString Text;
+	if (!FFileHelper::LoadFileToString(Text, *LeaderboardPath(SlotName))) return {};
+	return kc::DeserializeLeaderboard(ToStd(Text));
+}
+
+bool UKcSaveSubsystem::SaveLeaderboard(const std::vector<kc::LeaderboardEntry>& Entries) const
+{
+	const FString Path = LeaderboardPath(SlotName);
+	IFileManager::Get().MakeDirectory(*FPaths::GetPath(Path), true);
+	const bool bOk = FFileHelper::SaveStringToFile(ToFString(kc::SerializeLeaderboard(Entries)), *Path, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
+	UE_LOG(LogKeycard, Display, TEXT("Leaderboard to %s: %s"), *Path, bOk ? TEXT("ok") : TEXT("FAILED"));
+	return bOk;
+}
+
 bool UKcSaveSubsystem::HasSave() const
 {
 	const FString Path = GetSlotPath();
@@ -35,7 +62,7 @@ bool UKcSaveSubsystem::Save(FString& OutError)
 		OutError = TEXT("No game in progress.");
 		return false;
 	}
-	const FString Path = GetSlotPath();
+	const FString Path = Game->IsChallenge() ? GetChallengePath() : GetSlotPath();
 	IFileManager::Get().MakeDirectory(*FPaths::GetPath(Path), true);
 	std::string Error;
 	const bool bOk = kc::SaveGameToFile(ToStd(Path), Game->GetState(), &Error);

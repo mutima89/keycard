@@ -40,6 +40,7 @@ public:
 	const std::vector<kc::ProcedureCard>& GetCards() const { return Cards; }
 	const std::vector<kc::GlossaryTerm>& GetGlossary() const { return Glossary; }
 	const std::vector<kc::EndingDef>& GetEndings() const { return Endings; }
+	const std::vector<kc::ClassroomSet>& GetClassroom() const { return Classroom; }
 	void InitWorldFor(kc::GameState& State) const;
 
 	// ---- People ----
@@ -115,6 +116,7 @@ private:
 	std::vector<kc::ProcedureCard> Cards;
 	std::vector<kc::GlossaryTerm> Glossary;
 	std::vector<kc::EndingDef> Endings;
+	std::vector<kc::ClassroomSet> Classroom;
 	TArray<FString> LoadErrors;
 	TMap<FString, TArray<FString>> ReportDraft;
 	kc::MissionDebrief Debrief;

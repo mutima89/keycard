@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "KcLearning.h"
 #include "KcTypes.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "KcSaveSubsystem.generated.h"
@@ -34,6 +35,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Keycard")
 	EKcLoadOutcome Load(FString& OutMessage);
+
+	// A challenge in progress saves here (<slot>_challenge), so it never overwrites the career.
+	FString GetChallengePath() const;
+	// Local best challenge results (<slot>_leaderboard.txt); nothing leaves the machine.
+	std::vector<kc::LeaderboardEntry> LoadLeaderboard() const;
+	bool SaveLeaderboard(const std::vector<kc::LeaderboardEntry>& Entries) const;
 
 private:
 	FString SlotName = TEXT("slot1");

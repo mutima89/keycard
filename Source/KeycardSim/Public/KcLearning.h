@@ -1,6 +1,6 @@
 // Learning and growth: the Field Manual (procedure cards earned from debriefs), the glossary,
 // skills, endings, the performance review and certificate, challenge modes and the local
-// leaderboard. Content: Data/FieldManual.json, Data/Glossary.json, Data/Endings.json.
+// leaderboard. Content: Data/FieldManual.json, Data/Glossary.json, Data/Endings.json, Data/Classroom.json.
 // Nothing here changes a rubric score or a promotion gate.
 #pragma once
 
@@ -147,6 +147,18 @@ KC_API void StartCustomChallenge(GameState& State, const std::vector<std::string
 KC_API std::string CurrentChallengeMission(const GameState& State);
 KC_API bool AdvanceChallenge(GameState& State, const MissionDebrief& D);
 KC_API bool ChallengeUnlocks(const GameState& State, const std::string& MissionId);
+
+// A trainer's fixed list of cases (classroom mode): everyone in the room plays the same ones.
+struct ClassroomSet
+{
+	std::string Id;
+	std::string Title;
+	std::string Description;
+	std::vector<std::string> Missions;
+};
+
+KC_API bool ClassroomFromJson(const std::string& Text, const std::string& SourceName, std::vector<ClassroomSet>& Out, std::vector<std::string>& OutErrors);
+KC_API std::vector<std::string> ValidateClassroom(const std::vector<ClassroomSet>& Sets, const MissionCatalogue* Missions);
 
 struct LeaderboardEntry
 {

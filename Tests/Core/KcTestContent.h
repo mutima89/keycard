@@ -25,6 +25,7 @@ struct KcContent
 	std::vector<kc::ProcedureCard> Cards;
 	std::vector<kc::GlossaryTerm> Terms;
 	std::vector<kc::EndingDef> Endings;
+	std::vector<kc::ClassroomSet> Classroom;
 	std::vector<std::string> Errors;
 };
 
@@ -55,10 +56,12 @@ inline const KcContent& LoadContent()
 		kc::FieldManualFromJson(Read("FieldManual.json"), "FieldManual.json", Out.Cards, Out.Errors);
 		kc::GlossaryFromJson(Read("Glossary.json"), "Glossary.json", Out.Terms, Out.Errors);
 		kc::EndingsFromJson(Read("Endings.json"), "Endings.json", Out.Endings, Out.Errors);
+		kc::ClassroomFromJson(Read("Classroom.json"), "Classroom.json", Out.Classroom, Out.Errors);
 		for (const std::string& E : kc::ValidateWorld(Out.World, &Out.Missions)) Out.Errors.push_back(E);
 		for (const std::string& E : kc::ValidateFieldManual(Out.Cards, &Out.Missions)) Out.Errors.push_back(E);
 		for (const std::string& E : kc::ValidateGlossary(Out.Terms, &Out.Missions)) Out.Errors.push_back(E);
 		for (const std::string& E : kc::ValidateEndings(Out.Endings)) Out.Errors.push_back(E);
+		for (const std::string& E : kc::ValidateClassroom(Out.Classroom, &Out.Missions)) Out.Errors.push_back(E);
 		return Out;
 	}();
 	return C;

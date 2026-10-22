@@ -25,6 +25,9 @@
 #include "KcVoice.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "KcLearning.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
 #include "Misc/App.h"
 #include "SKcHudOverlay.h"
 #include "SKcInbox.h"
@@ -353,6 +356,46 @@ void AKcHUD::OpenSettings(TFunction<void()> OnBack)
 	};
 	const FKcScreenParts Parts = KcScreens::Settings(this, Back);
 	ShowScreen(Parts.Widget, Parts.Focus, Back, !bFromMenu);
+	bMainMenuOpen = bFromMenu;
+}
+
+void AKcHUD::ShowChallengePicker()
+{
+	const FKcScreenParts Parts = KcScreens::ChallengePicker(this);
+	ShowScreen(Parts.Widget, Parts.Focus, [this]() { ShowMainMenu(); }, false);
+	bMainMenuOpen = true;
+}
+
+void AKcHUD::ShowClassroomPicker()
+{
+	const FKcScreenParts Parts = KcScreens::ClassroomPicker(this);
+	ShowScreen(Parts.Widget, Parts.Focus, [this]() { ShowChallengePicker(); }, false);
+	bMainMenuOpen = true;
+}
+
+void AKcHUD::StartChallenge(kc::EGameMode Mode, const FString& ClassroomSetId)
+{
+	if (!Game()->NewChallenge(Mode, ClassroomSetId))
+	{
+		Notice(TEXT("That challenge could not start: the game content did not load."));
+		return;
+	}
+	CloseScreen();
+	ClearNotices();
+	if (const AKcHotel* H = Hotel()) PlacePawn(PlayerOwner.Get(), H->GetPlayerStart());
+	const kc::ChallengeState& Ch = Game()->GetState().Challenge;
+	FString Rules = Mode == kc::EGameMode::Survival ? TEXT("Cases keep coming until three are failed.")
+		: Mode == kc::EGameMode::Daily ? TEXT("Three cases chosen by today's date, one attempt each.")
+		: TEXT("The trainer's cases, in order, one attempt each.");
+	Notice(FString::Printf(TEXT("%s: %d cases. %s Start each case at the LP office terminal. Your career save is not touched."),
+		*Game()->GetChallengeTitle(), static_cast<int32>(Ch.Sequence.size()), *Rules));
+}
+
+void AKcHUD::OpenLeaderboard(TFunction<void()> OnBack)
+{
+	const bool bFromMenu = bMainMenuOpen;
+	const FKcScreenParts Parts = KcScreens::Leaderboard(this, OnBack);
+	ShowScreen(Parts.Widget, Parts.Focus, OnBack, !bFromMenu);
 	bMainMenuOpen = bFromMenu;
 }
 
@@ -694,8 +737,48 @@ void AKcHUD::OpenDebrief()
 		Notice(TEXT("No debrief yet: file a report first."));
 		return;
 	}
-	const FKcScreenParts Parts = KcScreens::Debrief(this, *D, [this]() { CloseScreen(); });
-	ShowScreen(Parts.Widget, Parts.Focus, [this]() { CloseScreen(); }, false);
+	const FString MissionId = ToFString(D->MissionId);
+	const FKcScreenParts Parts = KcScreens::Debrief(this, *D, [this, MissionId]() { AfterDebrief(MissionId); });
+	ShowScreen(Parts.Widget, Parts.Focus, [this, MissionId]() { AfterDebrief(MissionId); }, false);
+}
+
+void AKcHUD::AfterDebrief(const FString& MissionId)
+{
+	CloseScreen();
+	UKcGameSubsystem* G = Game();
+	if (!G || !Campaign()) return;
+	if (G->IsChallenge())
+	{
+		if (G->RecordChallengeIfOver()) OpenChallengeResult();
+		return;
+	}
+	const kc::MissionDef* M = Campaign()->Find(MissionId);
+	if (M && M->Kind == kc::EMissionKind::Capstone && G->GetState().Career.HasPassed(M->Id)) OpenEnding();
+}
+
+void AKcHUD::OpenEnding()
+{
+	const FKcScreenParts Parts = KcScreens::Ending(this);
+	ShowScreen(Parts.Widget, Parts.Focus, [this]() { CloseScreen(); }, true);
+}
+
+void AKcHUD::OpenChallengeResult()
+{
+	const FKcScreenParts Parts = KcScreens::ChallengeResult(this);
+	ShowScreen(Parts.Widget, Parts.Focus, [this]() { CloseScreen(); ShowMainMenu(); }, true);
+}
+
+FString AKcHUD::SaveCertificate()
+{
+	const UKcCampaignSubsystem* C = Campaign();
+	if (!C || !Game()->HasGame()) return FString();
+	const kc::GameState& S = Game()->GetState();
+	const kc::PerformanceReview Review = kc::MakeReview(S, C->GetWorldContent().People);
+	const kc::EndingDef* Ending = kc::ChooseEnding(S, C->GetEndings());
+	const FString Date = FDateTime::Now().ToString(TEXT("%Y-%m-%d"));
+	const FString Path = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir() / TEXT("Certificates") / FString::Printf(TEXT("Keycard_Certificate_%s.md"), *Date));
+	const bool bOk = FFileHelper::SaveStringToFile(ToFString(kc::CertificateMarkdown(S, Review, Ending, ToStd(Date))), *Path, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
+	return bOk ? Path : FString();
 }
 
 void AKcHUD::OpenLift(int32 FromFloor)

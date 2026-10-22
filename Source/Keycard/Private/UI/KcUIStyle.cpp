@@ -22,7 +22,7 @@ namespace KcUI
 static float GTextScale = 1.0f;
 static bool GReducedMotion = false;
 
-const FLinearColor Accent = FLinearColor::FromSRGBColor(FColor(0x2B, 0xA3, 0xA8));
+const FLinearColor Accent = FLinearColor::FromSRGBColor(FColor(0x4B, 0x9C, 0xC4)); // harbour blue
 const FLinearColor TextPrimary = FLinearColor::FromSRGBColor(FColor(0xEC, 0xEE, 0xF0));
 const FLinearColor TextMuted = FLinearColor::FromSRGBColor(FColor(0x9A, 0xA3, 0xAD));
 FLinearColor Good = FLinearColor::FromSRGBColor(FColor(0x5C, 0xC4, 0x8A));

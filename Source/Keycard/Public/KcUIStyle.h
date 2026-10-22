@@ -24,7 +24,7 @@ FSlateFontInfo Font(int32 Size, bool bBold = false);
 FSlateFontInfo FontW(int32 Size, EWeight Weight);
 
 // ---- Colour tokens ----
-extern const FLinearColor Accent;      // Valtren teal #2BA3A8
+extern const FLinearColor Accent;      // harbour blue #4B9CC4
 extern const FLinearColor TextPrimary; // #ECEEF0
 extern const FLinearColor TextMuted;   // #9AA3AD
 extern FLinearColor Good;              // green, or blue with the colour-safe palette
@@ -46,10 +46,10 @@ constexpr float ModalTopBand = 64.0f;
 const FSlateBrush* PanelBrush();     // dark glass panel with hairline border, rounded
 const FSlateBrush* BackdropBrush();  // full-screen dim behind modal screens
 const FSlateBrush* CardBrush();      // section card inside a panel
-const FSlateBrush* FocusBrush();     // teal outline drawn around the focused control
+const FSlateBrush* FocusBrush();     // accent outline drawn around the focused control
 const FSlateBrush* VignetteBrush();  // soft dark frame around the screen edge (tinted by the caller)
 
-// 20 px check boxes and radio buttons: clear outline when off, teal fill when on.
+// 20 px check boxes and radio buttons: clear outline when off, accent fill when on.
 const struct FCheckBoxStyle& CheckStyle();
 const struct FCheckBoxStyle& RadioStyle();
 
@@ -62,7 +62,7 @@ TSharedRef<SWidget> MakeButton(const FText& Label, FOnClicked OnClicked, TShared
 
 TSharedRef<SWidget> MakeHeading(const FText& Text, int32 Size = 22);
 TSharedRef<SWidget> MakeBody(const FText& Text, int32 Size = 14, const FLinearColor& Color = TextPrimary);
-TSharedRef<SWidget> MakeEyebrow(const FText& Text); // small uppercase teal label above a heading
+TSharedRef<SWidget> MakeEyebrow(const FText& Text); // small uppercase accent label above a heading
 
 // Centred modal frame with a dim backdrop, used by every full screen.
 TSharedRef<SWidget> MakeModalFrame(TSharedRef<SWidget> Content, float MaxWidth = 900.0f);

@@ -14,6 +14,7 @@ import io
 import json
 import os
 import sys
+import urllib.error
 import urllib.request
 import zipfile
 
@@ -24,37 +25,35 @@ FONTS = os.path.join(ROOT, "Resources", "Fonts")
 CREDITS = os.path.join(ROOT, "Docs", "AssetCredits.md")
 UA = {"User-Agent": "Keycard-asset-fetch/1.0"}
 
-# (kind, Poly Haven id, role in the game)
+# (kind, slot, Poly Haven ids to try in order, role in the game). --resolve keeps the first id that exists, so a
+# renamed or withdrawn asset never stops the fetch; ImportAssets.py finds each asset by its slot.
 WANTED = [
-    ("texture", "herringbone_parquet", "Parquet floor: reception, manager's office, boardroom"),
-    ("texture", "laminate_floor_02", "Work-area floor: analyst workspace, training, monitoring"),
-    ("texture", "smooth_concrete_floor", "Corridor floor"),
-    ("texture", "plastered_wall_04", "Interior walls"),
-    ("texture", "oak_veneer_01", "Light oak desks and tables"),
-    ("texture", "black_walnut_veneer_01", "Walnut: manager's desk, boardroom table"),
-    ("texture", "poly_wool_herringbone", "Acoustic wall panels, soft furnishings"),
-    ("texture", "terrazzo_tiles", "Reception feature floor"),
-    ("model", "modern_arm_chair_01", "Task and visitor chairs"),
-    ("model", "dining_chair_02", "Boardroom and meeting chairs"),
-    ("model", "sofa_02", "Reception sofa"),
-    ("model", "modern_coffee_table_01", "Reception coffee table"),
-    ("model", "potted_plant_02", "Large plants"),
-    ("model", "potted_plant_04", "Desk plants"),
-    ("model", "drawer_cabinet", "Filing cabinet (insurance schedule evidence)"),
-    ("model", "binder_notebook", "Maintenance binder (evidence)"),
-    ("model", "clipboard", "Manual temperature log clipboard (evidence)"),
-    ("model", "office_notepads", "Document wallet / desk notepads (evidence, dressing)"),
-    ("model", "wall_clock", "Wall clocks"),
-    ("model", "projector_screen", "Meeting room screen"),
-    ("model", "modern_ceiling_lamp_01", "Boardroom pendant lights"),
-    ("hdri", "canary_wharf", "Business-district view through the windows, sky light"),
+    ("texture", "parquet", ["herringbone_parquet"], "Parquet: LP office, manager's office"),
+    ("texture", "marble", ["marble_01", "white_marble_03"], "Lobby floor; dark-tinted for the front desk and bar tops"),
+    ("texture", "tiles", ["white_bathroom_tiles", "bathroom_tiles", "square_tiles_02"], "Guest bathrooms, staff toilets"),
+    ("texture", "concrete_floor", ["concrete_floor_02", "smooth_concrete_floor"], "B1 back of house, loading dock"),
+    ("texture", "concrete_wall", ["concrete_wall_008", "concrete_wall_006", "painted_concrete"], "Stair shafts, B1 walls, facade"),
+    ("texture", "asphalt", ["asphalt_02", "asphalt_track"], "Street and garage ramp"),
+    ("texture", "paving", ["grey_cartago_02", "patterned_paving", "cobblestone_floor_08"], "Quay Promenade paving"),
+    ("texture", "wool", ["poly_wool_herringbone"], "Carpets, upholstery, acoustic panels"),
+    ("texture", "linen", ["fabric_pattern_07", "cotton_jersey", "denim_fabric"], "Bed linen and towels"),
+    ("texture", "leather", ["fabric_leather_02", "fabric_leather_01", "leather_red_02"], "Bar stools, lobby chairs"),
+    ("texture", "plaster", ["plastered_wall_04", "plastered_wall_02"], "Interior walls"),
+    ("texture", "oak", ["oak_veneer_01"], "Light oak: desks, guest-room doors"),
+    ("texture", "walnut", ["black_walnut_veneer_01"], "Walnut: front desk, manager's desk"),
+    ("model", "Chandelier_03", ["Chandelier_03"], "Lobby chandelier"),
+    ("model", "bar_chair_round_01", ["bar_chair_round_01"], "Lobby bar stools"),
+    ("model", "modern_coffee_table_01", ["modern_coffee_table_01"], "Lobby lounge table"),
+    ("model", "sofa_02", ["sofa_02"], "Lobby lounge and guest-room sofas"),
+    ("model", "modern_arm_chair_01", ["modern_arm_chair_01"], "Task and lounge chairs"),
+    ("model", "dining_chair_02", ["dining_chair_02"], "Guest-room desk chairs, LP office"),
+    ("model", "potted_plant_02", ["potted_plant_02"], "Large plants"),
+    ("model", "potted_plant_04", ["potted_plant_04"], "Desk plants"),
+    ("hdri", "night_sky", ["shanghai_bund", "dikhololo_night", "satara_night"], "Night harbour city through the windows"),
 ]
-# Real-world brand marks found in downloaded textures (Docs/GameDesign.md "Fictional names"):
-# each box is painted over with the average colour of a 6 px ring around it.
-EDITS = {
-    "polyhaven/wall_clock/wall_clock_diff_1k.jpg": [(252, 612, 307, 660)],             # "URBAN quartz" on the dial
-    "polyhaven/projector_screen/projector_screen_frame_diff_1k.jpg": [(702, 458, 746, 546)],  # "SIRIUS steering" on the housing
-}
+# Real-world brand marks found in downloaded textures (Docs/AssetCredits.md "Logo and brand check"):
+# each box is painted over with the average colour of a 6 px ring around it. None found in the hotel set yet.
+EDITS = {}
 EDITED = os.path.join(ROOT, "Data", "Assets", "edited")
 FONT_ZIP = ("font", "inter", "https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip",
             ["Inter-Regular.ttf", "Inter-Medium.ttf", "Inter-SemiBold.ttf", "Inter-Bold.ttf"])
@@ -89,12 +88,24 @@ def polyhaven_files(asset_id, kind):
     return out
 
 
+def first_existing(candidates):
+    for asset_id in candidates:
+        try:
+            return asset_id, json.loads(fetch("https://api.polyhaven.com/info/" + asset_id))
+        except urllib.error.HTTPError as e:
+            print(f"  {asset_id}: HTTP {e.code}, trying the next candidate")
+    return None, None
+
+
 def resolve():
     assets = []
-    for kind, asset_id, role in WANTED:
-        info = json.loads(fetch("https://api.polyhaven.com/info/" + asset_id))
+    for kind, slot, candidates, role in WANTED:
+        asset_id, info = first_existing(candidates)
+        if not asset_id:
+            print(f"MISSING {slot}: none of {candidates} exist; ImportAssets.py falls back to a flat tint")
+            continue
         entry = {
-            "id": asset_id, "kind": kind, "role": role, "source": "Poly Haven",
+            "id": asset_id, "slot": slot, "kind": kind, "role": role, "source": "Poly Haven",
             "page": f"https://polyhaven.com/a/{asset_id}", "licence": "CC0 1.0",
             "authors": sorted((info.get("authors") or {}).keys()), "name": info.get("name", asset_id), "files": [],
         }
@@ -157,6 +168,8 @@ def install_fonts(manifest):
 
 
 def apply_edits():
+    if not EDITS:
+        return
     from PIL import Image  # pip install pillow
     for rel, boxes in EDITS.items():
         img = Image.open(os.path.join(RAW, rel)).convert("RGB")
@@ -190,23 +203,23 @@ def write_credits_include(manifest):
     print("wrote", path)
 
 
+BEGIN, END = "<!-- generated:assets begin -->", "<!-- generated:assets end -->"
+
+
 def write_credits(manifest):
-    lines = ["# Asset credits", "",
-             "Generated from Data/AssetManifest.json by Scripts/FetchAssets.py. Every asset below allows redistribution in a game.",
-             "Assets under the Fab Standard License or Epic template content are not stored in this public repository (see the end).", "",
-             "| Asset | Use in Keycard | Source | Author(s) | Licence |", "|---|---|---|---|---|"]
+    """Rewrites only the generated block of Docs/AssetCredits.md; the hand-written rows (cast, voices, audio) stay."""
+    rows = ["| Asset | Source | Licence | Use | Notes |", "|---|---|---|---|---|"]
     for a in manifest["assets"]:
-        lines.append(f"| [{a['name']}]({a['page']}) | {a['role']} | {a['source']} | {', '.join(a['authors'])} | {a['licence']} |")
-    lines += ["", "## Logo and brand check",
-              "Every model and texture above was inspected for real-world logos or brand text before use (contact sheet of all diffuse maps, then zoomed crops).",
-              "- Wall Clock: dial printed \"URBAN quartz\" - painted out (Scripts/FetchAssets.py EDITS; the importer uses Data/Assets/edited/).",
-              "- Projector Screen: housing printed \"SIRIUS steering\" - painted out the same way.",
-              "- Stationery Supplies: several labels printed \"Haven Pinworks\" - model excluded rather than edited.",
-              "- All other assets: no text or logos found.", "",
-              "## Not in the repository",
-              "- UE mannequin (Priya Okafor fallback), Epic template content: copied from the local engine install by `Scripts/CopyEngineContent.bat` into `Content/Characters/` (git-ignored).", ""]
+        rows.append(f"| [{a['name']}]({a['page']}) by {', '.join(a['authors'])} | {a['source']} | {a['licence']} | {a['role']} | "
+                    "Logo check: see below |")
+    block = "\n".join([BEGIN, "Generated from Data/AssetManifest.json by `Scripts/FetchAssets.py --resolve`.", ""] + rows + [END])
+    text = open(CREDITS, encoding="utf-8").read() if os.path.exists(CREDITS) else "# Asset credits\n"
+    if BEGIN in text and END in text:
+        text = text[:text.index(BEGIN)] + block + text[text.index(END) + len(END):]
+    else:
+        text = text.rstrip("\n") + "\n\n## Art assets\n" + block + "\n"
     with open(CREDITS, "w", encoding="utf-8", newline="\n") as f:
-        f.write("\n".join(lines))
+        f.write(text)
     print("wrote", CREDITS)
 
 

@@ -51,7 +51,8 @@ void UKcAudioSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	}
 	for (const TCHAR* P : MoodPaths) MoodSounds.Add(P ? Load(P) : nullptr);
 	RoomTone = Load(TEXT("Ambience/AMB_RoomTone"));
-	for (const TCHAR* Name : {TEXT("AMB_Servers"), TEXT("AMB_Hvac"), TEXT("AMB_Office")})
+	for (const TCHAR* Name : {TEXT("AMB_Servers"), TEXT("AMB_Hvac"), TEXT("AMB_Office"), TEXT("AMB_Fluorescent"), TEXT("AMB_LobbyNight"),
+							 TEXT("AMB_Harbour"), TEXT("AMB_StairEcho"), TEXT("AMB_PartyMusic")})
 	{
 		if (USoundBase* S = Load(*FString::Printf(TEXT("Ambience/%s"), Name))) Ambiences.Add(Name, S);
 	}

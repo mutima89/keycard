@@ -1,7 +1,15 @@
 # Progress
 
-## Status: Phase 1 in progress (core and content done; UE layer next)
+## Status: Phase 1 in progress (core, content and UE layer written; PC build next)
 Last update: 2026-10-22
+
+- 2026-10-22 Phase 1 UE layer, cloud session (not compiled yet: no UE in the container).
+  - Hotel (`AKcHotel`): one building, B1 back of house (LP office, CCTV room, dock), ground floor (lobby, front desk, lounge, bar, street doors), floor 14 (corridor, rooms incl. 1412), stairs A and B, two lifts; floors 1-13 listed in the lift but not fitted. People and case points placed per mission step.
+  - HUD and screens rewritten for hotel casework: talk to people, case points, terminal, report, debrief, inbox (needs-reply first), Field Manual, career, lift ride with fade, radio case calls, promotion ceremony in the lobby.
+  - Self-test modes play (M001-M003 through the HUD, checks the first promotion and ceremony), resume, tour, ui.
+  - Asset scripts: `GenerateTextures.py` (18 original textures, checked by eye on a contact sheet; fixed the exit arrow over the T, the struck-through "YOU ARE HERE" and the whiteboard tag over the first note), `ImportAssets.py` (M_Kc masters, every MI the hotel uses, night HDRI, 8 models; flat-tint fallbacks when a texture is missing), `FetchAssets.py` (hotel list with fallback ids; Poly Haven API is blocked from the container, so it runs on the PC), `BuildAudio.py` (+5 ambiences: fluorescent, lobby at night, harbour, stair echo, music through a door; synthesised and checked for length, peak and NaN here).
+  - Docs: ArtDirection.md (new), AssetCredits.md (audio, original artwork, generated block).
+  - Core tests (GCC, ASan + UBSan): `42 test cases, 0 failed, 0 failed checks`.
 
 - 2026-10-22 Phase 1 core, cloud session. The owner said to carry on through the phases without stopping.
   - Core: `KcProperty`, `KcPeople`, `KcMission` (on-foot casework over a multi-floor hotel: 22 locations from B2 to floor 14, travel time between floors, case clock, expiring steps, chain of custody, hidden 7-dimension rubric, critical breaches, what-if replays, latent consequences that name their cause), `KcMissionData`, `KcWorld`/`KcWorldData`, `KcLearning`. `KcLpMath::EvaluateFormula` (13 named formulas, every input required) and `FormatMoney`.
@@ -21,4 +29,4 @@ Last update: 2026-10-22
   - Pushed to github.com/mutima89/keycard `main` (repo created by the owner); core tests re-run after the rebase onto the owner's initial commit: `27 test cases, 0 failed, 0 failed checks`.
 
 ### Next action
-Phase 1 UE layer: port the Riskbound UE code, build the multi-floor hotel (B1 LP office and CCTV room, ground floor, floor 14) with lifts and stairs, cast, screens and the promotion ceremony; then build, test and package on the PC.
+On the PC (Remote Control): FetchAssets --resolve, GenerateTextures, BuildAudio, FetchCharacters, BuildVoices, imports, CreateMap, build the editor target and fix compile errors, UE automation tests, package, then the packaged self-test play, resume and tour. Record the real output here.

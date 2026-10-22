@@ -1,5 +1,5 @@
-// A person in the office: the cast body (KcCast) with a face and body language that react to the player.
-// One component does it all so Priya, interviewees and background staff behave alike:
+// A person in the hotel: the cast body (KcCast) with a face and body language that react to the player.
+// One component does it all so colleagues, guests and background staff behave alike:
 //   - body: a looping idle that crossfades to talking, listening, reaction gestures, sitting and walking loops;
 //   - face: blinks, eye saccades, head and eyes that follow the player at conversation distance,
 //     text-driven lip-sync (Rocketbox visemes) and expressions (ARKit-style shapes);

@@ -1,10 +1,9 @@
-// The inbox: messages from colleagues, incidents, the regulator, home and the newswire. Some need a
-// reply before a deadline (in organisation weeks); if the player lets one lapse, its default outcome
-// applies (rules in kc::UpdateWorld). This widget only displays views and forwards replies.
+// The inbox: messages from colleagues, guests, the GM's office, home and the newswire. Some need a
+// reply before a deadline (in hotel weeks); if the player lets one lapse, its default outcome
+// applies (rules in kc::UpdateWorld). This widget only displays the messages and forwards replies.
 #pragma once
 
 #include "CoreMinimal.h"
-#include "KcCampaignTypes.h"
 #include "Widgets/SCompoundWidget.h"
 
 class SBox;

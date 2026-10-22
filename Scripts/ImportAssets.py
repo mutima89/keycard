@@ -1,14 +1,15 @@
-"""Editor import step: turns Data/Assets/raw (+ edited/) into Content/Keycard/ assets.
+"""Editor import step: turns Data/Assets/raw (+ edited/, generated/) into Content/Keycard/ assets.
 
 Run headless through Scripts/ImportAssets.bat (UnrealEditor-Cmd -run=pythonscript). Idempotent: existing
 assets are replaced. Writes Saved/KcImportReport.json listing every mesh and its material slots.
 Creates:
-  /Game/Keycard/Materials/M_RbWorld      world-aligned PBR (architecture; tiling never stretches)
-  /Game/Keycard/Materials/M_RbSurface    UV PBR (imported models)
-  /Game/Keycard/Materials/M_RbGlass      translucent glass
-  /Game/Keycard/Materials/M_RbEmissive   light panels and screens
-  /Game/Keycard/Materials/M_RbSky        HDRI sky sphere (lat-long, unlit)
-  /Game/Keycard/Materials/M_RbHighlight  focus overlay (fresnel)
+  /Game/Keycard/Materials/M_KcWorld      world-aligned PBR (architecture; tiling never stretches)
+  /Game/Keycard/Materials/M_KcSurface    UV PBR (imported models)
+  /Game/Keycard/Materials/M_KcGlass      translucent glass
+  /Game/Keycard/Materials/M_KcEmissive   light panels, LEDs, signs
+  /Game/Keycard/Materials/M_KcScreen     self-lit displays (CCTV wall, terminals, fire panel)
+  /Game/Keycard/Materials/M_KcSky        HDRI sky sphere (lat-long, unlit)
+  /Game/Keycard/Materials/M_KcHighlight  focus overlay (fresnel)
   /Game/Keycard/Materials/Instances/MI_* one instance per surface and per model material slot
 """
 import json
@@ -103,7 +104,7 @@ def new_material(name):
         MEL.delete_all_material_expressions(m)
     else:
         m = TOOLS.create_asset(name, MAT, unreal.Material, unreal.MaterialFactoryNew())
-    # The HQ draws repeated geometry as instanced static meshes; a cooked game silently falls
+    # The hotel draws repeated geometry as instanced static meshes; a cooked game silently falls
     # back to the default material for any material without this usage flag.
     m.set_editor_property("used_with_instanced_static_meshes", True)
     return m
@@ -154,8 +155,8 @@ def pbr_tail(m, base, normal_out, arm, x):
 
 
 def build_surface(defaults):
-    m = new_material("M_RbSurface")
-    m.set_editor_property("used_with_skeletal_mesh", True)  # Priya's outfit
+    m = new_material("M_KcSurface")
+    m.set_editor_property("used_with_skeletal_mesh", True)  # uniforms and the focus overlay on the cast
     uv = expr(m, unreal.MaterialExpressionTextureCoordinate, -1200, 0)
     uvs = expr(m, unreal.MaterialExpressionScalarParameter, -1200, 120, parameter_name="UVScale", default_value=1.0)
     uvm = expr(m, unreal.MaterialExpressionMultiply, -1000, 40)
@@ -173,7 +174,7 @@ def build_surface(defaults):
 
 
 def build_world(defaults):
-    m = new_material("M_RbWorld")
+    m = new_material("M_KcWorld")
     m.set_editor_property("tangent_space_normal", False)  # world-aligned normals are in world space
     wat = unreal.load_asset("/Engine/Functions/Engine_MaterialFunctions01/Texturing/WorldAlignedTexture.WorldAlignedTexture")
     wan = unreal.load_asset("/Engine/Functions/Engine_MaterialFunctions01/Texturing/WorldAlignedNormal.WorldAlignedNormal")
@@ -193,7 +194,7 @@ def build_world(defaults):
 
 
 def build_glass():
-    m = new_material("M_RbGlass")
+    m = new_material("M_KcGlass")
     m.set_editor_property("blend_mode", unreal.BlendMode.BLEND_TRANSLUCENT)
     m.set_editor_property("translucency_lighting_mode", unreal.TranslucencyLightingMode.TLM_VOLUMETRIC_NON_DIRECTIONAL)  # cheap: large facades
     m.set_editor_property("two_sided", True)
@@ -208,7 +209,7 @@ def build_glass():
 
 
 def build_emissive():
-    m = new_material("M_RbEmissive")
+    m = new_material("M_KcEmissive")
     color = expr(m, unreal.MaterialExpressionVectorParameter, -700, 0, parameter_name="Color", default_value=unreal.LinearColor(1, 0.95, 0.88, 1))
     inten = expr(m, unreal.MaterialExpressionScalarParameter, -700, 200, parameter_name="Intensity", default_value=8.0)
     mul = expr(m, unreal.MaterialExpressionMultiply, -400, 50)
@@ -224,7 +225,7 @@ def build_emissive():
 
 def build_sky(hdri):
     """Unlit HDRI cubemap on an inside-out sphere, sampled along the view direction; marked IsSky."""
-    m = new_material("M_RbSky")
+    m = new_material("M_KcSky")
     m.set_editor_property("shading_model", unreal.MaterialShadingModel.MSM_UNLIT)
     m.set_editor_property("two_sided", True)
     m.set_editor_property("is_sky", False)  # a plain unlit dome; IsSky needs full-screen coverage
@@ -245,7 +246,7 @@ def build_sky(hdri):
 
 def build_screen(defaults):
     """Self-lit display: a texture shown as emissive light over a dark glossy base."""
-    m = new_material("M_RbScreen")
+    m = new_material("M_KcScreen")
     tex = expr(m, unreal.MaterialExpressionTextureSampleParameter2D, -700, 0, parameter_name="ScreenTexture", texture=defaults["color"],
                sampler_type=unreal.MaterialSamplerType.SAMPLERTYPE_COLOR)
     inten = expr(m, unreal.MaterialExpressionScalarParameter, -700, 250, parameter_name="Intensity", default_value=12.0)
@@ -261,14 +262,14 @@ def build_screen(defaults):
 
 
 def build_highlight():
-    m = new_material("M_RbHighlight")
+    m = new_material("M_KcHighlight")
     m.set_editor_property("blend_mode", unreal.BlendMode.BLEND_TRANSLUCENT)
     m.set_editor_property("shading_model", unreal.MaterialShadingModel.MSM_UNLIT)
     # The overlay also goes on people (skinned, with face shapes); without these the game draws the default material.
     m.set_editor_property("used_with_skeletal_mesh", True)
     m.set_editor_property("used_with_morph_targets", True)
     fres =expr(m, unreal.MaterialExpressionFresnel, -600, 100, exponent=2.5)
-    color = expr(m, unreal.MaterialExpressionVectorParameter, -600, -150, parameter_name="Color", default_value=unreal.LinearColor(0.17, 0.64, 0.66, 1))
+    color = expr(m, unreal.MaterialExpressionVectorParameter, -600, -150, parameter_name="Color", default_value=unreal.LinearColor(0.29, 0.61, 0.77, 1))  # harbour blue (KcUI Accent)
     em = expr(m, unreal.MaterialExpressionMultiply, -300, -100)
     link(color, "", em, "A")
     link(fres, "", em, "B")
@@ -330,7 +331,11 @@ def import_model(asset_id):
     sm.set_editor_property("combine_meshes", True)
     sm.set_editor_property("auto_generate_collision", True)
     sm.set_editor_property("generate_lightmap_u_vs", False)
-    paths = import_file(source("polyhaven/%s/%s_1k.fbx" % (asset_id, asset_id)), dest, "SM_" + asset_id, opts)
+    fbx = source("polyhaven/%s/%s_1k.fbx" % (asset_id, asset_id))
+    if not os.path.exists(fbx):
+        err("model %s not downloaded (run Scripts/FetchAssets.py); the hotel uses its stand-in" % asset_id)
+        return
+    paths = import_file(fbx, dest, "SM_" + asset_id, opts)
     meshes = [p for p in paths if isinstance(unreal.load_asset(p), unreal.StaticMesh)]
     if not meshes:
         err("no static mesh for " + asset_id)
@@ -358,67 +363,116 @@ def import_model(asset_id):
 
 
 # ---------------------------------------------------------------- main
+def manifest_ids():
+    """Slot -> Poly Haven id, from Data/AssetManifest.json (FetchAssets.py picks the first candidate that exists)."""
+    path = os.path.join(ROOT, "Data", "AssetManifest.json")
+    if not os.path.exists(path):
+        err("Data/AssetManifest.json missing: run python Scripts/FetchAssets.py --resolve; surfaces fall back to flat tints")
+        return {}
+    return {a.get("slot", a["id"]): a["id"] for a in json.load(open(path, encoding="utf-8"))["assets"]}
+
+
 unreal.SystemLibrary.execute_console_command(None, "Interchange.FeatureFlags.Import.FBX False")
+IDS = manifest_ids()
 tmp = os.path.join(ROOT, "Saved", "KcImportTmp")
 os.makedirs(tmp, exist_ok=True)
 defaults = {}
-for kind, name, rgb in [("color", "T_RbWhite", (255, 255, 255)), ("mask", "T_RbDefaultARM", (255, 140, 0)), ("normal", "T_RbFlatNormal", (128, 128, 255))]:
+for kind, name, rgb in [("color", "T_KcWhite", (255, 255, 255)), ("mask", "T_KcDefaultARM", (255, 140, 0)), ("normal", "T_KcFlatNormal", (128, 128, 255))]:
     write_png(os.path.join(tmp, name + ".png"), rgb)
     import_file(os.path.join(tmp, name + ".png"), GAME + "/Textures/Defaults", name)
     defaults[kind] = setup_texture(GAME + "/Textures/Defaults/" + name, kind)
 
-hdr_paths = import_file(os.path.join(RAW, "polyhaven", "canary_wharf", "canary_wharf_2k.hdr"), GAME + "/HDRI", "T_CanaryWharfSky")
-hdri = unreal.load_asset(hdr_paths[0]) if hdr_paths else None
+hdri = None
+if "night_sky" in IDS:
+    sky_id = IDS["night_sky"]
+    hdr_paths = import_file(os.path.join(RAW, "polyhaven", sky_id, sky_id + "_2k.hdr"), GAME + "/HDRI", "T_NightCity")
+    hdri = unreal.load_asset(hdr_paths[0]) if hdr_paths else None
 log("HDRI imported as %s" % (hdri.get_class().get_name() if hdri else "nothing"))
 
 SURFACE = build_surface(defaults)
 WORLD = build_world(defaults)
-build_glass()
-build_emissive()
+GLASS = build_glass()
+EMISSIVE = build_emissive()
 build_highlight()
 if hdri and isinstance(hdri, unreal.TextureCube):
     build_sky(hdri)
 else:
-    err("HDRI is not a TextureCube; sky material skipped")
+    err("night HDRI is not a TextureCube; sky material skipped (the hotel falls back to a flat night colour)")
 
-# Architecture surfaces (world-aligned). TileSize is the real-world size of one texture repeat in cm.
-for name, asset_id, tile, tint, rough in [
-        ("MI_FloorParquet", "herringbone_parquet", 160, (1, 1, 1), 2.6),
-        ("MI_FloorLaminate", "laminate_floor_02", 220, (1, 1, 1), 1.5),
-        ("MI_FloorConcrete", "smooth_concrete_floor", 300, (1, 1, 1), 1.3),
-        ("MI_FloorTerrazzo", "terrazzo_tiles", 180, (1, 1, 1), 2.0),
-        ("MI_Carpet", "poly_wool_herringbone", 45, (0.3, 0.32, 0.34), 2.0),
-        ("MI_FabricDark", "poly_wool_herringbone", 30, (0.12, 0.13, 0.15), 2.0),
-        ("MI_Rug", "poly_wool_herringbone", 35, (0.52, 0.48, 0.42), 2.0),
-        ("MI_WallPlaster", "plastered_wall_04", 260, (0.93, 0.91, 0.88), 1.0),
-        ("MI_WoodOak", "oak_veneer_01", 140, (1, 1, 1), 0.9),
-        ("MI_WoodWalnut", "black_walnut_veneer_01", 140, (1, 1, 1), 0.85),
-        ("MI_AcousticPanel", "poly_wool_herringbone", 60, (0.55, 0.78, 0.8), 1.0)]:
-    instance(name, WORLD, texture_set(asset_id), {"MetallicScale": 0.0, "RoughnessScale": rough}, {"Tint": tint + (1,), "TileSize": (tile, tile, tile, 0)})
+
+def world_surface(name, slot, tile, tint, rough, metal=0.0):
+    """World-aligned architecture surface. TileSize is the real size of one texture repeat in cm.
+    Without the textures (asset not fetched) the instance still exists as a flat tint, so the hotel never shows the default grid."""
+    textures = texture_set(IDS[slot]) if slot in IDS else {}
+    if slot and not textures:
+        err("surface %s: no textures for slot %s, flat tint used" % (name, slot))
+    parent = WORLD if textures else SURFACE
+    vectors = {"Tint": tint + (1,)}
+    if textures:
+        vectors["TileSize"] = (tile, tile, tile, 0)
+    instance(name, parent, textures, {"MetallicScale": metal, "RoughnessScale": rough}, vectors)
     log("surface " + name)
-# Untextured surfaces: defaults are white base, ARM = (AO 1, rough 0.55, metal 0) scaled below.
-for name, tint, rough, metal in [("MI_Graphite", (0.06, 0.065, 0.075), 0.75, 1.0), ("MI_Chrome", (0.8, 0.8, 0.82), 0.3, 1.0),
-                                 ("MI_CeilingWhite", (0.86, 0.86, 0.85), 1.6, 0.0), ("MI_TealAccent", (0.1, 0.55, 0.58), 1.0, 0.0),
-                                 ("MI_Skirting", (0.12, 0.12, 0.13), 1.2, 0.0), ("MI_DeviceBlack", (0.02, 0.02, 0.025), 0.6, 0.0),
-                                 ("MI_SkinTone", (0.45, 0.3, 0.22), 1.0, 0.0), ("MI_SuitNavy", (0.04, 0.06, 0.12), 1.4, 0.0),
-                                 ("MI_Paper", (0.9, 0.9, 0.88), 1.7, 0.0), ("MI_Ceramic", (0.92, 0.92, 0.9), 0.35, 0.0),
-                                 ("MI_PlasticGrey", (0.35, 0.36, 0.38), 0.8, 0.0), ("MI_Brass", (0.75, 0.55, 0.3), 0.35, 1.0)]:
-    instance(name, SURFACE, {}, {"RoughnessScale": rough / 0.55, "MetallicScale": metal}, {"Tint": tint + (1,)})
-instance("MI_Glass", unreal.load_asset(MAT + "/M_RbGlass"))
-instance("MI_GlassFrosted", unreal.load_asset(MAT + "/M_RbGlass"), {}, {"Opacity": 0.55, "Roughness": 0.45}, {"Tint": (0.9, 0.93, 0.94, 1)})
-instance("MI_LightPanel", unreal.load_asset(MAT + "/M_RbEmissive"), {}, {"Intensity": 60.0}, {"Color": (1, 0.97, 0.92, 1)})
-instance("MI_ScreenTeal", unreal.load_asset(MAT + "/M_RbEmissive"), {}, {"Intensity": 18.0}, {"Color": (0.12, 0.45, 0.55, 1)})
-instance("MI_ScreenAlert", unreal.load_asset(MAT + "/M_RbEmissive"), {}, {"Intensity": 16.0}, {"Color": (0.75, 0.3, 0.12, 1)})
-instance("MI_Highlight", unreal.load_asset(MAT + "/M_RbHighlight"))
-# Ceiling: faintly self-lit so it reads as bounce-lit white rather than black between panels.
-instance("MI_CeilingSoft", unreal.load_asset(MAT + "/M_RbEmissive"), {}, {"Intensity": 13.0}, {"Color": (0.9, 0.9, 0.89, 1)})
-# Ceiling T-bars: a touch darker than the tiles so the grid reads softly instead of as black lines.
-instance("MI_CeilingGrid", unreal.load_asset(MAT + "/M_RbEmissive"), {}, {"Intensity": 10.5}, {"Color": (0.82, 0.83, 0.84, 1)})
-instance("MI_LampWarm", unreal.load_asset(MAT + "/M_RbEmissive"), {}, {"Intensity": 45.0}, {"Color": (1.0, 0.78, 0.5, 1)})
-instance("MI_ReceptionGlow", unreal.load_asset(MAT + "/M_RbEmissive"), {}, {"Intensity": 30.0}, {"Color": (0.17, 0.64, 0.66, 1)})
-instance("MI_LedStrip", unreal.load_asset(MAT + "/M_RbEmissive"), {}, {"Intensity": 70.0}, {"Color": (0.95, 0.97, 1.0, 1)})
 
-# Our own textures (Scripts/GenerateTextures.py): fictional screen UIs, whiteboard, wall prints.
+
+# Architecture. Tints are chosen so untextured fallbacks still read as the right material.
+for name, slot, tile, tint, rough in [
+        ("MI_FloorParquet", "parquet", 160, (1, 1, 1), 2.4),               # LP office, manager's office
+        ("MI_FloorMarble", "marble", 240, (0.95, 0.94, 0.92), 0.6),        # lobby
+        ("MI_StoneCounter", "marble", 120, (0.22, 0.22, 0.24), 0.5),       # front desk and bar tops: dark stone
+        ("MI_FloorTile", "tiles", 60, (0.93, 0.93, 0.92), 0.8),            # guest bathrooms, staff toilets
+        ("MI_Tile", "tiles", 30, (0.85, 0.87, 0.88), 0.7),                 # bathroom walls, kitchen splashback
+        ("MI_FloorConcrete", "concrete_floor", 300, (0.8, 0.8, 0.8), 1.3), # B1 back of house, loading dock
+        ("MI_Concrete", "concrete_wall", 280, (0.75, 0.75, 0.74), 1.4),    # stair shafts, B1 walls
+        ("MI_Facade", "concrete_wall", 400, (0.55, 0.56, 0.58), 1.2),      # exterior
+        ("MI_Asphalt", "asphalt", 400, (0.6, 0.6, 0.6), 1.4),              # street and garage ramp
+        ("MI_Paving", "paving", 200, (0.8, 0.79, 0.76), 1.3),              # Quay Promenade
+        ("MI_Carpet", "wool", 45, (0.3, 0.32, 0.34), 2.0),                 # LP office, CCTV room
+        ("MI_RoomCarpet", "wool", 40, (0.42, 0.38, 0.33), 2.0),            # guest rooms
+        ("MI_Rug", "wool", 35, (0.52, 0.48, 0.42), 2.0),
+        ("MI_FabricDark", "wool", 30, (0.12, 0.13, 0.15), 2.0),
+        ("MI_FabricAccent", "wool", 30, (0.18, 0.36, 0.48), 2.0),          # harbour-blue upholstery
+        ("MI_AcousticPanel", "wool", 60, (0.24, 0.3, 0.36), 1.0),
+        ("MI_Linen", "linen", 40, (0.95, 0.94, 0.91), 1.8),                # bed linen, towels
+        ("MI_Leather", "leather", 50, (0.2, 0.12, 0.08), 0.9),             # bar stools, lobby chairs
+        ("MI_WallPlaster", "plaster", 260, (0.93, 0.91, 0.88), 1.0),
+        ("MI_WallPaint", "plaster", 260, (0.82, 0.83, 0.82), 1.1),         # back-of-house corridors
+        ("MI_StairPaint", "plaster", 260, (0.7, 0.72, 0.7), 1.1),
+        ("MI_WoodOak", "oak", 140, (1, 1, 1), 0.9),
+        ("MI_WoodWalnut", "walnut", 140, (1, 1, 1), 0.85),
+        ("MI_DoorPaint", "oak", 140, (0.42, 0.33, 0.24), 0.8),             # guest-room doors: stained oak
+        ("MI_Cork", "wool", 25, (0.62, 0.46, 0.3), 1.8)]:                  # LP office notice board
+    world_surface(name, slot, tile, tint, rough)
+
+# Untextured surfaces: defaults are white base, ARM = (AO 1, rough 0.55, metal 0) scaled below.
+for name, tint, rough, metal in [
+        ("MI_Graphite", (0.06, 0.065, 0.075), 0.75, 1.0), ("MI_Chrome", (0.8, 0.8, 0.82), 0.3, 1.0),
+        ("MI_Steel", (0.55, 0.56, 0.58), 0.5, 1.0), ("MI_Brass", (0.75, 0.55, 0.3), 0.35, 1.0),
+        ("MI_Mirror", (0.95, 0.95, 0.95), 0.05, 1.0),
+        ("MI_CeilingWhite", (0.86, 0.86, 0.85), 1.6, 0.0), ("MI_Skirting", (0.12, 0.12, 0.13), 1.2, 0.0),
+        ("MI_DeviceBlack", (0.02, 0.02, 0.025), 0.6, 0.0), ("MI_PlasticGrey", (0.35, 0.36, 0.38), 0.8, 0.0),
+        ("MI_Paper", (0.9, 0.9, 0.88), 1.7, 0.0), ("MI_Ceramic", (0.92, 0.92, 0.9), 0.35, 0.0),
+        ("MI_Cardboard", (0.55, 0.42, 0.28), 1.7, 0.0), ("MI_FireRed", (0.6, 0.04, 0.03), 0.6, 0.0),
+        ("MI_SafetyYellow", (0.85, 0.65, 0.05), 0.8, 0.0), ("MI_Leaf", (0.12, 0.28, 0.1), 1.2, 0.0),
+        ("MI_Blossom", (0.85, 0.7, 0.75), 1.4, 0.0), ("MI_BottleAmber", (0.35, 0.16, 0.03), 0.15, 0.0),
+        ("MI_BottleGreen", (0.05, 0.2, 0.08), 0.15, 0.0),
+        # Uniforms: LP officers in black, engineering in grey, managers in navy suits.
+        ("MI_UniformBlack", (0.025, 0.025, 0.03), 1.5, 0.0), ("MI_UniformGrey", (0.22, 0.23, 0.25), 1.5, 0.0),
+        ("MI_SuitNavy", (0.04, 0.06, 0.12), 1.4, 0.0)]:
+    instance(name, SURFACE, {}, {"RoughnessScale": rough / 0.55, "MetallicScale": metal}, {"Tint": tint + (1,)})
+instance("MI_Glass", GLASS)
+instance("MI_GlassDark", GLASS, {}, {"Opacity": 0.45, "Roughness": 0.04}, {"Tint": (0.1, 0.12, 0.14, 1)})        # CCTV room window, lift doors' vision panels
+instance("MI_Sheer", GLASS, {}, {"Opacity": 0.4, "Roughness": 0.7, "Specular": 0.2}, {"Tint": (0.95, 0.94, 0.9, 1)})  # guest-room sheer curtains
+instance("MI_Water", GLASS, {}, {"Opacity": 0.7, "Roughness": 0.02}, {"Tint": (0.04, 0.12, 0.18, 1)})             # harbour
+instance("MI_LightPanel", EMISSIVE, {}, {"Intensity": 60.0}, {"Color": (1, 0.97, 0.92, 1)})
+instance("MI_LampWarm", EMISSIVE, {}, {"Intensity": 45.0}, {"Color": (1.0, 0.78, 0.5, 1)})
+instance("MI_LedStrip", EMISSIVE, {}, {"Intensity": 70.0}, {"Color": (0.95, 0.97, 1.0, 1)})
+instance("MI_SignGlow", EMISSIVE, {}, {"Intensity": 30.0}, {"Color": (0.29, 0.61, 0.77, 1)})  # hotel name and wayfinding
+instance("MI_LedGreen", EMISSIVE, {}, {"Intensity": 25.0}, {"Color": (0.1, 0.9, 0.25, 1)})
+instance("MI_LedRed", EMISSIVE, {}, {"Intensity": 25.0}, {"Color": (0.95, 0.08, 0.05, 1)})
+instance("MI_LedAmber", EMISSIVE, {}, {"Intensity": 25.0}, {"Color": (1.0, 0.55, 0.05, 1)})
+instance("MI_Highlight", unreal.load_asset(MAT + "/M_KcHighlight"))
+
+# Our own textures (Scripts/GenerateTextures.py): screen UIs, signs, whiteboard, prints, carpet and wallpaper patterns.
 GEN = os.path.join(ROOT, "Data", "Assets", "generated")
 gen = {}
 for f in sorted(os.listdir(GEN)) if os.path.isdir(GEN) else []:
@@ -426,27 +480,33 @@ for f in sorted(os.listdir(GEN)) if os.path.isdir(GEN) else []:
         name = os.path.splitext(f)[0]
         import_file(os.path.join(GEN, f), GAME + "/Textures/Generated", name)
         gen[name] = setup_texture(GAME + "/Textures/Generated/" + name, "color")
-        if name.startswith("T_Screen"):  # small on screen but must stay legible: keep every mip resident
+        if name.startswith(("T_Screen", "T_FloorPlan", "T_Whiteboard", "T_DndTag")):  # text must stay legible: keep every mip resident
             gen[name].set_editor_property("never_stream", True)
             EAL.save_asset(gen[name].get_path_name(), only_if_is_dirty=False)
+if not gen:
+    err("no generated textures: run python Scripts/GenerateTextures.py first")
 screen = build_screen(defaults)
-for mi, tex, inten in [("MI_ScreenDashboard", "T_ScreenDashboard", 14.0), ("MI_ScreenSheet", "T_ScreenSheet", 7.0),
-                       ("MI_ScreenEmail", "T_ScreenEmail", 14.0), ("MI_ScreenAlarmUI", "T_ScreenAlarm", 14.0),
-                       ("MI_ScreenKriTicker", "T_ScreenKriTicker", 12.0)]:
+for mi, tex, inten in [("MI_ScreenCctv1", "T_ScreenCctv1", 10.0), ("MI_ScreenCctv2", "T_ScreenCctv2", 10.0),
+                       ("MI_ScreenCctv3", "T_ScreenCctv3", 10.0), ("MI_ScreenCctv4", "T_ScreenCctv4", 10.0),
+                       ("MI_ScreenShiftBoard", "T_ScreenShiftBoard", 12.0), ("MI_ScreenFrontOffice", "T_ScreenFrontOffice", 9.0),
+                       ("MI_ScreenReport", "T_ScreenReport", 9.0), ("MI_ScreenExport", "T_ScreenExport", 12.0),
+                       ("MI_ScreenPanel", "T_ScreenPanel", 8.0), ("MI_ExitSign", "T_ExitSign", 20.0)]:
     if tex in gen:
         instance(mi, screen, {"ScreenTexture": gen[tex]}, {"Intensity": inten})
-for mi, tex in [("MI_Whiteboard", "T_Whiteboard"), ("MI_ArtPrintA", "T_ArtPrintA"), ("MI_ArtPrintB", "T_ArtPrintB"), ("MI_ArtPrintC", "T_ArtPrintC")]:
+for mi, tex, rough in [("MI_Whiteboard", "T_Whiteboard", 0.5), ("MI_ArtHarbourA", "T_ArtHarbourA", 1.5), ("MI_ArtHarbourB", "T_ArtHarbourB", 1.5),
+                       ("MI_ArtHarbourC", "T_ArtHarbourC", 1.5), ("MI_DndTag", "T_DndTag", 1.2), ("MI_FloorPlan", "T_FloorPlan", 0.6)]:
     if tex in gen:
-        instance(mi, SURFACE, {"BaseColorMap": gen[tex]}, {"RoughnessScale": 1.5, "MetallicScale": 0.0})
-# Clean polished concrete (monitoring room, corridor): our own texture, low roughness, 2.4 m slabs.
-if "T_PolishedConcrete" in gen:
-    instance("MI_FloorPolished", WORLD, {"BaseColorMap": gen["T_PolishedConcrete"]}, {"MetallicScale": 0.0, "RoughnessScale": 0.62},
-             {"Tint": (0.8, 0.8, 0.8, 1), "TileSize": (240, 240, 240, 0)})
-if EAL.does_asset_exist(MAT + "/M_RbSky"):
-    instance("MI_Sky", unreal.load_asset(MAT + "/M_RbSky"), {}, {"Intensity": 14.0})
+        instance(mi, SURFACE, {"BaseColorMap": gen[tex]}, {"RoughnessScale": rough, "MetallicScale": 0.0})
+# Patterned guest-floor carpet and corridor wallpaper: world-aligned so the repeat stays true to scale on every wall.
+for mi, tex, tile, rough in [("MI_CorridorCarpet", "T_CorridorCarpet", 120, 2.0), ("MI_Wallpaper", "T_Wallpaper", 90, 1.3)]:
+    if tex in gen:
+        instance(mi, WORLD, {"BaseColorMap": gen[tex]}, {"MetallicScale": 0.0, "RoughnessScale": rough},
+                 {"Tint": (1, 1, 1, 1), "TileSize": (tile, tile, tile, 0)})
+if EAL.does_asset_exist(MAT + "/M_KcSky"):
+    instance("MI_Sky", unreal.load_asset(MAT + "/M_KcSky"), {}, {"Intensity": 6.0})  # night: dimmer than a day sky
 
-for asset_id in ["modern_arm_chair_01", "dining_chair_02", "sofa_02", "modern_coffee_table_01", "potted_plant_02", "potted_plant_04",
-                 "drawer_cabinet", "binder_notebook", "clipboard", "office_notepads", "wall_clock", "projector_screen", "modern_ceiling_lamp_01"]:
+for asset_id in ["Chandelier_03", "bar_chair_round_01", "modern_coffee_table_01", "sofa_02", "modern_arm_chair_01",
+                 "dining_chair_02", "potted_plant_02", "potted_plant_04"]:
     try:
         import_model(asset_id)
     except Exception as e:  # keep going so one bad asset does not block the rest
@@ -454,4 +514,4 @@ for asset_id in ["modern_arm_chair_01", "dining_chair_02", "sofa_02", "modern_co
 
 with open(os.path.join(ROOT, "Saved", "KcImportReport.json"), "w", encoding="utf-8") as f:
     json.dump(report, f, indent=1)
-log("done: %d meshes, %d materials, %d errors" % (len(report["meshes"]), len(report["materials"]), len(report["errors"])))
+log("done: %d meshes, %d materials, %d errors (audio: Scripts/ImportAudio.py)" % (len(report["meshes"]), len(report["materials"]), len(report["errors"])))

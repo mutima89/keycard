@@ -296,11 +296,104 @@ def burnout():
     return norm(reverb(x + ring, 2.5, 0.3), -4)
 
 
+def fluorescent():
+    """Tube ballast: 100 Hz buzz with harmonics and a slow flutter (back-of-house corridors)."""
+    rng = np.random.default_rng(5)
+    tt = t(30)
+    buzz = sum(a * np.sin(2 * np.pi * f * tt) for f, a in ((100, 1.0), (200, 0.5), (300, 0.3), (400, 0.12)))
+    buzz *= 1 + 0.08 * np.sin(2 * np.pi * 0.4 * tt)
+    hiss = bandpass(rng.standard_normal(len(tt)), 3000, 9000) * 0.05
+    x = np.stack([buzz + hiss, buzz * 0.96 + hiss[::-1]], axis=1) * 0.3
+    return norm(seamless(x, 3.0), -16)
+
+
+def lobby_night():
+    """A quiet hotel lobby after midnight: big-room air, a distant fountain, the odd far-off step and cart."""
+    rng = np.random.default_rng(6)
+    seconds = 64
+    n = int(seconds * SR)
+    air = np.stack([lowpass(pink(n, rng), 600), lowpass(pink(n, rng), 600)], axis=1)
+    water = bandpass(rng.standard_normal((n, 2)), 900, 5000) * 0.18 * (1 + 0.2 * np.sin(2 * np.pi * 0.05 * t(seconds)))[:, None]
+    events = np.zeros(n)
+    for at in rng.uniform(1, seconds - 2, 9):  # distant heel steps, three or four at a time
+        for k in range(rng.integers(3, 6)):
+            step = bandpass(rng.standard_normal(int(0.03 * SR)), 600, 3500) * np.exp(-np.arange(int(0.03 * SR)) / (0.006 * SR))
+            place(events, step * 0.5, at + k * 0.55)
+    for at in rng.uniform(2, seconds - 4, 2):  # a luggage cart rolling past
+        roll = lowpass(rng.standard_normal(int(2.5 * SR)), 300) * signal.windows.hann(int(2.5 * SR)) * 0.6
+        place(events, roll, at)
+    wet = reverb(events, 3.2, 0.7, seed=13, damp_hz=4000)[:n]
+    x = air * 0.6 + water + wet
+    return norm(seamless(x, 4.0), -14)
+
+
+def harbour():
+    """Outside the street doors at night: water lapping, light wind, a far horn now and then."""
+    rng = np.random.default_rng(8)
+    seconds = 60
+    n = int(seconds * SR)
+    wind = np.stack([lowpass(pink(n, rng), 500), lowpass(pink(n, rng), 500)], axis=1)
+    wind *= (1 + 0.4 * np.sin(2 * np.pi * 0.03 * t(seconds) + 1.0))[:, None]
+    lap = np.zeros(n)
+    for at in np.cumsum(rng.uniform(1.2, 3.5, 40)):
+        if at > seconds - 1:
+            break
+        splash = bandpass(rng.standard_normal(int(0.6 * SR)), 200, 1800) * signal.windows.hann(int(0.6 * SR)) * rng.uniform(0.3, 0.8)
+        place(lap, splash, at)
+    horn = np.zeros(n)
+    tt = t(3.5)
+    place(horn, 0.25 * (np.sin(2 * np.pi * 98 * tt) + 0.4 * np.sin(2 * np.pi * 196 * tt)) * env_adsr(len(tt), 0.4, 0.3, 0.8, 1.5), 22.0)
+    x = wind * 0.7 + np.stack([lap, lap[::-1]], axis=1) + reverb(horn, 4.0, 0.8, seed=17, damp_hz=1500)[:n]
+    return norm(seamless(x, 4.0), -13)
+
+
+def stair_echo():
+    """Concrete stairwell: low air in a hard shaft, far door clunks and steps that ring."""
+    rng = np.random.default_rng(9)
+    seconds = 48
+    n = int(seconds * SR)
+    air = np.stack([bandpass(pink(n, rng), 40, 300), bandpass(pink(n, rng), 40, 300)], axis=1)
+    hits = np.zeros(n)
+    for at in rng.uniform(2, seconds - 4, 4):
+        clunk = lowpass(rng.standard_normal(int(0.08 * SR)), 400) * np.exp(-np.arange(int(0.08 * SR)) / (0.02 * SR))
+        place(hits, clunk, at)
+    x = air * 0.5 + reverb(hits, 4.5, 0.85, seed=19, damp_hz=2500)[:n]
+    return norm(seamless(x, 4.0), -15)
+
+
+def party_music():
+    """Music through a hotel-room door: a muffled four-on-the-floor kick, bass and chords, low-passed hard."""
+    seconds = 32.0  # 16 bars at 120 bpm: loops on the bar
+    n = int(seconds * SR)
+    x = np.zeros(n)
+    beat = 0.5
+    kick_t = t(0.3)
+    kick = np.sin(2 * np.pi * (50 + 90 * np.exp(-kick_t * 30)) * kick_t) * np.exp(-kick_t * 9)
+    roots = [55.0, 43.65, 49.0, 41.2]  # A, F, G, E
+    for b in range(int(seconds / beat)):
+        place(x, kick, b * beat)
+        root = roots[(b // 8) % 4]
+        bt = t(beat * 0.9)
+        place(x, 0.5 * np.sin(2 * np.pi * root * 2 * bt) * env_adsr(len(bt), 0.01, 0.1, 0.7, 0.1), b * beat + beat / 2)
+    for bar in range(int(seconds / (beat * 4))):
+        root = roots[(bar // 2) % 4] * 4
+        ct = t(beat * 3.5)
+        chord = sum(np.sin(2 * np.pi * root * r * ct) for r in (1.0, 1.26, 1.5)) * env_adsr(len(ct), 0.05, 0.3, 0.5, 0.5) * 0.12
+        place(x, chord, bar * beat * 4)
+    muffled = lowpass(x, 260, order=6)  # a door and a wall in between
+    return norm(reverb(muffled, 0.8, 0.3, seed=23, damp_hz=600)[:n], -12)
+
+
 SYNTH = {
     "Ambience/AMB_RoomTone": room_tone,
     "Ambience/AMB_Hvac": hvac,
     "Ambience/AMB_Servers": servers,
     "Ambience/AMB_Office": office_bed,
+    "Ambience/AMB_Fluorescent": fluorescent,
+    "Ambience/AMB_LobbyNight": lobby_night,
+    "Ambience/AMB_Harbour": harbour,
+    "Ambience/AMB_StairEcho": stair_echo,
+    "Ambience/AMB_PartyMusic": party_music,
     "UI/UI_Message": message_ping,
     "Stingers/STG_Promotion": promotion,
     "Stingers/STG_Pass": passed,

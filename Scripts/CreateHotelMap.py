@@ -1,9 +1,9 @@
-# Creates the (empty) L_ValtrenHQ map asset. The HQ itself is built at runtime by
-# AKcValtrenHQ (Source/Keycard/Private/World), so this map only needs to exist.
+# Creates the (empty) L_Harbourfront map asset. The hotel itself is built at runtime by
+# AKcHotel (Source/Keycard/Private/World/KcHotel.cpp), so this map only needs to exist.
 # Run through Scripts\CreateMap.bat; safe to re-run (does nothing if the map exists).
 import unreal
 
-MAP_PATH = "/Game/Maps/L_ValtrenHQ"
+MAP_PATH = "/Game/Maps/L_Harbourfront"
 
 if unreal.EditorAssetLibrary.does_asset_exist(MAP_PATH):
     unreal.log("KcCreateMap: {} already exists".format(MAP_PATH))

@@ -12,6 +12,8 @@
 #include "KcCast.h"
 #include "KcHotel.generated.h"
 
+namespace kc { struct MissionCatalogue; }
+
 class AKcCasePoint;
 class AKcSign;
 class USceneComponent;
@@ -58,6 +60,9 @@ public:
 	FVector LiftDestination(const FVector& From, int32 ToFloor) const;
 	// Camera positions for the screenshot and performance tour (one per place).
 	void GetTourViewpoints(TArray<FString>& OutNames, TArray<FTransform>& OutViews) const;
+
+	// Every mission step with nowhere in the building to do it: "<mission> <action>: <why>". Empty is good.
+	TArray<FString> MissingWorkPoints(const kc::MissionCatalogue& Catalogue) const;
 
 	// Lights on the player's floor (and the stair) only: cheaper, and no light through the slabs.
 	void SetActiveFloor(int32 Floor);
@@ -139,6 +144,7 @@ private:
 	void BuildHousekeeping();
 	void BuildLoadingDock();
 	void BuildLuggageRoom();
+	void BuildKitchen();
 
 	// ---- furniture ----
 	void Desk(const FVector& Center, float Yaw, const FVector& Size, UMaterialInterface* Top);
@@ -179,6 +185,8 @@ private:
 	// unattended bag (only there in the case that has it).
 	UPROPERTY(Transient) TObjectPtr<AKcCasePoint> LobbyBarPoint;
 	UPROPERTY(Transient) TObjectPtr<AKcCasePoint> BagPoint;
+	UPROPERTY(Transient) TObjectPtr<AKcCasePoint> WetFloorPoint;
+	UPROPERTY(Transient) TObjectPtr<AKcCasePoint> ValvePoint;
 	FVector LobbyBarCounter = FVector::ZeroVector;
 	FVector Safe1412 = FVector::ZeroVector;
 

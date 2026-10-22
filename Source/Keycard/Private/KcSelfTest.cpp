@@ -333,6 +333,7 @@ struct FTourState
 	TArray<FString> Names;
 	TArray<FTransform> Views;
 	TArray<FString> Lines;
+	TArray<FString> Gaps;
 	int32 Index = 0;
 	bool bCaptured = false;
 	double SumMs = 0.0;
@@ -355,6 +356,10 @@ static void RunTour(UWorld* World, AKcHUD* Hud)
 	PC->SetIgnoreMoveInput(true);
 	TSharedRef<FTourState> State = MakeShared<FTourState>();
 	Hotel->GetTourViewpoints(State->Names, State->Views);
+	if (const UKcCampaignSubsystem* Campaign = World->GetGameInstance()->GetSubsystem<UKcCampaignSubsystem>())
+	{
+		for (const FString& Gap : Hotel->MissingWorkPoints(Campaign->GetCatalogue())) State->Gaps.Add(Gap);
+	}
 	const FIntPoint Size = World->GetGameViewport() ? World->GetGameViewport()->Viewport->GetSizeXY() : FIntPoint::ZeroValue;
 	State->Lines.Add(FString::Printf(TEXT("resolution=%dx%d places=%d"), Size.X, Size.Y, State->Views.Num()));
 	TWeakObjectPtr<AKcHotel> WeakHotel(Hotel);
@@ -394,7 +399,10 @@ static void RunTour(UWorld* World, AKcHUD* Hud)
 		{
 			TourWorld->GetTimerManager().ClearTimer(State->Timer);
 			const double AvgMs = State->SumMs / FMath::Max(1, State->Views.Num());
-			FString Text = FString::Printf(TEXT("PASS\nmode=tour\naverage_frame_ms=%.2f average_fps=%.1f\n"), AvgMs, AvgMs > 0.0 ? 1000.0 / AvgMs : 0.0);
+			// Every mission step must have somewhere in the building to be done.
+			FString Text = FString::Printf(TEXT("%s\nmode=tour\naverage_frame_ms=%.2f average_fps=%.1f\nwork_point_gaps=%d\n"), State->Gaps.IsEmpty() ? TEXT("PASS") : TEXT("FAIL"),
+				AvgMs, AvgMs > 0.0 ? 1000.0 / AvgMs : 0.0, State->Gaps.Num());
+			for (const FString& G : State->Gaps) Text += TEXT("gap: ") + G + TEXT("\n");
 			for (const FString& L : State->Lines) Text += L + TEXT("\n");
 			const FString Path = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir() / TEXT("KcTour.txt"));
 			FFileHelper::SaveStringToFile(Text, *Path, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);

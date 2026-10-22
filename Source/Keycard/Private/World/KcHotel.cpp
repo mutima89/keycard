@@ -125,6 +125,8 @@ const FPost Posts[] = {
 	{TEXT("guest_nyholt"), TEXT("lobby_bar"), 0, FVector2D(1470.0f, -820.0f), 10.0f},
 	{TEXT("receiving_clerk"), TEXT("loading_dock"), -1, FVector2D(3220.0f, -560.0f), -150.0f},
 	{TEXT("partner"), TEXT("f14_corridor"), 14, FVector2D(2470.0f, -70.0f), 160.0f},
+	{TEXT("guest_ashcombe"), TEXT("lobby"), 0, FVector2D(540.0f, -120.0f), 160.0f},
+	{TEXT("contractor_fenner"), TEXT("kitchen"), 0, FVector2D(3620.0f, -720.0f), -100.0f},
 };
 
 // A guest behind a closed door: their face-to-face work is offered at the door's spot until the
@@ -184,6 +186,35 @@ FString AKcHotel::FloorLabel(int32 Floor)
 	return FString::FromInt(Floor);
 }
 
+TArray<FString> AKcHotel::MissingWorkPoints(const kc::MissionCatalogue& Catalogue) const
+{
+	TArray<FString> Out;
+	auto HasPoint = [this](const FString& Location, const FString& Spot)
+	{
+		for (const AKcCasePoint* P : CasePoints)
+		{
+			if (P && P->Location == Location && P->Spot == Spot) return true;
+		}
+		return false;
+	};
+	auto HasZone = [](const FString& Location)
+	{
+		for (const FZone& Zn : Zones()) if (Zn.Location == Location) return true;
+		return false;
+	};
+	for (const kc::MissionDef& M : Catalogue.Missions)
+	{
+		for (const kc::ActionDef& A : M.Actions)
+		{
+			const FString Where = KcConvert::ToFString(A.At), Spot = KcConvert::ToFString(A.Spot);
+			const FString Name = KcConvert::ToFString(M.Id) + TEXT(" ") + KcConvert::ToFString(A.Id);
+			if (!HasZone(Where)) Out.Add(Name + TEXT(": no zone for ") + Where);
+			else if (!HasPoint(Where, Spot)) Out.Add(Name + TEXT(": no case point ") + (Spot.IsEmpty() ? Where : Where + TEXT("/") + Spot));
+		}
+	}
+	return Out;
+}
+
 FString AKcHotel::LocationAt(const FVector& WorldPoint) const
 {
 	const int32 Floor = FloorAt(WorldPoint.Z);
@@ -217,7 +248,7 @@ FTransform AKcHotel::GetArrival(const FString& Location) const
 		{TEXT("back_of_house"), -1, FVector2D(2400.0f, -40.0f), 0.0f},
 		{TEXT("housekeeping"), -1, FVector2D(1000.0f, -260.0f), -90.0f},
 		{TEXT("loading_dock"), -1, FVector2D(3500.0f, -260.0f), -90.0f},
-		{TEXT("kitchen"), 0, FVector2D(3300.0f, -60.0f), -90.0f},
+		{TEXT("kitchen"), 0, FVector2D(3300.0f, -280.0f), -90.0f},
 		{TEXT("front_desk"), 0, FVector2D(1100.0f, 470.0f), 90.0f},
 		{TEXT("lobby"), 0, FVector2D(2350.0f, -40.0f), 180.0f},
 		{TEXT("lobby_bar"), 0, FVector2D(1050.0f, -480.0f), -90.0f},
@@ -267,12 +298,15 @@ void AKcHotel::GetTourViewpoints(TArray<FString>& OutNames, TArray<FTransform>& 
 	Add(TEXT("Lobby bar"), 0, FVector2D(1050.0f, -470.0f), FVector(900.0f, -980.0f, 140.0f));
 	Add(TEXT("Lift lobby, ground floor"), 0, FVector2D(2400.0f, -130.0f), FVector(2400.0f, 160.0f, 160.0f));
 	Add(TEXT("Fire command centre"), 0, FVector2D(3100.0f, 260.0f), FVector(3100.0f, 1000.0f, 150.0f));
+	Add(TEXT("Main kitchen"), 0, FVector2D(2850.0f, -260.0f), FVector(4000.0f, -900.0f, 150.0f));
+	Add(TEXT("Main kitchen (cook line and canopy)"), 0, FVector2D(3600.0f, -500.0f), FVector(3700.0f, -950.0f, 200.0f));
 	Add(TEXT("Floor 14 corridor"), 14, FVector2D(2420.0f, 0.0f), FVector(0.0f, 0.0f, 150.0f));
 	Add(TEXT("Floor 14 corridor (east)"), 14, FVector2D(2600.0f, 60.0f), FVector(4800.0f, 0.0f, 150.0f));
 	Add(TEXT("Room 1412"), 14, FVector2D(830.0f, -330.0f), FVector(1100.0f, -900.0f, 80.0f));
 	Add(TEXT("Room 1412 (desk and safe)"), 14, FVector2D(1150.0f, -800.0f), FVector(790.0f, -480.0f, 90.0f));
 	Add(TEXT("Room 1406 from the door"), 14, FVector2D(2775.0f, 40.0f), FVector(2850.0f, 800.0f, 120.0f));
 	Add(TEXT("Floor 14 closet"), 14, FVector2D(150.0f, -190.0f), FVector(150.0f, -900.0f, 80.0f));
+	Add(TEXT("Stair A, floor 14 (sprinkler valve)"), 14, FVector2D(2220.0f, -200.0f), FVector(2134.0f, -400.0f, 120.0f));
 	Add(TEXT("Stair A, floor 7"), 7, FVector2D(2185.0f, -220.0f), FVector(2120.0f, -320.0f, 190.0f));
 }
 
@@ -1692,6 +1726,9 @@ void AKcHotel::BuildGround()
 	AddBox(FVector(12.0f, 122.0f, Zf(F, 135.0f)), FVector(2.0f, 8.0f, 8.0f), Mat(TEXT("MI_Brass")), 0.0f, false);
 	AddLabel(TEXT("NIGHT BELL"), FVector(-2.0f, 160.0f, Zf(F, 150.0f)), 180.0f, 2.4f, BrassText, F);
 	CctvDome(F, FVector(200.0f, 0.0f, Zf(F, 300.0f)), TEXT("L-01"));
+	// Rain walked in past the mat: the wet patch where Mrs Ashcombe fell (M014).
+	WetFloorPoint = SpawnCasePoint(TEXT("lobby"), TEXT("wet_floor"), FString(), FVector(420.0f, -45.0f, Zf(F, 0.25f)), 20.0f, Cylinder, FVector(1.1f, 0.8f, 0.004f),
+		Mat(TEXT("MI_Water")), EKcUseStyle::Screen, FVector(420.0f, -45.0f, Zf(F, 60.0f)));
 	// Round table with flowers between the doors and the lounge.
 	AddInstance(Cylinder, FVector(620.0f, 0.0f, Zf(F, 38.0f)), 0.0f, FVector(1.4f, 1.4f, 0.04f), Mat(TEXT("MI_WoodWalnut")), true);
 	AddInstance(Cylinder, FVector(620.0f, 0.0f, Zf(F, 18.0f)), 0.0f, FVector(0.4f, 0.4f, 0.36f), Mat(TEXT("MI_WoodWalnut")), true);
@@ -1797,6 +1834,7 @@ void AKcHotel::BuildGround()
 	AddLabel(TEXT("TIME CLOCK"), FVector(4600.0f, CorrY - Wall * 0.5f - 11.5f, Zf(F, 166.0f)), -90.0f, 2.6f, Ink, F);
 	CctvDome(F, FVector(4500.0f, 0.0f, Zf(F, StaffCeil)), TEXT("L-09"));
 	BuildFireCommand();
+	BuildKitchen();
 }
 
 void AKcHotel::BuildFrontDesk()
@@ -1947,9 +1985,10 @@ void AKcHotel::BuildFireCommand()
 	// Fire alarm control panel: a quiet night reads SYSTEM NORMAL.
 	const FVector P(3100.0f, Y1 - 6.0f, Zf(F, 150.0f));
 	AddBox(P, FVector(130.0f, 12.0f, 100.0f), Mat(TEXT("MI_FireRed")));
-	AddBox(P - FVector(0, 6.3f, -18.0f), FVector(60.0f, 0.4f, 22.0f), Mat(TEXT("MI_ScreenPanel")), 0.0f, false);
+	// The panel's screen is where its work is done (M012, M013, M015); what it reads is set per scene.
+	SpawnCasePoint(TEXT("fire_command"), TEXT("fire_panel"), FString(), P - FVector(0, 6.3f, -18.0f), -90.0f, Cube, FVector(0.004f, 0.6f, 0.22f), Mat(TEXT("MI_ScreenPanel")),
+		EKcUseStyle::Screen, P - FVector(0, 80.0f, -10.0f));
 	AddLabel(TEXT("FIRE ALARM CONTROL PANEL"), P - FVector(0, 6.6f, -42.0f), -90.0f, 2.8f, FColor::White, F);
-	AddLabel(TEXT("SYSTEM NORMAL"), P - FVector(0, 6.8f, -18.0f), -90.0f, 3.2f, FColor(120, 230, 140), F);
 	for (int32 i = 0; i < 6; ++i) AddBox(P - FVector(-45.0f + i * 18.0f, 6.4f, 22.0f), FVector(8.0f, 0.6f, 5.0f), Mat(i == 5 ? TEXT("MI_LedAmber") : TEXT("MI_Ceramic")), 0.0f, false);
 	AddLabel(TEXT("Alarm  Fault  Silence  Reset  Evacuate"), P - FVector(0, 6.6f, 32.0f), -90.0f, 1.8f, FColor::White, F);
 	// Building plans for the fire authority, the red phone, the PA desk, the evacuation plan.
@@ -1970,6 +2009,107 @@ void AKcHotel::BuildFireCommand()
 	CeilingLight(F, FVector(3100.0f, 450.0f, Zf(F, CeilBack)), DownLumens * 1.3f, Neutral);
 	CeilingLight(F, FVector(3100.0f, 800.0f, Zf(F, CeilBack)), DownLumens * 1.3f, Neutral);
 	SmokeDetector(F, FVector2D(3100.0f, 620.0f), CeilBack);
+}
+
+void AKcHotel::BuildKitchen()
+{
+	// Main kitchen, under the staff corridor's south side: the cook line and its extract canopy on the
+	// south wall, prep tables, the pass by the doors, dish wash, the walk-in, and the permit board (M015).
+	const int32 F = 0;
+	const float X0 = CoreX1, X1 = MaxX - 15.0f, Y0 = -HalfY + 15.0f, Y1 = -CorrY - Wall * 0.5f;
+	UMaterialInterface* Tile = Mat(TEXT("MI_Tile"));
+	UMaterialInterface* Steel = Mat(TEXT("MI_Steel"));
+	UMaterialInterface* Chrome = Mat(TEXT("MI_Chrome"));
+	FloorFinish(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), Mat(TEXT("MI_FloorTile")));
+	Ceiling(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), CeilBack, Mat(TEXT("MI_CeilingWhite")));
+	AddBox(FVector(X0 + 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilBack * 0.5f)), FVector(1.0f, Y1 - Y0, CeilBack), Tile, 0.0f, false);
+	AddBox(FVector(X1 - 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilBack * 0.5f)), FVector(1.0f, Y1 - Y0, CeilBack), Tile, 0.0f, false);
+	AddBox(FVector((X0 + X1) * 0.5f, Y0 + 0.5f, Zf(F, 100.0f)), FVector(X1 - X0, 1.0f, 200.0f), Tile, 0.0f, false);
+
+	// The cook line: two fryers at the west end, then ranges, a griddle and a salamander, all under one canopy.
+	const float LineY = Y0 + 50.0f;
+	for (int32 i = 0; i < 9; ++i)
+	{
+		const float X = 3500.0f + i * 110.0f;
+		const bool bFryer = i < 2;
+		AddBox(FVector(X, LineY, Zf(F, 45.0f)), FVector(104.0f, 90.0f, 90.0f), Steel);
+		AddBox(FVector(X, LineY, Zf(F, 90.5f)), FVector(100.0f, 86.0f, 1.0f), Mat(bFryer ? TEXT("MI_Graphite") : TEXT("MI_DeviceBlack")), 0.0f, false);
+		for (int32 k = 0; k < 4; ++k) AddBox(FVector(X - 36.0f + k * 24.0f, LineY + 46.0f, Zf(F, 70.0f)), FVector(4.0f, 2.0f, 4.0f), Chrome, 0.0f, false);
+		if (bFryer)
+		{
+			for (float Side : {-1.0f, 1.0f}) AddBox(FVector(X + Side * 22.0f, LineY + 10.0f, Zf(F, 110.0f)), FVector(30.0f, 40.0f, 3.0f), Chrome, 0.0f, false);
+		}
+	}
+	AddBox(FVector(3500.0f + 4.0f * 110.0f, LineY, Zf(F, 150.0f)), FVector(990.0f, 30.0f, 2.0f), Steel, 0.0f, false);
+	// The extract canopy: stainless box, baffle filters along its face (a scene prop: M015 takes them
+	// out), wet chemical nozzles, and four hanging rods to the slab. The rear one at the west end is cracked.
+	const float CanX0 = 3420.0f, CanX1 = 4520.0f, CanY = Y0 + 65.0f;
+	AddBox(FVector((CanX0 + CanX1) * 0.5f, CanY, Zf(F, 235.0f)), FVector(CanX1 - CanX0, 130.0f, 50.0f), Steel);
+	AddBox(FVector((CanX0 + CanX1) * 0.5f, CanY + 66.0f, Zf(F, 214.0f)), FVector(CanX1 - CanX0, 2.0f, 8.0f), Chrome, 0.0f, false);
+	for (float X = CanX0 + 60.0f; X < CanX1; X += 110.0f) AddInstance(Cylinder, FVector(X, CanY, Zf(F, 207.0f)), 0.0f, FVector(0.03f, 0.03f, 0.06f), Chrome, false);
+	for (float X : {CanX0 + 40.0f, CanX1 - 40.0f})
+	{
+		for (float Y : {CanY - 50.0f, CanY + 50.0f}) AddInstance(Cylinder, FVector(X, Y, Zf(F, 270.0f)), 0.0f, FVector(0.02f, 0.02f, 0.2f), Steel, false);
+	}
+	AddBox(FVector(CanX0 + 40.0f, CanY - 50.0f, Zf(F, 262.0f)), FVector(8.0f, 8.0f, 2.0f), Mat(TEXT("MI_LedRed")), 0.0f, false);
+	AddBox(FVector((CanX0 + CanX1) * 0.5f, Y0 + 30.0f, Zf(F, CeilBack - 10.0f)), FVector(200.0f, 50.0f, 20.0f), Steel, 0.0f, false);
+	// Detector zone K2: the two heat detectors over the canopy front.
+	for (float X : {3700.0f, 4300.0f}) SmokeDetector(F, FVector2D(X, CanY + 120.0f), CeilBack);
+	// Wet chemical release and the fire blanket at the west end of the line.
+	AddBox(FVector(CanX0 - 40.0f, Y0 + 4.0f, Zf(F, 140.0f)), FVector(22.0f, 8.0f, 30.0f), Mat(TEXT("MI_SafetyYellow")), 0.0f, false);
+	AddLabel(TEXT("HOOD FIRE SUPPRESSION: PULL"), FVector(CanX0 - 40.0f, Y0 + 8.6f, Zf(F, 162.0f)), 90.0f, 1.8f, Ink, F);
+	AddBox(FVector(CanX0 - 90.0f, Y0 + 5.0f, Zf(F, 150.0f)), FVector(30.0f, 10.0f, 34.0f), Mat(TEXT("MI_FireRed")), 0.0f, false);
+	AddLabel(TEXT("FIRE BLANKET"), FVector(CanX0 - 90.0f, Y0 + 10.4f, Zf(F, 150.0f)), 90.0f, 2.0f, FColor::White, F);
+	FireExtinguisher(F, FVector(CanX0 - 140.0f, Y0, 0.0f), 90.0f);
+	// The floor gully in front of the line.
+	AddBox(FVector((CanX0 + CanX1) * 0.5f, LineY + 120.0f, Zf(F, 0.4f)), FVector(CanX1 - CanX0, 14.0f, 0.6f), Steel, 0.0f, false);
+	SpawnCasePoint(TEXT("kitchen"), TEXT("kitchen_line"), FString(), FVector(3560.0f, LineY + 46.5f, Zf(F, 82.0f)), 90.0f, Cube, FVector(0.02f, 0.9f, 0.08f), Chrome,
+		EKcUseStyle::Screen, FVector(CanX0 + 40.0f, CanY - 40.0f, Zf(F, 255.0f)));
+
+	// Prep: two steel tables down the middle with boards and the shelf of pans above them.
+	for (float X : {3450.0f, 4050.0f})
+	{
+		Desk(FVector(X, -560.0f, Zf(F, 0.0f)), 0.0f, FVector(260.0f, 80.0f, 90.0f), Steel);
+		AddBox(FVector(X - 60.0f, -560.0f, Zf(F, 91.0f)), FVector(50.0f, 34.0f, 2.0f), Mat(TEXT("MI_Ceramic")), 6.0f, false);
+		AddBox(FVector(X + 60.0f, -560.0f, Zf(F, 91.0f)), FVector(50.0f, 34.0f, 2.0f), Mat(TEXT("MI_LedGreen")), -4.0f, false);
+	}
+	// The pass by the doors: a steel shelf under heat lamps, the ticket rail, tonight's last chits.
+	AddBox(FVector(3700.0f, Y1 - 40.0f, Zf(F, 45.0f)), FVector(500.0f, 70.0f, 90.0f), Steel);
+	AddBox(FVector(3700.0f, Y1 - 40.0f, Zf(F, 140.0f)), FVector(500.0f, 50.0f, 3.0f), Steel, 0.0f, false);
+	for (float X : {3530.0f, 3700.0f, 3870.0f}) AddBox(FVector(X, Y1 - 40.0f, Zf(F, 190.0f)), FVector(40.0f, 20.0f, 8.0f), Mat(TEXT("MI_LampWarm")), 0.0f, false);
+	AddBox(FVector(3700.0f, Y1 - 8.0f, Zf(F, 160.0f)), FVector(480.0f, 2.0f, 3.0f), Chrome, 0.0f, false);
+	for (int32 i = 0; i < 5; ++i) AddBox(FVector(3520.0f + i * 70.0f, Y1 - 9.2f, Zf(F, 150.0f)), FVector(8.0f, 0.4f, 16.0f), Mat(TEXT("MI_Paper")), 0.0f, false);
+	SpawnCasePoint(TEXT("kitchen"), FString(), TEXT("The pass"), FVector(3700.0f, Y1 - 40.0f, Zf(F, 91.0f)), 0.0f, Cube, FVector(0.3f, 0.22f, 0.02f), Mat(TEXT("MI_Paper")),
+		EKcUseStyle::PickUp);
+	// Dish wash in the north-west corner: the pot sink, the hood machine, the rack trolley.
+	AddBox(FVector(X0 + 140.0f, Y1 - 45.0f, Zf(F, 45.0f)), FVector(240.0f, 80.0f, 90.0f), Steel);
+	AddBox(FVector(X0 + 90.0f, Y1 - 45.0f, Zf(F, 80.0f)), FVector(70.0f, 60.0f, 20.0f), Mat(TEXT("MI_Graphite")), 0.0f, false);
+	AddBox(FVector(X0 + 300.0f, Y1 - 50.0f, Zf(F, 95.0f)), FVector(70.0f, 70.0f, 190.0f), Steel);
+	AddBox(FVector(X0 + 80.0f, -560.0f, Zf(F, 80.0f)), FVector(60.0f, 60.0f, 160.0f), Steel, 0.0f, true);
+	// Walk-in cooler in the north-east corner.
+	AddBox(FVector(4600.0f, (Y1 - 420.0f + Y1) * 0.5f - 210.0f, Zf(F, 125.0f)), FVector(370.0f, 420.0f, 250.0f), Mat(TEXT("MI_PlasticGrey")));
+	AddLabel(TEXT("WALK-IN COOLER  3 C"), FVector(4413.0f, Y1 - 420.0f, Zf(F, 190.0f)), 180.0f, 3.0f, Ink, F);
+	AddBox(FVector(4413.0f, Y1 - 420.0f, Zf(F, 100.0f)), FVector(2.0f, 90.0f, 200.0f), Steel, 0.0f, false);
+
+	// The permit board on the west wall by the dish area: hot work and other permits to work.
+	const FVector Board(X0 + 2.0f, -700.0f, Zf(F, 150.0f));
+	AddBox(Board, FVector(2.0f, 120.0f, 80.0f), Mat(TEXT("MI_Cork")), 0.0f, false);
+	AddLabel(TEXT("PERMITS TO WORK"), Board + FVector(2.0f, 0, 48.0f), 0.0f, 3.0f, Ink, F);
+	AddLabel(TEXT("No permit, no flame."), Board + FVector(2.0f, 0, -48.0f), 0.0f, 2.0f, FColor(170, 30, 30), F);
+	SpawnCasePoint(TEXT("kitchen"), TEXT("permit_board"), FString(), Board + FVector(2.0f, -20.0f, 4.0f), 0.0f, Cube, FVector(0.01f, 0.22f, 0.3f), Mat(TEXT("MI_Paper")),
+		EKcUseStyle::Screen, Board + FVector(70.0f, 0, 0));
+	AddBox(Board + FVector(2.0f, 34.0f, 6.0f), FVector(0.4f, 22.0f, 30.0f), Mat(TEXT("MI_Paper")), 0.0f, false);
+	// By the doors: the hygiene sign and the second extinguisher.
+	AddBox(FVector(3200.0f, Y1 - 1.0f, Zf(F, 160.0f)), FVector(50.0f, 1.0f, 36.0f), Mat(TEXT("MI_Paper")), 0.0f, false);
+	AddLabel(TEXT("WHITES  HAIR NET  WASH HANDS"), FVector(3200.0f, Y1 - 1.7f, Zf(F, 164.0f)), -90.0f, 2.2f, Ink, F);
+	FireExtinguisher(F, FVector(3420.0f, Y1, 0.0f), -90.0f);
+
+	for (float X : {3000.0f, 3600.0f, 4200.0f})
+	{
+		AddBox(FVector(X, -480.0f, Zf(F, CeilBack - 3.0f)), FVector(124.0f, 14.0f, 6.0f), Mat(TEXT("MI_LedStrip")), 0.0f, false);
+		AddLight(F, FVector(X, -480.0f, Zf(F, CeilBack - 16.0f)), 900.0f, 750.0f, Neutral, X == 3600.0f);
+	}
+	CeilingLight(F, FVector(3900.0f, CanY + 30.0f, Zf(F, 210.0f)), DownLumens, Neutral, 300.0f);
 }
 
 // ---------------------------------------------------------------------------- 14: the guest floor
@@ -2512,6 +2652,7 @@ void AKcHotel::PlaceFixedInteractables()
 		{TEXT("door_1412"), TEXT("1412"), 750.0f, false},
 		{TEXT("door_1418"), TEXT("1418"), 3750.0f, false},
 		{TEXT("door_1409"), TEXT("1409"), 3960.0f, true},
+		{TEXT("door_1416"), TEXT("1416"), 3050.0f, false},
 	};
 	for (const FDoorSpot& D : DoorSpots)
 	{
@@ -2526,6 +2667,21 @@ void AKcHotel::PlaceFixedInteractables()
 		{
 			if (P && Dyn->Pivot.IsValid()) P->AttachToComponent(Dyn->Pivot.Get(), FAttachmentTransformRules::KeepWorldTransform);
 		}
+	}
+	// The floor's sprinkler control valve on the Stair A landing: the red riser, a gauge, the valve
+	// wheel with its supervisory switch, and the chained padlock that holds it open (M013).
+	{
+		const float Vx = StairIn0 + 14.0f, Vy = -420.0f;
+		AddInstance(Cylinder, FVector(Vx, Vy, Zf(F, Ceil14 * 0.5f)), 0.0f, FVector(0.1f, 0.1f, Ceil14 / 100.0f), Mat(TEXT("MI_FireRed")), false);
+		AddInstance(Cylinder, FTransform(FRotator(0.0f, 0.0f, 90.0f), FVector(Vx, Vy + 18.0f, Zf(F, 120.0f)), FVector(0.06f, 0.06f, 0.3f)), Mat(TEXT("MI_FireRed")), false, false);
+		AddInstance(Cylinder, FVector(Vx + 6.0f, Vy, Zf(F, 160.0f)), 0.0f, FVector(0.06f, 0.06f, 0.02f), Mat(TEXT("MI_Ceramic")), false);
+		AddBox(FVector(Vx + 10.0f, Vy - 14.0f, Zf(F, 120.0f)), FVector(6.0f, 8.0f, 10.0f), Mat(TEXT("MI_PlasticGrey")), 0.0f, false);
+		AddBox(FVector(StairIn0 + 1.0f, Vy, Zf(F, 200.0f)), FVector(1.0f, 40.0f, 14.0f), Mat(TEXT("MI_Paper")), 0.0f, false);
+		AddLabel(TEXT("SPRINKLER VALVE  FLOOR 14"), FVector(StairIn0 + 1.6f, Vy, Zf(F, 202.0f)), 0.0f, 1.8f, FColor(170, 30, 30), F);
+		AddLabel(TEXT("Keep open and locked"), FVector(StairIn0 + 1.6f, Vy, Zf(F, 197.0f)), 0.0f, 1.3f, Ink, F);
+		ValvePoint = SpawnCasePoint(TEXT("f14_corridor"), TEXT("valve_14"), FString(), FVector(Vx, Vy + 34.0f, Zf(F, 120.0f)), 90.0f, Cylinder, FVector(0.22f, 0.22f, 0.03f),
+			Mat(TEXT("MI_FireRed")), EKcUseStyle::Screen, FVector(Vx + 120.0f, Vy + 60.0f, Zf(F, 150.0f)));
+		if (ValvePoint) ValvePoint->SetActorRotation(FRotator(0.0f, 0.0f, 90.0f));
 	}
 	// Outside 1406 and 1407: where you stand to check the corridor (the floor's house phone).
 	SpawnCasePoint(TEXT("f14_corridor"), TEXT("corridor_14"), FString(), FVector(2990.0f, -CorrY + Wall * 0.5f + 3.0f, Zf(F, 135.0f)), 90.0f, Cube,
@@ -2729,6 +2885,15 @@ void AKcHotel::RefreshScenes()
 	const bool bAed = Done(TEXT("use_aed"));
 	const bool bPropped = Has(TEXT("respond_alarm")) && !Done(TEXT("respond_alarm"));
 	const bool bLuggage = Has(TEXT("check_luggage_room"));
+	const bool bFireAlarm = Has(TEXT("read_panel")) && !Done(TEXT("debrief_team"));
+	const bool bSilenced = Done(TEXT("silence_panel"));
+	const bool bImpaired = Has(TEXT("tag_valve")) && Done(TEXT("tag_valve")) && !Done(TEXT("restore"));
+	const bool bSlip = Has(TEXT("cone_area"));
+	const bool bConed = Done(TEXT("cone_area")), bMopped = Done(TEXT("clean_floor"));
+	const bool bHotWork = Has(TEXT("isolate_zone"));
+	const bool bPrepped = Done(TEXT("walk_area"));
+	const bool bK2Off = (Done(TEXT("isolate_zone")) || Done(TEXT("isolate_all"))) && !Done(TEXT("restore_zone"));
+	const bool bAllOff = Done(TEXT("isolate_all")) && !Done(TEXT("restore_zone"));
 
 	// Guests behind doors: the door offers their work until they open it.
 	for (AKcCasePoint* P : CasePoints)
@@ -2745,8 +2910,9 @@ void AKcHotel::RefreshScenes()
 		}
 	}
 
-	const FString Key = FString::Printf(TEXT("%s|%d%d%d%d%d%d%d%d|%d%d%d%d%d"), M ? *KcConvert::ToFString(M->Id) : TEXT(""), bParty, bKnocked, bCapOff, bQuiet, bReturned, b1412,
-		bCloset, G && G->HasGame(), bBag, bCodeBlue, bAed, bPropped, bLuggage);
+	const FString Key = FString::Printf(TEXT("%s|%d%d%d%d%d%d%d%d|%d%d%d%d%d|%d%d%d%d%d%d%d%d%d%d"), M ? *KcConvert::ToFString(M->Id) : TEXT(""), bParty, bKnocked, bCapOff, bQuiet, bReturned,
+		b1412, bCloset, G && G->HasGame(), bBag, bCodeBlue, bAed, bPropped, bLuggage, bFireAlarm, bSilenced, bImpaired, bSlip, bConed, bMopped, bHotWork, bPrepped, bK2Off,
+		bAllOff);
 	if (Key == SceneKey) return;
 	SceneKey = Key;
 	for (UPrimitiveComponent* S : SceneProps)
@@ -2791,6 +2957,81 @@ void AKcHotel::RefreshScenes()
 			SceneBox(FVector(1620.0f, -820.0f, Zf(0, 7.0f)), FVector(30.0f, 26.0f, 12.0f), Mat(TEXT("MI_SafetyYellow")), 10.0f);
 			SceneBox(FVector(1620.0f, -820.0f, Zf(0, 13.5f)), FVector(14.0f, 10.0f, 1.0f), Mat(TEXT("MI_ScreenPanel")), 10.0f);
 			SceneBox(FVector(1585.0f, -790.0f, Zf(0, 1.2f)), FVector(16.0f, 12.0f, 0.6f), Mat(TEXT("MI_Paper")), 30.0f);
+		}
+	}
+	// The fire panel's screen: a fire on 14 (M012), the floor 14 valve supervisory (M013), zones
+	// isolated for hot work (M015), or a quiet night.
+	{
+		const FVector Screen(3100.0f, HalfY - 15.0f - 6.0f - 6.8f, Zf(0, 168.0f));
+		FString Status = TEXT("SYSTEM NORMAL");
+		FColor Tint(120, 230, 140);
+		if (bFireAlarm)
+		{
+			Status = bSilenced ? TEXT("FIRE  14 CORRIDOR E  (SILENCED)") : TEXT("FIRE  ZONE 14-3  14 CORRIDOR E");
+			Tint = FColor(255, 70, 60);
+		}
+		else if (bAllOff)
+		{
+			Status = TEXT("DISABLED  ZONES G-1 TO G-6");
+			Tint = FColor(255, 190, 60);
+		}
+		else if (bK2Off)
+		{
+			Status = TEXT("DISABLED  ZONE K2  HW-0418");
+			Tint = FColor(255, 190, 60);
+		}
+		else if (bImpaired)
+		{
+			Status = TEXT("SUPERVISORY  SPRINKLER VALVE 14");
+			Tint = FColor(255, 190, 60);
+		}
+		if (UTextRenderComponent* T = AddLabel(Status, Screen, -90.0f, 2.6f, Tint, 0)) SceneProps.Add(T);
+		if (bFireAlarm && !bSilenced) SceneBox(FVector(3055.0f, HalfY - 15.0f - 12.6f, Zf(0, 128.0f)), FVector(8.0f, 0.8f, 5.0f), Mat(TEXT("MI_LedRed")));
+	}
+	// M013: the red impairment tag on the floor 14 valve while it is shut.
+	if (bImpaired && ValvePoint)
+	{
+		const FVector V = ValvePoint->GetActorLocation();
+		SceneBox(V + FVector(0, 6.0f, -22.0f), FVector(1.0f, 9.0f, 15.0f), Mat(TEXT("MI_FireRed")));
+		SceneBox(V + FVector(0, 2.0f, -10.0f), FVector(0.4f, 0.4f, 10.0f), Mat(TEXT("MI_Graphite")));
+	}
+	// M014: the wet patch until it is mopped, cones round it once it is made safe, the mat kicked askew.
+	if (WetFloorPoint)
+	{
+		// Mopped, it is a damp sheen drying on the marble, still where the photos were taken.
+		WetFloorPoint->SetActorHiddenInGame(!bSlip);
+		WetFloorPoint->SetActorEnableCollision(bSlip);
+		WetFloorPoint->SetAppearance(Cylinder, bMopped ? FVector(0.6f, 0.4f, 0.004f) : FVector(1.1f, 0.8f, 0.004f), Mat(bMopped ? TEXT("MI_Glass") : TEXT("MI_Water")));
+		if (bSlip && bConed)
+		{
+			for (int32 i = 0; i < 4; ++i)
+			{
+				const FVector C = FVector(420.0f, -45.0f, Zf(0, 0.0f)) + FRotator(0.0f, 45.0f + i * 90.0f, 0.0f).Vector() * 85.0f;
+				SceneBox(C + FVector(0, 0, 1.0f), FVector(30.0f, 30.0f, 2.0f), Mat(TEXT("MI_SafetyYellow")), 0.0f);
+				SceneBox(C + FVector(0, 0, 32.0f), FVector(16.0f, 16.0f, 60.0f), Mat(TEXT("MI_SafetyYellow")), 0.0f, Cylinder);
+			}
+		}
+	}
+	// M015: the stepladder at the cracked bracket; the baffle filters on the canopy until the walk-round
+	// takes them to the dish area, with the fire blanket over the fryers and a welding blanket on the gully.
+	{
+		const float CanX0 = 3420.0f, CanY = -HalfY + 15.0f + 65.0f;
+		if (!bPrepped || !bHotWork)
+		{
+			for (float X = CanX0 + 55.0f; X < 4520.0f; X += 110.0f) SceneBox(FVector(X, CanY + 60.0f, Zf(0, 205.0f)), FVector(50.0f, 4.0f, 34.0f), Mat(TEXT("MI_Chrome")));
+		}
+		else
+		{
+			for (int32 i = 0; i < 10; ++i) SceneBox(FVector(2780.0f, -360.0f, Zf(0, 2.0f + i * 4.5f)), FVector(50.0f, 34.0f, 4.0f), Mat(TEXT("MI_Chrome")), 3.0f * (i % 3));
+			SceneBox(FVector(3555.0f, CanY - 15.0f, Zf(0, 92.0f)), FVector(220.0f, 92.0f, 2.0f), Mat(TEXT("MI_FireRed")));
+			SceneBox(FVector(3700.0f, CanY + 105.0f, Zf(0, 1.2f)), FVector(500.0f, 60.0f, 1.0f), Mat(TEXT("MI_Graphite")));
+		}
+		if (bHotWork)
+		{
+			const FVector L(CanX0 + 60.0f, CanY + 130.0f, Zf(0, 0.0f));
+			for (float Side : {-1.0f, 1.0f}) SceneBox(L + FVector(Side * 22.0f, 0.0f, 85.0f), FVector(4.0f, 8.0f, 170.0f), Mat(TEXT("MI_SafetyYellow")), 0.0f);
+			for (int32 r = 0; r < 5; ++r) SceneBox(L + FVector(0.0f, 0.0f, 30.0f + r * 32.0f), FVector(44.0f, 10.0f, 2.0f), Mat(TEXT("MI_Steel")), 0.0f);
+			SceneBox(L + FVector(90.0f, 20.0f, 30.0f), FVector(40.0f, 28.0f, 60.0f), Mat(TEXT("MI_FireRed")), 0.0f);
 		}
 	}
 	// M009: the dock door wedged open with the pallet jack; otherwise the jack is parked by the pallets.

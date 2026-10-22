@@ -253,6 +253,70 @@
       "avatar": "Female_Adult_09",
       "outfit": "guest",
       "staff": false
+    },
+    {
+      "id": "guest_halasz",
+      "name": "Teodor Halasz",
+      "role": "Guest, room 1409",
+      "department": "Guest",
+      "bio": "In town for a trade fair. Has had a long evening in the Lobby Bar and cannot find his room card.",
+      "location": "lobby",
+      "avatar": "Male_Adult_10",
+      "outfit": "guest",
+      "staff": false
+    },
+    {
+      "id": "guest_nyholt",
+      "name": "Elin Nyholt",
+      "role": "Guest, room 1416",
+      "department": "Guest",
+      "bio": "On a late anniversary drink in the Lobby Bar when her husband collapses.",
+      "location": "lobby_bar",
+      "avatar": "Female_Adult_10",
+      "outfit": "guest",
+      "staff": false
+    },
+    {
+      "id": "paramedic_sethna",
+      "name": "Ravi Sethna",
+      "role": "Paramedic, Port Avener Fire & Rescue",
+      "department": "Emergency services",
+      "bio": "Night crew lead on the harbourfront ambulance. Wants a clear handover and a clear route.",
+      "location": "lobby",
+      "avatar": "Medical_Male_01",
+      "outfit": "fire",
+      "staff": false
+    },
+    {
+      "id": "bell_captain",
+      "name": "Owen Tremlett",
+      "role": "Bell captain, nights",
+      "department": "Front Office",
+      "bio": "Twenty-two years on the bell stand. Knows every regular and every shortcut, and does not love paperwork.",
+      "location": "bell_stand",
+      "avatar": "Male_Adult_11",
+      "outfit": "front_office"
+    },
+    {
+      "id": "receiving_clerk",
+      "name": "Hattie Coombe",
+      "role": "Receiving clerk",
+      "department": "Purchasing",
+      "bio": "Runs the loading dock from 05:00. Practical, fast, and tired of the dock door alarm.",
+      "location": "loading_dock",
+      "avatar": "Female_Adult_11",
+      "outfit": "engineering"
+    },
+    {
+      "id": "guest_lindgren",
+      "name": "Mara Lindgren",
+      "role": "Guest, checking out",
+      "department": "Guest",
+      "bio": "Left two bags with the bell stand before a late meeting. One of them is not there now.",
+      "location": "bell_stand",
+      "avatar": "Female_Adult_12",
+      "outfit": "guest",
+      "staff": false
     }
   ]
 }

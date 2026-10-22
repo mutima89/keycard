@@ -7,6 +7,18 @@
       "title": "A key the desk never made",
       "summary": "The man at the desk for 1418 had a working keycard for the room, but the encoding log shows no key made for him. Somebody is making Veldane keys outside the front desk.",
       "chapter": 1
+    },
+    {
+      "id": "trolley_master",
+      "title": "The man in the grey cap",
+      "summary": "A man took a floor master from an unattended trolley, tried a vacant room and an occupied one, then left by the stairs. He knew where the trolley would be and which rooms were empty.",
+      "chapter": 1
+    },
+    {
+      "id": "rogue_encoder",
+      "title": "A fourth encoder",
+      "summary": "E-77 is a portable encoder registered to the Harbourfront's lock system at 03:12 one night, through a shared login whose password was taped under a keyboard. It made 31 keys the desk never logged.",
+      "chapter": 1
     }
   ]
 }

@@ -222,6 +222,14 @@ const std::vector<SpotDef>& KnownSpots()
 		{"door_1406", "f14_corridor", "Door of 1406"},
 		{"door_1412", "f14_corridor", "Lock on 1412"},
 		{"door_1418", "f14_corridor", "Door of 1418"},
+		{"door_1409", "f14_corridor", "Door of 1409"},
+		{"aed_cabinet", "lobby", "AED cabinet"},
+		{"unattended_bag", "lobby", "Unattended bag"},
+		{"luggage_room", "bell_stand", "Luggage room"},
+		{"luggage_log", "bell_stand", "Luggage tag book"},
+		{"key_cabinet", "housekeeping", "Master key cabinet"},
+		{"dock_door", "loading_dock", "Dock door"},
+		{"front_office_pc", "front_desk", "Front office terminal"},
 		{"corridor_14", "f14_corridor", "Floor 14 corridor"},
 		{"room_1412_desk", "room_1412", "Desk in 1412"},
 		{"room_1412_safe", "room_1412", "Safe in 1412"},
@@ -562,7 +570,7 @@ std::vector<std::string> ValidateMission(const MissionDef& M)
 			if (!Spot) Err(AP + ": unknown spot '" + A.Spot + "'");
 			else if (Spot->Location != A.At) Err(AP + ": spot '" + A.Spot + "' is not in " + A.At);
 		}
-		else Places.insert(A.At);
+		Places.insert(A.At);
 		if (A.Minutes < 0 || A.Minutes > 240) Err(AP + ": minutes outside 0..240");
 		if (A.Finding.empty()) Err(AP + ": needs a finding");
 		if ((A.Kind == EActionKind::Interview || A.Kind == EActionKind::Call) && A.Person.empty()) Err(AP + ": an interview or call needs a person");

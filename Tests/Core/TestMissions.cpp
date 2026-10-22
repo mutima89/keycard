@@ -88,14 +88,17 @@ TEST(Content_EveryMissionIsOnFootAndAssessesFourDimensions)
 		CHECK(Places.size() >= 2u);
 		CHECK(Interviews >= 1);
 		GameState S = Fresh();
+		S.Career.Level = std::max(S.Career.Level, M.MinLevel); // each case at the rank it is written for
 		std::vector<MissionAnswer> Report;
-		REQUIRE(StartMission(S, M) == EMissionError::None);
+		const EMissionError Started = StartMission(S, M);
+		if (Started != EMissionError::None) std::printf("    %s does not start\n", M.Id.c_str());
+		REQUIRE(Started == EMissionError::None);
 		REQUIRE(PlayBestFieldwork(S, M, Report));
 		const MissionDebrief D = ScoreMission(M, S.Campaign.Steps, [&] {
 			std::vector<MissionAnswer> All = S.Campaign.FieldAnswers;
 			All.insert(All.end(), Report.begin(), Report.end());
 			return All;
-		}(), 1);
+		}(), S.Career.Level);
 		CHECK_EQ(D.Score, 100);
 		if (D.Score != 100)
 		{
@@ -128,6 +131,22 @@ TEST(Campaign_FirstThreeCasesEarnThePromotionAndItsCeremony)
 	for (const char* Card : {"room_theft_response", "incident_report_writing", "identity_before_entry", "noise_complaint"}) CHECK(HasCard(S, Card));
 	CHECK(HasClue(S, "clone_1418"));
 	CHECK_EQ(static_cast<int>(S.Campaign.Records.size()), 3);
+}
+
+TEST(Campaign_BestPlayThroughLevelThreeReachesLevelFour)
+{
+	GameState S = Fresh();
+	for (const char* Id : {"M001", "M002", "M003", "M004", "M005", "M006", "M007", "M008", "M009", "M010", "M011"})
+	{
+		S.bCeremonyPending = false;
+		const MissionDebrief D = PlayBest(S, Id);
+		if (!D.bPassed || D.Score != 100) std::printf("    %s scored %d\n", Id, D.Score);
+		CHECK(D.bPassed && D.Score == 100);
+	}
+	CHECK_EQ(S.Career.Level, 4);
+	for (const char* Card : {"lost_master_key", "door_alarm_response", "luggage_room_control", "key_system_audit", "cctv_preservation"}) CHECK(HasCard(S, Card));
+	for (const char* Clue : {"clone_1418", "trolley_master", "rogue_encoder"}) CHECK(HasClue(S, Clue));
+	CHECK_EQ(static_cast<int>(S.Campaign.Records.size()), 11);
 }
 
 TEST(Campaign_SameSeedSameCareer)

@@ -1,0 +1,540 @@
+{
+  "schema": 1,
+  "id": "M005",
+  "title": "Code Blue at the Bar",
+  "kind": "mission",
+  "topic": "medical",
+  "minLevel": 2,
+  "opening": {
+    "channel": "radio",
+    "from": "server_kerr",
+    "at": "lobby",
+    "text": "LP, LP, Lobby Bar! A man's collapsed, he's on the floor, he's not answering me! Please, now!"
+  },
+  "briefing": [
+    "01:50. You are on patrol in the lobby when the Lobby Bar calls: a guest has collapsed. The bar is thirty metres away.",
+    "Veldane policy: every LP officer is trained in CPR and the AED. Call for help, start CPR, get the AED on, and make the way clear for the ambulance. The street doors are locked from 01:00."
+  ],
+  "learningObjectives": [
+    "Recognising cardiac arrest: unresponsive and not breathing normally",
+    "Call, CPR, AED: the chain of survival",
+    "Clearing the route and handing over to paramedics"
+  ],
+  "start": "01:50",
+  "actions": [
+    {
+      "id": "assess",
+      "label": "Check him: response and breathing",
+      "kind": "look",
+      "at": "lobby_bar",
+      "minutes": 1,
+      "required": true,
+      "findingTitle": "The man on the floor, 01:5x",
+      "finding": [
+        "A man in his sixties on his back by the bar stools. No response to your voice or to a firm tap on the shoulders.",
+        "You tilt his head and look, listen and feel for ten seconds: no normal breathing, only an occasional gasp. Gasping is not breathing. This is cardiac arrest."
+      ]
+    },
+    {
+      "id": "call_ems",
+      "label": "Send Nadia to call the emergency number and bring the AED",
+      "kind": "interview",
+      "at": "lobby_bar",
+      "person": "server_kerr",
+      "minutes": 1,
+      "requires": [
+        "assess"
+      ],
+      "required": true,
+      "findingTitle": "Help on the way",
+      "finding": "Nadia calls the emergency number on speaker from the bar phone: adult collapsed, not breathing, CPR started, the Veldane Grand Harbourfront, Lobby Bar, ground floor. She sends Tariq running for the AED by the lifts.",
+      "lines": [
+        {
+          "speaker": "server_kerr",
+          "text": "Calling now. Tariq, the defibrillator, by the lifts! Go!"
+        }
+      ]
+    },
+    {
+      "id": "start_cpr",
+      "label": "Start chest compressions",
+      "kind": "other",
+      "at": "lobby_bar",
+      "minutes": 1,
+      "requires": [
+        "assess"
+      ],
+      "required": true,
+      "findingTitle": "CPR from 01:5x",
+      "finding": "Heel of the hand on the centre of the chest, arms straight, hard and fast: about two a second, five to six centimetres deep, full recoil. You count out loud. The call handler on speaker counts with you."
+    },
+    {
+      "id": "move_casualty",
+      "label": "Move him into the corridor, out of sight of the guests",
+      "kind": "other",
+      "at": "lobby_bar",
+      "minutes": 3,
+      "requires": [
+        "assess"
+      ],
+      "findingTitle": "Moving him",
+      "finding": "It takes three of you and three minutes to drag him into the service corridor. Nobody was pressing on his chest the whole time.",
+      "effects": {
+        "SafetyCompliance": -5
+      }
+    },
+    {
+      "id": "use_aed",
+      "label": "Put the AED on and follow its prompts",
+      "kind": "other",
+      "at": "lobby_bar",
+      "minutes": 4,
+      "requires": [
+        "start_cpr",
+        "call_ems"
+      ],
+      "required": true,
+      "findingTitle": "AED",
+      "finding": [
+        "Tariq arrives with the AED. You switch it on and it talks you through it: pads on bare chest, one below the right collarbone, one on the left side below the armpit. \"Analysing. Do not touch the patient.\"",
+        "\"Shock advised.\" You shout \"Stand clear!\", check nobody is touching him, and press the button at 01:5x. \"Shock delivered. Start CPR.\" You go straight back to compressions."
+      ]
+    },
+    {
+      "id": "brief_night_manager",
+      "label": "Ask Felix to open the street doors, meet the crew and hold a lift",
+      "kind": "interview",
+      "at": "lobby_bar",
+      "person": "night_manager",
+      "minutes": 1,
+      "requires": [
+        "call_ems"
+      ],
+      "findingTitle": "Route cleared",
+      "finding": "Felix Amadi unlocks the street doors, puts the night bell on hold, sends Tariq to wave the ambulance in at the kerb and moves two lounge chairs out of the way. He keeps guests back from the bar with a calm word.",
+      "lines": [
+        {
+          "speaker": "night_manager",
+          "text": "Doors are open, I'll bring them straight to you. Keep going."
+        }
+      ]
+    },
+    {
+      "id": "talk_wife",
+      "label": "Speak to his wife",
+      "kind": "interview",
+      "at": "lobby_bar",
+      "person": "guest_nyholt",
+      "minutes": 2,
+      "requires": [
+        "call_ems"
+      ],
+      "findingTitle": "Elin Nyholt",
+      "finding": "His name is Karl Nyholt, sixty-four, room 1416. He has a heart condition and takes tablets for blood pressure and a blood thinner; the list is on her phone. He said he felt \"funny\" a minute before he fell. Nadia sits with her.",
+      "lines": [
+        {
+          "speaker": "guest_nyholt",
+          "text": "He has a bad heart. He takes, oh God, I have the list on my phone. He said he felt funny and then he just went down."
+        }
+      ]
+    },
+    {
+      "id": "handover",
+      "label": "Hand over to the paramedics",
+      "kind": "interview",
+      "at": "lobby",
+      "person": "paramedic_sethna",
+      "minutes": 4,
+      "requires": [
+        "use_aed",
+        "brief_night_manager"
+      ],
+      "required": true,
+      "findingTitle": "Handover, 02:0x",
+      "finding": [
+        "The crew take over compressions and attach their own monitor. You give the handover in order: collapsed about 01:51, no normal breathing, CPR from 01:5x, one shock at 01:5x, CPR since. Heart condition; medication list from his wife.",
+        "After ten minutes he has a pulse. They take him to the Harbour General with his wife. The paramedic thanks the team for early CPR and the shock."
+      ],
+      "lines": [
+        {
+          "speaker": "paramedic_sethna",
+          "text": "Good handover. Early compressions and a shock in under ten minutes, that's what gives him a chance. We'll take it from here."
+        }
+      ]
+    },
+    {
+      "id": "support_staff",
+      "label": "Check on Nadia and Tariq",
+      "kind": "interview",
+      "at": "lobby_bar",
+      "person": "server_kerr",
+      "minutes": 3,
+      "requires": [
+        "handover"
+      ],
+      "findingTitle": "The team",
+      "finding": "Nadia is shaking; Tariq is quiet. You thank them by name, tell them what they did made a difference, and give them the employee assistance number. Felix covers the bar for twenty minutes.",
+      "relations": {
+        "server_kerr": 6,
+        "desk_agent": 4
+      }
+    },
+    {
+      "id": "aed_service",
+      "label": "Take the AED out of service and get it restocked",
+      "kind": "check",
+      "at": "lobby",
+      "spot": "aed_cabinet",
+      "minutes": 5,
+      "requires": [
+        "handover"
+      ],
+      "findingTitle": "AED back in service",
+      "finding": "Used pads replaced from the spare set in the LP office, battery indicator green, self-test passed, cabinet alarm reset, the use logged on the AED check sheet. Engineering is asked to order new spare pads.",
+      "columns": [
+        "Check",
+        "Result"
+      ],
+      "rows": [
+        [
+          "Pads",
+          "Replaced (spare set)"
+        ],
+        [
+          "Battery",
+          "OK"
+        ],
+        [
+          "Self-test",
+          "Passed"
+        ],
+        [
+          "Spare pads",
+          "Reorder requested"
+        ]
+      ]
+    },
+    {
+      "id": "cctv_timeline",
+      "label": "Pull the bar camera for the timeline",
+      "kind": "cctvReview",
+      "at": "cctv_room",
+      "spot": "cctv_console",
+      "minutes": 6,
+      "requires": [
+        "handover"
+      ],
+      "findingTitle": "L-07 Lobby Bar",
+      "finding": "Camera L-07 gives exact times for the report: collapse 01:51:12, compressions 01:52:40, AED arrives 01:55:58, shock 01:57:05, crew at the bar 02:03:30.",
+      "columns": [
+        "Time",
+        "What it shows"
+      ],
+      "rows": [
+        [
+          "01:51:12",
+          "Guest collapses by the bar"
+        ],
+        [
+          "01:52:40",
+          "LP officer starts compressions"
+        ],
+        [
+          "01:55:58",
+          "AED arrives"
+        ],
+        [
+          "01:57:05",
+          "Shock delivered"
+        ],
+        [
+          "02:03:30",
+          "Paramedics at the bar"
+        ]
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "q_wife",
+      "prompt": "Mrs Nyholt is trying to pull him upright. What do you say?",
+      "dimension": "Care",
+      "competency": "GuestServiceDeescalation",
+      "weight": 8,
+      "at": "lobby_bar",
+      "person": "guest_nyholt",
+      "requires": [
+        "call_ems"
+      ],
+      "options": [
+        {
+          "id": "role",
+          "label": "\"Leave him flat, I'm helping his heart. An ambulance is coming. What's his name? Does he take any medicine?\"",
+          "score": 100,
+          "feedback": "Short, kind, and gives her a job: the history the paramedics will need.",
+          "reply": {
+            "speaker": "guest_nyholt",
+            "text": "Karl. His name's Karl. His tablets are on my phone."
+          }
+        },
+        {
+          "id": "away",
+          "label": "\"Madam, please step away and let us work.\"",
+          "score": 45,
+          "feedback": "Correct that he must stay flat, but you pushed her out instead of letting her help."
+        },
+        {
+          "id": "promise",
+          "label": "\"Don't worry, he'll be fine.\"",
+          "score": 20,
+          "feedback": "You cannot promise that, and she will remember it.",
+          "reply": {
+            "speaker": "guest_nyholt",
+            "text": "Will he? Will he really?"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_timeline",
+      "kind": "order",
+      "prompt": "Incident report, put the response in order",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 8,
+      "section": "actions",
+      "explanation": "Recognise, call for help and the AED, compress, shock, hand over. The order is the chain of survival, and the report should show it held.",
+      "options": [
+        {
+          "id": "o1",
+          "label": "Checked for response and normal breathing"
+        },
+        {
+          "id": "o2",
+          "label": "Emergency number called, AED sent for"
+        },
+        {
+          "id": "o3",
+          "label": "Chest compressions started"
+        },
+        {
+          "id": "o4",
+          "label": "AED attached, one shock delivered, CPR resumed"
+        },
+        {
+          "id": "o5",
+          "label": "Handover to paramedics"
+        }
+      ]
+    },
+    {
+      "id": "r_facts",
+      "kind": "multi",
+      "prompt": "Incident report, which of these belong in the report?",
+      "dimension": "Report",
+      "competency": "IncidentResponse",
+      "weight": 7,
+      "section": "facts",
+      "options": [
+        {
+          "id": "f_times",
+          "label": "Times from camera L-07: collapse 01:51:12, compressions 01:52:40, shock 01:57:05, crew 02:03:30.",
+          "correct": true
+        },
+        {
+          "id": "f_aed",
+          "label": "AED used once; restocked, self-tested and back in service at 02:2x.",
+          "correct": true
+        },
+        {
+          "id": "f_who",
+          "label": "Staff involved: LP officer, N. Kerr (call), T. Bello (AED), F. Amadi (route).",
+          "correct": true
+        },
+        {
+          "id": "o_cause",
+          "label": "Guest had a heart attack caused by alcohol.",
+          "feedback": "A diagnosis. You saw a collapse and no normal breathing; the hospital decides the cause."
+        },
+        {
+          "id": "o_meds",
+          "label": "Guest's full medication list.",
+          "feedback": "That is his medical information. It went to the paramedics; it does not belong in an incident report many people will read."
+        }
+      ]
+    },
+    {
+      "id": "d_tell",
+      "prompt": "Who needs to hear about it tonight?",
+      "dimension": "Communication",
+      "competency": "IncidentResponse",
+      "weight": 7,
+      "options": [
+        {
+          "id": "right",
+          "label": "Night manager (already involved) and the Director of LP by message tonight; the GM in the morning brief; engineering for the AED pads; nobody outside the hotel except the paramedics.",
+          "score": 100,
+          "feedback": "Right people, right time, and the guest's privacy kept."
+        },
+        {
+          "id": "everyone",
+          "label": "Send an email to all managers with the details.",
+          "score": 30,
+          "feedback": "Health information about a named guest, sent widely. Share on a need-to-know basis."
+        },
+        {
+          "id": "nobody",
+          "label": "Nobody. It's over and he's in hospital.",
+          "score": 15,
+          "feedback": "The Director of LP needs to know a major medical event happened, and the AED must be restocked."
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "c_cpr_fast",
+      "label": "Compressions without delay",
+      "kind": "byMinute",
+      "action": "start_cpr",
+      "by": "01:56",
+      "dimension": "Procedure",
+      "competency": "FireLifeSafety",
+      "weight": 10,
+      "pass": "Compressions started within a few minutes of the collapse.",
+      "fail": "Every minute without compressions costs about a tenth of his chance."
+    },
+    {
+      "id": "c_aed_fast",
+      "label": "Shock within minutes",
+      "kind": "byMinute",
+      "action": "use_aed",
+      "by": "02:00",
+      "dimension": "Procedure",
+      "competency": "FireLifeSafety",
+      "weight": 10,
+      "pass": "The AED was on and the shock delivered within about eight minutes of the collapse.",
+      "fail": "The AED came too late to matter as much as it could."
+    },
+    {
+      "id": "c_call_first",
+      "label": "Call for help before CPR",
+      "kind": "before",
+      "action": "call_ems",
+      "other": "use_aed",
+      "dimension": "Communication",
+      "competency": "IncidentResponse",
+      "weight": 7,
+      "pass": "Help was called and the AED sent for straight away, by someone else, so you could start compressions.",
+      "fail": "Nobody had called for an ambulance when the AED went on."
+    },
+    {
+      "id": "c_no_move",
+      "label": "Do not move him",
+      "kind": "notDone",
+      "action": "move_casualty",
+      "dimension": "Care",
+      "competency": "FireLifeSafety",
+      "weight": 9,
+      "critical": true,
+      "pass": "You worked on him where he fell. Dignity matters, but screens and staff manage it; moving him stops CPR.",
+      "fail": "Moving him to hide him from guests stopped compressions for three minutes."
+    },
+    {
+      "id": "c_route",
+      "label": "Clear the route",
+      "kind": "done",
+      "action": "brief_night_manager",
+      "dimension": "Procedure",
+      "competency": "IncidentResponse",
+      "weight": 7,
+      "pass": "Doors open, crew met at the kerb, lift held. They were at the bar seven minutes after the call.",
+      "fail": "The paramedics arrived at locked street doors at 2 a.m."
+    },
+    {
+      "id": "c_handover",
+      "label": "Handover",
+      "kind": "done",
+      "action": "handover",
+      "dimension": "Communication",
+      "competency": "IncidentResponse",
+      "weight": 6,
+      "pass": "A clear handover: times, what was done, his history.",
+      "fail": "No handover to the crew."
+    },
+    {
+      "id": "c_aed_back",
+      "label": "AED back in service",
+      "kind": "done",
+      "action": "aed_service",
+      "dimension": "Compliance",
+      "competency": "FireLifeSafety",
+      "weight": 7,
+      "pass": "Pads replaced, self-test passed, use logged. The next person who collapses has an AED too.",
+      "fail": "The AED went back in its cabinet with no pads."
+    },
+    {
+      "id": "c_staff",
+      "label": "Look after the team",
+      "kind": "done",
+      "action": "support_staff",
+      "dimension": "Care",
+      "competency": "PeopleLeadership",
+      "weight": 6,
+      "pass": "You thanked and checked on the staff who helped.",
+      "fail": "Nadia and Tariq went back to work without a word."
+    },
+    {
+      "id": "c_cctv",
+      "label": "Exact times",
+      "kind": "done",
+      "action": "cctv_timeline",
+      "dimension": "Evidence",
+      "competency": "EvidenceReporting",
+      "weight": 8,
+      "pass": "The camera gives the report exact times, which the hospital and any review will ask for.",
+      "fail": "Your report times are guesses."
+    }
+  ],
+  "bestOrder": [
+    "assess",
+    "call_ems",
+    "start_cpr",
+    "use_aed",
+    "brief_night_manager",
+    "talk_wife",
+    "handover",
+    "support_staff",
+    "aed_service",
+    "cctv_timeline"
+  ],
+  "debrief": {
+    "whatHappened": "Karl Nyholt went into cardiac arrest at the Lobby Bar. He is alive because the chain of survival held: someone recognised it, called, pressed on his chest within two minutes and shocked him within six, and the paramedics walked straight in through open doors.",
+    "bestPractice": [
+      "Check response and breathing for no more than ten seconds; gasping is not breathing.",
+      "Send someone to call the emergency number and someone for the AED; put the call on speaker.",
+      "Start compressions: centre of the chest, hard and fast, about two a second, and do not stop.",
+      "AED on as soon as it arrives; follow the prompts; nobody touching when it analyses or shocks.",
+      "Open the route: street doors, a member of staff at the kerb, a lift held, furniture moved.",
+      "Give the crew a clear handover: times, actions, shocks, history and medication.",
+      "Restock and self-test the AED; log the use.",
+      "Look after the staff who helped; share health details only on a need-to-know basis."
+    ],
+    "why": "Survival from cardiac arrest falls by roughly ten per cent for every minute without CPR and defibrillation. A hotel is a place where the ambulance can take ten minutes to reach the patient through locked doors and lifts; the staff in the first five minutes decide the outcome.",
+    "commonMistakes": [
+      "Mistaking gasping for breathing.",
+      "Waiting for the ambulance instead of starting compressions.",
+      "Moving the patient out of sight.",
+      "Leaving the street doors locked at night.",
+      "Putting the AED back without pads."
+    ]
+  },
+  "procedureCards": [
+    "cardiac_arrest_response"
+  ],
+  "reportAt": "lp_office",
+  "passMark": 60,
+  "xp": 180,
+  "weeks": 1,
+  "lesson": "Call, push, shock, and open the way."
+}

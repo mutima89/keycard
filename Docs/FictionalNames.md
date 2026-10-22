@@ -33,4 +33,16 @@ Each full name was web-searched for a public figure, hotel executive or security
 | Desmond Okafor, Felix Amadi, Colm Brady, Ines Dalca, Priyanka Venn, Tomasz Rydell, Lucia Ferrante, Gideon Marsh, Rafael Quintero, Imogen Pryce, Callum Fenwick, Odile Marchetti, Ruth Calloway, Bernard Okoye | Staff, contractors, insurer, police, fire | No notable match in hospitality or security |
 | Anders Whitlock, Marisol Duarte, Nadia Kerr, Tariq Bello, Leon Haskett, Simone Achterberg, Jordan Pike, Helen Morrow | Guests, line staff, visitors | No notable match |
 
+## Cast (Phase 2, checked 2026-10-22)
+| Name | Role | Result |
+|---|---|---|
+| Stefan Varga | Intoxicated guest (first draft) | **Replaced**: a professional footballer of that name; a guest shown drunk should not share a public figure's name |
+| Clara Nyberg | Guest whose husband collapses (first draft) | **Replaced**: a historical figure in the Swedish women's biographical lexicon |
+| Teodor Halasz | Guest, room 1409 | Clear |
+| Elin Nyholt | Guest, room 1416 | Clear |
+| Ravi Sethna | Paramedic, Port Avener Fire & Rescue | Clear (nearest: Ravi Sethi, a computer scientist) |
+| Owen Tremlett | Bell captain | Clear (Tremlett cricketers share only the surname) |
+| Hattie Coombe | Receiving clerk | Clear |
+| Mara Lindgren | Departing guest | Clear |
+
 Equipment names in missions (encoders E-01 to E-03, camera ids, evidence numbers) are generic codes, not brands.

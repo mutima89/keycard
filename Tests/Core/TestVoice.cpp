@@ -43,9 +43,13 @@ TEST(Voice_EveryCharacterHasTheirOwnVoice)
 		if (!Entry) std::printf("    no voice for %s\n", P.Id.c_str());
 		REQUIRE(Entry && Entry->IsObject());
 		const JsonValue* Voice = Entry->Find("voice");
-		REQUIRE(Voice && Voice->Type == EJsonType::String);
-		CHECK(std::find(Voices.begin(), Voices.end(), Voice->String) == Voices.end());
-		Voices.push_back(Voice->String);
+		REQUIRE(Voice && (Voice->IsString() || Voice->IsObject()));
+		// A voice is a Kokoro id or a blend {id: weight}; either way no two characters share one.
+		std::string Sig = Voice->String;
+		for (const auto& [Id, Weight] : Voice->Members) Sig += Id + ":" + std::to_string(Weight.Number) + ";";
+		if (std::find(Voices.begin(), Voices.end(), Sig) != Voices.end()) std::printf("    %s shares a voice\n", P.Id.c_str());
+		CHECK(std::find(Voices.begin(), Voices.end(), Sig) == Voices.end());
+		Voices.push_back(Sig);
 	}
 	CHECK(Entries->Members.size() == C.World.People.People.size());
 }

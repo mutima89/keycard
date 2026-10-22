@@ -82,6 +82,178 @@
         "Entering the room",
         "Threatening eviction you have no authority to carry out"
       ]
+    },
+    {
+      "id": "intoxicated_guest_welfare",
+      "title": "Intoxicated guest: welfare first",
+      "topic": "guest",
+      "steps": [
+        "Ask the server what was served, over how long, and whether anything else was taken (medication, drugs).",
+        "Check welfare: responds to voice, breathing, colour, injuries, ability to walk. Never leave the person alone.",
+        "Call an ambulance at once for any red flag: hard to wake, vomiting while drowsy, slow or irregular breathing, a head injury, alcohol mixed with medication with worsening signs.",
+        "Back any refusal of service calmly; offer water; never shame the guest or the server.",
+        "Verify identity against the registration and the ID on file before any key or door.",
+        "Escort with two staff, stay at the threshold, leave them settled with water and a light on.",
+        "Go back to check (about 30 minutes), log each check with the time, and brief the night manager."
+      ],
+      "why": "Most alcohol deaths in hotels happen after the person has been put to bed and left alone. Supervision and a recheck cost minutes.",
+      "pitfalls": [
+        "Treating it as a security problem",
+        "Making a key because it is obviously them",
+        "Escorting alone or entering the room",
+        "No recheck"
+      ]
+    },
+    {
+      "id": "cardiac_arrest_response",
+      "title": "Collapse: call, push, shock",
+      "topic": "medical",
+      "steps": [
+        "Check response (voice, firm tap) and breathing for no more than ten seconds. Gasping is not normal breathing.",
+        "Send someone to call the emergency number on speaker and someone for the nearest AED.",
+        "Start chest compressions: centre of the chest, about two a second, five to six centimetres deep, full recoil. Do not stop except for the AED.",
+        "Switch the AED on and follow its prompts. Nobody touches the patient while it analyses or shocks.",
+        "Open the route: unlock doors, staff at the kerb to guide the crew, a lift held, furniture moved, onlookers kept back.",
+        "Hand over clearly: time of collapse, what was done, shocks given, medical history and medication.",
+        "Afterwards: restock and self-test the AED, log its use, look after the staff who helped, share health details on a need-to-know basis."
+      ],
+      "why": "Every minute without CPR and defibrillation costs about a tenth of the chance of survival. The first five minutes belong to the people already there.",
+      "pitfalls": [
+        "Mistaking gasping for breathing",
+        "Waiting for the ambulance before starting compressions",
+        "Moving the patient out of sight",
+        "Locked doors at night",
+        "An AED put back without pads"
+      ]
+    },
+    {
+      "id": "unattended_item",
+      "title": "Unattended item: assess before you touch",
+      "topic": "suspicious_item",
+      "steps": [
+        "Ask who found it, when, and whether anyone has touched it.",
+        "Assess from a distance against three questions: is it hidden, is it obviously suspicious (wires, liquids, smell, sound), is it typical for the place and time?",
+        "Do not touch, move or open it, and keep radios and mobile phones a safe distance away until it is assessed.",
+        "Use CCTV and the front office to find who left it and why.",
+        "Hidden, suspicious or unexplained: clear the area, keep people back, call the police, follow the bomb threat and evacuation plan.",
+        "Typical and explained: move it with a witness, tag it, enter it in the lost property register and lock it away.",
+        "Contact the owner and let them describe the contents."
+      ],
+      "why": "Most unattended items are forgotten luggage, which is exactly why staff handle them casually. The assessment protects everyone if it is real, and the hotel from needless evacuations and complaints if it is not.",
+      "pitfalls": [
+        "Carrying it to the desk",
+        "Opening it to find a name",
+        "Radios used beside it",
+        "Evacuating on time alone, without an assessment"
+      ]
+    },
+    {
+      "id": "cctv_preservation",
+      "title": "Preserving CCTV evidence",
+      "topic": "cctv",
+      "steps": [
+        "Note exactly what is asked for: cameras, date, time window, and who is asking.",
+        "Check the recorder's retention and work out when the footage overwrites. That is your deadline.",
+        "Review first, then export wide: before and after the event, and every camera on the route in and out.",
+        "Export in the recorder's native format with its player, record the hash, and use write-once media where you have it.",
+        "Use your own login. Never a shared account.",
+        "Log the export (reason, cameras, times, format, media number, hash, witness) and lock the media in the evidence locker.",
+        "Preserve for anyone who asks; release only under the footage release policy, decided by the Director of LP and counsel where needed."
+      ],
+      "why": "Footage overwrites in weeks and requests arrive late. An export that cannot be attributed or verified can be challenged; footage released casually can be a privacy breach.",
+      "pitfalls": [
+        "Waiting for paperwork while the footage overwrites",
+        "A few seconds converted to MP4",
+        "The shared admin login",
+        "Emailing clips to whoever asks"
+      ]
+    },
+    {
+      "id": "lost_master_key",
+      "title": "Lost or stolen master key",
+      "topic": "keys",
+      "steps": [
+        "Void an electronic master the moment it is reported. Investigate after; if it turns up, a new card costs nothing.",
+        "Pull the lock audit for that card: every door it touched since it was last seen in safe hands.",
+        "Check the rooms it opened or tried, and agree with the duty manager how and when affected guests are told.",
+        "Review CCTV on the floor and the routes off it: lifts and stairs.",
+        "Check the key log: who signed it out, when, and whether anything else on the same ring is missing.",
+        "Fix mechanical keys in proportion to what they open: re-core the locks that key fits, not the whole system.",
+        "Report theft or attempted entry to the police and preserve the audit and the footage.",
+        "Coach the employee: keys stay on the person, and reporting fast is thanked, never punished."
+      ],
+      "why": "A master card is a key to every guest on its floors, and the minutes between loss and void are the dangerous ones. Staff only report quickly when reporting is safe for them.",
+      "pitfalls": [
+        "Searching for an hour before voiding",
+        "Calling it lost without asking the locks",
+        "Re-keying everything, or nothing",
+        "Waking guests at midnight to tell them",
+        "Blaming the attendant so the next loss goes unreported"
+      ]
+    },
+    {
+      "id": "door_alarm_response",
+      "title": "Door alarms and propped doors",
+      "topic": "perimeter",
+      "steps": [
+        "Respond in person to every door alarm. Acknowledging it on the panel is not a response.",
+        "Close and secure the door. Note what was holding it and who was nearby.",
+        "Sweep the area behind the door before anything else: assume someone came in until you know they did not.",
+        "Check what the door protects: stock, cages, offices, stairs.",
+        "Review the cameras for the whole time the door was open, and how anyone who came in left.",
+        "Read the alarm history. A repeating alarm is a process failure; find out why the door is being propped.",
+        "Fix the cause, and give staff a safe way to work until it is fixed.",
+        "Log every alarm with its cause, and review the log weekly."
+      ],
+      "why": "Exterior doors are the perimeter. Most are propped for convenience, and an alarm that is cleared without a response teaches the whole team that the door does not matter.",
+      "pitfalls": [
+        "Clearing the alarm from the screen",
+        "Reviewing video before sweeping",
+        "Blaming the person and leaving the cause",
+        "Turning the alarm down instead of fixing the door"
+      ]
+    },
+    {
+      "id": "luggage_room_control",
+      "title": "Luggage room control",
+      "topic": "luggage",
+      "steps": [
+        "Tag every bag with a two-part ticket: one half on the bag, one to the guest. Log the tag, name, description and time.",
+        "Keep the luggage room locked; sign its key out and back.",
+        "Release only against the guest's half of the ticket, and collect it.",
+        "No ticket: photo ID matching the name on the tag and a description of the bag. Log the proof seen.",
+        "A missing bag: search the room, read the tag book, talk to whoever released it, then review the cameras.",
+        "Report a theft quickly with any vehicle or route details, and preserve the footage.",
+        "Look after the guest's immediate needs within your authority; route the claim to the GM and the insurer."
+      ],
+      "why": "Property the hotel takes into its care is the hotel's responsibility, and names and tag numbers are easy to read in a busy lobby.",
+      "pitfalls": [
+        "Releasing on a name and a number",
+        "An unlocked luggage room",
+        "Hiding behind a liability notice",
+        "Promising compensation you do not decide"
+      ]
+    },
+    {
+      "id": "key_system_audit",
+      "title": "Auditing the key system",
+      "topic": "keys",
+      "steps": [
+        "Check every encoder against the asset register: model, serial, location.",
+        "Open the lock system's list of trusted encoders. A device the system trusts is a key factory, wherever it is.",
+        "Audit lock system accounts against the staff list: shared logins, leavers, and who holds admin rights.",
+        "Compare encodings with the front desk's encoding log; list every card no one can account for.",
+        "Export, hash and log the system evidence before changing any setting.",
+        "Close the gap the same night: remove rogue devices, disable shared and leavers' accounts, re-key affected occupied rooms.",
+        "Report to the system's owner and the Director of LP; the vendor and the police take it from there."
+      ],
+      "why": "Locks do what the system tells them. Shared logins make every change anonymous, and one extra trusted encoder undoes every other key control.",
+      "pitfalls": [
+        "Counting the devices on the desk and stopping",
+        "Changing settings before exporting the evidence",
+        "Leaving a rogue device live to catch someone",
+        "Naming a suspect in an audit report"
+      ]
     }
   ]
 }

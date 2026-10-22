@@ -139,6 +139,54 @@
       "lang": "en-us",
       "speed": 0.97,
       "note": "Guest 1407: elderly-sounding, firm"
+    },
+    "guest_halasz": {
+      "voice": {
+        "am_onyx": 0.5,
+        "am_fenrir": 0.5
+      },
+      "lang": "en-us",
+      "speed": 0.9,
+      "note": "Intoxicated guest: slow, slurring a little, embarrassed when sober"
+    },
+    "guest_nyholt": {
+      "voice": "af_nova",
+      "lang": "en-us",
+      "speed": 1.08,
+      "note": "Frightened wife: fast, breathless"
+    },
+    "paramedic_sethna": {
+      "voice": {
+        "am_michael": 0.5,
+        "bm_daniel": 0.5
+      },
+      "lang": "en-gb",
+      "speed": 1.02,
+      "note": "Paramedic: calm, clipped, practical"
+    },
+    "bell_captain": {
+      "voice": {
+        "bm_fable": 0.5,
+        "bm_daniel": 0.5
+      },
+      "lang": "en-gb",
+      "speed": 0.97,
+      "note": "Bell captain: warm, a little defensive"
+    },
+    "receiving_clerk": {
+      "voice": {
+        "bf_alice": 0.5,
+        "bf_lily": 0.5
+      },
+      "lang": "en-gb",
+      "speed": 1.05,
+      "note": "Receiving clerk: brisk, matter-of-fact"
+    },
+    "guest_lindgren": {
+      "voice": "af_bella",
+      "lang": "en-us",
+      "speed": 1.0,
+      "note": "Departing guest: controlled, worried about a flight"
     }
   },
   "passing": {

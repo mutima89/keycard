@@ -365,6 +365,70 @@
         "Interviewing the respondent before the evidence",
         "Treating hearsay as a finding"
       ]
+    },
+    {
+      "id": "beverage_shrink",
+      "title": "Beverage shrink investigation",
+      "topic": "shrink",
+      "steps": [
+        "Measure: shrink % = (book - counted) / book x 100, outlet by outlet, month by month.",
+        "Compare with the other outlets and the trend to see where the problem is and since when.",
+        "Walk the process from requisition to empty bottle: who has keys, what is signed, what is counted.",
+        "Test the records: does each event's use match its package and headcount?",
+        "Use CCTV and access records to test specific events, and export what matters.",
+        "If an employee may be involved, plan with HR: evidence first, a companion, a full chance to answer.",
+        "No searches of people, lockers, bags or cars outside the posted policy and local law.",
+        "Fix the controls: key log, empty-for-full, par levels, two-person reconciliation, spot counts."
+      ],
+      "why": "Shrink is usually a process that leaves no trace. Close the gap and the opportunity closes for everyone.",
+      "pitfalls": [
+        "Dividing by counted value",
+        "Blaming one person for the whole gap",
+        "Searching belongings to be sure",
+        "Fixing nothing because someone was caught"
+      ]
+    },
+    {
+      "id": "lp_audit_capa",
+      "title": "LP audit and corrective actions",
+      "topic": "audit",
+      "steps": [
+        "Know the scoring: weighted items, a pass mark, and critical items that fail the audit outright.",
+        "Prepare by checking the critical items yourself: exits, master keys, CCTV retention, fire watch records, report timeliness.",
+        "Walk the building with the auditor; show the programme as it really runs.",
+        "Make anything unsafe safe at once, and record that you did.",
+        "Never alter or backfill a record for an audit.",
+        "For each finding write a corrective action: root cause, action, owner, due date, how and how long it is verified.",
+        "Brief the GM yourself, then track the plan to the re-audit."
+      ],
+      "why": "Audits find gaps before incidents do. A good plan fixes the cause, so the finding doesn't come back.",
+      "pitfalls": [
+        "Arguing a high score outweighs a critical failure",
+        "Blaming people instead of the cause",
+        "Backfilling logs",
+        "Actions with no owner or check"
+      ]
+    },
+    {
+      "id": "staffing_model",
+      "title": "Staffing and the contract or in-house decision",
+      "topic": "budget",
+      "steps": [
+        "Post hours a week = hours per day x days per week x posts.",
+        "FTEs = post hours a week x 52 / productive hours per FTE (after leave, training and sickness).",
+        "Cost every option for a full year: pay and employer costs, recruitment, training, kit, supervision, or the contract rate x hours.",
+        "Compare performance: KPIs, turnover, training, who controls standards.",
+        "Check when incidents happen before cutting any post.",
+        "Plan the transition: notice, recruitment, overlap, and HR and counsel on any transfer rights.",
+        "Recommend with the numbers to the people who decide; tell the team yourself."
+      ],
+      "why": "Security staffing is the biggest LP cost and the easiest to cut. A model built on hours and incident data shows what each option buys.",
+      "pitfalls": [
+        "Comparing hourly rates",
+        "Paid hours instead of productive hours",
+        "Cutting nights because they look quiet",
+        "No transition plan"
+      ]
     }
   ]
 }

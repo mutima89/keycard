@@ -133,7 +133,7 @@ TEST(Campaign_FirstThreeCasesEarnThePromotionAndItsCeremony)
 	CHECK_EQ(static_cast<int>(S.Campaign.Records.size()), 3);
 }
 
-TEST(Campaign_BestPlayThroughLevelFour)
+TEST(Campaign_BestPlayThroughLevelFive)
 {
 	GameState S = Fresh();
 	for (const char* Id : {"M001", "M002", "M003", "M004", "M005", "M006", "M007", "M008", "M009", "M010", "M011"})
@@ -164,6 +164,21 @@ TEST(Campaign_BestPlayThroughLevelFour)
 	}
 	for (const char* Card : {"fire_alarm_response", "sprinkler_impairment", "guest_injury_claim", "hot_work_permit"}) CHECK(HasCard(S, Card));
 	CHECK_EQ(static_cast<int>(S.Campaign.Records.size()), 15);
+	CHECK_EQ(S.Career.Level, 5);
+	// Level 5: workplace investigation, shrink, the audit and the staffing model.
+	for (const char* Id : {"M016", "M017", "M018", "M019"})
+	{
+		S.bCeremonyPending = false;
+		const MissionDebrief D = PlayBest(S, Id);
+		if (!D.bPassed || D.Score != 100) std::printf("    %s scored %d\n", Id, D.Score);
+		CHECK(D.bPassed && D.Score == 100);
+	}
+	for (const char* Card : {"workplace_investigation", "beverage_shrink", "lp_audit_capa", "staffing_model"}) CHECK(HasCard(S, Card));
+	if (S.Career.Level != 6)
+	{
+		for (int i = 0; i < kc::CompetencyCount; ++i) std::printf("    competency %d = %d\n", i, S.Career.Competencies[static_cast<size_t>(i)].Score);
+	}
+	CHECK_EQ(S.Career.Level, 6);
 }
 
 TEST(Campaign_SameSeedSameCareer)

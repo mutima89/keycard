@@ -1,0 +1,529 @@
+{
+  "schema": 1,
+  "id": "M018",
+  "title": "The Regional LP Audit",
+  "kind": "mission",
+  "topic": "audit",
+  "minLevel": 5,
+  "opening": {
+    "channel": "inPerson",
+    "from": "auditor_solberg",
+    "at": "lp_office",
+    "text": "Good morning. Henrike Solberg, regional LP audit. Forty-two items, five of them critical, pass mark eighty-five. I'll want to see the places, not only the paperwork. Shall we start with the opening meeting?"
+  },
+  "briefing": [
+    "08:30, Thursday. The annual Veldane Hotels & Resorts LP audit. The regional auditor checks the hotel's LP programme against the company standard: 42 weighted items in eight sections, five of them critical. Pass mark 85%, and any failed critical item fails the audit whatever the score.",
+    "Your job: show the programme as it really runs, fix what can be fixed safely on the spot, and write a corrective action plan for the rest: root cause, action, owner, date and how it will be verified. Records are never altered to suit an audit. Your authority is 50,000."
+  ],
+  "learningObjectives": [
+    "How a weighted audit with critical items is scored",
+    "Root cause and corrective action, not quick fixes",
+    "Why records are never changed for an audit"
+  ],
+  "start": "08:30",
+  "actions": [
+    {
+      "id": "opening_meeting",
+      "label": "Opening meeting with Henrike",
+      "kind": "interview",
+      "at": "exec_offices",
+      "person": "auditor_solberg",
+      "minutes": 6,
+      "required": true,
+      "findingTitle": "Scope",
+      "finding": "Eight sections: governance, incident reporting, key control, CCTV, patrols, fire and life safety, contractors, training. Critical items: exit routes clear, master key control, CCTV retention of at least 30 days on every camera, fire watch records, and LP reports filed within 24 hours. She will walk the building, then sample the records."
+    },
+    {
+      "id": "walk_exits",
+      "label": "Walk the B1 exit routes with Henrike",
+      "kind": "check",
+      "at": "back_of_house",
+      "minutes": 8,
+      "requires": [
+        "opening_meeting"
+      ],
+      "required": true,
+      "findingTitle": "Exit route, B1",
+      "finding": "Four linen cages parked in the back-of-house corridor narrow the exit route to the staff entrance to about 60 cm. The night porter says they are there most nights: the laundry has nowhere else to stage them before the 06:00 collection. Henrike records a failed critical item."
+    },
+    {
+      "id": "clear_exit",
+      "label": "Have the cages moved and the route marked",
+      "kind": "secure",
+      "at": "back_of_house",
+      "minutes": 5,
+      "requires": [
+        "walk_exits"
+      ],
+      "findingTitle": "Route cleared",
+      "finding": "With the housekeeping supervisor, the cages go into the laundry for now; the corridor's exit route is marked with yellow floor lines and a KEEP CLEAR sign. Henrike notes the immediate correction, and tells you it does not change the result."
+    },
+    {
+      "id": "key_audit",
+      "label": "Show the master key cabinet and its log",
+      "kind": "check",
+      "at": "housekeeping",
+      "spot": "key_cabinet",
+      "minutes": 5,
+      "requires": [
+        "opening_meeting"
+      ],
+      "findingTitle": "Key control",
+      "finding": "Every master key signed out and in for the last 90 days, the lost HK-M12 key recorded with the re-key, and a monthly count signed by LP. Pass."
+    },
+    {
+      "id": "cctv_retention",
+      "label": "Check retention on every camera",
+      "kind": "check",
+      "at": "cctv_room",
+      "spot": "cctv_console",
+      "minutes": 6,
+      "requires": [
+        "opening_meeting"
+      ],
+      "findingTitle": "CCTV retention",
+      "finding": "44 cameras hold 31 days. Two, B1-03 and L-09, hold only 14 days since a recorder firmware update in August reset their settings. Henrike scores the item partly met: it is critical, but the recorder log shows the reset was not a choice and both are corrected today.",
+      "columns": [
+        "Cameras",
+        "Retention"
+      ],
+      "rows": [
+        [
+          "44",
+          "31 days"
+        ],
+        [
+          "B1-03, L-09",
+          "14 days (since 14 Aug update)"
+        ]
+      ]
+    },
+    {
+      "id": "patrol_records",
+      "label": "Pull last week's patrol scans",
+      "kind": "check",
+      "at": "lp_office",
+      "spot": "lp_desk",
+      "minutes": 5,
+      "requires": [
+        "opening_meeting"
+      ],
+      "findingTitle": "Patrol scans",
+      "finding": "480 checkpoints scheduled last week, 412 scanned inside their window. Nearly all the misses are on the B1 tour between 03:00 and 05:00, run by Tessmore officers, when the same officer also covers the dock deliveries.",
+      "columns": [
+        "Shift",
+        "Scheduled",
+        "On time"
+      ],
+      "rows": [
+        [
+          "Days",
+          "168",
+          "160"
+        ],
+        [
+          "Evenings",
+          "168",
+          "151"
+        ],
+        [
+          "Nights",
+          "144",
+          "101"
+        ]
+      ]
+    },
+    {
+      "id": "backfill_logs",
+      "label": "Ask the night team to add the missed scans to the log by hand",
+      "kind": "other",
+      "at": "lp_office",
+      "spot": "lp_desk",
+      "minutes": 2,
+      "requires": [
+        "patrol_records"
+      ],
+      "findingTitle": "Records altered",
+      "finding": "The patrol log now shows rounds that were never walked. Henrike compares it with the scanner export in ten minutes. An audit finding becomes an integrity finding about the LP department.",
+      "effects": {
+        "OwnerTrust": -4,
+        "SecurityPosture": -3
+      }
+    },
+    {
+      "id": "incident_reports",
+      "label": "Sample the incident reports",
+      "kind": "check",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 5,
+      "requires": [
+        "opening_meeting"
+      ],
+      "findingTitle": "Incident reports",
+      "finding": "58 reports this quarter: 55 filed within 24 hours, 3 filed after 30 to 40 hours, all on weekends when the evening supervisor was off. Content quality good. Item partly met."
+    },
+    {
+      "id": "closing_meeting",
+      "label": "Closing meeting with Henrike",
+      "kind": "interview",
+      "at": "exec_offices",
+      "person": "auditor_solberg",
+      "minutes": 8,
+      "requires": [
+        "walk_exits",
+        "patrol_records"
+      ],
+      "required": true,
+      "findingTitle": "Result",
+      "finding": "Weighted score 88.4%. One critical item failed: the obstructed exit route. Result: FAIL, with a re-audit in 60 days. She expects a corrective action plan within ten working days.",
+      "lines": [
+        {
+          "speaker": "auditor_solberg",
+          "text": "The programme is good. But the one thing the standard will not trade is a clear way out."
+        }
+      ]
+    },
+    {
+      "id": "capa_plan",
+      "label": "Write the corrective action plan",
+      "kind": "logEvidence",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 10,
+      "requires": [
+        "closing_meeting"
+      ],
+      "required": true,
+      "findingTitle": "Corrective action plan",
+      "finding": "For each finding: root cause, action, owner, due date and how it will be verified.",
+      "columns": [
+        "Finding",
+        "Root cause",
+        "Action",
+        "Owner",
+        "Due",
+        "Verified by"
+      ],
+      "rows": [
+        [
+          "Exit route obstructed (critical)",
+          "No night staging space for linen cages",
+          "Staging bay in the laundry; route marked; nightly check on the B1 tour",
+          "Exec Housekeeper / LP",
+          "2 weeks",
+          "LP weekly photo check, 8 weeks"
+        ],
+        [
+          "CCTV retention 14 days on 2 cameras",
+          "Firmware update reset settings",
+          "Restored; retention check added to the update procedure",
+          "LP / IT",
+          "Done",
+          "Monthly retention report"
+        ],
+        [
+          "Patrol compliance 86%",
+          "Night B1 tour clashes with dock deliveries",
+          "Tour re-timed around the deliveries",
+          "LP / Tessmore",
+          "1 week",
+          "Weekly scan report with Tessmore"
+        ],
+        [
+          "3 late reports",
+          "No weekend cover for report review",
+          "Weekend reports reviewed by the night supervisor",
+          "LP",
+          "1 week",
+          "Monthly timeliness report"
+        ]
+      ]
+    },
+    {
+      "id": "brief_gm",
+      "label": "Brief the GM on the result and the plan",
+      "kind": "interview",
+      "at": "gm_office",
+      "person": "gm",
+      "minutes": 5,
+      "requires": [
+        "capa_plan"
+      ],
+      "findingTitle": "GM briefed",
+      "finding": "Marguerite Ellery hears the result from you before she reads it. She approves the laundry staging bay and asks for the 60-day re-audit date in her diary, with a walk of B1 together a week before it."
+    }
+  ],
+  "questions": [
+    {
+      "id": "q_patrol",
+      "kind": "numeric",
+      "prompt": "What was last week's patrol compliance, in percent?",
+      "dimension": "Evidence",
+      "competency": "ComplianceAudit",
+      "weight": 8,
+      "formula": {
+        "name": "PatrolCompliancePercent",
+        "inputs": {
+          "onTime": 412,
+          "scheduled": 480
+        }
+      },
+      "tolerance": 0.02,
+      "unit": "%",
+      "explanation": "Compliance = checkpoints scanned on time / checkpoints scheduled x 100 = 412 / 480 x 100 = 85.8%.",
+      "mistakes": [
+        {
+          "value": 14.17,
+          "feedback": "That is the share missed. Compliance is the share scanned on time."
+        }
+      ]
+    },
+    {
+      "id": "d_result",
+      "prompt": "The weighted score is 88.4% and one critical item failed. What is the result?",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 8,
+      "options": [
+        {
+          "id": "fail",
+          "label": "Fail: a failed critical item fails the audit whatever the score.",
+          "score": 100,
+          "feedback": "Critical items are the ones that can cost lives or the business. No score can buy them back."
+        },
+        {
+          "id": "pass",
+          "label": "Pass: 88.4% is above the 85% pass mark.",
+          "score": 15,
+          "feedback": "The score is only half the rule. Any failed critical item fails the audit."
+        },
+        {
+          "id": "fixed",
+          "label": "Pass, because the route was cleared during the visit.",
+          "score": 25,
+          "feedback": "Fixing it was right, and it is noted. It does not change what the auditor found when she walked the corridor."
+        }
+      ]
+    },
+    {
+      "id": "d_root",
+      "prompt": "What is the root cause of the blocked exit?",
+      "dimension": "Procedure",
+      "competency": "ComplianceAudit",
+      "weight": 8,
+      "options": [
+        {
+          "id": "space",
+          "label": "The laundry has nowhere to stage cages before the 06:00 collection, so the corridor became the store.",
+          "score": 100,
+          "feedback": "The cages are a symptom. Give them a place to go and add the check to the tour, and the corridor stays clear."
+        },
+        {
+          "id": "patrol",
+          "label": "The night officer didn't notice them.",
+          "score": 30,
+          "feedback": "A missed check is part of it, but the cages would come back the next night."
+        },
+        {
+          "id": "people",
+          "label": "Careless housekeeping staff; write them up.",
+          "score": 15,
+          "feedback": "Discipline won't create storage space. The same cages will be there next week."
+        }
+      ]
+    },
+    {
+      "id": "d_capa",
+      "kind": "multi",
+      "prompt": "What does every corrective action need?",
+      "dimension": "Report",
+      "competency": "ComplianceAudit",
+      "weight": 8,
+      "options": [
+        {
+          "id": "cause",
+          "label": "A root cause",
+          "correct": true
+        },
+        {
+          "id": "action",
+          "label": "A specific action",
+          "correct": true
+        },
+        {
+          "id": "owner",
+          "label": "A named owner and a due date",
+          "correct": true
+        },
+        {
+          "id": "verify",
+          "label": "How it will be verified, and for how long",
+          "correct": true
+        },
+        {
+          "id": "promise",
+          "label": "A commitment from the team to try harder",
+          "feedback": "Effort is not a control. Without a cause, an owner and a check, the finding will be back at the re-audit."
+        }
+      ]
+    },
+    {
+      "id": "d_patrol",
+      "prompt": "How do you fix the night patrol gap?",
+      "dimension": "Cost",
+      "competency": "FinancialAcumen",
+      "weight": 8,
+      "options": [
+        {
+          "id": "retime",
+          "label": "Re-time the B1 tour around the dock deliveries and review Tessmore's scan report weekly with Callum Fenwick.",
+          "score": 100,
+          "cost": 0,
+          "feedback": "The data shows a clash, not a shortage. Fix the schedule first and measure it."
+        },
+        {
+          "id": "officer",
+          "label": "Add a third night officer: about 61,000 a year.",
+          "score": 40,
+          "cost": 61000,
+          "feedback": "Above your authority, and the data doesn't show the work needs another person, only a better timetable."
+        },
+        {
+          "id": "nothing",
+          "label": "Nothing: 86% is close enough.",
+          "score": 20,
+          "feedback": "The misses are all in one place at one time. That is exactly where something will happen unnoticed."
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "c_no_backfill",
+      "label": "Records stay true",
+      "kind": "notDone",
+      "action": "backfill_logs",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 10,
+      "pass": "The patrol records show what really happened.",
+      "fail": "You had records changed for the audit."
+    },
+    {
+      "id": "c_exits",
+      "label": "Walk the building",
+      "kind": "done",
+      "action": "walk_exits",
+      "dimension": "Procedure",
+      "competency": "ComplianceAudit",
+      "weight": 7,
+      "pass": "You showed the auditor the building, not only the paperwork.",
+      "fail": "You kept the audit in the office."
+    },
+    {
+      "id": "c_fix_now",
+      "label": "Make it safe now",
+      "kind": "done",
+      "action": "clear_exit",
+      "dimension": "Care",
+      "competency": "FireLifeSafety",
+      "weight": 8,
+      "pass": "The exit route was cleared and marked the moment it was found.",
+      "fail": "The obstructed exit was left for the action plan."
+    },
+    {
+      "id": "c_capa",
+      "label": "Corrective action plan",
+      "kind": "done",
+      "action": "capa_plan",
+      "dimension": "Report",
+      "competency": "ComplianceAudit",
+      "weight": 9,
+      "pass": "Every finding has a cause, an action, an owner, a date and a check.",
+      "fail": "No corrective action plan."
+    },
+    {
+      "id": "c_patrol",
+      "label": "Test the patrols",
+      "kind": "done",
+      "action": "patrol_records",
+      "dimension": "Evidence",
+      "competency": "ComplianceAudit",
+      "weight": 6,
+      "pass": "You found where and when the rounds are missed.",
+      "fail": "You never looked at the patrol data."
+    },
+    {
+      "id": "c_retention",
+      "label": "Check every camera",
+      "kind": "done",
+      "action": "cctv_retention",
+      "dimension": "Evidence",
+      "competency": "EvidenceReporting",
+      "weight": 6,
+      "pass": "You found the two cameras the update had reset.",
+      "fail": "Two cameras are still keeping only 14 days."
+    },
+    {
+      "id": "c_gm",
+      "label": "Tell the GM yourself",
+      "kind": "done",
+      "action": "brief_gm",
+      "dimension": "Communication",
+      "competency": "PeopleLeadership",
+      "weight": 7,
+      "pass": "The GM heard the result and the plan from you first.",
+      "fail": "The GM learned of a failed audit from the report."
+    },
+    {
+      "id": "c_reports",
+      "label": "Sample the reports",
+      "kind": "done",
+      "action": "incident_reports",
+      "dimension": "Evidence",
+      "competency": "EvidenceReporting",
+      "weight": 7,
+      "pass": "You found the weekend reporting gap.",
+      "fail": "You never sampled the incident reports."
+    }
+  ],
+  "bestOrder": [
+    "opening_meeting",
+    "walk_exits",
+    "clear_exit",
+    "key_audit",
+    "cctv_retention",
+    "patrol_records",
+    "incident_reports",
+    "closing_meeting",
+    "capa_plan",
+    "brief_gm"
+  ],
+  "debrief": {
+    "whatHappened": "A good LP programme failed its audit on one critical item: linen cages in a B1 exit route, there most nights because the laundry had nowhere else to put them. You cleared it at once, kept the records honest, and wrote a corrective action plan that fixes causes, not symptoms.",
+    "bestPractice": [
+      "Know how the audit scores: weighted items, and critical items that fail it outright.",
+      "Show the real programme, places as well as paperwork.",
+      "Make anything unsafe safe immediately, then plan the lasting fix.",
+      "Every corrective action: root cause, action, owner, date, verification.",
+      "Never alter a record for an audit.",
+      "Tell the GM yourself, before the report lands."
+    ],
+    "why": "An audit is the cheapest way to find the gap before an incident finds it. The plan that follows decides whether the same finding comes back.",
+    "commonMistakes": [
+      "Arguing that a high score outweighs a critical failure.",
+      "Blaming people instead of finding the cause.",
+      "Backfilling logs.",
+      "Actions with no owner or check."
+    ]
+  },
+  "procedureCards": [
+    "lp_audit_capa"
+  ],
+  "reportAt": "lp_office",
+  "passMark": 60,
+  "xp": 300,
+  "weeks": 2,
+  "lesson": "Critical items can't be bought back with points. Fix the cause, keep the records true."
+}

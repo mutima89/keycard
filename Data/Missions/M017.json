@@ -1,0 +1,506 @@
+{
+  "schema": 1,
+  "id": "M017",
+  "title": "Banquet Bar Shrink",
+  "kind": "mission",
+  "topic": "shrink",
+  "minLevel": 5,
+  "opening": {
+    "channel": "email",
+    "from": "finance_director",
+    "at": "lp_office",
+    "text": "September's beverage counts are in and the banquet bar store is well out: thousands in spirits we paid for and can't find. The main bars are fine. Before I put it in the month-end pack I'd like LP to tell me what's going on. Hamish"
+  },
+  "briefing": [
+    "10:00, Wednesday. Month-end counts show a large gap between book stock and counted stock in the Harbour Ballroom's banquet bar store. The hotel's other bars are within normal limits.",
+    "Veldane shrink procedure: measure it with the standard formula, find out where the process lets stock go missing, test it against records and CCTV, and fix the controls. If an employee may be involved, plan the interview with HR and give them a fair chance to answer. Searches of people and their property follow the posted policy and local law only: never a locker, bag or car without consent and the policy's conditions. Your authority is 50,000."
+  ],
+  "learningObjectives": [
+    "Measuring shrink with the standard formula",
+    "Separating control failures from proven theft",
+    "Investigating an employee fairly, with HR, without unlawful searches"
+  ],
+  "start": "10:00",
+  "actions": [
+    {
+      "id": "review_counts",
+      "label": "Review the September beverage counts",
+      "kind": "check",
+      "at": "lp_office",
+      "spot": "lp_desk",
+      "minutes": 5,
+      "required": true,
+      "findingTitle": "September counts",
+      "finding": "Banquet bar store: book 18,400, counted 16,192, almost all of it spirits. Lobby Bar 1.6%, Quay Bar 2.1%: normal breakage and spillage. The banquet store was 2.4% in June and has climbed every month since.",
+      "columns": [
+        "Outlet",
+        "Book",
+        "Counted",
+        "Gap"
+      ],
+      "rows": [
+        [
+          "Banquet bar store",
+          "18,400",
+          "16,192",
+          "2,208"
+        ],
+        [
+          "Lobby Bar",
+          "9,250",
+          "9,102",
+          "148"
+        ],
+        [
+          "Quay Bar",
+          "6,800",
+          "6,657",
+          "143"
+        ]
+      ]
+    },
+    {
+      "id": "talk_celia",
+      "label": "Talk to Celia Wrenfield in the banquet office",
+      "kind": "interview",
+      "at": "ballroom",
+      "spot": "banquet_office",
+      "person": "banquet_manager",
+      "minutes": 6,
+      "requires": [
+        "review_counts"
+      ],
+      "required": true,
+      "findingTitle": "How the banquet bar runs",
+      "finding": [
+        "Stock is requisitioned from the main cellar to the banquet store each week. Bartenders draw what an event needs, and return opened and unopened bottles after it, with a returns sheet. Empty bottles go straight into the glass bin.",
+        "Three keys to the store padlock: Celia, Kit Albury, and the agency lead. On busy nights Celia's key hangs on the office hook. Event sheets are often signed off days later."
+      ],
+      "lines": [
+        {
+          "speaker": "banquet_manager",
+          "text": "We did forty events in September. I sign what the bartenders give me. I don't have time to count every bottle."
+        }
+      ]
+    },
+    {
+      "id": "check_requisitions",
+      "label": "Compare event sheets with what the events should use",
+      "kind": "check",
+      "at": "ballroom",
+      "spot": "banquet_office",
+      "minutes": 8,
+      "requires": [
+        "talk_celia"
+      ],
+      "findingTitle": "Event sheets",
+      "finding": "Most events use about what their package and headcount predict. Three do not, all closed by Kit alone on the returns sheet: the Haldane wedding on Friday (140 guests, 96 bottles of spirits recorded, about 40 expected), a charity dinner and a product launch. None of the three returned any unopened bottles.",
+      "columns": [
+        "Event",
+        "Guests",
+        "Spirits recorded",
+        "Expected",
+        "Returns signed by"
+      ],
+      "rows": [
+        [
+          "Haldane wedding (Fri)",
+          "140",
+          "96",
+          "~40",
+          "K. Albury only"
+        ],
+        [
+          "Charity dinner (12th)",
+          "220",
+          "88",
+          "~55",
+          "K. Albury only"
+        ],
+        [
+          "Product launch (19th)",
+          "90",
+          "41",
+          "~18",
+          "K. Albury only"
+        ],
+        [
+          "Other 37 events",
+          "-",
+          "within 10%",
+          "-",
+          "Bartender and C. Wrenfield"
+        ]
+      ]
+    },
+    {
+      "id": "inspect_store",
+      "label": "Inspect the banquet bar store",
+      "kind": "check",
+      "at": "ballroom",
+      "spot": "banquet_bar",
+      "minutes": 5,
+      "requires": [
+        "talk_celia"
+      ],
+      "findingTitle": "The store",
+      "finding": "A mesh cage behind the ballroom with a padlock and three keys, no key log, no camera on the door. No par levels on the shelves. Empties go into the glass bin, so an empty bottle can never be checked against a full one."
+    },
+    {
+      "id": "cctv_dock",
+      "label": "Review the dock cameras after the Haldane wedding",
+      "kind": "cctvReview",
+      "at": "cctv_room",
+      "spot": "cctv_console",
+      "minutes": 8,
+      "requires": [
+        "check_requisitions"
+      ],
+      "findingTitle": "B1-05 and B1-06, Saturday 01:4x",
+      "finding": "01:47: Kit Albury wheels a bar trolley with two covered cases through receiving to the dock door (B1-06), out to a silver hatchback on the apron (B1-05), loads the cases into the boot and returns with the trolley empty at 01:51. The wedding ended at 01:00. Exported with its hash.",
+      "evidence": "KC-1701",
+      "custody": "Clips B1-05 and B1-06 Saturday 01:40-01:55 exported by you under your own login to write-once USB KC-1701, SHA-256 recorded."
+    },
+    {
+      "id": "search_kit",
+      "label": "Open Kit's locker and look in his car",
+      "kind": "search",
+      "at": "loading_dock",
+      "minutes": 3,
+      "requires": [
+        "cctv_dock"
+      ],
+      "findingTitle": "Unlawful search",
+      "finding": "Without consent and outside the posted search policy, you open his locker and look through his car windows on the apron. Nothing useful is found, and the search itself becomes the first thing his representative raises.",
+      "effects": {
+        "StaffMorale": -3
+      }
+    },
+    {
+      "id": "brief_hr",
+      "label": "Plan the next step with Priyanka",
+      "kind": "interview",
+      "at": "exec_offices",
+      "spot": "hr_office",
+      "person": "hr_director",
+      "minutes": 6,
+      "requires": [
+        "cctv_dock"
+      ],
+      "required": true,
+      "findingTitle": "Plan with HR",
+      "finding": "Priyanka will hold an investigation meeting with Kit, with you presenting the evidence and Kit able to bring a companion. She will decide on suspension. The GM and counsel will decide whether the hotel reports it to the police; LP prepares the evidence pack either way."
+    },
+    {
+      "id": "interview_kit",
+      "label": "Investigation meeting with Kit and Priyanka",
+      "kind": "interview",
+      "at": "exec_offices",
+      "spot": "hr_office",
+      "person": "bartender_albury",
+      "minutes": 12,
+      "requires": [
+        "brief_hr"
+      ],
+      "required": true,
+      "findingTitle": "Kit's response",
+      "finding": [
+        "Shown the event sheets and the clip. He says the cases were \"opened bottles that would have been binned\". Told that opened bottles are returned, not binned, and that the wedding returned none, he says he \"took a few for a party\" and denies the other two events.",
+        "Priyanka suspends him on full pay pending the outcome, and tells him not to contact the banqueting team about the case."
+      ],
+      "lines": [
+        {
+          "speaker": "bartender_albury",
+          "text": "Everyone takes the odd bottle at the end of a wedding. It's not like it's being sold."
+        }
+      ]
+    },
+    {
+      "id": "fix_controls",
+      "label": "Put new controls on the banquet store",
+      "kind": "secure",
+      "at": "ballroom",
+      "spot": "banquet_bar",
+      "minutes": 6,
+      "requires": [
+        "inspect_store"
+      ],
+      "findingTitle": "New controls",
+      "finding": "Two key holders and a sign-out log; empty-for-full exchange (no full bottle out without an empty back in); par levels on every shelf; every event reconciled against its package within 24 hours, signed by the bartender and Celia; a weekly spot count by LP for three months; a camera on the store door requested in next year's plan."
+    }
+  ],
+  "questions": [
+    {
+      "id": "q_shrink",
+      "kind": "numeric",
+      "prompt": "What is the banquet store's shrink, in percent of book value?",
+      "dimension": "Evidence",
+      "competency": "FinancialAcumen",
+      "weight": 9,
+      "formula": {
+        "name": "ShrinkPercent",
+        "inputs": {
+          "book": 18400,
+          "counted": 16192
+        }
+      },
+      "tolerance": 0.03,
+      "unit": "%",
+      "explanation": "Shrink = (book - counted) / book x 100 = (18,400 - 16,192) / 18,400 x 100 = 12.0%. Always against book value, so outlets of different sizes compare fairly.",
+      "mistakes": [
+        {
+          "value": 13.64,
+          "feedback": "That divides the gap by the counted value. Shrink is measured against book value: (book - counted) / book x 100."
+        },
+        {
+          "value": 2208,
+          "feedback": "That is the gap in money. The question asks for the percentage of book value."
+        }
+      ]
+    },
+    {
+      "id": "d_cause",
+      "prompt": "What does the evidence show?",
+      "dimension": "Evidence",
+      "competency": "Investigation",
+      "weight": 8,
+      "options": [
+        {
+          "id": "both",
+          "label": "Weak controls let stock go missing without trace, and the CCTV shows one employee taking two cases after one event. The other two events are unexplained, not proven.",
+          "score": 100,
+          "feedback": "Two findings, kept apart: a control failure that explains how, and a specific act that the evidence proves. The rest is a question, not a conclusion."
+        },
+        {
+          "id": "kit",
+          "label": "Kit Albury stole the whole 12%.",
+          "score": 30,
+          "feedback": "The clip proves one night. The rest of the shrink could be anyone with a key, or poor records."
+        },
+        {
+          "id": "spill",
+          "label": "Breakage and spillage during busy events.",
+          "score": 10,
+          "feedback": "Spillage doesn't climb every month, or leave by the dock door at 01:47."
+        }
+      ]
+    },
+    {
+      "id": "d_controls",
+      "kind": "multi",
+      "prompt": "Which controls fix the store?",
+      "dimension": "Procedure",
+      "competency": "ComplianceAudit",
+      "weight": 8,
+      "options": [
+        {
+          "id": "e4f",
+          "label": "Empty-for-full exchange",
+          "correct": true
+        },
+        {
+          "id": "keys",
+          "label": "Two key holders and a sign-out log",
+          "correct": true
+        },
+        {
+          "id": "recon",
+          "label": "Each event reconciled within 24 hours, signed by two people",
+          "correct": true
+        },
+        {
+          "id": "par",
+          "label": "Par levels and a weekly spot count",
+          "correct": true
+        },
+        {
+          "id": "search",
+          "label": "Search every bartender's bag at the end of each shift",
+          "feedback": "Bag checks happen only under the posted policy, with consent and a witness. They don't fix a store that can't tell an empty bottle from a missing one."
+        }
+      ]
+    },
+    {
+      "id": "d_police",
+      "prompt": "Does the hotel report Kit to the police?",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 7,
+      "options": [
+        {
+          "id": "decide",
+          "label": "The GM and counsel decide with HR; LP prepares the evidence pack, and the HR process runs alongside.",
+          "score": 100,
+          "feedback": "Reporting an employee is a decision for the people who own the risk. LP makes sure the evidence is ready whichever way they decide."
+        },
+        {
+          "id": "arrest",
+          "label": "Call the police now and have him arrested at work.",
+          "score": 30,
+          "feedback": "That takes the decision away from the GM and counsel, and turns a workplace into a scene in front of his colleagues."
+        },
+        {
+          "id": "quiet",
+          "label": "Let him resign quietly and say nothing.",
+          "score": 20,
+          "feedback": "It hides a loss from the accounts and the insurer, and tells everyone else that it is safe to try."
+        }
+      ]
+    },
+    {
+      "id": "r_what",
+      "prompt": "Shrink report, summary (one line)",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 8,
+      "section": "what",
+      "options": [
+        {
+          "id": "facts",
+          "label": "Banquet store shrink 12.0% (2,208) in September against 1.6-2.1% elsewhere; weak key, returns and reconciliation controls; one removal of two cases on 01:47 Saturday on KC-1701; new controls in place; outcome with HR.",
+          "score": 100,
+          "feedback": "The measure, the comparison, the cause, the proven act, the fix and who owns the next step."
+        },
+        {
+          "id": "theft",
+          "label": "Bartender caught stealing liquor; problem solved.",
+          "score": 20,
+          "feedback": "The controls are the bigger finding, and one night does not explain the whole gap."
+        },
+        {
+          "id": "loss",
+          "label": "Beverage loss of 2,208 in banqueting.",
+          "score": 30,
+          "feedback": "A number without the cause or the fix."
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "c_evidence_first",
+      "label": "Evidence before the interview",
+      "kind": "before",
+      "action": "cctv_dock",
+      "other": "interview_kit",
+      "dimension": "Evidence",
+      "competency": "Investigation",
+      "weight": 8,
+      "pass": "You had the event sheets and the clip before Kit was asked to explain.",
+      "fail": "You interviewed Kit before you knew what the evidence showed."
+    },
+    {
+      "id": "c_no_search",
+      "label": "No unlawful searches",
+      "kind": "notDone",
+      "action": "search_kit",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 10,
+      "pass": "You did not search his locker or car.",
+      "fail": "You searched an employee's locker and car outside the policy."
+    },
+    {
+      "id": "c_hr",
+      "label": "Work with HR",
+      "kind": "done",
+      "action": "brief_hr",
+      "dimension": "Communication",
+      "competency": "PeopleLeadership",
+      "weight": 7,
+      "pass": "HR planned and ran the employee side.",
+      "fail": "HR were not involved."
+    },
+    {
+      "id": "c_requisitions",
+      "label": "Test the records",
+      "kind": "done",
+      "action": "check_requisitions",
+      "dimension": "Evidence",
+      "competency": "Investigation",
+      "weight": 8,
+      "pass": "You compared every event with what it should have used.",
+      "fail": "You never tested the event sheets."
+    },
+    {
+      "id": "c_store",
+      "label": "See the process",
+      "kind": "done",
+      "action": "inspect_store",
+      "dimension": "Procedure",
+      "competency": "ComplianceAudit",
+      "weight": 7,
+      "pass": "You saw how stock leaves the store, and why it can't be traced.",
+      "fail": "You never looked at the store itself."
+    },
+    {
+      "id": "c_controls",
+      "label": "Fix the controls",
+      "kind": "done",
+      "action": "fix_controls",
+      "dimension": "Procedure",
+      "competency": "ComplianceAudit",
+      "weight": 9,
+      "pass": "The store now has key control, empty-for-full, par levels and reconciliation.",
+      "fail": "The store is as easy to empty tomorrow as it was last month."
+    },
+    {
+      "id": "c_heard",
+      "label": "A fair hearing",
+      "kind": "done",
+      "action": "interview_kit",
+      "dimension": "Procedure",
+      "competency": "Investigation",
+      "weight": 6,
+      "pass": "Kit was shown the evidence and could answer it, with a companion.",
+      "fail": "Kit was never asked for his side."
+    },
+    {
+      "id": "c_counts",
+      "label": "Measure it",
+      "kind": "done",
+      "action": "review_counts",
+      "dimension": "Evidence",
+      "competency": "FinancialAcumen",
+      "weight": 5,
+      "pass": "You started from the counts, against the other bars.",
+      "fail": "You never looked at the numbers."
+    }
+  ],
+  "bestOrder": [
+    "review_counts",
+    "talk_celia",
+    "check_requisitions",
+    "inspect_store",
+    "fix_controls",
+    "cctv_dock",
+    "brief_hr",
+    "interview_kit"
+  ],
+  "debrief": {
+    "whatHappened": "A banquet store losing 12% of its stock. You measured it, found a process that could not tell a missing bottle from a used one, found three events that did not add up, and a clip of one bartender taking two cases. HR heard him, the controls changed, and the GM and counsel have the evidence pack to decide on a police report.",
+    "bestPractice": [
+      "Measure shrink against book value with the standard formula, and compare outlets.",
+      "Walk the process: where does stock leave, and what record does it leave behind?",
+      "Test the records against what should have happened.",
+      "Keep control failures and proven acts apart; don't stretch one night into a month.",
+      "Plan employee interviews with HR, with the evidence first and a fair chance to answer.",
+      "No searches of people, lockers, bags or cars outside the policy and local law."
+    ],
+    "why": "Most shrink is a process that lets stock leave without a trace, and theft follows the gap. Fix the process and you shrink the opportunity for everyone; prove only what the evidence shows and the case holds up.",
+    "commonMistakes": [
+      "Blaming one person for the whole gap.",
+      "Searching an employee's belongings to \"be sure\".",
+      "Fixing nothing because someone was caught.",
+      "Dividing by the counted value."
+    ]
+  },
+  "procedureCards": [
+    "beverage_shrink"
+  ],
+  "reportAt": "lp_office",
+  "passMark": 60,
+  "xp": 300,
+  "weeks": 2,
+  "lesson": "Measure it, walk the process, prove only what the evidence shows, and fix the gap."
+}

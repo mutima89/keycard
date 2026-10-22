@@ -1,7 +1,16 @@
 # Progress
 
-## Status: Phase 2 content written (M004-M011, hotel fit-out, tool screens); PC round 3 build pending
+## Status: Phase 3 content written (levels 4-7: M012-M026, crises C001-C002, floors 1 and 4); PC round 4 build pending
 Last update: 2026-10-22
+
+- 2026-10-22 Phase 3 (levels 4-7), cloud session (UE parts after commit 6cfc6d1 not compiled here; PC round 3 compiles part of it).
+  - Missions M012-M026 (sources in Scripts/content): level 4 fire alarm, sprinkler impairment, slip and fall, hot work; level 5 workplace complaint, banquet bar shrink, regional LP audit, contract or in-house staffing; level 6 Code Beacon (missing child), Do Not Disturb (guest death), the fire marshal's inspection; level 7 Two Hotels, One Standard (the airport hotel), Former Employee Access Not Removed, Chargeback Fraud Ring, Supervisor Protecting a Friend. Crises C001 Power Outage at Full Occupancy and C002 Bomb Threat Call. Each teaches its own Field Manual card (29 in all) and scores 100 with best play.
+  - Consequences that come back: every trap from level 4 on schedules a seeded latent event (claims, grievances, fire authority findings, insurer letters, press) that names the earlier decision; level 6-7 traps also set flags read by later context notes and events. Context notes in M022, C001, C002 and M024 react to earlier choices.
+  - Story chapters 2 and 3: clues `airport_clones`, `former_admin` (the payoff: a former systems administrator's shared login and vendor access registered E-77) and `blank_stock` (his arrest, or a cleared flat if you warned him).
+  - Inbox: 16 new events for levels 4-7 and fallout for 12 more topics. Cast: 11 new people with their own voices (Docs/FictionalNames.md).
+  - Hotel: floor 1 (foyer, Harbour Ballroom with 16 rounds, stage and bar, banquet office and bar store, cameras 1-01 to 1-03), floor 4 (executive offices, HR, finance, GM office, boardroom, camera 4-01), the kitchen cook line and permit board, the floor 14 sprinkler valve, Stair A's floor 2 landing as a place. Scenes: fire panel status for M012/M013/M015/C001, the valve tag, the wet floor and cones, the hot-work ladder and blankets, Theo on the Stair A landing, 1406 open with the attendant's cart then sealed, chairs on the landing, the holdall under the cake table and the cordon tape, and a building-wide drop to emergency lighting during C001. `MissingWorkPoints` makes the tour fail when any mission step has nowhere to be done.
+  - Core tests (GCC, ASan + UBSan): `44 test cases, 0 failed, 0 failed checks`. `Campaign_BestPlayToLevelEight` plays M001-M026, C001 and C002 at 100 and reaches level 8 with every card, clue and certain event.
+  - Known gaps: the airport hotel is not walkable (its manager comes to the Harbourfront; it is a property in the data only); Theo and the C002 holdall are built from primitives; new avatars Female_Adult_13-18, Male_Adult_12-14, Business_Female_05 and Security_Male_02 are still to be confirmed on the PC.
 
 - 2026-10-22 Phase 2 (levels 1-3), cloud session (UE parts not compiled yet).
   - Missions M004-M011 (sources in Scripts/content): Last Orders, Code Blue at the Bar, The Bag by the Sofa, Footage Before It Overwrites (level 2); The Missing Master, Propped Open, The Wrong Ticket, Encoder E-77 (level 3). Each teaches a Field Manual card (8 new, 12 in all), uses the strict validator, and scores 100 with best play.

@@ -58,5 +58,9 @@ Each full name was web-searched for a public figure, hotel executive or security
 | Aldous Treharne | Guest found dead in 1406 (M021, not in the cast) | Clear (rejected first choice Penhallow: a Georgette Heyer novel title) |
 | Theo Dunmore | Missing child (M020, not in the cast) | Clear |
 | Code Beacon | Veldane's missing-child code | Clear (searched: the real codes are Code Adam and Code Madeleine; no Code Beacon in use) |
+| Rhosyn Calder | LP Manager, Veldane Airport Port Avener | Clear |
+| Anneliese Thorburn | Credit Manager | Clear |
+| Rory Pennant | LP Officer, evenings | Clear |
+| Dorian Vessey | Former Front Office Systems Administrator (M024, not in the cast) | Clear (Denmark Vessey, a musician, shares only the surname) |
 
 Equipment names in missions (encoders E-01 to E-03, camera ids, evidence numbers) are generic codes, not brands.

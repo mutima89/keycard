@@ -3241,6 +3241,8 @@ void AKcHotel::RefreshScenes()
 	const bool bChairs = Has(TEXT("clear_landing")) && !Done(TEXT("clear_landing"));
 	const bool bOutage = Has(TEXT("call_engineer")) && Has(TEXT("talk_lift")) && !Done(TEXT("restore"));
 	SetBlackout(bOutage);
+	const bool bThreat = Has(TEXT("search_ballroom")) && Has(TEXT("cordon")) && !Done(TEXT("all_clear"));
+	const bool bCordoned = Done(TEXT("cordon")), bOpened = Done(TEXT("open_bag"));
 
 	// Guests behind doors: the door offers their work until they open it.
 	for (AKcCasePoint* P : CasePoints)
@@ -3257,9 +3259,9 @@ void AKcHotel::RefreshScenes()
 		}
 	}
 
-	const FString Key = FString::Printf(TEXT("%s|%d%d%d%d%d%d%d%d|%d%d%d%d%d|%d%d%d%d%d%d%d%d%d%d|%d%d%d%d%d"), M ? *KcConvert::ToFString(M->Id) : TEXT(""), bParty, bKnocked, bCapOff, bQuiet, bReturned,
+	const FString Key = FString::Printf(TEXT("%s|%d%d%d%d%d%d%d%d|%d%d%d%d%d|%d%d%d%d%d%d%d%d%d%d|%d%d%d%d%d|%d%d%d"), M ? *KcConvert::ToFString(M->Id) : TEXT(""), bParty, bKnocked, bCapOff, bQuiet, bReturned,
 		b1412, bCloset, G && G->HasGame(), bBag, bCodeBlue, bAed, bPropped, bLuggage, bFireAlarm, bSilenced, bImpaired, bSlip, bConed, bMopped, bHotWork, bPrepped, bK2Off,
-		bAllOff, bTheo, bDeath, bSecured, bChairs, bOutage);
+		bAllOff, bTheo, bDeath, bSecured, bChairs, bOutage, bThreat, bCordoned, bOpened);
 	if (Key == SceneKey) return;
 	SceneKey = Key;
 	for (UPrimitiveComponent* S : SceneProps)
@@ -3428,6 +3430,32 @@ void AKcHotel::RefreshScenes()
 			const FVector B(StairIn0 + 40.0f + s * 46.0f, StairY0 + 40.0f, Zf(2, 0.0f));
 			for (int32 c = 0; c < 6; ++c) SceneBox(B + FVector(0, 0, 45.0f + c * 8.0f), FVector(42.0f, 42.0f, 4.0f), Mat(TEXT("MI_Brass")), 4.0f * (c % 2));
 			SceneBox(B + FVector(0, -18.0f, 95.0f + 40.0f), FVector(40.0f, 4.0f, 50.0f), Mat(TEXT("MI_FabricAccent")), 0.0f);
+		}
+	}
+	// C002: the wedding fair's cake table by the stage, skirted to the floor, and under it the grey
+	// holdall nobody claims; tape across the ballroom doors once it is cordoned.
+	if (bThreat)
+	{
+		const int32 F1 = 1;
+		const FVector T(4480.0f, -300.0f, Zf(F1, 0.0f));
+		SceneBox(T + FVector(0, 0, 76.0f), FVector(90.0f, 180.0f, 2.0f), Mat(TEXT("MI_Linen")), 0.0f);
+		SceneBox(T + FVector(-44.0f, 0, 38.0f), FVector(1.0f, 180.0f, 74.0f), Mat(TEXT("MI_Linen")), 0.0f);
+		for (int32 t = 0; t < 3; ++t) SceneBox(T + FVector(0, 40.0f, 90.0f + t * 18.0f), FVector(40.0f - t * 10.0f, 40.0f - t * 10.0f, 18.0f), Mat(TEXT("MI_CeilingWhite")), 0.0f, Cylinder);
+		const FVector Bag = T + FVector(10.0f, -50.0f, 0.0f);
+		SceneBox(Bag + FVector(0, 0, 17.0f), FVector(34.0f, 60.0f, 32.0f), Mat(TEXT("MI_UniformGrey")), 8.0f, Cylinder);
+		SceneBox(Bag + FVector(0, 0, 34.0f), FVector(4.0f, 30.0f, 3.0f), Mat(TEXT("MI_Graphite")), 8.0f);
+		if (bOpened)
+		{
+			SceneBox(Bag + FVector(0, 0, 38.0f), FVector(22.0f, 28.0f, 10.0f), Mat(TEXT("MI_Cardboard")), 8.0f);
+			SceneBox(Bag + FVector(0, 4.0f, 45.0f), FVector(14.0f, 8.0f, 5.0f), Mat(TEXT("MI_DeviceBlack")), 8.0f);
+			SceneBox(Bag + FVector(5.0f, 4.0f, 47.6f), FVector(5.0f, 0.4f, 0.4f), Mat(TEXT("MI_LedRed")), 8.0f);
+		}
+		if (bCordoned)
+		{
+			for (float H : {95.0f, 125.0f})
+			{
+				SceneBox(FVector(CoreX1 - 6.0f, 0.0f, Zf(F1, H)), FVector(1.0f, 230.0f, 6.0f), Mat(TEXT("MI_SafetyYellow")), 0.0f);
+			}
 		}
 	}
 	// M009: the dock door wedged open with the pallet jack; otherwise the jack is parked by the pallets.

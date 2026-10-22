@@ -600,6 +600,28 @@
         "Locker searches outside policy",
         "Sanctions decided in the interview"
       ]
+    },
+    {
+      "id": "bomb_threat",
+      "title": "Bomb threat",
+      "topic": "bomb_threat",
+      "steps": [
+        "On the call: keep the caller talking, write the exact words, the time, the voice and the background; don't hang up.",
+        "Call the police at once with the checklist.",
+        "Take command with the GM; decide what to clear on police advice, targeted to the threat.",
+        "Search routes and assembly points before sending anyone there.",
+        "Search with staff who know each area, looking for what is out of place.",
+        "No radio or phone use within 15 metres of a suspicious item.",
+        "Never touch, move or open it; cordon around and below; hand over to the police.",
+        "Reopen only on the police all-clear; review the log."
+      ],
+      "why": "A threat is almost always a hoax, and you never know which. The procedure makes the response safe either way.",
+      "pitfalls": [
+        "Pulling the fire alarm",
+        "Touching the item",
+        "Radios near it",
+        "Unsearched assembly points"
+      ]
     }
   ]
 }

@@ -133,7 +133,7 @@ TEST(Campaign_FirstThreeCasesEarnThePromotionAndItsCeremony)
 	CHECK_EQ(static_cast<int>(S.Campaign.Records.size()), 3);
 }
 
-TEST(Campaign_BestPlayThroughLevelSix)
+TEST(Campaign_BestPlayToLevelEight)
 {
 	GameState S = Fresh();
 	for (const char* Id : {"M001", "M002", "M003", "M004", "M005", "M006", "M007", "M008", "M009", "M010", "M011"})
@@ -202,6 +202,29 @@ TEST(Campaign_BestPlayThroughLevelSix)
 		for (int i = 0; i < kc::CompetencyCount; ++i) std::printf("    competency %d = %d\n", i, S.Career.Competencies[static_cast<size_t>(i)].Score);
 	}
 	CHECK_EQ(S.Career.Level, 7);
+	// Level 7: the cluster standard, the former administrator, payment fraud, a supervisor's cover-up, the bomb threat.
+	for (const char* Id : {"M023", "M024", "M025", "M026", "C002"})
+	{
+		S.bCeremonyPending = false;
+		const MissionDebrief D = PlayBest(S, Id);
+		if (!D.bPassed || D.Score != 100) std::printf("    %s scored %d\n", Id, D.Score);
+		CHECK(D.bPassed && D.Score == 100);
+	}
+	for (const char* Card : {"cluster_standards", "access_revocation", "payment_fraud", "misconduct_investigation", "bomb_threat"}) CHECK(HasCard(S, Card));
+	CHECK(HasClue(S, "former_admin"));
+	CHECK_EQ(static_cast<int>(S.Campaign.Records.size()), 28);
+	for (const char* Event : {"dunmore_letter", "treharne_family", "marshal_followup", "generator_test", "airport_calendar", "vessey_arrest"})
+	{
+		const bool bFired = std::find(S.World.FiredEvents.begin(), S.World.FiredEvents.end(), Event) != S.World.FiredEvents.end();
+		if (!bFired) std::printf("    %s never arrived\n", Event);
+		CHECK(bFired);
+	}
+	CHECK(HasClue(S, "blank_stock"));
+	if (S.Career.Level != 8)
+	{
+		for (int i = 0; i < kc::CompetencyCount; ++i) std::printf("    competency %d = %d\n", i, S.Career.Competencies[static_cast<size_t>(i)].Score);
+	}
+	CHECK_EQ(S.Career.Level, 8);
 }
 
 TEST(Campaign_SameSeedSameCareer)

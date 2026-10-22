@@ -1,0 +1,544 @@
+{
+  "schema": 1,
+  "id": "C002",
+  "title": "Bomb Threat Call",
+  "kind": "crisis",
+  "topic": "bomb_threat",
+  "minLevel": 7,
+  "opening": {
+    "channel": "radio",
+    "from": "desk_agent",
+    "at": "front_desk",
+    "text": "LP, Tariq at the desk. A man just rang the switchboard and said there's a bomb in the ballroom. He said half past twelve. I wrote it all down. Please come."
+  },
+  "briefing": [
+    "11:20, Saturday. A wedding fair in the Harbour Ballroom: 400 visitors and forty exhibitors. The hotel is full. A caller has told the switchboard there is a bomb in the ballroom, timed for 12:30.",
+    "Veldane threat procedure: get the call details on the threat checklist while they are fresh; call the police at once; take command with the GM, who decides on evacuation with police advice; search with staff who know each area, looking for what is out of place; no radio or phone use within 15 metres of a suspicious item; never touch or move one; cordon and clear around it; search the routes and assembly points before people use them; reopen only on the police's all-clear. You are the crisis lead for the cluster. Your authority is 400,000."
+  ],
+  "context": [
+    {
+      "ifFlag": "dark_evacuation",
+      "text": "Since the night of the dark evacuation, Marguerite Ellery has been wary of moving guests. Bring her a decision she can trust."
+    },
+    {
+      "ifFlag": "exits_locked_finding",
+      "text": "The fire authority's finding about locked exits during Code Beacon is still open. Every exit stays unlocked today, whatever happens."
+    }
+  ],
+  "learningObjectives": [
+    "The threat checklist and the police, at once",
+    "A targeted evacuation decided with police advice",
+    "Search, don't touch: radios away, routes searched first"
+  ],
+  "start": "11:21",
+  "actions": [
+    {
+      "id": "checklist",
+      "label": "Go through the threat checklist with Tariq",
+      "kind": "interview",
+      "at": "front_desk",
+      "person": "desk_agent",
+      "minutes": 2,
+      "required": true,
+      "findingTitle": "The call, 11:18",
+      "finding": "Tariq used the checklist card from under the switchboard. Male, calm, local accent, 40 seconds. Exact words: \"There's a bomb in the ballroom, at your wedding thing. Half twelve. This is for what you did to my sister.\" Traffic and a station tannoy in the background. Number withheld. Tariq hung up when the line went quiet; the switchboard log has the time.",
+      "lines": [
+        {
+          "speaker": "desk_agent",
+          "text": "I kept him talking as long as I could. I wrote his words exactly. I'm sorry I put the phone down."
+        }
+      ]
+    },
+    {
+      "id": "call_police",
+      "label": "Call the police with the checklist",
+      "kind": "call",
+      "at": "front_desk",
+      "spot": "desk_phone",
+      "person": "police_liaison",
+      "minutes": 2,
+      "requires": [
+        "checklist"
+      ],
+      "required": true,
+      "findingTitle": "Police on the way, 11:2x",
+      "finding": "The police control room takes the exact words, the time and the background. A specific place and time: they advise clearing the ballroom and the floor 1 foyer, searching with staff, and keeping the rest of the hotel in place unless something is found. Officers in ten minutes, a search adviser with them. DS Calloway is told."
+    },
+    {
+      "id": "command",
+      "label": "Take command at fire command with the GM",
+      "kind": "interview",
+      "at": "fire_command",
+      "person": "gm",
+      "minutes": 3,
+      "requires": [
+        "call_police"
+      ],
+      "required": true,
+      "findingTitle": "Decision: clear floor 1",
+      "finding": "Marguerite decides on the police advice: clear the ballroom and the floor 1 foyer by Stair B to the quay; the rest of the hotel stays in place; lifts held off floor 1; the next update to guests at 11:45. You log every decision with its time.",
+      "lines": [
+        {
+          "speaker": "gm",
+          "text": "Floor 1 out, everyone else stays. If they find anything, you tell me first and we go again."
+        }
+      ]
+    },
+    {
+      "id": "radio_rule",
+      "label": "Put the radio rule out: no transmitting in the ballroom",
+      "kind": "call",
+      "at": "fire_command",
+      "person": "partner",
+      "minutes": 1,
+      "requires": [
+        "command"
+      ],
+      "required": true,
+      "findingTitle": "Radios down on floor 1",
+      "finding": "Ines tells every team on the radio, once: from now, no radio or mobile phone use inside the ballroom or within 15 metres of anything suspicious; searchers report by runner to the foyer stair door. She keeps the CCTV on 1-01 to 1-03."
+    },
+    {
+      "id": "search_route",
+      "label": "Have the route and the quay assembly point searched first",
+      "kind": "check",
+      "at": "lobby",
+      "minutes": 3,
+      "requires": [
+        "command"
+      ],
+      "required": true,
+      "findingTitle": "Route clear",
+      "finding": "Two officers walk Stair B, the side lobby and the quay assembly area before anyone is sent there: bins, planters, parked bikes. Nothing out of place. A second device placed where people gather is the risk this guards against."
+    },
+    {
+      "id": "clear_ballroom",
+      "label": "Have Celia clear the ballroom calmly by Stair B",
+      "kind": "call",
+      "at": "ballroom",
+      "person": "banquet_manager",
+      "minutes": 4,
+      "requires": [
+        "search_route"
+      ],
+      "required": true,
+      "findingTitle": "Floor 1 clear, 11:4x",
+      "finding": "Celia's team clears the fair in nine minutes: \"As a precaution we're asking everyone to leave the ballroom by the stairs. Please take all your belongings with you.\" Belongings taken mean fewer bags left to search. Two exhibitors in wheelchairs go down with staff by the service lift before it is held."
+    },
+    {
+      "id": "fire_alarm",
+      "label": "Sound the fire alarm to clear the whole building",
+      "kind": "other",
+      "at": "fire_command",
+      "spot": "fire_panel",
+      "minutes": 1,
+      "requires": [
+        "call_police"
+      ],
+      "findingTitle": "Full evacuation",
+      "finding": "Twelve hundred people pour through every exit, including the lobby doors under the ballroom and past the quay where nobody has searched. Phones are out, filming. The police arrive to a crowd at every door.",
+      "effects": {
+        "GuestSatisfaction": -5,
+        "SafetyCompliance": -3,
+        "IncidentCosts": 12000
+      },
+      "setsFlags": [
+        "c002_full_evacuation"
+      ]
+    },
+    {
+      "id": "search_ballroom",
+      "label": "Search the ballroom with the banquet team",
+      "kind": "check",
+      "at": "ballroom",
+      "minutes": 5,
+      "requires": [
+        "clear_ballroom",
+        "radio_rule"
+      ],
+      "required": true,
+      "findingTitle": "An unattended holdall",
+      "finding": "Celia's captains know the room: they search by sections, looking for what doesn't belong. Under the skirted table by the stage, behind the cake stand: a grey holdall no exhibitor claims. Nobody touches it. The runner takes the location to the foyer stair door."
+    },
+    {
+      "id": "open_bag",
+      "label": "Look inside the holdall",
+      "kind": "other",
+      "at": "ballroom",
+      "minutes": 1,
+      "requires": [
+        "search_ballroom"
+      ],
+      "findingTitle": "Opened",
+      "finding": "You unzip it. Inside: brochures, a clock radio taped to a box, and wires. If it had been real, the person who opened it would have been the first casualty. The police adviser asks who authorised it.",
+      "effects": {
+        "SafetyCompliance": -6
+      },
+      "schedules": [
+        {
+          "id": "handling_finding",
+          "description": "The police debrief to the owners records that a hotel manager opened a suspected device. The insurer asks for the hotel's threat procedure and training records.",
+          "delayWeeks": 2,
+          "probability": 0.8,
+          "effects": {
+            "InsurerConfidence": -4,
+            "OwnerTrust": -3
+          },
+          "flagIfOccurs": "device_handled"
+        }
+      ]
+    },
+    {
+      "id": "cordon",
+      "label": "Cordon the ballroom and clear the floor around it",
+      "kind": "secure",
+      "at": "ballroom",
+      "minutes": 2,
+      "requires": [
+        "search_ballroom"
+      ],
+      "required": true,
+      "findingTitle": "Cordon",
+      "finding": "Everyone out of the ballroom and the foyer; doors left open as found; staff at the cordon on the stair landings and the service corridor; the rooms below on the ground floor (lobby bar) moved away from the ceiling under the stage. Nothing is switched on or off near it."
+    },
+    {
+      "id": "handover",
+      "label": "Hand over to the police in the lobby",
+      "kind": "interview",
+      "at": "lobby",
+      "person": "police_liaison",
+      "minutes": 3,
+      "requires": [
+        "cordon"
+      ],
+      "required": true,
+      "findingTitle": "Handed over",
+      "finding": "DS Calloway and the search adviser get the checklist, the holdall's exact location and description, a floor plan with the cordon marked and who is where. The police take control of the scene; the bomb disposal team is called.",
+      "lines": [
+        {
+          "speaker": "police_liaison",
+          "text": "Exact words, a floor plan, and nobody touched it. Good. It's ours now; keep your cordon."
+        }
+      ]
+    },
+    {
+      "id": "cctv_holdall",
+      "label": "Find the holdall on the foyer cameras",
+      "kind": "cctvReview",
+      "at": "cctv_room",
+      "spot": "cctv_console",
+      "minutes": 5,
+      "requires": [
+        "handover"
+      ],
+      "evidence": "KC-2701",
+      "findingTitle": "10:51",
+      "finding": "1-03 foyer, 10:51:40: a man in a dark cap carries the holdall in with a group of visitors and leaves without it at 10:54. Exported, hashed and logged as KC-2701 for DS Calloway."
+    },
+    {
+      "id": "all_clear",
+      "label": "Reopen floor 1 on the police all-clear",
+      "kind": "call",
+      "at": "fire_command",
+      "person": "gm",
+      "minutes": 3,
+      "requires": [
+        "handover"
+      ],
+      "required": true,
+      "findingTitle": "All clear, 13:1x",
+      "finding": "The bomb disposal team finds a hoax: a clock radio taped to a box of brochures. The police give the all-clear at 13:12. Floor 1 reopens; the fair resumes at 13:45 with an apology and a free drink. Guests in the rest of the hotel get a short update."
+    },
+    {
+      "id": "after_action",
+      "label": "Write the crisis log and after-action review",
+      "kind": "logEvidence",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 5,
+      "requires": [
+        "all_clear"
+      ],
+      "findingTitle": "After action",
+      "finding": "The log becomes the review: checklist used well (keep the line open next time); police at 11:2x; targeted clearance in nine minutes; route searched first; radio rule held; nobody touched the item. Actions: checklist cards at every phone, search plans by area with named searchers, and a recorded threat line on the switchboard."
+    }
+  ],
+  "questions": [
+    {
+      "id": "d_first",
+      "kind": "order",
+      "prompt": "Put the first steps after the call in order",
+      "dimension": "Procedure",
+      "competency": "CrisisLeadership",
+      "weight": 9,
+      "explanation": "The caller's exact words fade fast, so the checklist comes first, and the police need them at once. Then command decides what to clear, and the routes are searched before anyone is sent down them.",
+      "options": [
+        {
+          "id": "o1",
+          "label": "Record the call on the threat checklist"
+        },
+        {
+          "id": "o2",
+          "label": "Call the police with the details"
+        },
+        {
+          "id": "o3",
+          "label": "Take command with the GM and decide what to clear"
+        },
+        {
+          "id": "o4",
+          "label": "Search the route and assembly point before using them"
+        }
+      ]
+    },
+    {
+      "id": "d_evac",
+      "prompt": "The threat names the ballroom and 12:30. What do you clear?",
+      "dimension": "Compliance",
+      "competency": "CrisisLeadership",
+      "weight": 9,
+      "options": [
+        {
+          "id": "targeted",
+          "label": "The ballroom and the floor 1 foyer, on the police's advice; the rest stays in place unless something is found.",
+          "score": 100,
+          "feedback": "A targeted clearance takes people away from the named place without pushing 1,200 people through routes nobody has searched."
+        },
+        {
+          "id": "all",
+          "label": "Sound the fire alarm and evacuate everyone.",
+          "score": 30,
+          "feedback": "The fire alarm sends everyone through every exit, including past the place named, to assembly points nobody has searched."
+        },
+        {
+          "id": "none",
+          "label": "Nothing: most threats are hoaxes.",
+          "score": 10,
+          "critical": true,
+          "feedback": "Most are, and you can't know which. A specific place and time is acted on, with the police."
+        }
+      ]
+    },
+    {
+      "id": "d_item",
+      "kind": "multi",
+      "prompt": "A searcher finds an unattended holdall. What happens?",
+      "dimension": "Care",
+      "competency": "IncidentResponse",
+      "weight": 9,
+      "options": [
+        {
+          "id": "touch",
+          "label": "Nobody touches, moves or opens it",
+          "correct": true
+        },
+        {
+          "id": "radio",
+          "label": "No radio or phone use within 15 metres",
+          "correct": true
+        },
+        {
+          "id": "clear",
+          "label": "Clear and cordon the area around it, and below it",
+          "correct": true
+        },
+        {
+          "id": "tell",
+          "label": "Give the police its exact location and description",
+          "correct": true
+        },
+        {
+          "id": "carry",
+          "label": "Carry it out to the street so it's away from people",
+          "feedback": "Never. Moving it can set it off, and the street is where the evacuees are."
+        }
+      ]
+    },
+    {
+      "id": "r_what",
+      "prompt": "Crisis log, summary (one line)",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 7,
+      "section": "what",
+      "options": [
+        {
+          "id": "facts",
+          "label": "Threat call 11:18 recorded on the checklist; police 11:2x; floor 1 cleared by Stair B after route search; holdall found under stage table, not touched, cordoned; handed to police; hoax confirmed, all-clear 13:12; footage KC-2701.",
+          "score": 100,
+          "feedback": "The times, the decisions, the item and who has the evidence."
+        },
+        {
+          "id": "hoax",
+          "label": "Hoax bomb call, no action needed.",
+          "score": 15,
+          "feedback": "It was only known to be a hoax at 13:12. Everything before that is the record."
+        },
+        {
+          "id": "sister",
+          "label": "Caller angry about his sister; staff to look into it.",
+          "score": 20,
+          "feedback": "The motive is for the police, with the exact words. LP doesn't investigate the caller."
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "c_checklist",
+      "label": "The caller's words",
+      "kind": "before",
+      "action": "checklist",
+      "other": "command",
+      "dimension": "Evidence",
+      "competency": "EvidenceReporting",
+      "weight": 5,
+      "pass": "The call was on the checklist before decisions were made.",
+      "fail": "Decisions were made before anyone knew exactly what was said."
+    },
+    {
+      "id": "c_cleared",
+      "label": "Clear the named place",
+      "kind": "done",
+      "action": "clear_ballroom",
+      "dimension": "Care",
+      "competency": "CrisisLeadership",
+      "weight": 5,
+      "pass": "Everyone left the ballroom calmly, with their belongings.",
+      "fail": "The named place was never cleared."
+    },
+    {
+      "id": "c_police_fast",
+      "label": "Police at once",
+      "kind": "byMinute",
+      "action": "call_police",
+      "by": "11:27",
+      "dimension": "Communication",
+      "competency": "CrisisLeadership",
+      "weight": 8,
+      "pass": "The police had the call details within minutes.",
+      "fail": "The police heard about it too late."
+    },
+    {
+      "id": "c_route",
+      "label": "Route searched first",
+      "kind": "before",
+      "action": "search_route",
+      "other": "clear_ballroom",
+      "dimension": "Procedure",
+      "competency": "FireLifeSafety",
+      "weight": 7,
+      "pass": "Nobody was sent down a route before it was searched.",
+      "fail": "People were sent to an unsearched assembly point."
+    },
+    {
+      "id": "c_radio",
+      "label": "Radio rule",
+      "kind": "before",
+      "action": "radio_rule",
+      "other": "search_ballroom",
+      "dimension": "Procedure",
+      "competency": "IncidentResponse",
+      "weight": 6,
+      "pass": "Radios were down before the search began.",
+      "fail": "Searchers were transmitting in the room being searched."
+    },
+    {
+      "id": "c_no_alarm",
+      "label": "No fire alarm evacuation",
+      "kind": "notDone",
+      "action": "fire_alarm",
+      "dimension": "Compliance",
+      "competency": "FireLifeSafety",
+      "weight": 7,
+      "pass": "The clearance was targeted, not the whole building.",
+      "fail": "The fire alarm sent everyone past the named place."
+    },
+    {
+      "id": "c_no_touch",
+      "label": "Don't touch it",
+      "kind": "notDone",
+      "action": "open_bag",
+      "dimension": "Compliance",
+      "competency": "IncidentResponse",
+      "weight": 10,
+      "pass": "Nobody touched the holdall.",
+      "fail": "You opened a suspected device."
+    },
+    {
+      "id": "c_cordon",
+      "label": "Cordon",
+      "kind": "done",
+      "action": "cordon",
+      "dimension": "Care",
+      "competency": "CrisisLeadership",
+      "weight": 6,
+      "pass": "The area around and below it was cleared and held.",
+      "fail": "People stayed near the item."
+    },
+    {
+      "id": "c_handover",
+      "label": "Hand over",
+      "kind": "done",
+      "action": "handover",
+      "dimension": "Communication",
+      "competency": "CrisisLeadership",
+      "weight": 6,
+      "pass": "The police had everything they needed to take the scene.",
+      "fail": "The police arrived to no handover."
+    },
+    {
+      "id": "c_all_clear",
+      "label": "Reopen on the all-clear",
+      "kind": "done",
+      "action": "all_clear",
+      "dimension": "Procedure",
+      "competency": "CrisisLeadership",
+      "weight": 6,
+      "pass": "Floor 1 reopened only on the police's all-clear.",
+      "fail": "The floor was never properly reopened."
+    }
+  ],
+  "bestOrder": [
+    "checklist",
+    "call_police",
+    "command",
+    "radio_rule",
+    "search_route",
+    "clear_ballroom",
+    "search_ballroom",
+    "cordon",
+    "handover",
+    "cctv_holdall",
+    "all_clear",
+    "after_action"
+  ],
+  "debrief": {
+    "whatHappened": "A specific bomb threat against a wedding fair. The checklist caught the caller's words, the police had them in minutes, and with the GM you cleared only floor 1 by a searched route. Staff who knew the room found an unattended holdall; nobody touched it, the radios were down, and it was cordoned and handed to the police. It was a hoax.",
+    "bestPractice": [
+      "Threat checklist on every phone: exact words, time, voice, background; keep the line open.",
+      "Police at once, with the details.",
+      "Command with the GM; evacuation decided with police advice, targeted to the threat.",
+      "Search routes and assembly points before using them.",
+      "Search with staff who know the area; no radios or phones near a suspicious item.",
+      "Never touch or move it; cordon around and below; hand over to the police.",
+      "Reopen only on the police all-clear."
+    ],
+    "why": "Almost every threat call is a hoax, and the response still has to assume it isn't. A plan that clears the right people by safe routes, finds what is out of place without touching it, and hands it to the police is what protects people on the day it is real.",
+    "commonMistakes": [
+      "Pulling the fire alarm.",
+      "Touching or moving the item.",
+      "Using radios near it.",
+      "Assembling people somewhere nobody searched.",
+      "Hanging up on the caller."
+    ]
+  },
+  "procedureCards": [
+    "bomb_threat"
+  ],
+  "reportAt": "lp_office",
+  "passMark": 60,
+  "xp": 520,
+  "weeks": 2,
+  "lesson": "Checklist and police at once; targeted clearance on police advice; routes searched first; find, don't touch, cordon, hand over."
+}

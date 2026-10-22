@@ -143,6 +143,19 @@
       ],
       "findingTitle": "No fire watch",
       "finding": "Nobody walks floor 14 while it has no sprinklers. The detectors are still on, so a fire would be heard. It would also have nothing to slow it.",
+      "schedules": [
+        {
+          "id": "impairment_unwatched",
+          "description": "Tarrowby's engineers find a sprinkler impairment on floor 14 with no fire watch log. They add an impairment warranty to the policy and raise the excess.",
+          "delayWeeks": 4,
+          "probability": 0.7,
+          "effects": {
+            "InsurerConfidence": -5,
+            "IncidentCosts": 3500
+          },
+          "flagIfOccurs": "impairment_warranty"
+        }
+      ],
       "effects": {
         "SafetyCompliance": -6
       }

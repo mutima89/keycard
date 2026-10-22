@@ -34,7 +34,7 @@ M = {
   {"id": "search_kit", "label": "Open Kit's locker and look in his car", "kind": "search", "at": "loading_dock", "minutes": 3, "requires": ["cctv_dock"],
    "findingTitle": "Unlawful search",
    "finding": "Without consent and outside the posted search policy, you open his locker and look through his car windows on the apron. Nothing useful is found, and the search itself becomes the first thing his representative raises.",
-   "effects": {"StaffMorale": -3}},
+   "schedules": [{"id": "unlawful_search_grievance", "description": "Kit Albury's representative raises the search of his locker and car. The dismissal is overturned on appeal and the hotel pays his costs.", "delayWeeks": 5, "probability": 0.75, "effects": {"StaffMorale": -2, "IncidentCosts": 6000, "OwnerTrust": -2}, "flagIfOccurs": "search_overturned"}], "effects": {"StaffMorale": -3}},
   {"id": "brief_hr", "label": "Plan the next step with Priyanka", "kind": "interview", "at": "exec_offices", "spot": "hr_office", "person": "hr_director", "minutes": 6, "requires": ["cctv_dock"], "required": True,
    "findingTitle": "Plan with HR",
    "finding": "Priyanka will hold an investigation meeting with Kit, with you presenting the evidence and Kit able to bring a companion. She will decide on suspension. The GM and counsel will decide whether the hotel reports it to the police; LP prepares the evidence pack either way."},

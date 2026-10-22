@@ -35,7 +35,7 @@ M = {
    "lines": [{"speaker": "partner", "text": "Every hour, the whole floor, logged. Nothing else on my radio. Got it."}]},
   {"id": "skip_watch", "label": "Skip the fire watch: the alarm is still live", "kind": "other", "at": "lp_office", "minutes": 1, "requires": ["talk_engineer"],
    "findingTitle": "No fire watch", "finding": "Nobody walks floor 14 while it has no sprinklers. The detectors are still on, so a fire would be heard. It would also have nothing to slow it.",
-   "effects": {"SafetyCompliance": -6}},
+   "schedules": [{"id": "impairment_unwatched", "description": "Tarrowby's engineers find a sprinkler impairment on floor 14 with no fire watch log. They add an impairment warranty to the policy and raise the excess.", "delayWeeks": 4, "probability": 0.7, "effects": {"InsurerConfidence": -5, "IncidentCosts": 3500}, "flagIfOccurs": "impairment_warranty"}], "effects": {"SafetyCompliance": -6}},
   {"id": "front_office", "label": "Tell the front office", "kind": "interview", "at": "front_desk", "person": "night_manager", "minutes": 2, "requires": ["talk_engineer"],
    "findingTitle": "Front office",
    "finding": "Felix Amadi blocks floor 14 to new arrivals for the night (three rooms re-assigned), so the fire watch has a fixed list, and tells the desk to route any floor 14 smell or smoke call straight to LP."},

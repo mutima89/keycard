@@ -34,7 +34,7 @@ M = {
   {"id": "isolate_all", "label": "Isolate every ground floor detector, as Declan asked", "kind": "other", "at": "fire_command", "spot": "fire_panel", "minutes": 1, "requires": ["talk_contractor"],
    "findingTitle": "Ground floor isolated",
    "finding": "The lobby, the restaurants, the kitchen and the back corridors stop detecting. A fire anywhere on the ground floor would now go unannounced until someone saw it.",
-   "effects": {"SafetyCompliance": -6}},
+   "schedules": [{"id": "ground_floor_blind", "description": "A bin fire starts in the lobby bar store while the ground floor detectors are still isolated from the canopy job. A bartender finds it by the smell; the fire authority asks why the zones were off.", "delayWeeks": 2, "probability": 0.4, "effects": {"SafetyCompliance": -6, "IncidentCosts": 4200, "Reputation": -2}, "flagIfOccurs": "zones_left_isolated"}], "effects": {"SafetyCompliance": -6}},
   {"id": "brief_watch", "label": "Brief Ines as fire watch", "kind": "call", "at": "lp_office", "spot": "lp_radio", "person": "partner", "minutes": 3, "requires": ["issue_permit"], "required": True,
    "findingTitle": "Fire watch",
    "finding": "Ines stands at the work with the extinguishers for the whole job, then stays for 60 minutes after the welding stops: above and behind the canopy, the duct access panel, the floor and the gully, every 15 minutes, logged on the permit. No other duties.",

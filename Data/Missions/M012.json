@@ -225,6 +225,20 @@
       ],
       "findingTitle": "Panel reset",
       "finding": "The sounders stop. Two minutes later the detector in 1416 goes back into alarm and the panel has lost the first event's time on its display.",
+      "schedules": [
+        {
+          "id": "silenced_alarm",
+          "description": "The fire authority's review of the floor 14 fire finds the panel was silenced and reset before the crew arrived, while a room was burning. A formal letter goes to the GM and the owner.",
+          "delayWeeks": 3,
+          "probability": 0.8,
+          "effects": {
+            "SafetyCompliance": -6,
+            "OwnerTrust": -4,
+            "InsurerConfidence": -3
+          },
+          "flagIfOccurs": "panel_silenced_finding"
+        }
+      ],
       "effects": {
         "SafetyCompliance": -8
       }

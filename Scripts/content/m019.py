@@ -62,7 +62,7 @@ M = {
    "options": [
     {"id": "inhouse", "label": "In-house officers for both posts from March, keeping two at night; Tessmore on a small event contract.", "score": 100,
      "feedback": "Cheaper over the year, with control of training and turnover, and the risk is covered when most incidents happen."},
-    {"id": "cut", "label": "Keep Tessmore and cut to one night post: saves 90,272.", "score": 25,
+    {"id": "cut", "label": "Keep Tessmore and cut to one night post: saves 90,272.", "score": 25, "schedules": [{"id": "night_understaffed", "description": "With one night officer, a guest collapses in the garage while the only officer is at a fire alarm on floor 9. The paramedics wait at the barrier for four minutes.", "delayWeeks": 6, "probability": 0.6, "effects": {"SafetyCompliance": -5, "Reputation": -4, "IncidentCosts": 5000}, "flagIfOccurs": "night_understaffed"}],
      "feedback": "It saves the most and leaves one person for 41% of incidents. On a fire alarm, one officer cannot be at the panel and on the floor at once."},
     {"id": "renew", "label": "Renew Tessmore as it is.", "score": 45, "feedback": "It is more expensive than in-house and the KPIs are being missed. Renewing rewards that."}]},
   {"id": "d_compare", "kind": "multi", "prompt": "What belongs in the comparison?", "dimension": "Evidence", "competency": "FinancialAcumen", "weight": 8,

@@ -148,6 +148,19 @@
       "setsFlags": [
         "m018_backfilled"
       ],
+      "schedules": [
+        {
+          "id": "falsified_records",
+          "description": "The regional office compares patrol logs with scanner exports across the region. The Harbourfront's backfilled rounds are found, and the audit result is withdrawn.",
+          "delayWeeks": 4,
+          "probability": 0.9,
+          "effects": {
+            "OwnerTrust": -8,
+            "SecurityPosture": -3
+          },
+          "flagIfOccurs": "records_falsified"
+        }
+      ],
       "effects": {
         "OwnerTrust": -4,
         "SecurityPosture": -3

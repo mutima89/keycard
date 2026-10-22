@@ -46,7 +46,7 @@ M = {
    "columns": ["Rooms", "Guests", "Status"], "rows": [["Floor 14", "64", "61 at the assembly point"], ["1416", "1", "With the fire crew"], ["1408", "1", "Refuge, brought down by the crew"], ["1403", "1", "Room empty, checked out 23:50"]]},
   {"id": "silence_panel", "label": "Silence and reset the panel yourself", "kind": "other", "at": "fire_command", "spot": "fire_panel", "minutes": 1, "requires": ["read_panel"],
    "findingTitle": "Panel reset", "finding": "The sounders stop. Two minutes later the detector in 1416 goes back into alarm and the panel has lost the first event's time on its display.",
-   "effects": {"SafetyCompliance": -8}},
+   "schedules": [{"id": "silenced_alarm", "description": "The fire authority's review of the floor 14 fire finds the panel was silenced and reset before the crew arrived, while a room was burning. A formal letter goes to the GM and the owner.", "delayWeeks": 3, "probability": 0.8, "effects": {"SafetyCompliance": -6, "OwnerTrust": -4, "InsurerConfidence": -3}, "flagIfOccurs": "panel_silenced_finding"}], "effects": {"SafetyCompliance": -8}},
   {"id": "debrief_team", "label": "Debrief the team and log the event", "kind": "logEvidence", "at": "fire_command", "minutes": 4, "requires": ["meet_crew"],
    "findingTitle": "Fire log",
    "finding": "Fire log entry with the panel print-out, the times, the fire authority's incident number, the roll call and the cause. A detector head replacement and a room damage report are raised; the guest in 1416 is seen by the duty manager in the morning."}

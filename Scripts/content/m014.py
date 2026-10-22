@@ -48,7 +48,7 @@ M = {
    "lines": [{"speaker": "adjuster", "text": "Photographs before cleaning and the footage already preserved. That's a file I can work with. Please, nothing about fault to the guest."}]},
   {"id": "promise_pay", "label": "Promise Ms Ashcombe the hotel will cover everything", "kind": "other", "at": "lobby", "minutes": 1, "requires": ["attend_guest"],
    "findingTitle": "A promise", "finding": "She thanks you and writes down your name. The insurer will read it in her lawyer's letter.",
-   "setsFlags": ["m014_promised"], "effects": {"InsurerConfidence": -4}}
+   "setsFlags": ["m014_promised"], "schedules": [{"id": "promise_quoted", "description": "Mrs Ashcombe's solicitor quotes your promise at the scene that the hotel would cover everything. Tarrowby reserves its position on the claim and the hotel carries more of the cost.", "delayWeeks": 3, "probability": 0.85, "effects": {"InsurerConfidence": -4, "IncidentCosts": 7500}, "flagIfOccurs": "admission_at_scene"}], "effects": {"InsurerConfidence": -4}}
  ],
  "questions": [
   {"id": "q_guest", "prompt": "\"Your floor's a death trap. Who's going to pay for this?\" What do you say?", "dimension": "Compliance", "competency": "GuestServiceDeescalation", "weight": 10,

@@ -227,6 +227,19 @@
       "setsFlags": [
         "m014_promised"
       ],
+      "schedules": [
+        {
+          "id": "promise_quoted",
+          "description": "Mrs Ashcombe's solicitor quotes your promise at the scene that the hotel would cover everything. Tarrowby reserves its position on the claim and the hotel carries more of the cost.",
+          "delayWeeks": 3,
+          "probability": 0.85,
+          "effects": {
+            "InsurerConfidence": -4,
+            "IncidentCosts": 7500
+          },
+          "flagIfOccurs": "admission_at_scene"
+        }
+      ],
       "effects": {
         "InsurerConfidence": -4
       }

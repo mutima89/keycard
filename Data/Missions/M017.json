@@ -172,6 +172,20 @@
       ],
       "findingTitle": "Unlawful search",
       "finding": "Without consent and outside the posted search policy, you open his locker and look through his car windows on the apron. Nothing useful is found, and the search itself becomes the first thing his representative raises.",
+      "schedules": [
+        {
+          "id": "unlawful_search_grievance",
+          "description": "Kit Albury's representative raises the search of his locker and car. The dismissal is overturned on appeal and the hotel pays his costs.",
+          "delayWeeks": 5,
+          "probability": 0.75,
+          "effects": {
+            "StaffMorale": -2,
+            "IncidentCosts": 6000,
+            "OwnerTrust": -2
+          },
+          "flagIfOccurs": "search_overturned"
+        }
+      ],
       "effects": {
         "StaffMorale": -3
       }

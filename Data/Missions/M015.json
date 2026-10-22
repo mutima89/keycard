@@ -141,6 +141,20 @@
       ],
       "findingTitle": "Ground floor isolated",
       "finding": "The lobby, the restaurants, the kitchen and the back corridors stop detecting. A fire anywhere on the ground floor would now go unannounced until someone saw it.",
+      "schedules": [
+        {
+          "id": "ground_floor_blind",
+          "description": "A bin fire starts in the lobby bar store while the ground floor detectors are still isolated from the canopy job. A bartender finds it by the smell; the fire authority asks why the zones were off.",
+          "delayWeeks": 2,
+          "probability": 0.4,
+          "effects": {
+            "SafetyCompliance": -6,
+            "IncidentCosts": 4200,
+            "Reputation": -2
+          },
+          "flagIfOccurs": "zones_left_isolated"
+        }
+      ],
       "effects": {
         "SafetyCompliance": -6
       }

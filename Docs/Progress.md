@@ -12,6 +12,22 @@ Last update: 2026-10-22
   - Self-test play now runs M001-M011 with the three ceremonies and expects level 4; resume expects level 4 and 11 records.
   - Core tests (GCC, ASan + UBSan): `44 test cases, 0 failed, 0 failed checks`. `BuildVoices.py --list`: 203 lines.
 
+- 2026-10-22 PC session round 2 (Remote Control, UE 5.8.4, MSVC). Branch at 4a7c65a before this commit. Nothing changed in C:\Downloads\Riskbound.
+  - `FetchAssets.py --resolve`: exit 0, all ids ok. `potted_plant_02_leaves_alpha_1k.jpg` fetched; potted_plant_04 has no alpha map upstream (its Poly Haven file list has no `alpha` key: solid leaves). AssetManifest.json gained the alpha entry.
+  - `BuildVoices.py` (kokoro-onnx installed): `KcVoice: 139 lines (139 spoken now), 6.5 minutes of speech`.
+  - `KeycardEditor Win64 Development`: `Result: Succeeded`. KcGameTests.cpp first compiled inside the unity blob; once edited it compiled alone and needed `using namespace KcConvert;` (C3861 `ToFString`/`ToStd`).
+  - Core tests (MSVC): `43 test cases, 0 failed, 0 failed checks`.
+  - Imports, headless: `KcImport: done: 8 meshes, 8 materials, 0 errors`, KcImportReport.json `errors: []` (plant_02 leaves slot: 4 textures, foliage master). `KcAudio: imported 167 sounds, 0 errors` (28 + 139 voice lines). CreateMap: map already exists, exit 0.
+  - `RunUnrealTests.bat` first run: 2 pass, 3 fail; all three were test bugs, the game was right:
+    - ShippedContentLoads: `"Lobby" != "lobby"` is false in UE (FString compares ignore case); now `Equals(..., ESearchCase::CaseSensitive)`.
+    - SlicePromotesWithCeremony: required `LastDebrief()` null when M002/M003 start, but the previous filed case's debrief stays reopenable by design; now checks no debrief exists for the open case.
+    - RoundTripAfterPromotion: the second session's `NewGame()` autosaved a level-1 game over the `uetest` slot before `Load()`; the loading session now starts no game.
+    - Re-run: `Keycard.Audio.VoiceLookupIsSafe`, `Keycard.Campaign.SlicePromotesWithCeremony`, `Keycard.Campaign.StepsNeedThePlaceAndTheOrder`, `Keycard.Content.ShippedContentLoads`, `Keycard.Save.RoundTripAfterPromotion`: all `Success`, exit 0.
+  - Tour shots looked at (before fixes): lobby ceiling no longer blown out (soft grey-white, coffer step reads) but the chandelier's light sat inside the fixture and threw two large hard black shapes on the ceiling; back plants now read as leafy plants; the round-table centrepiece was still green and pink spheres (procedural, not a model); LP office ceiling now light, light panels read, but a dark band remains where the walls meet the ceiling; CCTV room ceiling became a glowing white slab over a dark room (auto exposure lifts `MI_CeilingSoft`); 1412 wardrobe: grain direction (vertical) and scale (one repeat per 1.4 m) are right; what looked wrong was a white streaky sheen and a bright oval highlight from glossy grain lines (oak ARM roughness x 0.9).
+  - Fixes: chandelier light no shadows (KcHotel.cpp); round-table centrepiece is `potted_plant_02` at 0.8 (spheres kept as fallback); CCTV room ceiling uses new `MI_CeilingDim` (intensity 0.8); `MI_WoodOak` RoughnessScale 0.9 -> 1.5. Re-shot: ceiling shapes gone, centrepiece is a plant, CCTV ceiling dim grey (a soft reflection of the video wall remains on it), wardrobe reads as satin oak.
+  - `BuildWindows.bat Development`: `BUILD SUCCESSFUL`, ExitCode=0. Packaged self-tests at 1280x720: play `PASS` (M001-M003 score 100, ceremony Senior LP Officer, level 2, 4 cards), resume `PASS` (3 records, ceremony played), tour `PASS` 17 places, `average_fps=58.1`.
+  - Tour 1920x1080, High (GameUserSettings `sg.*=2`): `PASS`, `average_frame_ms=17.25 average_fps=58.0`. Frame rate is capped at 60, so every place but the first reads ~60 fps; worst: LP office 37.6 fps (first stop, warm-up), highest GPU time Floor 14 closet 17.81 ms, Floor 14 corridor 17.61 ms, Room 1406 17.54 ms. Shots in Saved/TourShots (not committed).
+
 - 2026-10-22 Phase 1 follow-up, cloud session (not compiled yet).
   - `Data/VoiceCast.json`: 23 characters, each with their own Kokoro voice; `BuildVoices.py` now collects case calls, action lines, interview replies and the in-passing lines (139 lines, `--list` run here). Core test `Voice_EveryCharacterHasTheirOwnVoice`.
   - UE automation tests `Keycard.*` (Source/Keycard/Private/Tests/KcGameTests.cpp): content loads, M001-M003 best play promotes with the ceremony, step place and order rules with the rubric hidden, save round trip, voice lookup.
@@ -58,4 +74,4 @@ Last update: 2026-10-22
   - Pushed to github.com/mutima89/keycard `main` (repo created by the owner); core tests re-run after the rebase onto the owner's initial commit: `27 test cases, 0 failed, 0 failed checks`.
 
 ### Next action
-Write Data/VoiceCast.json and run BuildVoices; add UE automation tests; fix the lighting and plant issues seen in the tour; check 1920x1080 High; hands-on playtest.
+Hands-on playtest; LP office wall-top dark band.

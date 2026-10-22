@@ -457,7 +457,7 @@ for name, slot, tile, tint, rough in [
         ("MI_WallPlaster", "plaster", 260, (0.93, 0.91, 0.88), 1.0),
         ("MI_WallPaint", "plaster", 260, (0.82, 0.83, 0.82), 1.1),         # back-of-house corridors
         ("MI_StairPaint", "plaster", 260, (0.7, 0.72, 0.7), 1.1),
-        ("MI_WoodOak", "oak", 140, (1, 1, 1), 0.9),
+        ("MI_WoodOak", "oak", 140, (1, 1, 1), 1.5),                         # satin: at 0.9 the glossy grain lines streaked white
         ("MI_WoodWalnut", "walnut", 140, (1, 1, 1), 0.85),
         ("MI_DoorPaint", "oak", 140, (0.42, 0.33, 0.24), 0.8),             # guest-room doors: stained oak
         ("MI_Cork", "wool", 25, (0.62, 0.46, 0.3), 1.8)]:                  # LP office notice board
@@ -492,6 +492,8 @@ instance("MI_LedRed", EMISSIVE, {}, {"Intensity": 25.0}, {"Color": (0.95, 0.08, 
 instance("MI_LedAmber", EMISSIVE, {}, {"Intensity": 25.0}, {"Color": (1.0, 0.55, 0.05, 1)})
 # Back-of-house ceilings: faintly self-lit so they read as bounce-lit white above the down-facing panels, not black.
 instance("MI_CeilingSoft", EMISSIVE, {}, {"Intensity": 6.0}, {"Color": (0.88, 0.89, 0.9, 1)})
+# CCTV room: kept dark for the screens; at 6 the exposure lifted the ceiling to a glowing white slab.
+instance("MI_CeilingDim", EMISSIVE, {}, {"Intensity": 0.8}, {"Color": (0.88, 0.89, 0.9, 1)})
 instance("MI_Highlight", unreal.load_asset(MAT + "/M_KcHighlight"))
 
 # Our own textures (Scripts/GenerateTextures.py): screen UIs, signs, whiteboard, prints, carpet and wallpaper patterns.

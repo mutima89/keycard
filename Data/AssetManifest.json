@@ -718,6 +718,12 @@
      "size": 167700
     },
     {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_leaves_alpha_1k.jpg",
+     "path": "polyhaven/potted_plant_02/potted_plant_02_leaves_alpha_1k.jpg",
+     "sha256": "829c74c9440c004fb621ccec0817ca68a137ebae236414b917f06319d77c9817",
+     "size": 58451
+    },
+    {
      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_leaves_nor_dx_1k.jpg",
      "path": "polyhaven/potted_plant_02/potted_plant_02_leaves_nor_dx_1k.jpg",
      "sha256": "2188c644fb5d8e4b0af499cb0f39b9600ce48a0e06452d0c7ff35b656069755b",

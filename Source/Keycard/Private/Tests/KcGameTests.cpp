@@ -15,6 +15,8 @@
 #include "KcSaveSubsystem.h"
 #include "KcVoice.h"
 
+using namespace KcConvert;
+
 namespace
 {
 constexpr EAutomationTestFlags GameFlags = EAutomationTestFlags::EditorContext | EAutomationTestFlags::ClientContext | EAutomationTestFlags::ProductFilter;
@@ -27,7 +29,8 @@ struct FGameSession
 	UKcCampaignSubsystem* Campaign = nullptr;
 	UKcSaveSubsystem* Saves = nullptr;
 
-	FGameSession()
+	// bNewGame false: no game is started (a new game autosaves, which would overwrite a slot the test means to load).
+	explicit FGameSession(bool bNewGame = true)
 	{
 		Instance = NewObject<UGameInstance>(GEngine);
 		Instance->AddToRoot();
@@ -36,7 +39,7 @@ struct FGameSession
 		Campaign = Instance->GetSubsystem<UKcCampaignSubsystem>();
 		Saves = Instance->GetSubsystem<UKcSaveSubsystem>();
 		if (Saves) Saves->SetSlotName(TEXT("uetest")); // never the player's slots
-		if (Game) Game->NewGame(EKcDifficulty::Professional);
+		if (Game && bNewGame) Game->NewGame(EKcDifficulty::Professional);
 	}
 
 	~FGameSession()
@@ -59,7 +62,9 @@ struct FGameSession
 		if (!T.TestTrue(FString::Printf(TEXT("%s starts"), MissionId), Campaign->StartCase(MissionId) == EKcCaseResult::Ok)) return false;
 		FKcCaseCall Call;
 		T.TestTrue(FString::Printf(TEXT("%s reaches the player as a call"), MissionId), Campaign->TakeCaseCall(Call) && Call.MissionId == MissionId && !Call.Text.IsEmpty());
-		T.TestNull(TEXT("no debrief before filing (rubric hidden)"), Campaign->LastDebrief());
+		// The previous case's debrief stays reopenable; this case's rubric must not be shown before filing.
+		const kc::MissionDebrief* Before = Campaign->LastDebrief();
+		T.TestTrue(FString::Printf(TEXT("%s has no debrief before filing (rubric hidden)"), MissionId), !Before || Before->MissionId != M->Id);
 		const EKcCaseResult R = Campaign->PlayBestAndFile(ToFString(M->ReportAt));
 		if (!T.TestTrue(FString::Printf(TEXT("%s filed: %s"), MissionId, *UKcCampaignSubsystem::ResultText(R)), R == EKcCaseResult::Ok)) return false;
 		const kc::MissionDebrief* D = Campaign->LastDebrief();
@@ -83,7 +88,7 @@ bool FKcContentTest::RunTest(const FString& Parameters)
 		for (const kc::ActionDef& A : M.Actions)
 		{
 			const FString Name = UKcCampaignSubsystem::LocationName(ToFString(A.At));
-			TestTrue(FString::Printf(TEXT("%s/%s place '%s' has a name"), *ToFString(M.Id), *ToFString(A.Id), *ToFString(A.At)), !Name.IsEmpty() && Name != ToFString(A.At));
+			TestTrue(FString::Printf(TEXT("%s/%s place '%s' has a name"), *ToFString(M.Id), *ToFString(A.Id), *ToFString(A.At)), !Name.IsEmpty() && !Name.Equals(ToFString(A.At), ESearchCase::CaseSensitive));
 		}
 	}
 	return true;
@@ -150,7 +155,7 @@ bool FKcSaveTest::RunTest(const FString& Parameters)
 		Path = S.Saves->GetSlotPath();
 	}
 	{
-		FGameSession S;
+		FGameSession S(false);
 		FString Message;
 		const EKcLoadOutcome Outcome = S.Saves->Load(Message);
 		TestTrue(TEXT("loaded: ") + Message, Outcome == EKcLoadOutcome::Ok || Outcome == EKcLoadOutcome::RecoveredFromBackup);

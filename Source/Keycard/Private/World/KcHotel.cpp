@@ -1331,7 +1331,7 @@ void AKcHotel::BuildCctvRoom()
 	const int32 F = -1;
 	const float X0 = 3700.0f + Wall * 0.5f, X1 = MaxX - 15.0f, Y0 = CorrY + Wall * 0.5f, Y1 = HalfY - 15.0f;
 	FloorFinish(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), Mat(TEXT("MI_FabricDark")));
-	Ceiling(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), CeilB1, Mat(TEXT("MI_CeilingSoft")));
+	Ceiling(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), CeilB1, Mat(TEXT("MI_CeilingDim")));
 	AddBox(FVector(X0 + 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilB1 * 0.5f)), FVector(1.0f, Y1 - Y0, CeilB1), Mat(TEXT("MI_AcousticPanel")), 0.0f, false);
 	AddBox(FVector(X1 - 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilB1 * 0.5f)), FVector(1.0f, Y1 - Y0, CeilB1), Mat(TEXT("MI_AcousticPanel")), 0.0f, false);
 	// Video wall: four by two monitors, each a different camera page.
@@ -1729,11 +1729,12 @@ void AKcHotel::BuildGround()
 	// Rain walked in past the mat: the wet patch where Mrs Ashcombe fell (M014).
 	WetFloorPoint = SpawnCasePoint(TEXT("lobby"), TEXT("wet_floor"), FString(), FVector(420.0f, -45.0f, Zf(F, 0.25f)), 20.0f, Cylinder, FVector(1.1f, 0.8f, 0.004f),
 		Mat(TEXT("MI_Water")), EKcUseStyle::Screen, FVector(420.0f, -45.0f, Zf(F, 60.0f)));
-	// Round table with flowers between the doors and the lounge.
+	// Round table with a plant between the doors and the lounge (sphere bouquet if the model is missing).
 	AddInstance(Cylinder, FVector(620.0f, 0.0f, Zf(F, 38.0f)), 0.0f, FVector(1.4f, 1.4f, 0.04f), Mat(TEXT("MI_WoodWalnut")), true);
 	AddInstance(Cylinder, FVector(620.0f, 0.0f, Zf(F, 18.0f)), 0.0f, FVector(0.4f, 0.4f, 0.36f), Mat(TEXT("MI_WoodWalnut")), true);
-	AddInstance(Cylinder, FVector(620.0f, 0.0f, Zf(F, 62.0f)), 0.0f, FVector(0.3f, 0.3f, 0.45f), Mat(TEXT("MI_Ceramic")), false);
+	if (!AddInstance(Model(TEXT("potted_plant_02")), FVector(620.0f, 0.0f, Zf(F, 40.0f)), 25.0f, FVector(0.8f)))
 	{
+		AddInstance(Cylinder, FVector(620.0f, 0.0f, Zf(F, 62.0f)), 0.0f, FVector(0.3f, 0.3f, 0.45f), Mat(TEXT("MI_Ceramic")), false);
 		FRandomStream R(1406);
 		for (int32 i = 0; i < 14; ++i)
 		{
@@ -1765,7 +1766,8 @@ void AKcHotel::BuildGround()
 			AddInstance(Sphere, P, 0.0f, FVector(0.18f), Mat(TEXT("MI_LampWarm")), false);
 		}
 	}
-	AddLight(F, FVector(1050.0f, 60.0f, Zf(F, CeilLobby - 140.0f)), 2600.0f, 900.0f, Warm, true);
+	// No shadows: from inside the fixture its crown and arms threw large black shapes onto the ceiling.
+	AddLight(F, FVector(1050.0f, 60.0f, Zf(F, CeilLobby - 140.0f)), 2600.0f, 900.0f, Warm, false);
 	for (const FVector2D& P : {FVector2D(400.0f, -250.0f), FVector2D(400.0f, 250.0f), FVector2D(1700.0f, -250.0f), FVector2D(1700.0f, 250.0f),
 			FVector2D(1100.0f, 450.0f), FVector2D(1850.0f, 0.0f)})
 	{

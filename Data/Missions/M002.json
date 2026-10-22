@@ -1,0 +1,700 @@
+{
+  "schema": 1,
+  "id": "M002",
+  "title": "Locked Out",
+  "kind": "mission",
+  "topic": "access",
+  "minLevel": 1,
+  "opening": {
+    "channel": "radio",
+    "from": "desk_agent",
+    "at": "lp_office",
+    "text": "LP to the front desk, please. There's a gentleman here who says he's locked out of 1418. His wallet's in the room. I'd make him a key, but he isn't on the registration."
+  },
+  "briefing": [
+    "03:10. A man in the lobby says he is locked out of room 1418. No ID, phone dead, wallet in the room. The new desk agent wants to help him.",
+    "Veldane policy: no key, no door opened and no room number confirmed until identity is verified against the registration."
+  ],
+  "learningObjectives": [
+    "Identity verification before room entry",
+    "Guest privacy: never confirm who is staying",
+    "De-escalating an upset visitor"
+  ],
+  "start": "03:10",
+  "actions": [
+    {
+      "id": "talk_visitor",
+      "label": "Talk to the man in the lobby",
+      "kind": "interview",
+      "at": "lobby",
+      "person": "visitor_haskett",
+      "minutes": 6,
+      "required": true,
+      "findingTitle": "Leon Haskett",
+      "finding": [
+        "Says he is staying in 1418 \"with my partner, Simone\". Phone dead, wallet and ID in the room. He has a keycard for 1418 that \"stopped working\" an hour ago.",
+        "He is polite but tense, and getting louder every time the answer is no."
+      ],
+      "lines": [
+        {
+          "speaker": "visitor_haskett",
+          "text": "Look, it's simple. I'm in 1418 with Simone. My card stopped working, my phone's dead and my wallet is up there. Just let me in."
+        },
+        {
+          "speaker": "visitor_haskett",
+          "text": "I have been standing here for twenty minutes. Do you want me to sleep on the sofa?"
+        }
+      ]
+    },
+    {
+      "id": "check_registration",
+      "label": "Check the registration for 1418",
+      "kind": "check",
+      "at": "front_desk",
+      "person": "desk_agent",
+      "minutes": 3,
+      "findingTitle": "Registration, room 1418",
+      "finding": "Registered to Ms S. Achterberg, one guest, no sharer. A note on her profile from check-in: \"Guest asks that her room number is not given to anyone.\"",
+      "columns": [
+        "Room",
+        "Registered guest",
+        "Guests",
+        "Sharer",
+        "Profile note"
+      ],
+      "rows": [
+        [
+          "1418",
+          "S. Achterberg",
+          "1",
+          "None",
+          "Do not disclose room number (guest request)"
+        ]
+      ]
+    },
+    {
+      "id": "test_card",
+      "label": "Read his keycard on the encoder",
+      "kind": "check",
+      "at": "front_desk",
+      "minutes": 3,
+      "requires": [
+        "talk_visitor"
+      ],
+      "findingTitle": "The card he is holding",
+      "finding": [
+        "It reads as a valid Veldane card for 1418, encoded at 21:14 last night on encoder E-77. The Harbourfront has three encoders, E-01 to E-03. No E-77 exists here, and the encoding log shows no key for 1418 at 21:14.",
+        "It stopped working at 02:05, when Ms Achterberg asked the desk for a replacement key and new keys were encoded."
+      ],
+      "columns": [
+        "Card",
+        "Room",
+        "Encoded",
+        "Encoder",
+        "In the encoding log?"
+      ],
+      "rows": [
+        [
+          "Presented by L. Haskett",
+          "1418",
+          "21:14",
+          "E-77",
+          "No"
+        ]
+      ],
+      "clue": "clone_1418"
+    },
+    {
+      "id": "make_key",
+      "label": "Tell the desk to make him a key",
+      "kind": "other",
+      "at": "front_desk",
+      "minutes": 2,
+      "findingTitle": "A key for 1418",
+      "finding": "Tariq encodes a key and hands it over. Mr Haskett walks to the lifts without a word.",
+      "effects": {
+        "SecurityPosture": -8,
+        "Reputation": -6
+      },
+      "schedules": [
+        {
+          "id": "unwanted_entry",
+          "description": "A guest on floor 14 reports that a man let himself into her room at night with a key the front desk made for him. She has gone to the police and to the press.",
+          "delayWeeks": 1,
+          "probability": 0.9,
+          "effects": {
+            "Reputation": -10,
+            "GuestSatisfaction": -6,
+            "OwnerTrust": -6,
+            "IncidentCosts": 12000
+          },
+          "flagIfOccurs": "unauthorised_room_entry"
+        }
+      ]
+    },
+    {
+      "id": "call_guest",
+      "label": "Call the registered guest in 1418",
+      "kind": "call",
+      "at": "front_desk",
+      "person": "guest_achterberg",
+      "minutes": 4,
+      "requires": [
+        "check_registration"
+      ],
+      "findingTitle": "Call to Ms Achterberg",
+      "finding": "She answers on the second ring, wide awake. She knows who Leon Haskett is. He is not staying with her, and she asked for her keys to be changed at 02:05 because her old card had gone missing from her bag. She asks you not to tell him she is here.",
+      "lines": [
+        {
+          "speaker": "guest_achterberg",
+          "text": "Leon? He's downstairs? He is not staying with me. Please, please don't tell him I'm here."
+        }
+      ]
+    },
+    {
+      "id": "brief_night_manager",
+      "label": "Brief the night manager",
+      "kind": "interview",
+      "at": "front_desk",
+      "person": "night_manager",
+      "minutes": 3,
+      "requires": [
+        "call_guest"
+      ],
+      "findingTitle": "Night manager briefed",
+      "finding": "Felix Amadi agrees: no key, a room move on another floor for Ms Achterberg, and the police if Mr Haskett will not leave or comes back.",
+      "relations": {
+        "night_manager": 5
+      }
+    },
+    {
+      "id": "bag_card",
+      "label": "Keep the keycard as evidence",
+      "kind": "bagEvidence",
+      "at": "lobby",
+      "minutes": 3,
+      "requires": [
+        "test_card"
+      ],
+      "findingTitle": "Keycard retained",
+      "finding": "You explain that keycards are hotel property and this one no longer works. He hands it over. Bagged and labelled KC-1418-C.",
+      "evidence": "KC-1418-C",
+      "custody": "Keycard presented by L. Haskett retained by you at 03:4x, sealed in bag KC-1418-C."
+    },
+    {
+      "id": "secure_floor",
+      "label": "Check floor 14 and speak to Ms Achterberg",
+      "kind": "secure",
+      "at": "f14_corridor",
+      "minutes": 6,
+      "requires": [
+        "call_guest"
+      ],
+      "findingTitle": "Floor 14",
+      "finding": "Stairwell doors closed and alarmed. You speak to Ms Achterberg through the door with the chain on, then walk her to a room on floor 9 with new keys. 1418's locks are re-encoded so every old card is void."
+    },
+    {
+      "id": "cctv_review",
+      "label": "Review lobby and lift CCTV",
+      "kind": "cctvReview",
+      "at": "cctv_room",
+      "minutes": 8,
+      "findingTitle": "Lobby and lifts",
+      "finding": "He came in from the street at 02:58 and tried the card in the lift reader for floor 14 twice before going to the desk.",
+      "columns": [
+        "Camera",
+        "Time",
+        "What it shows"
+      ],
+      "rows": [
+        [
+          "L-01 Main entrance",
+          "02:58",
+          "Man enters from the street, alone."
+        ],
+        [
+          "L-04 Lifts",
+          "03:01",
+          "He presents a card to the lift reader for floor 14 twice; refused."
+        ],
+        [
+          "L-02 Front desk",
+          "03:04-03:40",
+          "At the desk, then the lobby sofas."
+        ]
+      ]
+    },
+    {
+      "id": "export_footage",
+      "label": "Export the clips with a custody record",
+      "kind": "exportFootage",
+      "at": "cctv_room",
+      "minutes": 8,
+      "requires": [
+        "cctv_review"
+      ],
+      "findingTitle": "Footage preserved",
+      "finding": "Clips from L-01, L-02 and L-04, 02:50 to 03:45, exported to USB KC-0418 with the hash recorded.",
+      "evidence": "KC-0418",
+      "custody": "Clips L-01, L-02, L-04 02:50-03:45 exported by you to USB KC-0418, hash recorded, sealed and signed."
+    },
+    {
+      "id": "log_evidence",
+      "label": "Log the evidence in the LP locker",
+      "kind": "logEvidence",
+      "at": "lp_office",
+      "minutes": 4,
+      "requires": [
+        "bag_card",
+        "export_footage"
+      ],
+      "findingTitle": "Evidence locker",
+      "finding": "Keycard KC-1418-C and USB KC-0418 logged into evidence locker 3.",
+      "evidence": "KC-1418-C",
+      "custody": "KC-1418-C and KC-0418 placed in LP evidence locker 3 by you."
+    }
+  ],
+  "questions": [
+    {
+      "id": "q_visitor_open",
+      "prompt": "Mr Haskett is getting louder. What do you say?",
+      "dimension": "Care",
+      "competency": "GuestServiceDeescalation",
+      "weight": 8,
+      "at": "lobby",
+      "person": "visitor_haskett",
+      "requires": [
+        "talk_visitor"
+      ],
+      "options": [
+        {
+          "id": "calm",
+          "label": "\"I understand, it's late and you're tired. I can't open any room without checking who is registered there. It protects you too. Give me a few minutes.\"",
+          "score": 100,
+          "feedback": "Calm, empathetic, firm on the rule and gives a reason. You confirmed nothing about who is staying.",
+          "reply": {
+            "speaker": "visitor_haskett",
+            "text": "Fine. Five minutes."
+          }
+        },
+        {
+          "id": "threat",
+          "label": "\"Keep your voice down or I'll have you removed.\"",
+          "score": 30,
+          "feedback": "A threat raises the temperature, and removal is not yours to promise.",
+          "reply": {
+            "speaker": "visitor_haskett",
+            "text": "Removed? I'm a guest here!"
+          }
+        },
+        {
+          "id": "escort",
+          "label": "\"All right, I'll walk you up and open it for you.\"",
+          "score": 0,
+          "critical": true,
+          "feedback": "You offered to open a room for someone you had not identified. That is the single most dangerous thing an officer can do.",
+          "reply": {
+            "speaker": "visitor_haskett",
+            "text": "Thank you. Finally."
+          }
+        }
+      ]
+    },
+    {
+      "id": "q_visitor_leave",
+      "prompt": "He asks again to go up. What now?",
+      "dimension": "Compliance",
+      "competency": "GuestServiceDeescalation",
+      "weight": 6,
+      "at": "lobby",
+      "person": "visitor_haskett",
+      "requires": [
+        "call_guest"
+      ],
+      "options": [
+        {
+          "id": "options",
+          "label": "\"I can't give you access to any room, and I can't discuss who is staying here. I can call you a taxi, or you can wait here a while.\"",
+          "score": 100,
+          "feedback": "No confirmation, no denial, real options, and you stay with him until he leaves.",
+          "reply": {
+            "speaker": "visitor_haskett",
+            "text": "Forget it. Call me a taxi."
+          }
+        },
+        {
+          "id": "disclose",
+          "label": "\"She says she doesn't know you. You need to leave.\"",
+          "score": 0,
+          "critical": true,
+          "feedback": "You confirmed the guest is staying here and repeated what she told you in confidence. You have put her at risk.",
+          "effects": {
+            "SecurityPosture": -4
+          },
+          "schedules": [
+            {
+              "id": "disclosed_guest",
+              "description": "The man from the 1418 night comes back and waits for Ms Achterberg in the lobby. He knew she was here because LP told him.",
+              "delayWeeks": 1,
+              "probability": 0.7,
+              "effects": {
+                "Reputation": -8,
+                "GuestSatisfaction": -5,
+                "IncidentCosts": 3000
+              },
+              "flagIfOccurs": "guest_privacy_breach"
+            }
+          ],
+          "reply": {
+            "speaker": "visitor_haskett",
+            "text": "So she is here. Right."
+          }
+        },
+        {
+          "id": "eject",
+          "label": "\"You're trespassing. Out, now, or I call the police.\"",
+          "score": 40,
+          "feedback": "If he refuses to leave, the police are right. Starting with an ultimatum is not: he had not refused anything yet.",
+          "reply": {
+            "speaker": "visitor_haskett",
+            "text": "I'm going. You'll be hearing from me."
+          }
+        }
+      ]
+    },
+    {
+      "id": "q_guest_care",
+      "prompt": "Ms Achterberg asks what happens now.",
+      "dimension": "Care",
+      "competency": "IncidentResponse",
+      "weight": 8,
+      "at": "f14_corridor",
+      "person": "guest_achterberg",
+      "requires": [
+        "secure_floor"
+      ],
+      "options": [
+        {
+          "id": "plan",
+          "label": "Tell her: a room on another floor tonight, all old keys void, the police if she wants them (you'll make the call), and a note on her profile.",
+          "score": 100,
+          "feedback": "Safety first, choices hers, and every practical gap closed. She sleeps on floor 9.",
+          "reply": {
+            "speaker": "guest_achterberg",
+            "text": "Yes. Please. Can you call the police for me in the morning? I'd like to report the card."
+          }
+        },
+        {
+          "id": "reassure",
+          "label": "\"You're safe. He's gone. Try to get some sleep.\"",
+          "score": 30,
+          "feedback": "Kind words, but he had a working key to her room an hour ago. She deserved the facts and the choices.",
+          "reply": {
+            "speaker": "guest_achterberg",
+            "text": "Gone where? He'll be back."
+          }
+        },
+        {
+          "id": "scare",
+          "label": "\"He had a cloned key to your room. You should leave the hotel tonight.\"",
+          "score": 40,
+          "feedback": "True, but frightening and unhelpful. The hotel can make her safe; tell her how.",
+          "reply": {
+            "speaker": "guest_achterberg",
+            "text": "Leave? It's four in the morning!"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_what",
+      "prompt": "Incident report, what happened (one line)",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 5,
+      "section": "what",
+      "options": [
+        {
+          "id": "facts",
+          "label": "An unregistered visitor asked for access to 1418 with a keycard encoded outside the hotel's system. Access refused; the registered guest moved and re-keyed; card retained as evidence.",
+          "score": 100,
+          "feedback": "Factual, complete, and it records the cloned card, the most important finding of the night."
+        },
+        {
+          "id": "domestic",
+          "label": "Domestic dispute between a guest and her ex-partner.",
+          "score": 20,
+          "feedback": "A label, not a fact, and private information that does not belong in the opening line."
+        },
+        {
+          "id": "lockout",
+          "label": "Guest lockout, 1418. Resolved.",
+          "score": 10,
+          "feedback": "He was not a guest and it was not a lockout. The report must say what really happened."
+        }
+      ]
+    },
+    {
+      "id": "r_facts",
+      "kind": "multi",
+      "prompt": "Incident report, which of these belong in the findings?",
+      "dimension": "Report",
+      "competency": "KeyAccessControl",
+      "weight": 7,
+      "section": "facts",
+      "options": [
+        {
+          "id": "f_reg",
+          "label": "1418 is registered to one guest with no sharer, and a do-not-disclose note.",
+          "correct": true
+        },
+        {
+          "id": "f_card",
+          "label": "The card presented was encoded at 21:14 on encoder E-77, which is not a Harbourfront encoder and does not appear in the encoding log.",
+          "correct": true
+        },
+        {
+          "id": "f_lift",
+          "label": "CCTV L-04: he tried the card at the floor 14 lift reader twice at 03:01.",
+          "correct": true
+        },
+        {
+          "id": "f_move",
+          "label": "The registered guest was moved and 1418 re-encoded; old cards are void.",
+          "correct": true
+        },
+        {
+          "id": "o_stalker",
+          "label": "He is obviously stalking her.",
+          "feedback": "Possibly, and the police may decide so. Your report records what you saw and were told."
+        },
+        {
+          "id": "o_agent",
+          "label": "The desk agent nearly made him a key, which shows poor training.",
+          "feedback": "If that is a training need, raise it with his manager. The report records actions, not judgements of colleagues."
+        }
+      ]
+    },
+    {
+      "id": "r_when",
+      "prompt": "Incident report, when did his card stop working, and why?",
+      "dimension": "Report",
+      "competency": "KeyAccessControl",
+      "weight": 4,
+      "section": "when",
+      "options": [
+        {
+          "id": "rekey",
+          "label": "02:05, when the registered guest asked for new keys and the lock was re-encoded.",
+          "score": 100,
+          "feedback": "From the encoding log and the guest. It explains everything about his story."
+        },
+        {
+          "id": "fault",
+          "label": "Some time in the evening; card faults are common.",
+          "score": 10,
+          "feedback": "The log tells you exactly when and why."
+        }
+      ]
+    },
+    {
+      "id": "d_tell",
+      "prompt": "Who needs to know about the card, and when?",
+      "dimension": "Communication",
+      "competency": "KeyAccessControl",
+      "weight": 8,
+      "options": [
+        {
+          "id": "all",
+          "label": "Night manager now; the police at the guest's request; the Director of LP first thing, because someone is encoding Veldane keys outside the hotel.",
+          "score": 100,
+          "feedback": "The card is the bigger story: a working clone of a Harbourfront key. LP leadership must hear it the same morning."
+        },
+        {
+          "id": "manager",
+          "label": "Just the night manager. It's sorted.",
+          "score": 45,
+          "feedback": "The guest is safe tonight, but a cloned-key problem left at night manager level will not be fixed."
+        },
+        {
+          "id": "police_now",
+          "label": "Call the police now and have him arrested for the card.",
+          "score": 35,
+          "feedback": "Arrest is the police's decision. The guest asked for a report in the morning; he has left. Respect her choice and keep the evidence safe."
+        }
+      ]
+    },
+    {
+      "id": "d_cost",
+      "prompt": "Felix asks what the move should cost Ms Achterberg.",
+      "dimension": "Cost",
+      "competency": "GuestServiceDeescalation",
+      "weight": 6,
+      "options": [
+        {
+          "id": "nothing",
+          "label": "Nothing: a same-category room on another floor, no charge. His call, within his authority.",
+          "score": 100,
+          "escalates": true,
+          "feedback": "Proportionate and inside the night manager's authority. The hotel moved her for her safety, not as compensation."
+        },
+        {
+          "id": "other_hotel",
+          "label": "Book and pay for her at another hotel tonight.",
+          "score": 40,
+          "cost": 380,
+          "feedback": "Above your authority, and moving her out of a building you can secure, at 4 a.m., is not safer."
+        },
+        {
+          "id": "upgrade",
+          "label": "Upgrade her to a suite and comp the stay.",
+          "score": 30,
+          "cost": 1500,
+          "feedback": "Generous, far above your authority, and it reads like an admission that the hotel was at fault."
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "c_no_key",
+      "label": "No key or entry without identity",
+      "kind": "notDone",
+      "action": "make_key",
+      "dimension": "Compliance",
+      "competency": "KeyAccessControl",
+      "weight": 8,
+      "critical": true,
+      "pass": "No key, no door, until identity was verified. It was the right call: he was not a guest.",
+      "fail": "You had a key made for someone who was not registered to the room. A guest was put in danger."
+    },
+    {
+      "id": "c_registration",
+      "label": "Check the registration",
+      "kind": "done",
+      "action": "check_registration",
+      "dimension": "Procedure",
+      "competency": "KeyAccessControl",
+      "weight": 6,
+      "pass": "The registration told you he was not on the room and that the guest had asked for privacy.",
+      "fail": "Identity checks start with the registration."
+    },
+    {
+      "id": "c_call_guest",
+      "label": "Contact the registered guest",
+      "kind": "done",
+      "action": "call_guest",
+      "dimension": "Procedure",
+      "competency": "KeyAccessControl",
+      "weight": 6,
+      "pass": "The registered guest decides who has access to her room. You asked her.",
+      "fail": "Without asking the registered guest you could not know whether he was welcome."
+    },
+    {
+      "id": "c_card",
+      "label": "Read the card",
+      "kind": "done",
+      "action": "test_card",
+      "dimension": "Evidence",
+      "competency": "KeyAccessControl",
+      "weight": 5,
+      "pass": "Reading the card exposed a key made outside the hotel's system.",
+      "fail": "The card in his hand was the most important evidence of the night and you never read it."
+    },
+    {
+      "id": "c_retain",
+      "label": "Retain the card",
+      "kind": "done",
+      "action": "bag_card",
+      "dimension": "Evidence",
+      "competency": "EvidenceReporting",
+      "weight": 4,
+      "pass": "The clone is bagged and logged for the police and LP.",
+      "fail": "The cloned card left the building in his pocket."
+    },
+    {
+      "id": "c_export",
+      "label": "Preserve the footage",
+      "kind": "done",
+      "action": "export_footage",
+      "dimension": "Evidence",
+      "competency": "EvidenceReporting",
+      "weight": 5,
+      "pass": "Lobby and lift clips exported with a custody record.",
+      "fail": "No footage preserved: if he returns, or the police ask, you have nothing to show."
+    },
+    {
+      "id": "c_log",
+      "label": "Close the chain of custody",
+      "kind": "done",
+      "action": "log_evidence",
+      "dimension": "Evidence",
+      "competency": "EvidenceReporting",
+      "weight": 4,
+      "pass": "Card and USB logged into the evidence locker.",
+      "fail": "Evidence not logged into the locker breaks the chain of custody."
+    },
+    {
+      "id": "c_floor",
+      "label": "Make the guest safe",
+      "kind": "done",
+      "action": "secure_floor",
+      "dimension": "Care",
+      "competency": "IncidentResponse",
+      "weight": 6,
+      "pass": "Floor checked, guest moved, locks re-encoded.",
+      "fail": "The guest was left in a room someone had a working key to an hour ago."
+    },
+    {
+      "id": "c_brief",
+      "label": "Brief the night manager",
+      "kind": "done",
+      "action": "brief_night_manager",
+      "dimension": "Communication",
+      "competency": "IncidentResponse",
+      "weight": 4,
+      "pass": "The night manager knew and agreed the plan.",
+      "fail": "A room move and a refused visitor are the night manager's business. He never heard."
+    }
+  ],
+  "bestOrder": [
+    "talk_visitor",
+    "check_registration",
+    "test_card",
+    "call_guest",
+    "brief_night_manager",
+    "bag_card",
+    "secure_floor",
+    "cctv_review",
+    "export_footage",
+    "log_evidence"
+  ],
+  "debrief": {
+    "whatHappened": "Leon Haskett was never a guest in 1418. He had a keycard for the room made on an encoder that does not belong to the Harbourfront, and it stopped working only because Ms Achterberg had her keys changed at 02:05. If the desk had made him a key, he would have walked into her room.",
+    "bestPractice": [
+      "Stay calm and polite; explain that rooms are opened only after identity is checked.",
+      "Check the registration: who is registered, any sharers, any privacy notes.",
+      "No ID? Contact the registered guest. Never confirm or deny who is staying.",
+      "Read any card the person presents: it can tell you more than they do.",
+      "Make the registered guest safe: move the room if needed, void every old key, offer the police.",
+      "Offer the visitor real options (taxi, wait in the lobby) and stay with them until they leave; call the police if they refuse.",
+      "Preserve the evidence: retain the card, export the footage, log both.",
+      "Brief the night manager now and LP leadership in the morning."
+    ],
+    "why": "Letting the wrong person into a room can end in violence. Front desks are talked into it every night by confident, plausible people. The registration and the registered guest are the only answers that count, and a guest's privacy is part of her safety.",
+    "commonMistakes": [
+      "Making a key because the person seems genuine or upset.",
+      "Saying \"she says she doesn't know you\": that confirms she is here.",
+      "Threatening or arguing instead of de-escalating.",
+      "Letting the cloned card leave in the visitor's pocket."
+    ]
+  },
+  "procedureCards": [
+    "identity_before_entry"
+  ],
+  "reportAt": "lp_office",
+  "passMark": 60,
+  "xp": 120,
+  "weeks": 1,
+  "lesson": "No identity, no key, no door, and never confirm who is staying."
+}

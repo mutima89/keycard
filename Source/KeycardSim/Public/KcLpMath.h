@@ -6,6 +6,8 @@
 
 #include "KcApi.h"
 
+#include <string>
+#include <utility>
 #include <vector>
 
 namespace kc
@@ -108,5 +110,20 @@ constexpr int CloseScoreExact = 100; // within tolerance
 constexpr int CloseScoreClose = 70;  // within 3 x tolerance
 constexpr int CloseScoreNear = 35;   // within 10 x tolerance
 KC_API int ScoreByCloseness(double Answer, double Truth, double RelativeTolerance);
+
+// Mission data names a formula and its inputs instead of typing the answer (Docs/MissionData.md),
+// so content can never disagree with the tools. Names and inputs:
+//   ShrinkPercent(book, counted); CostVariancePoints(actual, ideal, sales);
+//   LossRatePer1000RoomNights(value, roomNights); ClaimReserve / ClaimIncurred(medical, indemnity, expense, paid);
+//   IncidentCost / InsurerRecovery(uninsured, hours, rate, repairs, recovery, insured, deductible);
+//   PatrolCompliancePercent(onTime, scheduled); PostHoursPerWeek(hoursPerDay, daysPerWeek, posts);
+//   FtesRequired(postHours, productiveHours); StaffingCoveragePercent(scheduled, required);
+//   RekeyCost(doors, costPerDoor, labourMinutes, rate, keys, costPerKey); AnnualisedLoss(eventsPerYear, averageCost).
+// Missing inputs are zero. False (with OutError) for an unknown formula or input name, or invalid inputs.
+KC_API bool EvaluateFormula(const std::string& Name, const std::vector<std::pair<std::string, double>>& Inputs, double& OutValue, std::string& OutError);
+KC_API const std::vector<std::string>& FormulaNames();
 } // namespace lp
+
+// "12,500" or "-1,250.50" (plain currency units; the game never names a real currency).
+KC_API std::string FormatMoney(double Value);
 } // namespace kc

@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "title": "The Blank Cards",
+  "clues": [
+    {
+      "id": "clone_1418",
+      "title": "A key the desk never made",
+      "summary": "The man at the desk for 1418 had a working keycard for the room, but the encoding log shows no key made for him. Somebody is making Veldane keys outside the front desk.",
+      "chapter": 1
+    }
+  ]
+}

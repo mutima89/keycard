@@ -23,4 +23,14 @@ Checked 2026-10-22 (cloud session, standard web search; a search can miss small 
 
 Owner's call: the two replacements follow the standing rule. If you prefer other names, say so and they will be checked the same way.
 
-People's names are added in Phase 1 with the cast and checked the same way (no real public figures; no real hotel executives).
+## Cast (Phase 1, checked 2026-10-22)
+Each full name was web-searched for a public figure, hotel executive or security professional of that name. Common first-and-surname pairs will always match private individuals; the test is no notable person and nobody in hospitality or security.
+
+| Name | Role | Result |
+|---|---|---|
+| Marguerite Ashdown | General Manager (first draft) | **Replaced**: Ashdown Park Hotel is a real hotel |
+| Marguerite Ellery | General Manager | Clear |
+| Desmond Okafor, Felix Amadi, Colm Brady, Ines Dalca, Priyanka Venn, Tomasz Rydell, Lucia Ferrante, Gideon Marsh, Rafael Quintero, Imogen Pryce, Callum Fenwick, Odile Marchetti, Ruth Calloway, Bernard Okoye | Staff, contractors, insurer, police, fire | No notable match in hospitality or security |
+| Anders Whitlock, Marisol Duarte, Nadia Kerr, Tariq Bello, Leon Haskett, Simone Achterberg, Jordan Pike, Helen Morrow | Guests, line staff, visitors | No notable match |
+
+Equipment names in missions (encoders E-01 to E-03, camera ids, evidence numbers) are generic codes, not brands.

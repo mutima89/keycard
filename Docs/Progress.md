@@ -1,7 +1,14 @@
 # Progress
 
-## Status: Phase 0 done (cloud and PC); waiting for the owner before Phase 1
+## Status: Phase 1 in progress (core and content done; UE layer next)
 Last update: 2026-10-22
+
+- 2026-10-22 Phase 1 core, cloud session. The owner said to carry on through the phases without stopping.
+  - Core: `KcProperty`, `KcPeople`, `KcMission` (on-foot casework over a multi-floor hotel: 22 locations from B2 to floor 14, travel time between floors, case clock, expiring steps, chain of custody, hidden 7-dimension rubric, critical breaches, what-if replays, latent consequences that name their cause), `KcMissionData`, `KcWorld`/`KcWorldData`, `KcLearning`. `KcLpMath::EvaluateFormula` (13 named formulas, every input required) and `FormatMoney`.
+  - Save v2 with the v1 migration (Docs/SaveFormat.md).
+  - Content: M001 Night Shift: Room 1412, M002 Locked Out, M003 The 2 a.m. Noise Complaint (sources in Scripts/content), 23-person cast, Field Manual (4 cards), story, events and fallout, glossary, endings. Cast names checked (Docs/FictionalNames.md).
+  - Tests: `Scripts/run_core_tests.sh` (GCC, ASan + UBSan): `42 test cases, 0 failed, 0 failed checks`. Clang Release: `42 test cases, 0 failed, 0 failed checks`, no warnings. New tests cover content validation, best play scoring 100 on every mission, M001-M003 promoting to level 2 with the ceremony pending, critical breaches, expiry, travel, what-if, authority caps, save v2 round trip mid-case and the v1 migration.
+  - Not yet done: the UE layer, PC build and package.
 
 - 2026-10-22 Phase 0 PC audit (Remote Control, Docs/EnvironmentAudit.md): UE 5.8.4, MSVC 14.44, SDK 10.0.22621, GTX 1650 4 GB, 70 GB free. Core tests on MSVC: `27 test cases, 0 failed, 0 failed checks`. `KeycardEditor Win64 Development`: `Result: Succeeded` (160.58 s). Nothing changed in C:\Downloads\Riskbound.
 - 2026-10-22 Phase 0, cloud session.
@@ -14,4 +21,4 @@ Last update: 2026-10-22
   - Pushed to github.com/mutima89/keycard `main` (repo created by the owner); core tests re-run after the rebase onto the owner's initial commit: `27 test cases, 0 failed, 0 failed checks`.
 
 ### Next action
-Owner: review Phase 0 and the two replaced names (Docs/FictionalNames.md); start Phase 1 (M001 vertical slice) on the owner's word. Then Phase 1 on the owner's word.
+Phase 1 UE layer: port the Riskbound UE code, build the multi-floor hotel (B1 LP office and CCTV room, ground floor, floor 14) with lifts and stairs, cast, screens and the promotion ceremony; then build, test and package on the PC.

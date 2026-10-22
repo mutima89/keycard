@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "cards": [
+    {
+      "id": "room_theft_response",
+      "title": "Room theft report",
+      "topic": "theft",
+      "steps": [
+        "Go to the guest. Apologise for the situation, not for fault. Take a full statement with open questions and a timeline.",
+        "Offer to help the guest report it to the police. Never discourage a report.",
+        "Look and photograph: door, frame, lock, safe, balcony. Touch as little as possible.",
+        "Interrogate the lock: download and print the audit trail.",
+        "Check the keycard encoding log for duplicate keys and the lost property log for the item.",
+        "Interview every member of staff whose key appears, the same shift, with open questions, after you know what the lock says.",
+        "Review CCTV for the times the evidence points to; export the clips with a hash and a custody record.",
+        "Log every item of evidence into the LP locker. Release property only after ownership is proven, with a signature.",
+        "Report the facts; brief the duty manager; liability and compensation go to claims and the GM, never decided on the floor."
+      ],
+      "why": "A theft claim is a claim, not a fact. The objective evidence (lock, cameras, logs) protects the guest who is right and the employee who is innocent.",
+      "pitfalls": [
+        "Searching or accusing staff on a hunch",
+        "Promising compensation",
+        "Watching footage without exporting it"
+      ]
+    },
+    {
+      "id": "incident_report_writing",
+      "title": "Writing the incident report",
+      "topic": "report",
+      "steps": [
+        "Who: everyone involved, with role and how you identified them.",
+        "What: what happened, in one factual line, then the detail.",
+        "When and where: times from systems (locks, cameras, logs), not memory, and exact places.",
+        "How: what the evidence shows, with references (photo, export, log numbers).",
+        "Actions: what you did, in order, and who you told.",
+        "Facts, not opinions: write what you saw and heard. Quote people; do not characterise them.",
+        "Note where a statement and the evidence differ, without judging the person."
+      ],
+      "why": "Your report may be read by the GM, an insurer, the police or a court, months later. Only facts survive that reading.",
+      "pitfalls": [
+        "Opinions about guests or staff",
+        "Vague lines with no times or references",
+        "Leaving out an inconvenient fact"
+      ]
+    },
+    {
+      "id": "identity_before_entry",
+      "title": "Identity check before room entry",
+      "topic": "access",
+      "steps": [
+        "Never open a guest room, or give out a room number, until identity is verified against the registration.",
+        "Ask for photo ID and match the name to the registered guest or a registered sharer.",
+        "No ID: verify through the registration details only the guest would know, or call the registered guest.",
+        "If the person is not registered, do not confirm or deny who is staying in the room.",
+        "If the registered guest asks not to be disturbed, respect it, and stay with the visitor until they leave or the situation is resolved.",
+        "Record the request, the checks and the outcome in the daily activity report."
+      ],
+      "why": "Letting the wrong person into a room is one of the most serious failures a hotel can make. It can put a guest in real danger.",
+      "pitfalls": [
+        "Opening the door because the person seems confident",
+        "Confirming a guest is staying",
+        "Arguing with an upset visitor instead of de-escalating"
+      ]
+    },
+    {
+      "id": "noise_complaint",
+      "title": "Noise complaint and de-escalation",
+      "topic": "guest",
+      "steps": [
+        "Get the complaint details: who, which room, how long, what kind of noise.",
+        "Go in pairs. Tell the night manager where you are going.",
+        "Listen at the door first. Note what you hear and the time.",
+        "Knock, identify yourself, stand to the side of the door, and ask the guest to step into the doorway. Do not enter.",
+        "Calm voice, open hands, explain the problem and what you need. Give a clear, polite request and a time.",
+        "Watch for safety issues: overcrowding, smoke detectors covered, intoxication, anyone at risk.",
+        "Follow the warning policy. Eviction is the night manager's decision, under policy and local law.",
+        "Follow up with the complainant and record every visit and time."
+      ],
+      "why": "Most noise complaints end with one polite knock. The ones that escalate do so because staff argued, entered, or threatened what they could not deliver.",
+      "pitfalls": [
+        "Going alone",
+        "Entering the room",
+        "Threatening eviction you have no authority to carry out"
+      ]
+    }
+  ]
+}

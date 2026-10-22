@@ -1,0 +1,113 @@
+{
+  "schema": 1,
+  "events": [
+    {
+      "id": "welcome_mentor",
+      "category": "team",
+      "from": "mentor",
+      "subject": "Welcome to nights",
+      "body": [
+        "Your first week. Three things: write everything down, never search anyone, and call me if you are not sure.",
+        "The Field Manual in your notebook grows with every case. Read it."
+      ],
+      "when": {
+        "passed": [
+          "M001"
+        ]
+      }
+    },
+    {
+      "id": "exec_hk_thanks",
+      "category": "team",
+      "from": "exec_housekeeper",
+      "subject": "Marisol",
+      "body": "Marisol told me how you handled 1412. Thank you for treating her fairly. I have already reminded the whole team about doors on trolleys.",
+      "when": {
+        "flags": [
+          "m001_door_coached"
+        ]
+      }
+    },
+    {
+      "id": "rival_paperwork",
+      "category": "politics",
+      "from": "rival",
+      "subject": "Your reports",
+      "body": "Your 1412 report runs to two pages for a laptop that was never stolen. Night officers patrol; they do not write novels. Cut it down.",
+      "when": {
+        "passed": [
+          "M001"
+        ]
+      },
+      "deadlineWeeks": 2,
+      "defaultChoice": "ignore",
+      "choices": [
+        {
+          "id": "explain",
+          "label": "Reply that every finding is referenced, and copy Desmond Okafor",
+          "outcome": "Desmond backs you in one line: \"Keep writing them like that.\" Colm does not reply.",
+          "relations": {
+            "mentor": 5,
+            "rival": -5
+          }
+        },
+        {
+          "id": "shorten",
+          "label": "Promise to keep future reports shorter",
+          "outcome": "Colm is pleased. Your next report leaves out the custody references, and Desmond sends it back.",
+          "relations": {
+            "rival": 5,
+            "mentor": -5
+          }
+        },
+        {
+          "id": "ignore",
+          "label": "Ignore it",
+          "outcome": "Colm takes the silence as agreement and complains about you at the supervisors' meeting.",
+          "relations": {
+            "rival": -5
+          }
+        }
+      ]
+    }
+  ],
+  "fallout": [
+    {
+      "topic": "default",
+      "description": "A weak call in \"{mission}\" comes back: {choice}. A guest complaint follows and the file does not hold up.",
+      "effects": {
+        "GuestSatisfaction": -2,
+        "Reputation": -1,
+        "IncidentCosts": 600
+      }
+    },
+    {
+      "topic": "theft",
+      "description": "A theft claim on another floor goes badly. The investigation repeats a habit from \"{mission}\" ({choice}) and the guest's lawyer asks for the file.",
+      "effects": {
+        "GuestSatisfaction": -2,
+        "InsurerConfidence": -2,
+        "IncidentCosts": 1500
+      }
+    },
+    {
+      "topic": "access",
+      "description": "Someone talks their way into a room that is not theirs, the way the gap in \"{mission}\" allowed ({choice}).",
+      "effects": {
+        "GuestSatisfaction": -3,
+        "Reputation": -3,
+        "SecurityPosture": -3,
+        "IncidentCosts": 2500
+      }
+    },
+    {
+      "topic": "guest",
+      "description": "A guest dispute escalates on the floor. Staff repeat the approach from \"{mission}\" ({choice}) and a complaint reaches the brand.",
+      "effects": {
+        "GuestSatisfaction": -3,
+        "Reputation": -2,
+        "IncidentCosts": 800
+      }
+    }
+  ]
+}

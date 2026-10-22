@@ -1,0 +1,258 @@
+{
+  "schema": 1,
+  "people": [
+    {
+      "id": "mentor",
+      "name": "Desmond Okafor",
+      "role": "Director of Loss Prevention",
+      "department": "Loss Prevention",
+      "faction": "safety",
+      "bio": "Twenty years in hotel LP. Hired you, expects you to write it down, and never raises his voice. Your mentor, if you let him be.",
+      "location": "lp_office",
+      "avatar": "Business_Male_03",
+      "outfit": "lp",
+      "executive": true,
+      "startRelation": 20
+    },
+    {
+      "id": "gm",
+      "name": "Marguerite Ellery",
+      "role": "General Manager",
+      "department": "Executive",
+      "faction": "revenue",
+      "bio": "Runs the Harbourfront like a ship. Cares about guests, reviews and the owners' numbers, in that order on a good day.",
+      "location": "gm_office",
+      "avatar": "Business_Female_02",
+      "outfit": "executive",
+      "executive": true
+    },
+    {
+      "id": "night_manager",
+      "name": "Felix Amadi",
+      "role": "Night Manager",
+      "department": "Front Office",
+      "bio": "Keeps the hotel running from midnight to seven. Calm on the radio, tired by four.",
+      "location": "front_desk",
+      "avatar": "Business_Male_02",
+      "outfit": "front_office",
+      "startRelation": 10
+    },
+    {
+      "id": "rival",
+      "name": "Colm Brady",
+      "role": "LP Supervisor, evenings",
+      "department": "Loss Prevention",
+      "bio": "Fifteen years on the floor, sure of his instincts, short on paperwork. Wanted your job for his nephew.",
+      "location": "lp_office",
+      "avatar": "Security_Male_01",
+      "outfit": "lp",
+      "startRelation": -5
+    },
+    {
+      "id": "partner",
+      "name": "Ines Dalca",
+      "role": "LP Officer, nights",
+      "department": "Loss Prevention",
+      "bio": "Your partner on nights. Ex-paramedic, first-aid trainer, dry sense of humour.",
+      "location": "cctv_room",
+      "avatar": "Security_Female_01",
+      "outfit": "lp",
+      "startRelation": 15
+    },
+    {
+      "id": "hr_director",
+      "name": "Priyanka Venn",
+      "role": "Director of Human Resources",
+      "department": "Human Resources",
+      "bio": "Fair process before everything. Will back you if your file is clean and bury you if it is not.",
+      "location": "exec_offices",
+      "avatar": "Business_Female_03",
+      "outfit": "hr",
+      "executive": true
+    },
+    {
+      "id": "chief_engineer",
+      "name": "Tomasz Rydell",
+      "role": "Chief Engineer",
+      "department": "Engineering",
+      "faction": "safety",
+      "bio": "Knows every valve and panel in the building and resents every work order that is not his idea.",
+      "location": "engineering",
+      "avatar": "Construction_Male_02",
+      "outfit": "engineering"
+    },
+    {
+      "id": "exec_housekeeper",
+      "name": "Lucia Ferrante",
+      "role": "Executive Housekeeper",
+      "department": "Housekeeping",
+      "bio": "Protective of her team of ninety. Will not forgive anyone who accuses one of them without evidence.",
+      "location": "housekeeping",
+      "avatar": "Female_Adult_04",
+      "outfit": "housekeeping"
+    },
+    {
+      "id": "front_office_manager",
+      "name": "Gideon Marsh",
+      "role": "Front Office Manager",
+      "department": "Front Office",
+      "faction": "revenue",
+      "bio": "Measured on guest satisfaction scores and arrival times. Sees LP as the department of no.",
+      "location": "front_desk",
+      "avatar": "Business_Male_04",
+      "outfit": "front_office",
+      "startRelation": -5
+    },
+    {
+      "id": "fnb_director",
+      "name": "Rafael Quintero",
+      "role": "Director of Food & Beverage",
+      "department": "Food & Beverage",
+      "faction": "revenue",
+      "bio": "Banquets, bars and the kitchen. Generous with comps, allergic to stock counts.",
+      "location": "kitchen",
+      "avatar": "Male_Adult_05",
+      "outfit": "fnb"
+    },
+    {
+      "id": "night_auditor",
+      "name": "Imogen Pryce",
+      "role": "Night Auditor",
+      "department": "Front Office",
+      "bio": "Balances the day's takings at 3 a.m. and notices everything.",
+      "location": "front_desk",
+      "avatar": "Female_Adult_02",
+      "outfit": "front_office",
+      "startRelation": 5
+    },
+    {
+      "id": "guard_lead",
+      "name": "Callum Fenwick",
+      "role": "Site Lead, Tessmore Guard Services",
+      "department": "Contract security",
+      "bio": "Runs the contract guards on the doors and the dock. Good people, thin staffing.",
+      "location": "loading_dock",
+      "avatar": "Male_Adult_06",
+      "outfit": "contractor"
+    },
+    {
+      "id": "adjuster",
+      "name": "Odile Marchetti",
+      "role": "Claims Adjuster, Tarrowby Mutual",
+      "department": "Insurer",
+      "bio": "Reads every file twice. Rewards clean evidence and punishes admissions of liability.",
+      "location": "exec_offices",
+      "avatar": "Business_Female_04",
+      "outfit": "insurer",
+      "staff": false
+    },
+    {
+      "id": "police_liaison",
+      "name": "Ruth Calloway",
+      "role": "Detective Sergeant, Port Avener Police Department",
+      "department": "Police",
+      "bio": "Your liaison at the PAPD. Wants footage exported properly and statements nobody has coached.",
+      "location": "lobby",
+      "avatar": "Police_Female_01",
+      "outfit": "police",
+      "staff": false
+    },
+    {
+      "id": "fire_marshal",
+      "name": "Bernard Okoye",
+      "role": "Fire Marshal, Port Avener Fire & Rescue",
+      "department": "Fire authority",
+      "bio": "Inspects the Harbourfront twice a year and remembers every blocked exit he has ever seen.",
+      "location": "fire_command",
+      "avatar": "Fire_Male_02",
+      "outfit": "fire",
+      "staff": false
+    },
+    {
+      "id": "guest_whitlock",
+      "name": "Anders Whitlock",
+      "role": "Guest, room 1412",
+      "department": "Guest",
+      "bio": "In town for a two-day sales conference. Tired, a few drinks in, and certain someone has been in his room.",
+      "location": "room_1412",
+      "avatar": "Business_Male_05",
+      "outfit": "guest",
+      "staff": false
+    },
+    {
+      "id": "attendant_duarte",
+      "name": "Marisol Duarte",
+      "role": "Room attendant, late shift",
+      "department": "Housekeeping",
+      "bio": "Eleven years at the Harbourfront. Does the turndowns on floors 12 to 15 and restocks the floor closets before she goes home.",
+      "location": "f14_service",
+      "avatar": "Female_Adult_06",
+      "outfit": "housekeeping"
+    },
+    {
+      "id": "server_kerr",
+      "name": "Nadia Kerr",
+      "role": "Server, Lobby Bar",
+      "department": "Food & Beverage",
+      "bio": "Closes the Lobby Bar most nights and hands everything she finds to the front desk.",
+      "location": "lobby_bar",
+      "avatar": "Female_Adult_07",
+      "outfit": "fnb"
+    },
+    {
+      "id": "desk_agent",
+      "name": "Tariq Bello",
+      "role": "Front desk agent, nights",
+      "department": "Front Office",
+      "bio": "Six months in the job. Wants to help everyone who walks up to the desk.",
+      "location": "front_desk",
+      "avatar": "Male_Adult_08",
+      "outfit": "front_office",
+      "startRelation": 5
+    },
+    {
+      "id": "visitor_haskett",
+      "name": "Leon Haskett",
+      "role": "Man at the front desk",
+      "department": "Visitor",
+      "bio": "Says he is locked out of 1418 and that his wallet is in the room.",
+      "location": "lobby",
+      "avatar": "Male_Adult_07",
+      "outfit": "guest",
+      "staff": false
+    },
+    {
+      "id": "guest_achterberg",
+      "name": "Simone Achterberg",
+      "role": "Guest, room 1418",
+      "department": "Guest",
+      "bio": "Checked in alone two nights ago. Asked at check-in that her room number not be given out.",
+      "location": "f14_corridor",
+      "avatar": "Female_Adult_08",
+      "outfit": "guest",
+      "staff": false
+    },
+    {
+      "id": "guest_pike",
+      "name": "Jordan Pike",
+      "role": "Guest, room 1406",
+      "department": "Guest",
+      "bio": "Celebrating a promotion with far too many friends in a standard room.",
+      "location": "guest_room",
+      "avatar": "Male_Adult_09",
+      "outfit": "guest",
+      "staff": false
+    },
+    {
+      "id": "guest_morrow",
+      "name": "Helen Morrow",
+      "role": "Guest, room 1407",
+      "department": "Guest",
+      "bio": "Has an eight o'clock flight and has called the desk three times.",
+      "location": "f14_corridor",
+      "avatar": "Female_Adult_09",
+      "outfit": "guest",
+      "staff": false
+    }
+  ]
+}

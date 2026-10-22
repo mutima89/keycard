@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "terms": [
+    {
+      "id": "lock_audit_trail",
+      "term": "Lock audit trail",
+      "category": "Key control",
+      "definition": "The record an electronic lock keeps of every credential that opened it and when, downloaded with a programmer. The first objective evidence in a room entry or theft case.",
+      "missions": [
+        "M001"
+      ]
+    },
+    {
+      "id": "chain_of_custody",
+      "term": "Chain of custody",
+      "category": "Evidence",
+      "definition": "The signed, unbroken record of who held an item of evidence, when, and what they did with it, from collection to court. A gap lets anyone say the evidence was changed.",
+      "missions": [
+        "M001"
+      ]
+    },
+    {
+      "id": "observe_and_report",
+      "term": "Observe and report",
+      "category": "Policy",
+      "definition": "The Veldane LP stance: officers observe, report and de-escalate. Physical intervention, searches and detention happen only as policy and local law allow.",
+      "missions": [
+        "M001",
+        "M002",
+        "M003"
+      ]
+    },
+    {
+      "id": "open_question",
+      "term": "Open question",
+      "category": "Interviews",
+      "definition": "A question that invites an account (\"walk me through...\") rather than a yes or no. It gets more information and does not suggest the answer.",
+      "missions": [
+        "M001"
+      ]
+    },
+    {
+      "id": "admission_of_liability",
+      "term": "Admission of liability",
+      "category": "Claims",
+      "definition": "Saying or implying the hotel is at fault or will pay. Liability is decided by claims, insurers and counsel on the facts, never on the floor.",
+      "missions": [
+        "M001"
+      ]
+    },
+    {
+      "id": "identity_verification",
+      "term": "Identity verification",
+      "category": "Key control",
+      "definition": "Matching a person to the room registration (photo ID, name, registration details) before issuing a key, opening a door or confirming a guest is staying.",
+      "missions": [
+        "M002"
+      ]
+    },
+    {
+      "id": "de_escalation",
+      "term": "De-escalation",
+      "category": "Guest service",
+      "definition": "Lowering tension with calm voice, open body language, listening, clear requests and options, so a conflict ends without force.",
+      "missions": [
+        "M002",
+        "M003"
+      ]
+    }
+  ]
+}

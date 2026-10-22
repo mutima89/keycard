@@ -133,7 +133,7 @@ TEST(Campaign_FirstThreeCasesEarnThePromotionAndItsCeremony)
 	CHECK_EQ(static_cast<int>(S.Campaign.Records.size()), 3);
 }
 
-TEST(Campaign_BestPlayThroughLevelFive)
+TEST(Campaign_BestPlayThroughLevelSix)
 {
 	GameState S = Fresh();
 	for (const char* Id : {"M001", "M002", "M003", "M004", "M005", "M006", "M007", "M008", "M009", "M010", "M011"})
@@ -187,6 +187,21 @@ TEST(Campaign_BestPlayThroughLevelFive)
 		if (!bFired) std::printf("    %s never arrived\n", Event);
 		CHECK(bFired);
 	}
+	// Level 6: the missing child, the death in a room, the fire authority, then the first career crisis.
+	for (const char* Id : {"M020", "M021", "M022", "C001"})
+	{
+		S.bCeremonyPending = false;
+		const MissionDebrief D = PlayBest(S, Id);
+		if (!D.bPassed || D.Score != 100) std::printf("    %s scored %d\n", Id, D.Score);
+		CHECK(D.bPassed && D.Score == 100);
+	}
+	for (const char* Card : {"missing_child_code", "death_on_property", "fire_inspection", "power_outage"}) CHECK(HasCard(S, Card));
+	CHECK_EQ(static_cast<int>(S.Campaign.Records.size()), 23);
+	if (S.Career.Level != 7)
+	{
+		for (int i = 0; i < kc::CompetencyCount; ++i) std::printf("    competency %d = %d\n", i, S.Career.Competencies[static_cast<size_t>(i)].Score);
+	}
+	CHECK_EQ(S.Career.Level, 7);
 }
 
 TEST(Campaign_SameSeedSameCareer)

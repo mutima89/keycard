@@ -47,5 +47,16 @@ Each full name was web-searched for a public figure, hotel executive or security
 | Idris Kellaway | Station Officer, Port Avener Fire & Rescue | Clear |
 | Gwendolyn Ashcombe | Guest, slipped in the lobby | Clear |
 | Declan Fenner | Contractor, kitchen equipment | Clear (rejected first choice Anton Castellane: too close to Antoine de Castellane) |
+| Keziah Morland | Banquet server | Clear |
+| Duncan Pellmore | Banquet captain | Clear (rejected first choice Graham Pellow: too close to Graham Fellows) |
+| Sunniva Haig | Banquet server | Clear |
+| Celia Wrenfield | Banquet Manager | Clear |
+| Kit Albury | Banquet bartender | Clear |
+| Henrike Solberg | Regional LP Auditor, Veldane Hotels & Resorts | Clear |
+| Hamish Lorrimer | Director of Finance | Clear |
+| Rosalie Dunmore | Wedding guest, Harbour Ballroom | Clear |
+| Aldous Treharne | Guest found dead in 1406 (M021, not in the cast) | Clear (rejected first choice Penhallow: a Georgette Heyer novel title) |
+| Theo Dunmore | Missing child (M020, not in the cast) | Clear |
+| Code Beacon | Veldane's missing-child code | Clear (searched: the real codes are Code Adam and Code Madeleine; no Code Beacon in use) |
 
 Equipment names in missions (encoders E-01 to E-03, camera ids, evidence numbers) are generic codes, not brands.

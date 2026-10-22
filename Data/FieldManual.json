@@ -493,6 +493,29 @@
         "Counting a briefing as a drill",
         "Planning a fix that could be done today"
       ]
+    },
+    {
+      "id": "power_outage",
+      "title": "Power outage",
+      "topic": "power_outage",
+      "steps": [
+        "Read the fire alarm panel: is there a fire, what has lost power.",
+        "Take command at the fire command centre and open a log.",
+        "Talk to anyone trapped in a lift at once; the lift contractor or the fire authority releases them.",
+        "Treat any fire system without power as an impairment: fire watch, fire authority, insurer.",
+        "Shelter in place unless there is a fire or the building is unsafe.",
+        "Send staff to every guest on the special-assistance list.",
+        "Tell every guest what is happening and when the next update will be.",
+        "Plan for the emergency lighting running out.",
+        "Restore life safety first, then lifts, then the rest; review what failed."
+      ],
+      "why": "An outage hurts people through what it switches off: lifts, fire pumps, stair lighting, medical equipment. Knowing what has failed and who is vulnerable is the whole job.",
+      "pitfalls": [
+        "Forcing lift doors",
+        "Evacuating for darkness alone",
+        "Forgetting the fire pump",
+        "Silence while guests wait"
+      ]
     }
   ]
 }

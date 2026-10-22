@@ -1,0 +1,573 @@
+{
+  "schema": 1,
+  "id": "C001",
+  "title": "Power Outage at Full Occupancy",
+  "kind": "crisis",
+  "topic": "power_outage",
+  "minLevel": 6,
+  "opening": {
+    "channel": "radio",
+    "from": "chief_engineer",
+    "at": "fire_command",
+    "text": "LP, Tomasz. We've lost the grid, the whole quarter's dark. Generator's running but the transfer switch hasn't changed over. And I've got the lift alarm from car 2. Meet me at fire command."
+  },
+  "briefing": [
+    "19:42, Friday, a sold-out night: 600 rooms, a conference dinner of 300 in the Harbour Ballroom. The grid fails across the harbourfront. The emergency lighting comes on, rated for 90 minutes. The generator starts, but the automatic transfer switch sticks, so the life-safety board is on batteries only.",
+    "Veldane outage procedure: set up command at the fire command centre; check the fire alarm panel (it runs on its standby batteries) and what has lost power; free anyone trapped in a lift through the lift contractor or the fire authority, never by forcing doors; treat any fire system without power as an impairment (fire watch, the fire authority and the insurer told); shelter in place unless there is a fire or the building becomes unsafe; look after the guests on the special-assistance list first; keep guests and staff informed on a fixed rhythm; restore in a controlled order and record it all in the crisis log. You are the crisis lead for the property. Your authority is 150,000."
+  ],
+  "context": [
+    {
+      "ifFlag": "night_understaffed",
+      "text": "Since the night cover was cut there are only two officers on tonight. Every task you hand out takes someone off a door."
+    },
+    {
+      "ifFlag": "impairment_warranty",
+      "text": "The insurer's warranty from the floor 14 valve case stands: any impairment of the sprinklers is reported to them within the hour."
+    },
+    {
+      "ifFlag": "panel_silenced_finding",
+      "text": "The fire authority have already found this hotel silencing a panel before they arrived. Tonight they will want to hear from you early."
+    },
+    {
+      "ifNotFlag": "night_understaffed",
+      "text": "The full night team is on: four officers and a supervisor, all with radios and torches."
+    }
+  ],
+  "learningObjectives": [
+    "Command, the panel, and people in lifts first",
+    "A fire system without power is an impairment",
+    "Shelter in place, with the special-assistance list first"
+  ],
+  "start": "19:44",
+  "actions": [
+    {
+      "id": "read_panel",
+      "label": "Read the fire alarm panel",
+      "kind": "check",
+      "at": "fire_command",
+      "spot": "fire_panel",
+      "minutes": 2,
+      "required": true,
+      "findingTitle": "Panel on standby batteries",
+      "finding": "MAINS FAIL, on standby batteries, rated 24 hours plus 30 minutes in alarm. No fire signals. Two faults: FIRE PUMP POWER LOST and LIFT 2 ALARM. The emergency lighting came on at 19:42: on its rating it runs until about 21:12."
+    },
+    {
+      "id": "open_log",
+      "label": "Open the crisis command log",
+      "kind": "logEvidence",
+      "at": "fire_command",
+      "minutes": 1,
+      "requires": [
+        "read_panel"
+      ],
+      "required": true,
+      "findingTitle": "Command set up, 19:4x",
+      "finding": "Fire command is the command post. You open the log: grid failure 19:42, generator running, transfer switch stuck, fire pump without power, lift 2 alarm. Every decision from here on goes in with its time."
+    },
+    {
+      "id": "talk_lift",
+      "label": "Speak to the people in lift 2 on the intercom",
+      "kind": "call",
+      "at": "fire_command",
+      "person": "partner",
+      "minutes": 2,
+      "requires": [
+        "read_panel"
+      ],
+      "required": true,
+      "findingTitle": "Lift 2: four people, floor 9-10",
+      "finding": "Four guests between floors 9 and 10, the car light on its battery. Nobody hurt; one woman is pregnant and frightened of the dark. You tell them who you are, that help is coming, that they are safe in the car, and that someone will speak to them every ten minutes. Ines stays on the intercom.",
+      "lines": [
+        {
+          "speaker": "partner",
+          "text": "I'm on the lift line. I'll talk to them every ten minutes until they're out."
+        }
+      ]
+    },
+    {
+      "id": "lift_rescue",
+      "label": "Call the lift contractor and the fire authority for the rescue",
+      "kind": "call",
+      "at": "fire_command",
+      "person": "fire_officer",
+      "minutes": 2,
+      "requires": [
+        "talk_lift"
+      ],
+      "required": true,
+      "findingTitle": "Rescue on its way",
+      "finding": "The lift contractor's emergency line gives forty minutes. With a pregnant passenger and the power out, you also call the fire authority, who send a crew trained to release a car. They arrive at 20:06, wind the car to floor 10 and open it. All four out, checked by a first aider."
+    },
+    {
+      "id": "pry_doors",
+      "label": "Have the engineers force the lift doors now",
+      "kind": "other",
+      "at": "fire_command",
+      "minutes": 2,
+      "requires": [
+        "talk_lift"
+      ],
+      "findingTitle": "Doors forced",
+      "finding": "Two engineers lever the landing doors on floor 10 with a bar. The car is 70 cm below the sill. A guest climbs out across the gap before anyone can stop him and twists his knee. The others refuse to move. The fire crew arrive to a damaged door and an injury.",
+      "effects": {
+        "SafetyCompliance": -6,
+        "GuestSatisfaction": -3
+      },
+      "schedules": [
+        {
+          "id": "lift_injury_claim",
+          "description": "The guest who climbed out of lift 2 claims for his knee. The file shows hotel staff forced the doors without training or the contractor.",
+          "delayWeeks": 4,
+          "probability": 0.75,
+          "effects": {
+            "IncidentCosts": 18000,
+            "InsurerConfidence": -4,
+            "OwnerTrust": -3
+          },
+          "flagIfOccurs": "lift_forced_claim"
+        }
+      ]
+    },
+    {
+      "id": "call_engineer",
+      "label": "Go through the transfer switch and the fire pump with Tomasz",
+      "kind": "interview",
+      "at": "fire_command",
+      "person": "chief_engineer",
+      "minutes": 2,
+      "requires": [
+        "read_panel"
+      ],
+      "required": true,
+      "findingTitle": "Transfer switch",
+      "finding": "Tomasz can't make the switch change over on its own. He asks for an hour to transfer it by hand, under the generator contractor's instructions on the phone. Until then the fire pump, the lifts and the emergency lighting charger have no power."
+    },
+    {
+      "id": "fire_watch",
+      "label": "Start a fire watch and tell the fire authority and the insurer",
+      "kind": "call",
+      "at": "fire_command",
+      "person": "night_manager",
+      "minutes": 3,
+      "requires": [
+        "call_engineer"
+      ],
+      "required": true,
+      "findingTitle": "Impairment handled",
+      "finding": "With the fire pump down, the sprinklers above the lower floors have only mains water pressure. You treat it as an impairment: a fire watch on every floor, an hourly patrol with radios and torches, no hot work, the kitchen on cold service. The fire authority control room and Tarrowby Mutual's out-of-hours line are told at 20:0x, with the expected restoration time."
+    },
+    {
+      "id": "special_assist",
+      "label": "Print the special-assistance list and send staff to each room",
+      "kind": "check",
+      "at": "front_desk",
+      "spot": "front_office_pc",
+      "minutes": 3,
+      "requires": [
+        "open_log"
+      ],
+      "required": true,
+      "findingTitle": "Eleven guests",
+      "finding": "The front office system is on its own UPS. Eleven guests have declared they need help in an emergency: four use wheelchairs, two are blind, one is on home oxygen on floor 11. Felix sends a pair of staff with torches to each. The oxygen user's concentrator is on battery for three hours; you note it in the log and arrange a spare cylinder through the ambulance service's non-emergency line."
+    },
+    {
+      "id": "guest_comms",
+      "label": "Get the message to every room and the ballroom",
+      "kind": "call",
+      "at": "front_desk",
+      "spot": "desk_phone",
+      "person": "front_office_manager",
+      "minutes": 3,
+      "requires": [
+        "open_log"
+      ],
+      "required": true,
+      "findingTitle": "Message out, then every 30 minutes",
+      "finding": "A short message by the PA on battery, by staff on every floor and to the ballroom: the power is out across the area, the building is safe, please stay in your rooms or in the ballroom, use the stairs with care, lifts are off, call the front desk if you need help. The next update is promised at 20:30, and then every thirty minutes."
+    },
+    {
+      "id": "evacuate_all",
+      "label": "Evacuate the whole hotel",
+      "kind": "other",
+      "at": "fire_command",
+      "minutes": 2,
+      "requires": [
+        "read_panel"
+      ],
+      "findingTitle": "Evacuation in the dark",
+      "finding": "Twelve hundred people come down two stairs by emergency lighting into a dark street, with no fire. A guest falls on Stair A; the wheelchair users on the upper floors are left waiting on landings; the assembly points are blocked by traffic with the signals out. In ninety minutes the lights fade.",
+      "effects": {
+        "SafetyCompliance": -5,
+        "GuestSatisfaction": -6,
+        "IncidentCosts": 6000
+      },
+      "schedules": [
+        {
+          "id": "dark_evacuation",
+          "description": "The night of the dark evacuation is in the press and the fall on Stair A turns into a claim.",
+          "delayWeeks": 3,
+          "probability": 0.7,
+          "effects": {
+            "Reputation": -4,
+            "OwnerTrust": -3
+          },
+          "flagIfOccurs": "dark_evacuation"
+        }
+      ]
+    },
+    {
+      "id": "brief_gm",
+      "label": "Brief Marguerite Ellery",
+      "kind": "call",
+      "at": "fire_command",
+      "person": "gm",
+      "minutes": 2,
+      "requires": [
+        "fire_watch"
+      ],
+      "required": true,
+      "findingTitle": "GM briefed",
+      "finding": "You give the GM the picture in a minute: no fire, lift 2 released, fire watch on, special-assistance guests covered, restoration by about 21:00, next guest update 20:30. She takes the conference organiser and the owners; you keep the building.",
+      "lines": [
+        {
+          "speaker": "gm",
+          "text": "Good. I'll handle the organiser and the owners. You run the building. Tell me before you change anything."
+        }
+      ]
+    },
+    {
+      "id": "lighting",
+      "label": "Plan for the emergency lighting running out",
+      "kind": "call",
+      "at": "fire_command",
+      "person": "night_manager",
+      "minutes": 2,
+      "requires": [
+        "open_log"
+      ],
+      "findingTitle": "Torches and lanterns",
+      "finding": "If the transfer is not done by 21:00 the stairs go dark at about 21:12. Felix sends the housekeeping torches and the banquet lanterns to the stair landings and the lift lobbies, and a staff member to each stair door."
+    },
+    {
+      "id": "restore",
+      "label": "Restore in order with Tomasz",
+      "kind": "call",
+      "at": "fire_command",
+      "person": "chief_engineer",
+      "minutes": 4,
+      "requires": [
+        "call_engineer",
+        "fire_watch"
+      ],
+      "required": true,
+      "findingTitle": "Restored, 20:5x",
+      "finding": "The transfer is made by hand at 20:52: life safety first (fire pump, emergency lighting charger), then one lift for the special-assistance guests, then kitchens and the rest. The panel faults clear, the fire watch stands down once the pump is proved, the fire authority and the insurer are told. Mains returns at 22:10 and Tomasz transfers back in the same order."
+    },
+    {
+      "id": "after_action",
+      "label": "Write the after-action review",
+      "kind": "logEvidence",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 5,
+      "requires": [
+        "restore"
+      ],
+      "findingTitle": "After action",
+      "finding": "The log becomes the review: what worked (command, the lift line, the list), what didn't (the transfer switch, no torches on the landings, the PA battery life). Actions: an annual load test with a real changeover, torches stored on every landing, the special-assistance list printed at each shift change, and a contract clause for lift rescue times."
+    }
+  ],
+  "questions": [
+    {
+      "id": "d_first",
+      "kind": "order",
+      "prompt": "Put the first minutes of the outage in order",
+      "dimension": "Procedure",
+      "competency": "CrisisLeadership",
+      "weight": 9,
+      "explanation": "You can't lead what you can't see: the panel tells you there is no fire and what has failed. Command and a log come next so every call that follows is recorded. People in danger or trapped come before equipment, and the guests then need to hear from you before rumour fills the gap.",
+      "options": [
+        {
+          "id": "o1",
+          "label": "Read the fire alarm panel"
+        },
+        {
+          "id": "o2",
+          "label": "Set up command and open the log"
+        },
+        {
+          "id": "o3",
+          "label": "Speak to the people trapped in the lift"
+        },
+        {
+          "id": "o4",
+          "label": "Tell the guests what is happening and when the next update will be"
+        }
+      ]
+    },
+    {
+      "id": "d_lift",
+      "prompt": "Four people are trapped in lift 2. How do you get them out?",
+      "dimension": "Care",
+      "competency": "IncidentResponse",
+      "weight": 9,
+      "options": [
+        {
+          "id": "rescue",
+          "label": "Keep them talking on the intercom; the lift contractor or the fire authority releases them.",
+          "score": 100,
+          "feedback": "A stalled car is the safest place for them. Releasing a car needs training: the gap to the sill and the shaft are what injure people."
+        },
+        {
+          "id": "force",
+          "label": "Engineers force the landing doors so they can climb out.",
+          "score": 10,
+          "critical": true,
+          "feedback": "Forced doors and a car below the sill are how people fall into shafts. Never let untrained staff do it."
+        },
+        {
+          "id": "wait",
+          "label": "Wait for the power: the lift will come down by itself.",
+          "score": 35,
+          "feedback": "It may, or it may not, and nobody knows when. Call for the rescue and keep talking to them."
+        }
+      ]
+    },
+    {
+      "id": "d_stay",
+      "prompt": "The building is dark but there is no fire. Evacuate or shelter in place?",
+      "dimension": "Compliance",
+      "competency": "FireLifeSafety",
+      "weight": 8,
+      "options": [
+        {
+          "id": "shelter",
+          "label": "Shelter in place, with staff on every floor and a plan if the lighting runs out or anything changes.",
+          "score": 100,
+          "feedback": "An evacuation is a risk in itself. Without a fire or a structural danger, people are safer where they are, with light, information and help."
+        },
+        {
+          "id": "evacuate",
+          "label": "Evacuate everyone now while the emergency lighting lasts.",
+          "score": 25,
+          "feedback": "Twelve hundred people on two stairs in the dark, into a street with no lights, for no fire. Evacuate if the danger changes, not because the lights did."
+        },
+        {
+          "id": "nothing",
+          "label": "Do nothing: the power will come back.",
+          "score": 15,
+          "feedback": "Sheltering is a decision with a plan, not doing nothing."
+        }
+      ]
+    },
+    {
+      "id": "d_impair",
+      "kind": "multi",
+      "prompt": "The fire pump has no power. What do you do?",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 8,
+      "options": [
+        {
+          "id": "watch",
+          "label": "Start a fire watch on every floor",
+          "correct": true
+        },
+        {
+          "id": "authority",
+          "label": "Tell the fire authority",
+          "correct": true
+        },
+        {
+          "id": "insurer",
+          "label": "Tell the insurer",
+          "correct": true
+        },
+        {
+          "id": "hot",
+          "label": "Stop all hot work and cooking on open flame",
+          "correct": true
+        },
+        {
+          "id": "wait",
+          "label": "Nothing until the power is back: the sprinklers still have water",
+          "feedback": "They have mains pressure, not the pump. That is an impairment, whatever the cause."
+        }
+      ]
+    },
+    {
+      "id": "r_what",
+      "prompt": "Crisis log, summary (one line)",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 7,
+      "section": "what",
+      "options": [
+        {
+          "id": "facts",
+          "label": "Grid failure 19:42; transfer switch failed; fire pump impaired, fire watch on, fire authority and insurer told; lift 2 released by the fire authority 20:06; special-assistance guests checked; sheltered in place; restored by hand 20:52, mains 22:10.",
+          "score": 100,
+          "feedback": "The times, the failures, what you did about each, and the people."
+        },
+        {
+          "id": "fine",
+          "label": "Power cut, no incidents.",
+          "score": 20,
+          "feedback": "There was a trapped lift, an impaired fire pump and eleven vulnerable guests. Leave them out and nothing gets fixed."
+        },
+        {
+          "id": "blame",
+          "label": "Engineering's transfer switch failed again and left LP to run the building.",
+          "score": 15,
+          "feedback": "Blame doesn't belong in the log. The failure goes in as a fact with an action."
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "c_panel",
+      "label": "Panel first",
+      "kind": "before",
+      "action": "read_panel",
+      "other": "evacuate_all",
+      "dimension": "Procedure",
+      "competency": "FireLifeSafety",
+      "weight": 4,
+      "pass": "You read the panel before deciding anything.",
+      "fail": "You acted before you knew whether there was a fire."
+    },
+    {
+      "id": "c_lift_fast",
+      "label": "Lift line in minutes",
+      "kind": "byMinute",
+      "action": "talk_lift",
+      "by": "19:52",
+      "dimension": "Care",
+      "competency": "GuestServiceDeescalation",
+      "weight": 7,
+      "pass": "Someone was talking to the people in the lift within minutes.",
+      "fail": "The people in the lift were left in the dark too long."
+    },
+    {
+      "id": "c_no_force",
+      "label": "Doors not forced",
+      "kind": "notDone",
+      "action": "pry_doors",
+      "dimension": "Compliance",
+      "competency": "IncidentResponse",
+      "weight": 9,
+      "pass": "The car was released by people trained to do it.",
+      "fail": "Untrained staff forced a lift door."
+    },
+    {
+      "id": "c_impair",
+      "label": "Fire watch and notifications",
+      "kind": "done",
+      "action": "fire_watch",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 8,
+      "pass": "The fire pump was treated as an impairment.",
+      "fail": "The building ran without its fire pump and nobody was told."
+    },
+    {
+      "id": "c_list",
+      "label": "Special-assistance guests",
+      "kind": "byMinute",
+      "action": "special_assist",
+      "by": "20:15",
+      "dimension": "Care",
+      "competency": "CrisisLeadership",
+      "weight": 8,
+      "pass": "Every guest on the list had staff with them early.",
+      "fail": "The guests who most needed help waited longest."
+    },
+    {
+      "id": "c_comms",
+      "label": "Guests informed",
+      "kind": "done",
+      "action": "guest_comms",
+      "dimension": "Communication",
+      "competency": "GuestServiceDeescalation",
+      "weight": 7,
+      "pass": "Every room and the ballroom heard from you, with a time for the next update.",
+      "fail": "Guests found out from each other."
+    },
+    {
+      "id": "c_shelter",
+      "label": "No evacuation in the dark",
+      "kind": "notDone",
+      "action": "evacuate_all",
+      "dimension": "Compliance",
+      "competency": "FireLifeSafety",
+      "weight": 6,
+      "pass": "You kept people safe where they were.",
+      "fail": "You evacuated a dark building with no fire."
+    },
+    {
+      "id": "c_gm",
+      "label": "GM briefed",
+      "kind": "done",
+      "action": "brief_gm",
+      "dimension": "Communication",
+      "competency": "CrisisLeadership",
+      "weight": 4,
+      "pass": "The GM took the organiser and the owners while you ran the building.",
+      "fail": "The GM heard about it from the owners."
+    },
+    {
+      "id": "c_restore",
+      "label": "Restore in order",
+      "kind": "done",
+      "action": "restore",
+      "dimension": "Procedure",
+      "competency": "CrisisLeadership",
+      "weight": 6,
+      "pass": "Life safety came back first.",
+      "fail": "Power was not restored in a controlled order."
+    }
+  ],
+  "bestOrder": [
+    "read_panel",
+    "open_log",
+    "talk_lift",
+    "lift_rescue",
+    "call_engineer",
+    "fire_watch",
+    "special_assist",
+    "guest_comms",
+    "lighting",
+    "brief_gm",
+    "restore",
+    "after_action"
+  ],
+  "debrief": {
+    "whatHappened": "The grid went down on a sold-out Friday and the transfer switch failed with it. You read the panel, took command, kept four people calm in a stalled lift until a trained crew released them, treated the dead fire pump as an impairment, looked after the eleven guests who most needed it, kept everyone informed and sheltered, and brought the power back in order.",
+    "bestPractice": [
+      "Read the panel: is there a fire, what has failed.",
+      "Take command at the fire command centre and log every decision.",
+      "Talk to anyone in a lift at once; the contractor or the fire authority releases them.",
+      "A fire system without power is an impairment: fire watch, fire authority, insurer.",
+      "Shelter in place unless there is a fire or the building is unsafe; plan for the emergency lighting running out.",
+      "The special-assistance list first, then every guest on a fixed update rhythm.",
+      "Restore life safety first, then lifts, then the rest; review and fix what failed."
+    ],
+    "why": "Outages kill through the things they knock out: lifts, fire pumps, lights on stairs, oxygen machines. A command post with a list of what has failed, and a list of who is vulnerable, turns a dark building into a managed one.",
+    "commonMistakes": [
+      "Forcing lift doors.",
+      "Evacuating a dark building for no fire.",
+      "Forgetting the fire pump is an impairment.",
+      "Leaving guests to rumour.",
+      "No plan for when the emergency lighting runs out."
+    ]
+  },
+  "procedureCards": [
+    "power_outage"
+  ],
+  "reportAt": "lp_office",
+  "passMark": 60,
+  "xp": 480,
+  "weeks": 2,
+  "lesson": "Panel, command, people in lifts, impairments, the vulnerable first, shelter and inform, restore in order."
+}

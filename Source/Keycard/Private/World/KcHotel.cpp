@@ -569,6 +569,22 @@ void AKcHotel::SetActiveFloor(int32 Floor)
 	}
 }
 
+void AKcHotel::SetBlackout(bool bOn)
+{
+	if (bOn == bBlackout) return;
+	bBlackout = bOn;
+	if (FloorLightIntensity.Num() != FloorLights.Num())
+	{
+		FloorLightIntensity.Reset();
+		for (const ULightComponent* L : FloorLights) FloorLightIntensity.Add(L ? L->Intensity : 0.0f);
+	}
+	// The emergency fittings: about a tenth of the normal light, enough to find the stairs.
+	for (int32 i = 0; i < FloorLights.Num(); ++i)
+	{
+		if (ULightComponent* L = FloorLights[i]) L->SetIntensity(FloorLightIntensity[i] * (bOn ? 0.12f : 1.0f));
+	}
+}
+
 // ---------------------------------------------------------------------------- architecture
 
 void AKcHotel::BuildSlabs()
@@ -3223,6 +3239,8 @@ void AKcHotel::RefreshScenes()
 	const bool bDeath = Has(TEXT("attend_room"));
 	const bool bSecured = Done(TEXT("secure_scene"));
 	const bool bChairs = Has(TEXT("clear_landing")) && !Done(TEXT("clear_landing"));
+	const bool bOutage = Has(TEXT("call_engineer")) && Has(TEXT("talk_lift")) && !Done(TEXT("restore"));
+	SetBlackout(bOutage);
 
 	// Guests behind doors: the door offers their work until they open it.
 	for (AKcCasePoint* P : CasePoints)
@@ -3239,9 +3257,9 @@ void AKcHotel::RefreshScenes()
 		}
 	}
 
-	const FString Key = FString::Printf(TEXT("%s|%d%d%d%d%d%d%d%d|%d%d%d%d%d|%d%d%d%d%d%d%d%d%d%d|%d%d%d%d"), M ? *KcConvert::ToFString(M->Id) : TEXT(""), bParty, bKnocked, bCapOff, bQuiet, bReturned,
+	const FString Key = FString::Printf(TEXT("%s|%d%d%d%d%d%d%d%d|%d%d%d%d%d|%d%d%d%d%d%d%d%d%d%d|%d%d%d%d%d"), M ? *KcConvert::ToFString(M->Id) : TEXT(""), bParty, bKnocked, bCapOff, bQuiet, bReturned,
 		b1412, bCloset, G && G->HasGame(), bBag, bCodeBlue, bAed, bPropped, bLuggage, bFireAlarm, bSilenced, bImpaired, bSlip, bConed, bMopped, bHotWork, bPrepped, bK2Off,
-		bAllOff, bTheo, bDeath, bSecured, bChairs);
+		bAllOff, bTheo, bDeath, bSecured, bChairs, bOutage);
 	if (Key == SceneKey) return;
 	SceneKey = Key;
 	for (UPrimitiveComponent* S : SceneProps)
@@ -3298,6 +3316,11 @@ void AKcHotel::RefreshScenes()
 		{
 			Status = bSilenced ? TEXT("FIRE  14 CORRIDOR E  (SILENCED)") : TEXT("FIRE  ZONE 14-3  14 CORRIDOR E");
 			Tint = FColor(255, 70, 60);
+		}
+		else if (bOutage)
+		{
+			Status = TEXT("MAINS FAIL  ON BATTERY  2 FAULTS");
+			Tint = FColor(255, 190, 60);
 		}
 		else if (bAllOff)
 		{

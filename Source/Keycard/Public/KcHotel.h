@@ -66,6 +66,8 @@ public:
 
 	// Lights on the player's floor (and the stair) only: cheaper, and no light through the slabs.
 	void SetActiveFloor(int32 Floor);
+	// A power cut (C001): every light falls to the emergency lighting's level until power is restored.
+	void SetBlackout(bool bOn);
 
 	struct FZone
 	{
@@ -208,6 +210,8 @@ private:
 	UPROPERTY(Transient) TMap<FString, TObjectPtr<UInstancedStaticMeshComponent>> Pools;
 	UPROPERTY(Transient) TArray<TObjectPtr<ULightComponent>> FloorLights;
 	TArray<int32> FloorLightFloor; // floor of each entry in FloorLights (stair lights: INT32_MAX, always on)
+	TArray<float> FloorLightIntensity; // each light's normal intensity, kept for the end of a blackout
+	bool bBlackout = false;
 	UPROPERTY(Transient) TArray<TObjectPtr<UTextRenderComponent>> Labels;
 	int32 ComponentCount = 0;
 	int32 InstanceCount = 0;

@@ -504,6 +504,28 @@
       "avatar": "Business_Female_07",
       "outfit": "executive",
       "staff": true
+    },
+    {
+      "id": "board_chair",
+      "name": "Constance Aldermoor",
+      "role": "Chair of the Board, Veldane Hotels & Resorts",
+      "department": "Executive",
+      "bio": "Twenty years on hotel boards. Asks for the bad news first and remembers who gave it to her straight.",
+      "location": "boardroom",
+      "avatar": "Business_Female_01",
+      "outfit": "executive",
+      "staff": true
+    },
+    {
+      "id": "family_varnham",
+      "name": "Maren Varnham",
+      "role": "Daughter of the guest assaulted in room 907",
+      "department": "Guest",
+      "bio": "A schoolteacher who drove through the night to her father's bedside. Wants the truth, not a statement.",
+      "location": "boardroom",
+      "avatar": "Female_Adult_05",
+      "outfit": "guest",
+      "staff": false
     }
   ]
 }

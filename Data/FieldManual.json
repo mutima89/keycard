@@ -837,6 +837,28 @@
         "Keeping staff",
         "Going out in the eye"
       ]
+    },
+    {
+      "id": "post_incident_review",
+      "title": "Major incident and post-incident review",
+      "topic": "multi_property_breach",
+      "steps": [
+        "People first: the injured guest, the family (one named contact), then the staff.",
+        "Order evidence preserved at every affected property at once: lock trails, encoder logs, CCTV, key records, rosters.",
+        "Join everything to one timeline; note clock offsets between systems.",
+        "Share facts, not guesses, with the police; say what you don't know.",
+        "Tell the family the truth early and keep telling it; counsel shapes the wording, not the honesty.",
+        "Notify the insurer and the owners the same day; one approved voice to the media.",
+        "No blame on a person before the review; look for the system causes.",
+        "Close the hole group-wide, then give the board the whole review, bad news included, with a measured rate and no 'never again'."
+      ],
+      "why": "A major incident is judged twice: by how people were treated that night, and by whether the organisation learned.",
+      "pitfalls": [
+        "Blaming the nearest person",
+        "Silence while counsel works",
+        "Only good news to the board",
+        "Promising 'never again'"
+      ]
     }
   ]
 }

@@ -65,5 +65,8 @@ Each full name was web-searched for a public figure, hotel executive or security
 | Harriet Oyelaran | Environmental Health Officer, Port Avener Health Department | Clear |
 | Garrick Tamsett | Guest claiming an injury | Clear (rejected first choice Garrick Holmwood: Arthur Holmwood is a character in Dracula) |
 | Isolde Marchbank | General Manager, Veldane Cliffside Resort | Clear |
+| Constance Aldermoor | Chair of the Board, Veldane Hotels & Resorts | Clear (no match for the full name; rejected Ferrars, a Jane Austen surname) |
+| Maren Varnham | Daughter of the assaulted guest (X001) | Clear (Varnham is a real English surname; no public figure with this full name) |
+| Paul Varnham | Guest assaulted in room 907 (X001, named only) | Clear |
 
 Equipment names in missions (encoders E-01 to E-03, camera ids, evidence numbers) are generic codes, not brands.

@@ -245,6 +245,27 @@ TEST(Campaign_BestPlayToTheTop)
 		for (int i = 0; i < kc::CompetencyCount; ++i) std::printf("    competency %d = %d\n", i, S.Career.Competencies[static_cast<size_t>(i)].Score);
 	}
 	CHECK_EQ(S.Career.Level, 10);
+	// Level 10: the capstone, then the ending it earns.
+	S.bCeremonyPending = false;
+	const MissionDebrief X = PlayBest(S, "X001");
+	if (!X.bPassed || X.Score != 100) std::printf("    X001 scored %d\n", X.Score);
+	CHECK(X.bPassed && X.Score == 100);
+	CHECK(HasCard(S, "post_incident_review"));
+	const kc::EndingDef* E = kc::ChooseEnding(S, LoadContent().Endings);
+	REQUIRE(E != nullptr);
+	if (E->Id != "the_standard")
+	{
+		for (int i = 0; i < kc::PropertyMetricCount; ++i) std::printf("    %s = %.1f\n", kc::MetricName(static_cast<kc::EPropertyMetric>(i)), S.Property.Get(static_cast<kc::EPropertyMetric>(i)));
+		std::printf("    stress = %d, ending = %s\n", S.World.Stress, E->Id.c_str());
+	}
+	CHECK(E->Id == "the_standard");
+	// A cover-up outranks the best numbers; without the capstone the career is unfinished.
+	GameState Spun = S;
+	Spun.Property.SetFlag("x001_spun_board");
+	CHECK(kc::ChooseEnding(Spun, LoadContent().Endings)->Id == "inquiry_board");
+	CHECK(kc::ChooseEnding(Fresh(), LoadContent().Endings)->Id == "unfinished");
+	const std::string Certificate = kc::CertificateMarkdown(S, kc::MakeReview(S, LoadContent().World.People), E, "2026-10-22");
+	CHECK(Certificate.find("The Veldane standard") != std::string::npos);
 }
 
 TEST(Campaign_SameSeedSameCareer)

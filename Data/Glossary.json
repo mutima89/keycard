@@ -66,6 +66,375 @@
         "M002",
         "M003"
       ]
+    },
+    {
+      "id": "master_key",
+      "term": "Master key",
+      "category": "Key control",
+      "definition": "A key or card that opens every room in a section, floor or building. Its loss puts every room it opens at risk until the locks are re-keyed or the card is cancelled.",
+      "missions": [
+        "M008",
+        "M011"
+      ]
+    },
+    {
+      "id": "door_held_alarm",
+      "term": "Door held alarm",
+      "category": "Access control",
+      "definition": "An alarm raised when a controlled door stays open past its set time. A response checks the door, the area and the CCTV, and records who left it open and why.",
+      "missions": [
+        "M009"
+      ]
+    },
+    {
+      "id": "baggage_claim_ticket",
+      "term": "Baggage claim ticket",
+      "category": "Guest service",
+      "definition": "The numbered two-part ticket that ties stored luggage to its owner. Bags are released only against the matching half, or against verified identity and a signed release.",
+      "missions": [
+        "M010"
+      ]
+    },
+    {
+      "id": "key_reconciliation",
+      "term": "Key reconciliation",
+      "category": "Key control",
+      "definition": "Counting every issued key and card against the register at set times, so a missing one is found the same day rather than after a loss.",
+      "missions": [
+        "M008"
+      ]
+    },
+    {
+      "id": "cctv_retention",
+      "term": "CCTV retention",
+      "category": "CCTV",
+      "definition": "How long recordings are kept before the system overwrites them. Footage for an incident must be exported and preserved before that time runs out.",
+      "missions": [
+        "M007"
+      ]
+    },
+    {
+      "id": "footage_hash",
+      "term": "Footage hash",
+      "category": "Evidence",
+      "definition": "A digital fingerprint (for example SHA-256) taken when footage is exported. A matching hash later shows the copy was not changed.",
+      "missions": [
+        "M007",
+        "X001"
+      ]
+    },
+    {
+      "id": "unattended_item",
+      "term": "Unattended item",
+      "category": "Security",
+      "definition": "A bag or package left with no owner in sight. Don't touch it: ask nearby people, check CCTV for who left it, keep people back and follow the suspicious item plan if it isn't explained.",
+      "missions": [
+        "M006"
+      ]
+    },
+    {
+      "id": "rekey",
+      "term": "Re-key",
+      "category": "Key control",
+      "definition": "Changing a lock, or its electronic code, so old keys and cards no longer work. The cost is doors x cost per door, plus labour, plus new keys (KcLpMath RekeyCost).",
+      "missions": [
+        "M011",
+        "M031"
+      ]
+    },
+    {
+      "id": "fire_alarm_investigation",
+      "term": "Alarm investigation",
+      "category": "Fire safety",
+      "definition": "Checking the panel, going to the zone with a radio, and confirming fire or a false alarm within the time the fire plan sets, while the building's evacuation rules apply.",
+      "missions": [
+        "M012"
+      ]
+    },
+    {
+      "id": "impairment",
+      "term": "Fire protection impairment",
+      "category": "Fire safety",
+      "definition": "Any time a sprinkler, alarm or other fire system is out of service. It needs a permit, a fire watch, notice to the insurer and the fire authority as required, and a restore check.",
+      "missions": [
+        "M013"
+      ]
+    },
+    {
+      "id": "fire_watch",
+      "term": "Fire watch",
+      "category": "Fire safety",
+      "definition": "A trained person patrolling an area with a working means to raise the alarm while its fire protection is impaired, on a set route and logged.",
+      "missions": [
+        "M013",
+        "M015"
+      ]
+    },
+    {
+      "id": "claim_reserve",
+      "term": "Claim reserve",
+      "category": "Claims",
+      "definition": "The money set aside for what a claim is still expected to cost: estimated medical, indemnity and expense, less what has already been paid (KcLpMath ClaimReserve).",
+      "missions": [
+        "M014",
+        "M030"
+      ]
+    },
+    {
+      "id": "incurred_loss",
+      "term": "Incurred loss",
+      "category": "Claims",
+      "definition": "What a claim has cost and is expected to cost in total: paid plus reserve (KcLpMath ClaimIncurred).",
+      "missions": [
+        "M027"
+      ]
+    },
+    {
+      "id": "hot_work_permit",
+      "term": "Hot work permit",
+      "category": "Fire safety",
+      "definition": "Written permission for welding, cutting or grinding, with checks before work, a fire watch during and after, and sign-off when the area is safe.",
+      "missions": [
+        "M015"
+      ]
+    },
+    {
+      "id": "workplace_investigation",
+      "term": "Workplace investigation",
+      "category": "Investigations",
+      "definition": "A fair, documented inquiry into a complaint: a neutral investigator, interviews of both sides and witnesses, evidence before conclusions, confidentiality and protection from retaliation.",
+      "missions": [
+        "M016",
+        "M026"
+      ]
+    },
+    {
+      "id": "shrink",
+      "term": "Shrink",
+      "category": "Audit",
+      "definition": "Stock lost without a sale: (expected - actual) / expected x 100 (KcLpMath ShrinkPercent). A rise is a question to investigate, not proof of theft.",
+      "missions": [
+        "M017"
+      ]
+    },
+    {
+      "id": "capa",
+      "term": "Corrective and preventive action (CAPA)",
+      "category": "Audit",
+      "definition": "The plan that follows an audit finding: fix the cause, not just the symptom, with an owner, a date and a check that it worked.",
+      "missions": [
+        "M018"
+      ]
+    },
+    {
+      "id": "fte",
+      "term": "Full-time equivalent (FTE)",
+      "category": "Staffing",
+      "definition": "Post hours per week divided by one person's contracted hours, adjusted for leave and training (KcLpMath FtesRequired).",
+      "missions": [
+        "M019"
+      ]
+    },
+    {
+      "id": "code_adam",
+      "term": "Missing child code",
+      "category": "Guest safety",
+      "definition": "An immediate, hotel-wide search plan for a missing child: describe, lock down exits, search to a pattern, call the police by the set time.",
+      "missions": [
+        "M020"
+      ]
+    },
+    {
+      "id": "scene_preservation",
+      "term": "Scene preservation",
+      "category": "Evidence",
+      "definition": "Keeping a scene as found: nothing touched or moved except to save life, access logged, the area secured until the police release it.",
+      "missions": [
+        "M021"
+      ]
+    },
+    {
+      "id": "occupant_load",
+      "term": "Occupant load",
+      "category": "Fire safety",
+      "definition": "The most people a room may hold, set by the fire authority from its exits and floor area. Exceeding it is a life-safety breach.",
+      "missions": [
+        "M022"
+      ]
+    },
+    {
+      "id": "emergency_lighting",
+      "term": "Emergency lighting",
+      "category": "Fire safety",
+      "definition": "Battery or generator lights that switch on when power fails, so people can find exits. Tested monthly and for full duration each year.",
+      "missions": [
+        "C001"
+      ]
+    },
+    {
+      "id": "loss_rate",
+      "term": "Loss rate per 1,000 room nights",
+      "category": "Metrics",
+      "definition": "Incidents or loss value divided by occupied room nights, times 1,000 (KcLpMath LossRatePer1000RoomNights). It lets hotels of different sizes be compared.",
+      "missions": [
+        "M023",
+        "X001"
+      ]
+    },
+    {
+      "id": "access_revocation",
+      "term": "Access revocation",
+      "category": "Access control",
+      "definition": "Cancelling every credential, account and code a person holds on the day they leave, and checking it worked.",
+      "missions": [
+        "M024"
+      ]
+    },
+    {
+      "id": "chargeback",
+      "term": "Chargeback",
+      "category": "Fraud",
+      "definition": "A card payment reversed by the card issuer after a dispute. A ring of chargebacks with shared details points to fraud, not unhappy guests.",
+      "missions": [
+        "M025"
+      ]
+    },
+    {
+      "id": "bomb_threat_checklist",
+      "term": "Bomb threat checklist",
+      "category": "Crisis",
+      "definition": "The form kept by every phone that takes calls: exact words, voice, background, time. It is filled in during the call and given to the police.",
+      "missions": [
+        "C002"
+      ]
+    },
+    {
+      "id": "non_disclosure",
+      "term": "Non-disclosure",
+      "category": "Insurance",
+      "definition": "Leaving a known fact or claim off an insurance proposal. It can let the insurer refuse cover when a claim comes.",
+      "missions": [
+        "M027"
+      ]
+    },
+    {
+      "id": "traceability",
+      "term": "Traceability",
+      "category": "Food safety",
+      "definition": "Being able to say where every food item came from and where it went, by batch and date, so a suspect product can be found and held.",
+      "missions": [
+        "M028"
+      ]
+    },
+    {
+      "id": "trafficking_indicators",
+      "term": "Trafficking indicators",
+      "category": "Guest safety",
+      "definition": "Signs that someone may be controlled by another person. Staff observe and report to the manager and the police; they never confront or investigate alone.",
+      "missions": [
+        "M029"
+      ]
+    },
+    {
+      "id": "fraudulent_claim",
+      "term": "Fraudulent claim",
+      "category": "Claims",
+      "definition": "A claim the evidence does not support. It is handled with facts and the insurer, never with accusations, and the claimant is treated fairly throughout.",
+      "missions": [
+        "M030"
+      ]
+    },
+    {
+      "id": "compartmentation",
+      "term": "Compartmentation",
+      "category": "Fire safety",
+      "definition": "Fire-resisting walls and doors that hold fire and smoke in one area. A wedged or opened fire door defeats it.",
+      "missions": [
+        "C003"
+      ]
+    },
+    {
+      "id": "annualised_loss",
+      "term": "Annualised loss",
+      "category": "Metrics",
+      "definition": "Expected events per year times the average cost per event (KcLpMath AnnualisedLoss). It is an average, never a worst case.",
+      "missions": [
+        "M031"
+      ]
+    },
+    {
+      "id": "privacy_impact",
+      "term": "Privacy impact assessment",
+      "category": "CCTV",
+      "definition": "A written check, before cameras are added, of what they will see, why, who can view it, how long it is kept, and how privacy is protected.",
+      "missions": [
+        "M032"
+      ]
+    },
+    {
+      "id": "holding_statement",
+      "term": "Holding statement",
+      "category": "Communications",
+      "definition": "A short, approved first statement in a crisis: what happened, care for those affected, what is being done. No speculation or blame.",
+      "missions": [
+        "M033",
+        "X001"
+      ]
+    },
+    {
+      "id": "retaliation",
+      "term": "Retaliation",
+      "category": "People",
+      "definition": "Any adverse treatment of someone because they reported a concern or took part in an investigation. Policy forbids it and it is investigated as misconduct.",
+      "missions": [
+        "M034"
+      ]
+    },
+    {
+      "id": "decision_points",
+      "term": "Decision points",
+      "category": "Crisis",
+      "definition": "Fixed times, set against an official forecast or plan, when a crisis team decides what happens next, so decisions aren't put off hoping for better news.",
+      "missions": [
+        "C004"
+      ]
+    },
+    {
+      "id": "candour",
+      "term": "Candour",
+      "category": "Communications",
+      "definition": "Telling those affected the facts early, openly and repeatedly, with an apology, while counsel shapes the wording, not whether the truth is told.",
+      "missions": [
+        "X001"
+      ]
+    },
+    {
+      "id": "system_cause",
+      "term": "System cause",
+      "category": "Investigations",
+      "definition": "A cause in the way work is set up (a missing control, an old process) rather than in one person. Post-incident reviews look for these before blaming anyone.",
+      "missions": [
+        "X001",
+        "M018"
+      ]
+    },
+    {
+      "id": "responsible_service",
+      "term": "Responsible service",
+      "category": "Guest safety",
+      "definition": "Refusing to serve someone who is intoxicated and looking after them: water, a seat, a safe way home, and a record of what was done.",
+      "missions": [
+        "M004"
+      ]
+    },
+    {
+      "id": "aed",
+      "term": "AED",
+      "category": "Medical",
+      "definition": "Automated external defibrillator. In a collapse: call for help and the AED at once, start CPR, and follow the machine's voice prompts until paramedics take over.",
+      "missions": [
+        "M005"
+      ]
     }
   ]
 }

@@ -1,7 +1,16 @@
 # Progress
 
-## Status: Phase 4 content and screens written (levels 8-10: M027-M034, crises C003-C004, capstone X001, endings, challenge modes); PC round 4 build pending
+## Status: Phases 1-4 built and packaged on the PC; core 44/44, UE 6/6; packaged play, resume, tour (0 gaps, 35 places) and ui pass at 1920x1080 High
 Last update: 2026-10-22
+
+- 2026-10-22 PC session round 4 (Remote Control, UE 5.8.4, MSVC). Built at 278c417. Nothing changed in C:\Downloads\Riskbound.
+  - Core tests (MSVC): `44 test cases, 0 failed, 0 failed checks`.
+  - `KeycardEditor` and `Keycard` Win64 Development: `Result: Succeeded` with no source changes; a non-unity `KeycardEditor` build (`-DisableUnity`) also `Result: Succeeded`, so the new challenge, classroom, leaderboard and ending code compiles file by file.
+  - `BuildVoices.py`: `KcVoice: 380 lines (108 spoken now), 26.8 minutes of speech`. `FetchCharacters.py`: done (Business_Female_01 for board_chair and Female_Adult_05 for family_varnham both exist; People.json unchanged; still `missing anim f_cell_phone_listen_01`). `KcImportCharacters: done` (exit 1 only from the known `m003_head_normal - wr.png`); `KcAudio: imported 408 sounds, 0 errors`. ImportAssets.py and GenerateTextures.py unchanged since round 2, not re-run.
+  - `RunUnrealTests.bat`: six `Keycard.*` tests `Success` (VoiceLookupIsSafe, SlicePromotesWithCeremony, StepsNeedThePlaceAndTheOrder, ClassroomSavesBesideTheCareer, ShippedContentLoads, RoundTripAfterPromotion), exit 0.
+  - Self-test additions: tour view `Stair A, floor 2`; ui steps Challenges, Classroom, Leaderboard (before the HUD step).
+  - `BuildWindows.bat Development`: `BUILD SUCCESSFUL`. Packaged at 1920x1080 High: play `PASS` (`content: 39 missions, 40 cards, 0 problems`; M001-M011 at 100), resume `PASS`, ui exit 0 (24 screens incl. main menu, Challenges, Classroom, Leaderboard), tour `PASS` with `work_point_gaps=0` over 35 places (floors 1 and 4 closed the M016-M019 gaps), `average_frame_ms=16.95 average_fps=59.0` (60 cap); LP office 37.7 fps (first stop, warm-up); ballroom 60.2, executive offices 59.9, boardroom 60.6, Stair A floor 2 60.2; highest GPU time (final run) Housekeeping key cabinet 22.86 ms, Bell stand and luggage room 18.75 ms, Main kitchen (cook line and canopy) 18.50 ms.
+  - Shots looked at: ballroom chairs of neighbouring rounds met back to back (chairs at 125 cm on rounds 310 cm apart) and the centrepieces were pink spheres - chairs now at 115 cm, centrepieces `potted_plant_04` (sphere fallback kept); executive offices, HR, finance and boardroom ceilings glowed white over dark rooms (`MI_CeilingSoft`) - now `MI_CeilingDim`, a downlight reflection streak remains on them. Stair A floor 2 sign, fire command panel, kitchen, floor 1 foyer: nothing floating, black or clipping (kitchen floor still reads as dark patterned carpet). UI: main menu, Challenges, Classroom picker and Leaderboard readable, no clipping. Re-packaged and re-run after the fixes: play, resume, tour `PASS`, `work_point_gaps=0`, `average_fps=59.0`.
 
 - 2026-10-22 Phase 4 (levels 8-10), cloud session (UE parts after 7ee1f84 not compiled here).
   - Missions M027-M034 (insurer renewal, food illness, trafficking awareness, a claim the evidence doesn't support, lock business case, CCTV and privacy, viral video, retaliation risk), crises C003 (fire on a guest floor) and C004 (hurricane at the Cliffside Resort), and the capstone X001 One Night, Three Hotels: one intruder with cards from the stolen blank stock enters rooms at three hotels and assaults a guest; people first, evidence held group-wide, one timeline, candour with the family, no blame before the review, the whole story to the board (LossRatePer1000RoomNights 118 / 2,140,000 = 0.055). 47 Field Manual cards.
@@ -102,4 +111,4 @@ Last update: 2026-10-22
   - Pushed to github.com/mutima89/keycard `main` (repo created by the owner); core tests re-run after the rebase onto the owner's initial commit: `27 test cases, 0 failed, 0 failed checks`.
 
 ### Next action
-PC round 4: compile and tour the new floors 1 and 4 (should close the M016-M019 gaps) and Phase 4; kitchen floor finish; hands-on playtest; LP office wall-top dark band.
+Kitchen floor finish; glossy downlight streaks on the dim ceilings; hands-on playtest; LP office wall-top dark band.

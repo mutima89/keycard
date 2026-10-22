@@ -346,6 +346,7 @@ void AKcHotel::GetTourViewpoints(TArray<FString>& OutNames, TArray<FTransform>& 
 	Add(TEXT("General Manager's office"), 4, FVector2D(400.0f, -230.0f), FVector(400.0f, -900.0f, 100.0f));
 	Add(TEXT("Boardroom"), 4, FVector2D(850.0f, -250.0f), FVector(2000.0f, -700.0f, 100.0f));
 	Add(TEXT("Stair A, floor 14 (sprinkler valve)"), 14, FVector2D(2220.0f, -200.0f), FVector(2134.0f, -400.0f, 120.0f));
+	Add(TEXT("Stair A, floor 2"), 2, FVector2D(2185.0f, -220.0f), FVector(2120.0f, -320.0f, 190.0f));
 	Add(TEXT("Stair A, floor 7"), 7, FVector2D(2185.0f, -220.0f), FVector(2120.0f, -320.0f, 190.0f));
 }
 
@@ -2245,12 +2246,15 @@ void AKcHotel::BuildBallroomFloor()
 	for (const FRound& R : Rounds)
 	{
 		AddInstance(Cylinder, FVector(R.X, R.Y, Zf(F, 37.0f)), 0.0f, FVector(1.8f, 1.8f, 0.74f), Mat(TEXT("MI_Linen")), true);
-		AddInstance(Sphere, FVector(R.X, R.Y, Zf(F, 86.0f)), 0.0f, FVector(0.24f, 0.24f, 0.2f), Mat(TEXT("MI_Blossom")), false);
+		if (!AddInstance(Model(TEXT("potted_plant_04")), FVector(R.X, R.Y, Zf(F, 74.0f)), R.X + R.Y, FVector(1.0f)))
+		{
+			AddInstance(Sphere, FVector(R.X, R.Y, Zf(F, 86.0f)), 0.0f, FVector(0.24f, 0.24f, 0.2f), Mat(TEXT("MI_Blossom")), false);
+		}
 		for (int32 k = 0; k < 8; ++k)
 		{
 			const float A = k * 45.0f;
 			const FVector Dir = FRotator(0.0f, A, 0.0f).Vector();
-			Chair(FVector(R.X, R.Y, Zf(F, 0.0f)) + Dir * 125.0f, A + 180.0f, TEXT("dining_chair_02"));
+			Chair(FVector(R.X, R.Y, Zf(F, 0.0f)) + Dir * 115.0f, A + 180.0f, TEXT("dining_chair_02")); // at 125 the backs of neighbouring rounds met
 		}
 	}
 	// The portable bar by the doors (the bartenders draw from the store and return to it, M017).
@@ -2380,7 +2384,7 @@ void AKcHotel::BuildExecutiveFloor()
 	// Executive offices (north-west): reception and open plan, a passage to finance and HR.
 	const float PassY = 330.0f, Y1 = HalfY - 15.0f;
 	FloorFinish(F, FBox2D(FVector2D(15.0f, CorrY + Wall * 0.5f), FVector2D(CoreX0, Y1)), Carpet);
-	Ceiling(F, FBox2D(FVector2D(0.0f, CorrY), FVector2D(CoreX0, HalfY)), Ceil, Mat(TEXT("MI_CeilingSoft")));
+	Ceiling(F, FBox2D(FVector2D(0.0f, CorrY), FVector2D(CoreX0, HalfY)), Ceil, Mat(TEXT("MI_CeilingDim")));
 	AddBox(FVector(CoreX0 - 0.5f, (CorrY + Y1) * 0.5f, Zf(F, Ceil * 0.5f)), FVector(1.0f, Y1 - CorrY, Ceil), Paint, 0.0f, false);
 	WallX(F, PassY, 15.0f, 1300.0f, {FVector2D(350.0f, 90.0f), FVector2D(1000.0f, 90.0f)}, Paint, Ceil);
 	WallY(F, 700.0f, PassY + Wall * 0.5f, Y1, {}, Paint, Ceil);
@@ -2427,7 +2431,7 @@ void AKcHotel::BuildExecutiveFloor()
 	// The GM's office (south-west) and the boardroom.
 	const float SY0 = -HalfY + 15.0f;
 	FloorFinish(F, FBox2D(FVector2D(15.0f, SY0), FVector2D(CoreX0, -CorrY - Wall * 0.5f)), Carpet);
-	Ceiling(F, FBox2D(FVector2D(0.0f, -HalfY), FVector2D(CoreX0, -CorrY)), Ceil, Mat(TEXT("MI_CeilingSoft")));
+	Ceiling(F, FBox2D(FVector2D(0.0f, -HalfY), FVector2D(CoreX0, -CorrY)), Ceil, Mat(TEXT("MI_CeilingDim")));
 	AddBox(FVector(CoreX0 - 0.5f, (SY0 - CorrY) * 0.5f, Zf(F, Ceil * 0.5f)), FVector(1.0f, -CorrY - SY0, Ceil), Paint, 0.0f, false);
 	WallY(F, 800.0f, SY0, -CorrY - Wall * 0.5f, {}, Paint, Ceil);
 	Desk(FVector(400.0f, -760.0f, Zf(F, 0.0f)), 0.0f, FVector(200.0f, 90.0f, DeskH), Mat(TEXT("MI_WoodWalnut")));

@@ -1,0 +1,985 @@
+#include "KcScreens.h"
+#include <algorithm>
+#include "Engine/GameViewportClient.h"
+#include "Widgets/SWindow.h"
+
+#include "HAL/PlatformProcess.h"
+#include "KcCredits.h"
+#include "KcCampaignSubsystem.h"
+#include "KcAiColleaguesSubsystem.h"
+#include "Widgets/Input/SEditableTextBox.h"
+#include "KcConvert.h"
+#include "Misc/DateTime.h"
+#include "KcGameSubsystem.h"
+#include "KcHUD.h"
+#include "KcSaveSubsystem.h"
+#include "Brushes/SlateColorBrush.h"
+#include "Brushes/SlateRoundedBoxBrush.h"
+#include "Styling/AppStyle.h"
+#include "Styling/CoreStyle.h"
+#include "Widgets/Input/SButton.h"
+#include "Widgets/Input/SCheckBox.h"
+#include "Widgets/Input/SSlider.h"
+#include "Widgets/Layout/SBorder.h"
+#include "Widgets/Layout/SBox.h"
+#include "Widgets/Layout/SScrollBox.h"
+#include "Widgets/SBoxPanel.h"
+#include "Widgets/Text/STextBlock.h"
+
+#define LOCTEXT_NAMESPACE "Keycard"
+
+using namespace KcUI;
+
+namespace
+{
+TSharedRef<SVerticalBox> Column() { return SNew(SVerticalBox); }
+
+void AddRow(const TSharedRef<SVerticalBox>& Box, TSharedRef<SWidget> W, float Bottom = 10.0f)
+{
+	Box->AddSlot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, Bottom)[W];
+}
+
+void AddBullets(const TSharedRef<SVerticalBox>& Box, const FText& Heading, const TArray<FString>& Items)
+{
+	if (Items.IsEmpty()) return;
+	AddRow(Box, MakeHeading(Heading, 16), 4.0f);
+	for (const FString& Item : Items)
+	{
+		AddRow(Box, MakeBody(FText::FromString(TEXT("-  ") + Item), 14), 3.0f);
+	}
+	Box->AddSlot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, 8.0f)[SNew(SBox)];
+}
+
+// Wrapped at a fixed width: rows far down a scrolled journal wrap correctly before they are first painted.
+TSharedRef<SWidget> WrappedLine(const FString& Text, int32 Size, const FLinearColor& Color)
+{
+	return SNew(STextBlock).Text(FText::FromString(Text)).Font(FontW(Size, EWeight::Regular)).ColorAndOpacity(Color).WrapTextAt(720.0f).LineHeightPercentage(1.15f);
+}
+
+FOnClicked Click(TFunction<void()> Fn)
+{
+	return FOnClicked::CreateLambda([Fn]() { Fn(); return FReply::Handled(); });
+}
+
+TSharedRef<SWidget> Scrolling(TSharedRef<SWidget> Content)
+{
+	return SNew(SScrollBox) + SScrollBox::Slot()[Content];
+}
+
+FText Percent(double Ratio)
+{
+	FNumberFormattingOptions O;
+	O.MaximumFractionalDigits = 0;
+	return FText::AsPercent(Ratio, &O);
+}
+
+FText Ratio2(double Value)
+{
+	FNumberFormattingOptions O;
+	O.MinimumFractionalDigits = 2;
+	O.MaximumFractionalDigits = 2;
+	return FText::AsNumber(Value, &O);
+}
+
+TSharedRef<SWidget> TableRow(const FText& A, const FText& B, const FText& C, bool bHeader = false)
+{
+	const int32 Size = 14;
+	return SNew(SHorizontalBox)
+		+ SHorizontalBox::Slot().FillWidth(1.2f)[SNew(STextBlock).Text(A).Font(Font(Size, bHeader)).ColorAndOpacity(bHeader ? TextMuted : TextPrimary)]
+		+ SHorizontalBox::Slot().FillWidth(1.0f)[SNew(STextBlock).Text(B).Font(Font(Size, bHeader)).ColorAndOpacity(bHeader ? TextMuted : TextPrimary).AutoWrapText(true)]
+		+ SHorizontalBox::Slot().FillWidth(1.0f)[SNew(STextBlock).Text(C).Font(Font(Size, bHeader)).ColorAndOpacity(bHeader ? TextMuted : TextPrimary).AutoWrapText(true)];
+}
+
+const FSliderStyle& SliderStyle()
+{
+	static FSliderStyle Style = []
+	{
+		FSliderStyle S = FCoreStyle::Get().GetWidgetStyle<FSliderStyle>("Slider");
+		const FSlateColorBrush Bar(FLinearColor(1.0f, 1.0f, 1.0f, 0.22f));
+		const FSlateRoundedBoxBrush Handle(Accent, 7.0f, FVector2f(14.0f, 14.0f));
+		S.SetNormalBarImage(Bar).SetHoveredBarImage(Bar).SetDisabledBarImage(Bar);
+		S.SetNormalThumbImage(Handle).SetHoveredThumbImage(Handle).SetDisabledThumbImage(Handle);
+		S.SetBarThickness(3.0f);
+		return S;
+	}();
+	return Style;
+}
+
+TSharedRef<SWidget> SettingSlider(const FText& Label, float Min, float Max, float Step, TFunction<float()> Get, TFunction<void(float)> Set)
+{
+	return SNew(SHorizontalBox)
+		+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center)
+		[
+			SNew(SBox).WidthOverride(220.0f)[MakeBody(Label, 15)]
+		]
+		+ SHorizontalBox::Slot().FillWidth(1.0f).VAlign(VAlign_Center)
+		[
+			SNew(SSlider)
+			.MinValue(Min)
+			.MaxValue(Max)
+			.StepSize(Step)
+			.IsFocusable(true)
+			.Style(&SliderStyle())
+			.Value_Lambda([Get]() { return Get(); })
+			.OnValueChanged_Lambda([Set](float V) { Set(V); })
+		]
+		+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(12.0f, 0.0f, 0.0f, 0.0f)
+		[
+			SNew(SBox).WidthOverride(60.0f)
+			[
+				SNew(STextBlock).Font(Font(15)).ColorAndOpacity(TextPrimary).Text_Lambda([Get]() { return Ratio2(Get()); })
+			]
+		];
+}
+
+TSharedRef<SWidget> SettingToggle(const FText& Label, TFunction<bool()> Get, TFunction<void(bool)> Set)
+{
+	return SNew(SCheckBox)
+		.Style(&KcUI::CheckStyle())
+		.IsChecked_Lambda([Get]() { return Get() ? ECheckBoxState::Checked : ECheckBoxState::Unchecked; })
+		.OnCheckStateChanged_Lambda([Set](ECheckBoxState S) { Set(S == ECheckBoxState::Checked); })
+		[
+			MakeBody(Label, 15)
+		];
+}
+} // namespace
+
+namespace KcScreens
+{
+FKcScreenParts MainMenu(AKcHUD* Hud)
+{
+	TSharedPtr<SButton> First;
+	const bool bHasSave = Hud->Saves()->HasSave();
+	TSharedRef<SVerticalBox> Box = Column();
+	AddRow(Box, MakeEyebrow(LOCTEXT("Studio", "Valtren Coldline Logistics  /  Risk function")), Space2);
+	AddRow(Box, SNew(STextBlock).Text(LOCTEXT("GameTitle", "RISKBOUND")).Font(FontW(52, EWeight::Bold)).ColorAndOpacity(TextPrimary), 2.0f);
+	AddRow(Box, MakeBody(LOCTEXT("Tagline", "From graduate trainee to Chief Risk Officer, one real decision at a time."), 16, TextMuted), 24.0f);
+	AddRow(Box, MakeButton(LOCTEXT("NewGame", "New game"), Click([Hud]() { Hud->ShowDifficultyPicker(); }), &First, true, true), 8.0f);
+	AddRow(Box, MakeButton(LOCTEXT("Continue", "Continue"), Click([Hud]()
+	{
+		FString Message;
+		const EKcLoadOutcome Outcome = Hud->ContinueGame(Message);
+		if (Outcome != EKcLoadOutcome::Ok && Outcome != EKcLoadOutcome::RecoveredFromBackup)
+		{
+			Hud->ShowMainMenu(); // shows MenuMessage
+		}
+	}), nullptr, bHasSave), 8.0f);
+	AddRow(Box, MakeButton(LOCTEXT("ChallengesBtn", "Challenges and classroom"), Click([Hud]() { Hud->ShowChallenges(); })), 8.0f);
+	AddRow(Box, MakeButton(LOCTEXT("Settings", "Settings"), Click([Hud]() { Hud->OpenSettings([Hud]() { Hud->ShowMainMenu(); }); })), 8.0f);
+	AddRow(Box, MakeButton(LOCTEXT("MenuCredits", "Credits"), Click([Hud]() { Hud->OpenCredits([Hud]() { Hud->ShowMainMenu(); }); })), 8.0f);
+	AddRow(Box, MakeButton(LOCTEXT("Quit", "Quit"), Click([Hud]() { Hud->QuitToDesktop(); })), 16.0f);
+	if (!Hud->MenuMessage.IsEmpty())
+	{
+		AddRow(Box, MakeBody(Hud->MenuMessage, 14, Bad));
+	}
+	AddRow(Box, MakeBody(bHasSave ? LOCTEXT("SaveFound", "Saved game found.") : LOCTEXT("NoSave", "No saved game yet."), 12, TextMuted), 0.0f);
+	return {MakeModalFrame(Box, 620.0f), First};
+}
+
+FKcScreenParts DifficultyPicker(AKcHUD* Hud)
+{
+	struct FChoice
+	{
+		EKcDifficulty Difficulty;
+		FText Label;
+		FText Help;
+	};
+	const FChoice Choices[] = {
+		{EKcDifficulty::Analyst, LOCTEXT("Analyst", "Analyst"), LOCTEXT("AnalystHelp", "Hints on. Operational incidents are less likely.")},
+		{EKcDifficulty::Professional, LOCTEXT("Professional", "Professional"), LOCTEXT("ProfessionalHelp", "The baseline experience. Hints on, adjustable in settings.")},
+		{EKcDifficulty::Executive, LOCTEXT("Executive", "Executive"), LOCTEXT("ExecutiveHelp", "No hints by default. Incidents are more likely.")},
+	};
+	TSharedPtr<SButton> First;
+	TSharedRef<SVerticalBox> Box = Column();
+	AddRow(Box, MakeHeading(LOCTEXT("ChooseDifficulty", "Choose difficulty")), 4.0f);
+	AddRow(Box, MakeBody(LOCTEXT("DifficultyNote", "Difficulty changes how often things go wrong, never how your decisions are judged."), 14, TextMuted), 16.0f);
+	for (const FChoice& C : Choices)
+	{
+		const EKcDifficulty D = C.Difficulty;
+		TSharedPtr<SButton>* Out = First.IsValid() ? nullptr : &First;
+		AddRow(Box, MakeButton(C.Label, Click([Hud, D]() { Hud->ShowBackgroundPicker(D); }), Out), 2.0f);
+		AddRow(Box, MakeBody(C.Help, 13, TextMuted), 12.0f);
+	}
+	AddRow(Box, MakeButton(LOCTEXT("Back", "Back"), Click([Hud]() { Hud->ShowMainMenu(); })), 0.0f);
+	return {MakeModalFrame(Box, 620.0f), First};
+}
+
+FKcScreenParts BackgroundPicker(AKcHUD* Hud, EKcDifficulty Difficulty)
+{
+	TSharedPtr<SButton> First;
+	TSharedRef<SVerticalBox> Box = Column();
+	AddRow(Box, MakeEyebrow(LOCTEXT("BgEyebrow", "New career")), Space1);
+	AddRow(Box, MakeHeading(LOCTEXT("ChooseBackground", "Where do you come from?")), 4.0f);
+	AddRow(Box, MakeBody(LOCTEXT("BgNote", "Your background changes how people take to you at first and gives you a starting skill. It never changes how your work is judged."), 14, TextMuted), 16.0f);
+	const UKcCampaignSubsystem* Campaign = Hud->GetGameInstance()->GetSubsystem<UKcCampaignSubsystem>();
+	for (const FKcBackgroundView& B : Campaign ? Campaign->GetBackgrounds() : TArray<FKcBackgroundView>())
+	{
+		const FString Id = B.Id;
+		TSharedPtr<SButton>* Out = First.IsValid() ? nullptr : &First;
+		AddRow(Box, MakeButton(FText::FromString(B.Name), Click([Hud, Difficulty, Id]() { Hud->StartNewGame(Difficulty, Id); }), Out, true, Id == TEXT("graduate")), 2.0f);
+		const FString Help = B.StartingSkill.IsEmpty() ? B.Description : FString::Printf(TEXT("%s Starts with: %s."), *B.Description, *B.StartingSkill);
+		AddRow(Box, WrappedLine(Help, 13, TextMuted), 12.0f);
+	}
+	AddRow(Box, MakeButton(LOCTEXT("BgBack", "Back"), Click([Hud]() { Hud->ShowDifficultyPicker(); })), 0.0f);
+	return {MakeModalFrame(Box, 760.0f), First};
+}
+
+FKcScreenParts Skills(AKcHUD* Hud, TFunction<void()> OnBack)
+{
+	TSharedPtr<SButton> Back;
+	UKcCampaignSubsystem* Campaign = Hud->GetGameInstance()->GetSubsystem<UKcCampaignSubsystem>();
+	TSharedRef<SVerticalBox> Box = Column();
+	AddRow(Box, MakeEyebrow(LOCTEXT("SkillsEyebrow", "Journal  /  Skills")), Space1);
+	AddRow(Box, MakeHeading(FText::Format(LOCTEXT("SkillsTitle", "Skills  ({0} point(s) to spend)"), Campaign ? Campaign->GetSkillPoints() : 0)), 4.0f);
+	AddRow(Box, MakeBody(LOCTEXT("SkillsNote", "Points come with promotions and every four missions you pass. Skills change how the office and your workload treat you and open new replies; they never change a score or a promotion."), 13, TextMuted), Space4);
+	FString Branch;
+	for (const FKcSkillView& S : Campaign ? Campaign->GetSkills() : TArray<FKcSkillView>())
+	{
+		if (S.Branch != Branch)
+		{
+			Branch = S.Branch;
+			AddRow(Box, MakeHeading(FText::FromString(Branch), 16), 4.0f);
+		}
+		TSharedRef<SHorizontalBox> Row = SNew(SHorizontalBox);
+		Row->AddSlot().FillWidth(1.0f).VAlign(VAlign_Center)
+		[
+			SNew(SVerticalBox)
+			+ SVerticalBox::Slot().AutoHeight()[MakeBody(FText::FromString(S.Name + (S.bLearned ? TEXT("  (learned)") : TEXT(""))), 14, S.bLearned ? Good : TextPrimary)]
+			+ SVerticalBox::Slot().AutoHeight()[WrappedLine(S.Description + (S.RequiresName.IsEmpty() || S.bLearned ? FString() : TEXT(" Needs ") + S.RequiresName + TEXT(" first.")), 12, TextMuted)]
+		];
+		if (!S.bLearned)
+		{
+			const FString Id = S.Id;
+			Row->AddSlot().AutoWidth().VAlign(VAlign_Center).Padding(Space3, 0.0f, 0.0f, 0.0f)
+			[
+				MakeButton(LOCTEXT("Learn", "Learn"), Click([Hud, Id, OnBack]()
+				{
+					FString Error;
+					UKcCampaignSubsystem* C = Hud->GetGameInstance()->GetSubsystem<UKcCampaignSubsystem>();
+					if (C && !C->LearnSkill(Id, Error)) Hud->Notice(Error);
+					Hud->OpenSkills(OnBack);
+				}), nullptr, S.bCanLearn)
+			];
+		}
+		AddRow(Box, Row, Space2);
+	}
+	TSharedRef<SVerticalBox> Root = Column();
+	Root->AddSlot().FillHeight(1.0f)[Scrolling(Box)];
+	Root->AddSlot().AutoHeight().Padding(0.0f, Space3, 0.0f, 0.0f).HAlign(HAlign_Right)[MakeButton(LOCTEXT("SkillsBack", "Back"), Click(OnBack), &Back)];
+	return {MakeModalFrame(Root, 820.0f), Back};
+}
+
+FKcScreenParts Conversation(AKcHUD* Hud, const FKcConversationView& View, TFunction<void()> OnEnd)
+{
+	TSharedPtr<SButton> First;
+	TSharedRef<SVerticalBox> Box = Column();
+	AddRow(Box, MakeEyebrow(FText::FromString(View.Title)), Space1);
+	AddRow(Box, MakeHeading(FText::FromString(View.PersonRole.IsEmpty() ? View.PersonName : View.PersonName + TEXT(", ") + View.PersonRole), 18), Space3);
+	AddRow(Box, SNew(SBorder).BorderImage(CardBrush()).Padding(Space4)[WrappedLine(TEXT("\u201C") + View.Line + TEXT("\u201D"), 16, TextPrimary)], Space4);
+	for (const FKcDialogueResponseView& R : View.Responses)
+	{
+		const FString ConvId = View.Id, NodeId = View.NodeId, RespId = R.Id;
+		const FString Tag = R.SkillName.IsEmpty() ? FString::Printf(TEXT("[%s]  "), *R.Tone) : FString::Printf(TEXT("[%s, %s]  "), *R.Tone, *R.SkillName);
+		TSharedPtr<SButton>* Out = First.IsValid() ? nullptr : &First;
+		AddRow(Box, MakeButton(FText::FromString(Tag + R.Label), Click([Hud, ConvId, NodeId, RespId, OnEnd]()
+		{
+			UKcCampaignSubsystem* C = Hud->GetGameInstance()->GetSubsystem<UKcCampaignSubsystem>();
+			FString Error;
+			const FKcConversationView Next = C ? C->ChooseResponse(ConvId, NodeId, RespId, Error) : FKcConversationView();
+			if (!Error.IsEmpty()) Hud->Notice(Error);
+			Hud->PlayConversation(Next, OnEnd);
+		}), Out, true, !R.SkillName.IsEmpty()), Space2);
+	}
+	return {MakeConversationFrame(Box, 900.0f), First};
+}
+
+FKcScreenParts Approach(const FText& Speaker, const FText& Text, TFunction<void()> OnRead, TFunction<void()> OnLater)
+{
+	TSharedPtr<SButton> Read;
+	TSharedRef<SVerticalBox> Box = Column();
+	AddRow(Box, SNew(STextBlock).Text(Speaker).Font(Font(16, true)).ColorAndOpacity(Accent), 8.0f);
+	AddRow(Box, MakeBody(Text, 16), 16.0f);
+	Box->AddSlot().AutoHeight().HAlign(HAlign_Right)
+	[
+		SNew(SHorizontalBox)
+		+ SHorizontalBox::Slot().AutoWidth().Padding(0.0f, 0.0f, Space2, 0.0f)[MakeButton(LOCTEXT("ApproachLater", "Later"), Click(OnLater))]
+		+ SHorizontalBox::Slot().AutoWidth()[MakeButton(LOCTEXT("ApproachRead", "Read it now"), Click(OnRead), &Read, true, true)]
+	];
+	return {MakeConversationFrame(Box, 900.0f), Read};
+}
+
+TSharedRef<SWidget> CeremonyOverlay(const FString& Title, const FString& Subtitle)
+{
+	const FLinearColor Bar(0.0f, 0.0f, 0.0f, 0.92f);
+	return SNew(SBox).Visibility(EVisibility::HitTestInvisible)
+	[
+		SNew(SVerticalBox)
+		+ SVerticalBox::Slot().AutoHeight()[SNew(SBox).HeightOverride(110.0f)[SNew(SBorder).BorderImage(FCoreStyle::Get().GetBrush("WhiteBrush")).BorderBackgroundColor(Bar)]]
+		+ SVerticalBox::Slot().FillHeight(1.0f).VAlign(VAlign_Bottom).HAlign(HAlign_Center).Padding(0.0f, 0.0f, 0.0f, 40.0f)
+		[
+			SNew(SVerticalBox)
+			+ SVerticalBox::Slot().AutoHeight().HAlign(HAlign_Center)[SNew(STextBlock).Text(LOCTEXT("CeremonyEyebrow", "VALTREN COLDLINE LOGISTICS")).Font(FontW(13, EWeight::SemiBold)).ColorAndOpacity(Accent)]
+			+ SVerticalBox::Slot().AutoHeight().HAlign(HAlign_Center).Padding(0.0f, Space2)[SNew(STextBlock).Text(FText::FromString(Title)).Font(FontW(44, EWeight::SemiBold)).ColorAndOpacity(TextPrimary)]
+			+ SVerticalBox::Slot().AutoHeight().HAlign(HAlign_Center)[SNew(STextBlock).Text(FText::FromString(Subtitle)).Font(FontW(17, EWeight::Regular)).ColorAndOpacity(TextMuted)]
+		]
+		+ SVerticalBox::Slot().AutoHeight()[SNew(SBox).HeightOverride(110.0f)[SNew(SBorder).BorderImage(FCoreStyle::Get().GetBrush("WhiteBrush")).BorderBackgroundColor(Bar)]]
+	];
+}
+
+FKcScreenParts Challenges(AKcHUD* Hud)
+{
+	TSharedPtr<SButton> First;
+	UKcCampaignSubsystem* Campaign = Hud->GetGameInstance()->GetSubsystem<UKcCampaignSubsystem>();
+	TSharedRef<SVerticalBox> Box = Column();
+	AddRow(Box, MakeEyebrow(LOCTEXT("ChEyebrow", "Play differently")), Space1);
+	AddRow(Box, MakeHeading(LOCTEXT("ChTitle", "Challenges and classroom")), Space3);
+	AddRow(Box, MakeButton(LOCTEXT("Survival", "Survival: one crisis after another"), Click([Hud]() { Hud->StartChallenge(1); }), &First, true, true), 2.0f);
+	AddRow(Box, WrappedLine(TEXT("All twelve crises in a random order at full authority. Three failed crises, or burning out, ends the run. Score: crises handled."), 13, TextMuted), Space3);
+	AddRow(Box, MakeButton(FText::Format(LOCTEXT("Daily", "Daily cases ({0})"), FText::FromString(FDateTime::Now().ToString(TEXT("%Y-%m-%d")))), Click([Hud]() { Hud->StartChallenge(2); })), 2.0f);
+	AddRow(Box, WrappedLine(TEXT("Three cases chosen by today's date, the same for everyone today. One attempt each. Score: the total."), 13, TextMuted), Space3);
+	// Classroom: a trainer picks a case and up to four players take it in turn.
+	AddRow(Box, MakeHeading(LOCTEXT("Classroom", "Classroom (hot seat)"), 16), 4.0f);
+	AddRow(Box, WrappedLine(TEXT("Players take the same case in turn on identical games; at the end the results can be exported as a CSV for the trainer."), 13, TextMuted), Space2);
+	for (const TCHAR* CaseId : {TEXT("M031"), TEXT("M033"), TEXT("M036"), TEXT("C001")})
+	{
+		const FKcMissionView M = Campaign ? Campaign->GetMission(CaseId) : FKcMissionView();
+		if (!M.bFound) continue;
+		const FString Id = CaseId;
+		AddRow(Box, MakeButton(FText::FromString(FString::Printf(TEXT("Classroom: %s (4 players)"), *M.Title)), Click([Hud, Id]()
+		{
+			UKcCampaignSubsystem* C = Hud->GetGameInstance()->GetSubsystem<UKcCampaignSubsystem>();
+			if (!C) return;
+			C->StartClassroom({TEXT("Player 1"), TEXT("Player 2"), TEXT("Player 3"), TEXT("Player 4")}, Id);
+			Hud->CloseScreen();
+			Hud->OpenCaseFiles(Id);
+			Hud->Notice(TEXT("Classroom: Player 1, it is your turn."));
+		})), 4.0f);
+	}
+	const TArray<FString> Board = Campaign ? Campaign->LeaderboardLines() : TArray<FString>();
+	AddRow(Box, SNew(SBox).HeightOverride(8.0f));
+	AddRow(Box, MakeHeading(LOCTEXT("Leaderboard", "Your best results (this PC)"), 16), 4.0f);
+	if (Board.IsEmpty()) AddRow(Box, MakeBody(LOCTEXT("NoBoard", "Nothing yet."), 13, TextMuted), 2.0f);
+	for (int32 i = 0; i < FMath::Min(8, Board.Num()); ++i) AddRow(Box, WrappedLine(Board[i], 13, TextMuted), 1.0f);
+	if (Campaign && (Campaign->ModMissionCount() > 0 || !Campaign->ModErrors().IsEmpty()))
+	{
+		AddRow(Box, SNew(SBox).HeightOverride(8.0f));
+		AddRow(Box, WrappedLine(Campaign->ModErrors().IsEmpty() ? FString::Printf(TEXT("Mods: %d player-made cases loaded from Saved/Mods/Missions."), Campaign->ModMissionCount())
+			: FString::Printf(TEXT("Mods: not loaded, %d problem(s). First: %s"), Campaign->ModErrors().Num(), *Campaign->ModErrors()[0]), 13, Campaign->ModErrors().IsEmpty() ? Good : Warning), 2.0f);
+	}
+	AddRow(Box, SNew(SBox).HeightOverride(8.0f));
+	AddRow(Box, MakeButton(LOCTEXT("ChBack", "Back"), Click([Hud]() { Hud->ShowMainMenu(); })), 0.0f);
+	TSharedRef<SVerticalBox> Root = Column();
+	Root->AddSlot().FillHeight(1.0f)[Scrolling(Box)];
+	return {MakeModalFrame(Root, 760.0f), First};
+}
+
+FKcScreenParts ChallengeResults(AKcHUD* Hud)
+{
+	TSharedPtr<SButton> Done;
+	UKcCampaignSubsystem* Campaign = Hud->GetGameInstance()->GetSubsystem<UKcCampaignSubsystem>();
+	TSharedRef<SVerticalBox> Box = Column();
+	AddRow(Box, MakeHeading(LOCTEXT("ResultsTitle", "Results")), Space3);
+	if (Campaign && Campaign->IsClassroom())
+	{
+		AddRow(Box, MakeBody(LOCTEXT("ClassResults", "Classroom results"), 15, TextPrimary), Space2);
+		for (const FString& L : Campaign->ClassroomResults()) AddRow(Box, MakeBody(FText::FromString(L.Replace(TEXT(","), TEXT("   "))), 14, TextMuted), 2.0f);
+		AddRow(Box, MakeButton(LOCTEXT("ExportCsv", "Export results as CSV"), Click([Hud]()
+		{
+			UKcCampaignSubsystem* C = Hud->GetGameInstance()->GetSubsystem<UKcCampaignSubsystem>();
+			const FString Path = C ? C->ExportClassroomCsv() : FString();
+			Hud->Notice(Path.IsEmpty() ? FString(TEXT("Could not write the CSV.")) : TEXT("Saved: ") + Path);
+		})), Space2);
+	}
+	else if (Campaign)
+	{
+		const FString Status = Campaign->ChallengeStatus();
+		AddRow(Box, MakeBody(FText::FromString(Status), 16, TextPrimary), Space2);
+		const kc::ChallengeState& C = Hud->Game()->GetState().Challenge;
+		Campaign->RecordOnLeaderboard(KcConvert::ToFString(kc::ToString(C.Mode)), KcConvert::ToFString(C.Date), C.Points);
+		AddRow(Box, MakeBody(LOCTEXT("Recorded", "Recorded on this PC's leaderboard."), 13, TextMuted), Space2);
+	}
+	AddRow(Box, MakeButton(LOCTEXT("ResultsDone", "Back to the main menu"), Click([Hud]()
+	{
+		if (UKcCampaignSubsystem* C = Hud->GetGameInstance()->GetSubsystem<UKcCampaignSubsystem>()) C->EndClassroom();
+		Hud->CloseScreen();
+		Hud->ShowMainMenu();
+	}), &Done, true, true), 0.0f);
+	return {MakeModalFrame(Box, 700.0f), Done};
+}
+
+FKcScreenParts AiChat(AKcHUD* Hud, const FString& PersonId, const FString& Status)
+{
+	UKcAiColleaguesSubsystem* Ai = Hud->GetGameInstance()->GetSubsystem<UKcAiColleaguesSubsystem>();
+	UKcCampaignSubsystem* Campaign = Hud->GetGameInstance()->GetSubsystem<UKcCampaignSubsystem>();
+	const FString Name = Campaign ? Campaign->PersonName(KcConvert::ToStd(PersonId)) : PersonId;
+	TSharedRef<SVerticalBox> Box = Column();
+	AddRow(Box, MakeEyebrow(LOCTEXT("AiEyebrow", "AI colleague (online, your API key)")), Space1);
+	AddRow(Box, MakeHeading(FText::FromString(TEXT("Talk to ") + Name)), Space2);
+	AddRow(Box, WrappedLine(TEXT("Ask anything in your own words. Replies are generated by an AI model in character; colleagues will not hand you case answers."), 12, TextMuted), Space3);
+	for (const kc::AiTurn& T : Ai ? Ai->Transcript(PersonId) : TArray<kc::AiTurn>())
+	{
+		AddRow(Box, MakeBody(FText::FromString(T.bPlayer ? TEXT("You") : Name), 12, T.bPlayer ? TextMuted : Accent), 1.0f);
+		AddRow(Box, WrappedLine(KcConvert::ToFString(T.Text), 14, TextPrimary), Space2);
+	}
+	if (Ai && Ai->IsWaiting()) AddRow(Box, MakeBody(FText::FromString(Name + TEXT(" is thinking...")), 13, TextMuted), Space2);
+	if (!Status.IsEmpty()) AddRow(Box, WrappedLine(Status, 13, Warning), Space2);
+	TSharedPtr<SEditableTextBox> Input;
+	TSharedRef<SVerticalBox> Root = Column();
+	Root->AddSlot().FillHeight(1.0f)[Scrolling(Box)];
+	auto Send = [Hud, PersonId](const FString& Line)
+	{
+		UKcAiColleaguesSubsystem* A = Hud->GetGameInstance()->GetSubsystem<UKcAiColleaguesSubsystem>();
+		if (!A || Line.TrimStartAndEnd().IsEmpty()) return;
+		TWeakObjectPtr<AKcHUD> WeakHud(Hud);
+		A->Ask(PersonId, Line, [WeakHud, PersonId](const FString& Error) { if (WeakHud.IsValid()) WeakHud->OpenAiChat(PersonId, Error); });
+		Hud->OpenAiChat(PersonId);
+	};
+	Root->AddSlot().AutoHeight().Padding(0.0f, Space3, 0.0f, 0.0f)
+	[
+		SNew(SHorizontalBox)
+		+ SHorizontalBox::Slot().FillWidth(1.0f)
+		[
+			SAssignNew(Input, SEditableTextBox)
+			.HintText(LOCTEXT("AiHint", "Type a question and press Enter"))
+			.Font(FontW(15, EWeight::Regular))
+			.IsEnabled_Lambda([Hud]() { const UKcAiColleaguesSubsystem* A = Hud->GetGameInstance()->GetSubsystem<UKcAiColleaguesSubsystem>(); return A && A->IsReady() && !A->IsWaiting(); })
+			.OnTextCommitted_Lambda([Send](const FText& T, ETextCommit::Type How) { if (How == ETextCommit::OnEnter) Send(T.ToString()); })
+		]
+		+ SHorizontalBox::Slot().AutoWidth().Padding(Space2, 0.0f, 0.0f, 0.0f)
+		[
+			MakeButton(LOCTEXT("AiClose", "Close"), Click([Hud]() { Hud->CloseScreen(); Hud->OpenJournal(); }))
+		]
+	];
+	return {MakeModalFrame(Root, 820.0f), Input};
+}
+
+FKcScreenParts Glossary(AKcHUD* Hud, TFunction<void()> OnBack)
+{
+	TSharedPtr<SButton> Back;
+	UKcCampaignSubsystem* Campaign = Hud->GetGameInstance()->GetSubsystem<UKcCampaignSubsystem>();
+	TSharedRef<SVerticalBox> Box = Column();
+	AddRow(Box, MakeEyebrow(LOCTEXT("GlEyebrow", "Journal  /  Learn")), Space1);
+	AddRow(Box, MakeHeading(LOCTEXT("GlTitle", "Risk concepts")), 4.0f);
+	AddRow(Box, MakeBody(LOCTEXT("GlNote", "The ideas behind the cases, in plain words, with an example from Valtren."), 13, TextMuted), Space4);
+	std::vector<const kc::GlossaryTerm*> Sorted;
+	if (Campaign) for (const kc::GlossaryTerm& T : Campaign->GetGlossary()) Sorted.push_back(&T);
+	std::stable_sort(Sorted.begin(), Sorted.end(), [](const kc::GlossaryTerm* A, const kc::GlossaryTerm* B) { return A->Category < B->Category; });
+	std::string Category;
+	for (const kc::GlossaryTerm* T : Sorted)
+	{
+		if (T->Category != Category)
+		{
+			Category = T->Category;
+			AddRow(Box, MakeHeading(FText::FromString(KcConvert::ToFString(Category)), 16), 4.0f);
+		}
+		AddRow(Box, MakeBody(FText::FromString(KcConvert::ToFString(T->Term)), 14, Accent), 1.0f);
+		AddRow(Box, WrappedLine(KcConvert::ToFString(T->Definition), 13, TextPrimary), 1.0f);
+		if (!T->Example.empty()) AddRow(Box, WrappedLine(TEXT("At Valtren: ") + KcConvert::ToFString(T->Example), 12, TextMuted), Space3);
+	}
+	TSharedRef<SVerticalBox> Root = Column();
+	Root->AddSlot().FillHeight(1.0f)[Scrolling(Box)];
+	Root->AddSlot().AutoHeight().Padding(0.0f, Space3, 0.0f, 0.0f).HAlign(HAlign_Right)[MakeButton(LOCTEXT("GlBack", "Back"), Click(OnBack), &Back)];
+	return {MakeModalFrame(Root, 820.0f), Back};
+}
+
+FKcScreenParts Review(AKcHUD* Hud, bool bEnding, TFunction<void()> OnBack)
+{
+	TSharedPtr<SButton> Back;
+	UKcCampaignSubsystem* Campaign = Hud->GetGameInstance()->GetSubsystem<UKcCampaignSubsystem>();
+	TSharedRef<SVerticalBox> Box = Column();
+	if (!Campaign) return {MakeModalFrame(Box, 820.0f), Back};
+	const kc::PerformanceReview R = Campaign->GetReview();
+	const kc::EndingDef* E = bEnding ? Campaign->GetEnding() : nullptr;
+	AddRow(Box, MakeEyebrow(bEnding ? LOCTEXT("EndEyebrow", "Your career") : LOCTEXT("RvEyebrow", "Journal  /  Performance review")), Space1);
+	AddRow(Box, MakeHeading(FText::FromString(E ? KcConvert::ToFString(E->Title) : FString::Printf(TEXT("Performance review: %s"), *KcConvert::ToFString(R.Title)))), Space3);
+	if (E)
+	{
+		for (const FString& P : [&]() { TArray<FString> Parts; KcConvert::ToFString(E->Epilogue).ParseIntoArray(Parts, TEXT("\n\n")); return Parts; }())
+		{
+			AddRow(Box, WrappedLine(P, 15, TextPrimary), Space2);
+		}
+		AddRow(Box, SNew(SBox).HeightOverride(8.0f));
+	}
+	AddRow(Box, SNew(SBorder).BorderImage(CardBrush()).Padding(Space4)[WrappedLine(KcConvert::ToFString(R.Summary), 14, TextPrimary)], Space3);
+	if (!R.Strengths.empty()) AddRow(Box, WrappedLine(TEXT("Strengths: ") + KcConvert::ToFString([&]() { std::string J; for (const std::string& S : R.Strengths) J += (J.empty() ? "" : ", ") + S; return J; }()), 13, Good), 2.0f);
+	if (!R.Growth.empty()) AddRow(Box, WrappedLine(TEXT("To develop: ") + KcConvert::ToFString([&]() { std::string J; for (const std::string& S : R.Growth) J += (J.empty() ? "" : ", ") + S; return J; }()), 13, Warning), Space3);
+	AddRow(Box, MakeButton(LOCTEXT("ExportCert", "Export career certificate"), Click([Hud]()
+	{
+		UKcCampaignSubsystem* C = Hud->GetGameInstance()->GetSubsystem<UKcCampaignSubsystem>();
+		const FString Path = C ? C->ExportCertificate() : FString();
+		Hud->Notice(Path.IsEmpty() ? FString(TEXT("Could not write the certificate.")) : TEXT("Certificate saved: ") + Path);
+	})), Space2);
+	AddRow(Box, MakeButton(bEnding ? LOCTEXT("EndContinue", "Continue in the role") : LOCTEXT("RvBack", "Back"), Click(OnBack), &Back, true, true), 0.0f);
+	TSharedRef<SVerticalBox> Root = Column();
+	Root->AddSlot().FillHeight(1.0f)[Scrolling(Box)];
+	return {MakeModalFrame(Root, 820.0f), Back};
+}
+
+FKcScreenParts PauseMenu(AKcHUD* Hud)
+{
+	TSharedPtr<SButton> First;
+	TSharedRef<SVerticalBox> Box = Column();
+	AddRow(Box, MakeHeading(LOCTEXT("Paused", "Paused")), 16.0f);
+	AddRow(Box, MakeButton(LOCTEXT("Resume", "Resume"), Click([Hud]() { Hud->CloseScreen(); }), &First, true, true), 8.0f);
+	AddRow(Box, MakeButton(LOCTEXT("Save", "Save game"), Click([Hud]() { FString M; Hud->SaveNow(M); })), 8.0f);
+	AddRow(Box, MakeButton(LOCTEXT("Journal", "Journal"), Click([Hud]() { Hud->CloseScreen(); Hud->OpenJournal(); })), 8.0f);
+	AddRow(Box, MakeButton(LOCTEXT("PauseSettings", "Settings"), Click([Hud]() { Hud->OpenSettings([Hud]() { Hud->CloseScreen(); Hud->OpenPauseMenu(); }); })), 8.0f);
+	AddRow(Box, MakeButton(LOCTEXT("PauseCredits", "Credits"), Click([Hud]() { Hud->OpenCredits([Hud]() { Hud->CloseScreen(); Hud->OpenPauseMenu(); }); })), 8.0f);
+	AddRow(Box, MakeButton(LOCTEXT("QuitDesktop", "Quit to desktop"), Click([Hud]() { Hud->QuitToDesktop(); })), 12.0f);
+	AddRow(Box, MakeBody(LOCTEXT("PauseNote", "Progress autosaves after meeting your manager and after submitting. Unsaved investigation steps are lost on quit."), 12, TextMuted), 0.0f);
+	return {MakeModalFrame(Box, 520.0f), First};
+}
+
+FKcScreenParts Settings(AKcHUD* Hud, TFunction<void()> OnBack)
+{
+	TWeakObjectPtr<UKcGameSubsystem> Game(Hud->Game());
+	auto Get = [Game]() { return Game.IsValid() ? Game->GetSettings() : FKcSettingsView(); };
+	auto Update = [Game](TFunction<void(FKcSettingsView&)> Change, bool bWindowMode)
+	{
+		if (!Game.IsValid()) return;
+		FKcSettingsView S = Game->GetSettings();
+		Change(S);
+		Game->SetSettings(S, bWindowMode);
+	};
+
+	TSharedPtr<SButton> Back;
+	TSharedRef<SVerticalBox> Box = Column();
+	AddRow(Box, MakeHeading(LOCTEXT("SettingsTitle", "Settings")), 16.0f);
+	AddRow(Box, SettingSlider(LOCTEXT("Sensitivity", "Mouse sensitivity"), 0.1f, 5.0f, 0.1f,
+		[Get]() { return Get().MouseSensitivity; }, [Update](float V) { Update([V](FKcSettingsView& S) { S.MouseSensitivity = V; }, false); }));
+	AddRow(Box, SettingSlider(LOCTEXT("TextSize", "Text size"), 0.8f, 1.6f, 0.1f,
+		[Get]() { return Get().TextScale; }, [Update](float V) { Update([V](FKcSettingsView& S) { S.TextScale = V; }, false); }));
+	AddRow(Box, SettingSlider(LOCTEXT("Volume", "Master volume"), 0.0f, 1.0f, 0.05f,
+		[Get]() { return Get().MasterVolume; }, [Update](float V) { Update([V](FKcSettingsView& S) { S.MasterVolume = V; }, false); }));
+	{
+		// Graphics quality: engine scalability presets. Low switches off Lumen for slower GPUs.
+		TSharedRef<SHorizontalBox> Row = SNew(SHorizontalBox)
+			+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center)[SNew(SBox).WidthOverride(220.0f)[MakeBody(LOCTEXT("Quality", "Graphics quality"), 15)]];
+		const FText Names[] = {LOCTEXT("QLow", "Low"), LOCTEXT("QMedium", "Medium"), LOCTEXT("QHigh", "High"), LOCTEXT("QEpic", "Epic")};
+		for (int32 Q = 0; Q < 4; ++Q)
+		{
+			Row->AddSlot().AutoWidth().Padding(0.0f, 0.0f, Space4, 0.0f)
+			[
+				SNew(SCheckBox)
+				.Style(&KcUI::RadioStyle())
+				.IsChecked_Lambda([Get, Q]() { return Get().GraphicsQuality == Q ? ECheckBoxState::Checked : ECheckBoxState::Unchecked; })
+				.OnCheckStateChanged_Lambda([Update, Q](ECheckBoxState) { Update([Q](FKcSettingsView& S) { S.GraphicsQuality = Q; }, false); })
+				[
+					MakeBody(Names[Q], 14)
+				]
+			];
+		}
+		AddRow(Box, Row);
+	}
+	{
+		// Upscaling: TSR renders fewer pixels and reconstructs the image (more frames on slower GPUs).
+		TSharedRef<SHorizontalBox> Row = SNew(SHorizontalBox)
+			+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center)[SNew(SBox).WidthOverride(220.0f)[MakeBody(LOCTEXT("Upscaling", "Upscaling (TSR)"), 15)]];
+		const FText Names[] = {LOCTEXT("UNative", "Native"), LOCTEXT("UQuality", "Quality"), LOCTEXT("UBalanced", "Balanced"), LOCTEXT("UPerf", "Performance")};
+		for (int32 Q = 0; Q < 4; ++Q)
+		{
+			Row->AddSlot().AutoWidth().Padding(0.0f, 0.0f, Space4, 0.0f)
+			[
+				SNew(SCheckBox).Style(&KcUI::RadioStyle())
+				.IsChecked_Lambda([Get, Q]() { return Get().Upscaling == Q ? ECheckBoxState::Checked : ECheckBoxState::Unchecked; })
+				.OnCheckStateChanged_Lambda([Update, Q](ECheckBoxState) { Update([Q](FKcSettingsView& S) { S.Upscaling = Q; }, false); })
+				[MakeBody(Names[Q], 14)]
+			];
+		}
+		AddRow(Box, Row);
+	}
+	{
+		TSharedRef<SHorizontalBox> Row = SNew(SHorizontalBox)
+			+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center)[SNew(SBox).WidthOverride(220.0f)[MakeBody(LOCTEXT("FrameCap", "Frame rate limit"), 15)]];
+		const int32 Caps[] = {30, 60, 120, 0};
+		const FText CapNames[] = {LOCTEXT("F30", "30"), LOCTEXT("F60", "60"), LOCTEXT("F120", "120"), LOCTEXT("FOff", "Unlimited")};
+		for (int32 i = 0; i < 4; ++i)
+		{
+			const int32 Cap = Caps[i];
+			Row->AddSlot().AutoWidth().Padding(0.0f, 0.0f, Space4, 0.0f)
+			[
+				SNew(SCheckBox).Style(&KcUI::RadioStyle())
+				.IsChecked_Lambda([Get, Cap]() { return Get().FrameCap == Cap ? ECheckBoxState::Checked : ECheckBoxState::Unchecked; })
+				.OnCheckStateChanged_Lambda([Update, Cap](ECheckBoxState) { Update([Cap](FKcSettingsView& S) { S.FrameCap = Cap; }, false); })
+				[MakeBody(CapNames[i], 14)]
+			];
+		}
+		AddRow(Box, Row);
+	}
+	AddRow(Box, SettingToggle(LOCTEXT("VSync", "Vertical sync"),
+		[Get]() { return Get().bVSync; }, [Update](bool B) { Update([B](FKcSettingsView& S) { S.bVSync = B; }, false); }));
+	AddRow(Box, SettingSlider(LOCTEXT("PadSensitivity", "Controller look sensitivity"), 0.1f, 5.0f, 0.1f,
+		[Get]() { return Get().GamepadSensitivity; }, [Update](float V) { Update([V](FKcSettingsView& S) { S.GamepadSensitivity = V; }, false); }));
+	AddRow(Box, SettingToggle(LOCTEXT("InvertY", "Invert look up and down"),
+		[Get]() { return Get().bInvertY; }, [Update](bool B) { Update([B](FKcSettingsView& S) { S.bInvertY = B; }, false); }));
+	AddRow(Box, SettingToggle(LOCTEXT("ColourSafe", "Colour-safe palette (blue and orange for good and bad)"),
+		[Get]() { return Get().bColourSafe; }, [Update](bool B) { Update([B](FKcSettingsView& S) { S.bColourSafe = B; }, false); }));
+	// Optional AI colleagues: off by default; the key stays on this PC (Saved/Config/KeycardAi.cfg).
+	AddRow(Box, SettingToggle(LOCTEXT("AiOn", "AI colleagues (online, uses your Anthropic API key; off keeps the game fully offline)"),
+		[Hud]() { const UKcAiColleaguesSubsystem* A = Hud->GetGameInstance()->GetSubsystem<UKcAiColleaguesSubsystem>(); return A && A->IsEnabled(); },
+		[Hud](bool B) { if (UKcAiColleaguesSubsystem* A = Hud->GetGameInstance()->GetSubsystem<UKcAiColleaguesSubsystem>()) A->SetEnabled(B); }));
+	{
+		const UKcAiColleaguesSubsystem* A = Hud->GetGameInstance()->GetSubsystem<UKcAiColleaguesSubsystem>();
+		AddRow(Box, SNew(SHorizontalBox)
+			+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center)[SNew(SBox).WidthOverride(220.0f)[MakeBody(FText::FromString(FString::Printf(TEXT("API key (%s)"), A ? *A->MaskedKey() : TEXT("none"))), 15)]]
+			+ SHorizontalBox::Slot().FillWidth(1.0f)
+			[
+				SNew(SEditableTextBox).IsPassword(true).HintText(LOCTEXT("AiKeyHint", "Paste your key and press Enter (empty + Enter removes it)"))
+				.OnTextCommitted_Lambda([Hud](const FText& T, ETextCommit::Type How)
+				{
+					if (How != ETextCommit::OnEnter) return;
+					if (UKcAiColleaguesSubsystem* K = Hud->GetGameInstance()->GetSubsystem<UKcAiColleaguesSubsystem>()) K->SetApiKey(T.ToString());
+					Hud->Notice(T.IsEmpty() ? FString(TEXT("API key removed.")) : FString(TEXT("API key saved on this PC.")));
+				})
+			]);
+	}
+	AddRow(Box, SettingToggle(LOCTEXT("ReducedMotion", "Reduced motion (no motion blur)"),
+		[Get]() { return Get().bReducedMotion; }, [Update](bool B) { Update([B](FKcSettingsView& S) { S.bReducedMotion = B; }, false); }));
+	AddRow(Box, SettingToggle(LOCTEXT("Hints", "Hints (evidence locations in briefing and journal)"),
+		[Get]() { return Get().bHints; }, [Update](bool B) { Update([B](FKcSettingsView& S) { S.bHints = B; }, false); }));
+	AddRow(Box, SettingToggle(LOCTEXT("Fullscreen", "Fullscreen (off = windowed)"),
+		// Shows the window as it is (a -windowed launch is windowed whatever the save says).
+		[Get]()
+		{
+			const TSharedPtr<SWindow> W = GEngine && GEngine->GameViewport ? GEngine->GameViewport->GetWindow() : nullptr;
+			return W.IsValid() ? W->GetWindowMode() != EWindowMode::Windowed : Get().bFullscreen;
+		},
+		[Update](bool B) { Update([B](FKcSettingsView& S) { S.bFullscreen = B; }, true); }));
+	AddRow(Box, MakeBody(LOCTEXT("SettingsNote", "Settings are stored with your save. Text size applies to screens opened after this one. Left/Right adjust a focused slider."), 12, TextMuted), 12.0f);
+	AddRow(Box, MakeButton(LOCTEXT("SettingsBack", "Back"), Click(OnBack), &Back), 0.0f);
+	return {MakeModalFrame(Box, 760.0f), Back};
+}
+
+FKcScreenParts Journal(AKcHUD* Hud)
+{
+	const UKcGameSubsystem* Game = Hud->Game();
+	const bool bHints = Game->GetSettings().bHints;
+	TSharedPtr<SButton> Close;
+	TSharedRef<SVerticalBox> Box = Column();
+	const FKcCareerView Career = Game->GetCareer();
+	AddRow(Box, MakeHeading(LOCTEXT("JournalTitle", "Journal")), 2.0f);
+	AddRow(Box, MakeBody(FText::Format(LOCTEXT("JournalCareer", "Level {0}: {1}"), Career.Level, FText::FromString(Career.Title)), 14, TextMuted), 12.0f);
+	if (const UKcCampaignSubsystem* Camp = Hud->GetGameInstance()->GetSubsystem<UKcCampaignSubsystem>())
+	{
+		if (!Camp->GetBackgroundName().IsEmpty() || Camp->GetSkillPoints() > 0)
+		{
+			AddRow(Box, MakeBody(FText::Format(LOCTEXT("JournalBackground", "Background: {0}.  Skill points to spend: {1}."), FText::FromString(Camp->GetBackgroundName().IsEmpty() ? TEXT("not recorded") : Camp->GetBackgroundName()),
+				Camp->GetSkillPoints()), 13, Camp->GetSkillPoints() > 0 ? Accent : TextMuted), 12.0f);
+		}
+	}
+	AddRow(Box, MakeHeading(LOCTEXT("Objectives", "Mission 001: The Unresolved Warning"), 16), 4.0f);
+	for (const FKcObjectiveView& O : Game->GetObjectives())
+	{
+		AddRow(Box, MakeBody(FText::FromString((O.bComplete ? TEXT("[x]  ") : TEXT("[  ]  ")) + O.Text), 14, O.bComplete ? TextMuted : TextPrimary), 2.0f);
+	}
+	AddRow(Box, SNew(SBox).HeightOverride(10.0f));
+	AddRow(Box, MakeHeading(LOCTEXT("Documents", "Documents"), 16), 4.0f);
+	for (const FKcEvidenceView& E : Game->GetEvidence())
+	{
+		FString Line = (E.bViewed ? TEXT("[read]  ") : TEXT("[unread]  ")) + E.Title;
+		if (E.bViewed || bHints) Line += TEXT("  -  ") + E.Location;
+		AddRow(Box, MakeBody(FText::FromString(Line), 14, E.bViewed ? TextMuted : TextPrimary), 2.0f);
+	}
+	AddRow(Box, SNew(SBox).HeightOverride(10.0f));
+	AddRow(Box, MakeHeading(LOCTEXT("JournalPromotion", "Next promotion"), 16), 4.0f);
+	const bool bTop = Career.UnmetPromotionGates.Num() == 1 && Career.UnmetPromotionGates[0].StartsWith(TEXT("Already at the top"));
+	AddRow(Box, MakeBody(Career.UnmetPromotionGates.IsEmpty() ? LOCTEXT("JournalNoGaps", "You meet every requirement for your level.")
+		: (bTop ? LOCTEXT("JournalTop", "You are at the top of the career ladder.") : FText::FromString(FString::Join(Career.UnmetPromotionGates, TEXT("\n")))), 14, TextMuted), 2.0f);
+	const TArray<FString> Unlocked = Game->GetAchievementTitles();
+	if (const UKcCampaignSubsystem* Campaign = Hud->GetGameInstance()->GetSubsystem<UKcCampaignSubsystem>())
+	{
+		const FKcWorldView W = Campaign->GetWorldView();
+		AddRow(Box, SNew(SBox).HeightOverride(10.0f));
+		AddRow(Box, MakeHeading(LOCTEXT("JournalWellbeing", "You"), 16), 4.0f);
+		const FString StressWord = W.Stress >= 70 ? TEXT("running on empty") : (W.Stress >= 45 ? TEXT("stretched") : TEXT("steady"));
+		AddRow(Box, MakeBody(FText::Format(LOCTEXT("JournalStress", "Stress {0} of 100 ({1}). Crises and overtime raise it; weeks pass and time at home bring it down. At 90 you are sent home for two weeks."),
+			W.Stress, FText::FromString(StressWord)), 14, W.Stress >= 70 ? Bad : TextMuted), 2.0f);
+		AddRow(Box, SNew(SBox).HeightOverride(10.0f));
+		AddRow(Box, MakeHeading(LOCTEXT("JournalPeople", "People"), 16), 4.0f);
+		for (const FKcPersonView& P : Campaign->GetPeople())
+		{
+			const FLinearColor C = P.Relation >= 20 ? Good : (P.Relation <= -20 ? Bad : TextMuted);
+			const UKcAiColleaguesSubsystem* Ai = Hud->GetGameInstance()->GetSubsystem<UKcAiColleaguesSubsystem>();
+			if (Ai && Ai->IsReady() && !P.bPersonal)
+			{
+				const FString Id = P.Id;
+				AddRow(Box, SNew(SHorizontalBox)
+					+ SHorizontalBox::Slot().FillWidth(1.0f).VAlign(VAlign_Center)[WrappedLine(FString::Printf(TEXT("%s, %s  -  %s"), *P.Name, *P.Role, *P.RelationLabel), 14, C)]
+					+ SHorizontalBox::Slot().AutoWidth()[MakeButton(LOCTEXT("AiTalk", "Talk"), Click([Hud, Id]() { Hud->CloseScreen(); Hud->OpenAiChat(Id); }))], 2.0f);
+			}
+			else
+			{
+				AddRow(Box, WrappedLine(FString::Printf(TEXT("%s, %s  -  %s"), *P.Name, *P.Role, *P.RelationLabel), 14, C), 2.0f);
+			}
+		}
+		const TArray<FKcClueView> Clues = Campaign->GetClues();
+		if (!Clues.IsEmpty())
+		{
+			AddRow(Box, SNew(SBox).HeightOverride(10.0f));
+			AddRow(Box, MakeHeading(FText::Format(LOCTEXT("JournalStory", "{0}: case board ({1} of {2})"), FText::FromString(W.StoryTitle), W.CluesFound, W.CluesTotal), 16), 4.0f);
+			for (const FKcClueView& Cl : Clues)
+			{
+				AddRow(Box, WrappedLine(Cl.Title, 14, TextPrimary), 1.0f);
+				AddRow(Box, WrappedLine(Cl.Summary, 13, TextMuted), 6.0f);
+			}
+		}
+		if (!W.News.IsEmpty())
+		{
+			AddRow(Box, SNew(SBox).HeightOverride(10.0f));
+			AddRow(Box, MakeHeading(LOCTEXT("JournalNews", "Headlines"), 16), 4.0f);
+			for (int32 i = 0; i < FMath::Min(6, W.News.Num()); ++i)
+			{
+				const FKcNewsView& N = W.News[i];
+				AddRow(Box, WrappedLine(FString::Printf(TEXT("Week %d: %s"), N.Week, *N.Text), 13, N.Tone < 0 ? Bad : (N.Tone > 0 ? Good : TextMuted)), 2.0f);
+			}
+		}
+	}
+	AddRow(Box, SNew(SBox).HeightOverride(10.0f));
+	AddRow(Box, MakeHeading(FText::Format(LOCTEXT("JournalAchievements", "Achievements ({0} of {1})"), Unlocked.Num(), Game->GetAchievementTotal()), 16), 4.0f);
+	AddRow(Box, MakeBody(Unlocked.IsEmpty() ? LOCTEXT("JournalNoAchievements", "None yet.") : FText::FromString(FString::Join(Unlocked, TEXT(", "))), 14, TextMuted), 2.0f);
+	TSharedRef<SVerticalBox> Root = Column();
+	Root->AddSlot().FillHeight(1.0f)[Scrolling(Box)];
+	Root->AddSlot().AutoHeight().Padding(0.0f, 12.0f, 0.0f, 0.0f).HAlign(HAlign_Right)
+	[
+		SNew(SHorizontalBox)
+		+ SHorizontalBox::Slot().AutoWidth().Padding(0.0f, 0.0f, Space2, 0.0f)
+		[
+			MakeButton(LOCTEXT("JournalSkills", "Skills"), Click([Hud]() { Hud->CloseScreen(); Hud->OpenSkills([Hud]() { Hud->CloseScreen(); Hud->OpenJournal(); }); }))
+		]
+		+ SHorizontalBox::Slot().AutoWidth().Padding(0.0f, 0.0f, Space2, 0.0f)
+		[
+			MakeButton(LOCTEXT("JournalLearn", "Learn"), Click([Hud]() { Hud->CloseScreen(); Hud->OpenGlossary([Hud]() { Hud->CloseScreen(); Hud->OpenJournal(); }); }))
+		]
+		+ SHorizontalBox::Slot().AutoWidth().Padding(0.0f, 0.0f, Space2, 0.0f)
+		[
+			MakeButton(LOCTEXT("JournalReview", "Review"), Click([Hud]() { Hud->CloseScreen(); Hud->OpenReview(false, [Hud]() { Hud->CloseScreen(); Hud->OpenJournal(); }); }))
+		]
+		+ SHorizontalBox::Slot().AutoWidth()
+		[
+			MakeButton(LOCTEXT("CloseJournal", "Close"), Click([Hud]() { Hud->CloseScreen(); }), &Close)
+		]
+	];
+	return {MakeModalFrame(Root, 820.0f), Close};
+}
+
+FKcScreenParts Credits(AKcHUD* Hud, TFunction<void()> OnBack)
+{
+	TSharedPtr<SButton> Back;
+	TSharedRef<SVerticalBox> Box = Column();
+	AddRow(Box, MakeEyebrow(LOCTEXT("CreditsEyebrow", "Keycard")), Space1);
+	AddRow(Box, MakeHeading(LOCTEXT("CreditsTitle", "Credits")), Space4);
+	for (const KcCredits::FSection& S : KcCredits::Sections())
+	{
+		AddRow(Box, MakeHeading(FText::FromString(S.Title), 17), Space1);
+		for (const FString& Line : S.Lines)
+		{
+			AddRow(Box, MakeBody(FText::FromString(Line), 14, S.Title == TEXT("Created by") ? TextPrimary : TextMuted), 2.0f);
+		}
+		if (S.Title == TEXT("Created by"))
+		{
+			// Links are shown as text; the browser opens only on this explicit button press.
+			AddRow(Box, MakeButton(LOCTEXT("OpenLinkedIn", "Open LinkedIn profile in browser"),
+				Click([]() { FPlatformProcess::LaunchURL(KcCredits::CreatorLinkedIn, nullptr, nullptr); })), Space2);
+		}
+		Box->AddSlot().AutoHeight().Padding(0.0f, 0.0f, 0.0f, Space3)[SNew(SBox)];
+	}
+	TSharedRef<SVerticalBox> Root = Column();
+	Root->AddSlot().FillHeight(1.0f)[Scrolling(Box)];
+	Root->AddSlot().AutoHeight().Padding(0.0f, Space3, 0.0f, 0.0f).HAlign(HAlign_Right)
+	[
+		MakeButton(LOCTEXT("CreditsBack", "Back"), Click(OnBack), &Back, true, true)
+	];
+	return {MakeModalFrame(Root, 900.0f), Back};
+}
+
+FKcScreenParts Workstation(AKcHUD* Hud)
+{
+	const UKcGameSubsystem* Game = Hud->Game();
+	const bool bSubmitted = Game->IsSubmitted();
+	auto Status = [Game](const TCHAR* Id) { return Game->GetEvidenceItem(Id).bViewed ? FString(TEXT("  (read)")) : FString(TEXT("  (new)")); };
+	auto BackHere = [Hud]() { Hud->OpenWorkstation(); };
+
+	TSharedPtr<SButton> First;
+	TSharedRef<SVerticalBox> Box = Column();
+	AddRow(Box, MakeHeading(FText::Format(LOCTEXT("WorkstationTitle", "Workstation: {0}"), FText::FromString(Game->GetCareer().Title.ToLower()))), 4.0f);
+	AddRow(Box, MakeBody(LOCTEXT("WorkstationHelp", "Inbox and the operational risk register. The assessment form for R-014 is filed from here."), 14, TextMuted), 16.0f);
+	AddRow(Box, MakeButton(FText::FromString(TEXT("Inbox: Incident report IR-2291") + Status(TEXT("incident_report"))),
+		Click([Hud, BackHere]() { Hud->OpenEvidence(TEXT("incident_report"), BackHere); }), &First), 8.0f);
+	AddRow(Box, MakeButton(FText::FromString(TEXT("Risk register: R-014 cold-store temperature excursion") + Status(TEXT("risk_register_R014"))),
+		Click([Hud, BackHere]() { Hud->OpenEvidence(TEXT("risk_register_R014"), BackHere); })), 8.0f);
+	AddRow(Box, MakeButton(bSubmitted ? LOCTEXT("FormDone", "Assessment form (submitted)") : LOCTEXT("FormOpen", "Assessment form: R-014"),
+		Click([Hud]() { Hud->OpenAssessment(); }), nullptr, !bSubmitted), 8.0f);
+	const UKcCampaignSubsystem* CampaignW = Hud->GetGameInstance()->GetSubsystem<UKcCampaignSubsystem>();
+	const bool bCases = Game->IsDebriefed() || (CampaignW && CampaignW->IsChallenge());
+	if (const UKcCampaignSubsystem* Campaign = Hud->GetGameInstance()->GetSubsystem<UKcCampaignSubsystem>())
+	{
+		const FKcWorldView W = Campaign->GetWorldView();
+		const FText Label = W.AwaitingReply > 0
+			? FText::Format(LOCTEXT("MailWithReplies", "Messages: {0} unread, {1} awaiting your reply"), W.Unread, W.AwaitingReply)
+			: FText::Format(LOCTEXT("Mail", "Messages: {0} unread"), W.Unread);
+		AddRow(Box, MakeButton(Label, Click([Hud]() { Hud->OpenInbox(); }), nullptr, true, W.AwaitingReply > 0), 8.0f);
+	}
+	AddRow(Box, MakeButton(bCases ? LOCTEXT("CaseFiles", "Case files: your assignments") : LOCTEXT("CaseFilesLocked", "Case files (after your Mission 001 debrief)"),
+		Click([Hud]() { Hud->OpenCaseFiles(); }), nullptr, bCases, bCases), 8.0f);
+	AddRow(Box, MakeButton(LOCTEXT("RiskTools", "Risk tools: register, KRIs, quantification, actions, report"),
+		Click([Hud]() { Hud->OpenToolHub(0); }), nullptr, true, !bCases), 8.0f);
+	AddRow(Box, MakeButton(LOCTEXT("LogOff", "Log off"), Click([Hud]() { Hud->CloseScreen(); })), 0.0f);
+	return {MakeModalFrame(Box, 720.0f), First};
+}
+
+FKcScreenParts Document(const FText& Title, const FText& Subtitle, const FText& Body, TFunction<void()> OnClose)
+{
+	TSharedPtr<SButton> Close;
+	TSharedRef<SVerticalBox> Box = Column();
+	AddRow(Box, MakeHeading(Title), 2.0f);
+	AddRow(Box, MakeBody(Subtitle, 13, TextMuted), 14.0f);
+	TSharedRef<SVerticalBox> Root = Column();
+	Root->AddSlot().AutoHeight()[Box];
+	Root->AddSlot().FillHeight(1.0f)
+	[
+		SNew(SBorder).BorderImage(CardBrush()).Padding(16.0f)[Scrolling(MakeBody(Body, 16))]
+	];
+	Root->AddSlot().AutoHeight().Padding(0.0f, 14.0f, 0.0f, 0.0f).HAlign(HAlign_Right)
+	[
+		MakeButton(LOCTEXT("CloseDoc", "Close"), Click(OnClose), &Close)
+	];
+	return {MakeModalFrame(Root, 820.0f), Close};
+}
+
+FKcScreenParts Dialogue(const FText& Speaker, const FText& Text, TFunction<void()> OnContinue)
+{
+	TSharedPtr<SButton> Continue;
+	TSharedRef<SVerticalBox> Box = Column();
+	AddRow(Box, SNew(STextBlock).Text(Speaker).Font(Font(16, true)).ColorAndOpacity(Accent), 8.0f);
+	AddRow(Box, MakeBody(Text, 16), 16.0f);
+	Box->AddSlot().AutoHeight().HAlign(HAlign_Right)[MakeButton(LOCTEXT("DialogueContinue", "Continue"), Click(OnContinue), &Continue, true, true)];
+	return {MakeConversationFrame(Box, 900.0f), Continue};
+}
+
+FKcScreenParts Debrief(const FKcDebriefView& D, const FKcCareerView& Career, const TArray<FString>& Achievements, TFunction<void()> OnClose)
+{
+	TSharedPtr<SButton> Close;
+	TSharedRef<SVerticalBox> Box = Column();
+	AddRow(Box, MakeHeading(LOCTEXT("DebriefTitle", "Debrief: Mission 001, The Unresolved Warning")), 6.0f);
+	if (!D.bAvailable)
+	{
+		AddRow(Box, MakeBody(LOCTEXT("NoDebrief", "Submit your assessment first."), 15));
+	}
+	else
+	{
+		// Summary card first: verdict, score, strongest area and the first thing to improve.
+		const FKcCriterionView* Best = nullptr;
+		for (const FKcCriterionView& C : D.Criteria)
+		{
+			if (!Best || C.Score * C.Weight > Best->Score * Best->Weight) Best = &C;
+		}
+		const FText Improve = D.Improvements.IsEmpty() ? LOCTEXT("NothingMajor", "Nothing major: keep the same evidence discipline.")
+			: FText::FromString(D.Improvements[0]);
+		AddRow(Box, SNew(SBorder).BorderImage(CardBrush()).Padding(Space4)
+			[
+				SNew(SHorizontalBox)
+				+ SHorizontalBox::Slot().AutoWidth().VAlign(VAlign_Center).Padding(0.0f, 0.0f, Space6, 0.0f)
+				[
+					SNew(SVerticalBox)
+					+ SVerticalBox::Slot().AutoHeight()[SNew(STextBlock).Text(D.bPassed ? LOCTEXT("Passed", "PASSED") : LOCTEXT("NotPassed", "NOT PASSED"))
+						.Font(FontW(14, EWeight::Bold)).ColorAndOpacity(D.bPassed ? Good : Bad)]
+					+ SVerticalBox::Slot().AutoHeight()[SNew(STextBlock).Text(FText::Format(LOCTEXT("ScoreBig", "{0}"), D.OverallScore))
+						.Font(FontW(44, EWeight::Bold)).ColorAndOpacity(TextPrimary)]
+					+ SVerticalBox::Slot().AutoHeight()[MakeBody(LOCTEXT("ScoreLabel", "decision quality / 100"), 12, TextMuted)]
+				]
+				+ SHorizontalBox::Slot().FillWidth(1.0f).VAlign(VAlign_Center)
+				[
+					SNew(SVerticalBox)
+					+ SVerticalBox::Slot().AutoHeight()[MakeEyebrow(LOCTEXT("Strongest", "Strongest"))]
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 2.0f, 0.0f, Space3)[MakeBody(Best ? FText::FromString(Best->Name) : FText::GetEmpty(), 15)]
+					+ SVerticalBox::Slot().AutoHeight()[MakeEyebrow(LOCTEXT("ImproveFirst", "Improve first"))]
+					+ SVerticalBox::Slot().AutoHeight().Padding(0.0f, 2.0f, 0.0f, 0.0f)[MakeBody(Improve, 14)]
+				]
+			], Space2);
+		AddRow(Box, MakeBody(LOCTEXT("QualityNote", "Decision quality is judged on the evidence you had, separately from how events turn out."), 13, TextMuted), 14.0f);
+
+		AddRow(Box, MakeHeading(LOCTEXT("Criteria", "How your assessment was judged"), 16), 6.0f);
+		for (const FKcCriterionView& C : D.Criteria)
+		{
+			AddRow(Box, SNew(SVerticalBox)
+				+ SVerticalBox::Slot().AutoHeight()
+				[
+					SNew(STextBlock)
+					.Text(FText::Format(LOCTEXT("CriterionFmt", "{0}  (weight {1}%):  {2}/100"), FText::FromString(C.Name), C.Weight, C.Score))
+					.Font(Font(14, true))
+					.ColorAndOpacity(C.Score >= 60 ? TextPrimary : Bad)
+				]
+				+ SVerticalBox::Slot().AutoHeight()[MakeBody(FText::FromString(C.Feedback), 13, TextMuted)], 6.0f);
+		}
+
+		AddRow(Box, MakeHeading(LOCTEXT("LossTitle", "Loss exposure before treatment"), 16), 4.0f);
+		AddRow(Box, MakeBody(FText::Format(LOCTEXT("ExpectedLoss", "Expected loss (probability-weighted average per year): {0}"), Money(D.BaselineExpectedLoss)), 14), 2.0f);
+		AddRow(Box, MakeBody(FText::Format(LOCTEXT("WorstCase", "Worst single scenario (not the expected loss): {0}"), Money(D.BaselineWorstCase)), 14), 12.0f);
+
+		AddRow(Box, MakeHeading(LOCTEXT("AppraisalTitle", "Treatment appraisal"), 16), 4.0f);
+		TSharedRef<SVerticalBox> Table = Column();
+		const FKcAppraisalView& A = D.Chosen;
+		const FKcAppraisalView& R = D.Recommended;
+		AddRow(Table, TableRow(LOCTEXT("Metric", "Metric"), FText::Format(LOCTEXT("YourChoice", "Your choice: {0}"), FText::FromString(A.TreatmentLabel)), FText::FromString(R.TreatmentLabel), true), 4.0f);
+		AddRow(Table, TableRow(LOCTEXT("Reduction", "Annual risk reduction"), Money(A.AnnualRiskReduction), Money(R.AnnualRiskReduction)), 2.0f);
+		AddRow(Table, TableRow(LOCTEXT("PvBenefit", "PV of benefit"), Money(A.PvBenefit), Money(R.PvBenefit)), 2.0f);
+		AddRow(Table, TableRow(LOCTEXT("PvCost", "PV of cost"), Money(A.PvCost), Money(R.PvCost)), 2.0f);
+		AddRow(Table, TableRow(LOCTEXT("Npv", "NPV"), Money(A.Npv), Money(R.Npv)), 2.0f);
+		AddRow(Table, TableRow(LOCTEXT("Roi", "ROI"), Percent(A.Roi), Percent(R.Roi)), 2.0f);
+		AddRow(Table, TableRow(LOCTEXT("Bcr", "Benefit-cost ratio"), Ratio2(A.BenefitCostRatio), Ratio2(R.BenefitCostRatio)), 2.0f);
+		AddRow(Table, TableRow(LOCTEXT("CostEffective", "Cost-effective (NPV > 0)"),
+			A.bCostEffective ? LOCTEXT("Yes", "Yes") : LOCTEXT("No", "No"), R.bCostEffective ? LOCTEXT("Yes", "Yes") : LOCTEXT("No", "No")), 14.0f);
+		AddRow(Box, SNew(SBorder).BorderImage(CardBrush()).Padding(FMargin(Space4, Space3))[Table], 14.0f);
+
+		AddBullets(Box, LOCTEXT("Assumptions", "Assumptions"), D.Assumptions);
+		AddBullets(Box, LOCTEXT("TradeOffs", "Trade-offs"), D.TradeOffs);
+		AddBullets(Box, LOCTEXT("Improvements", "What to improve"), D.Improvements);
+	}
+
+	AddRow(Box, MakeHeading(LOCTEXT("CareerTitle", "Career"), 16), 4.0f);
+	AddRow(Box, MakeBody(FText::Format(LOCTEXT("CareerLine", "Level {0}: {1}.  Passed missions: {2}.  XP {3} (feedback only; promotion needs competence evidence)."),
+		Career.Level, FText::FromString(Career.Title), FText::FromString(FString::Join(Career.PassedMissions, TEXT(", "))), Career.Xp), 14), 4.0f);
+	AddBullets(Box, LOCTEXT("Gates", "Before your next promotion"), Career.UnmetPromotionGates);
+	AddBullets(Box, LOCTEXT("Achievements", "Achievements"), Achievements);
+
+	TSharedRef<SVerticalBox> Root = Column();
+	Root->AddSlot().FillHeight(1.0f)[Scrolling(Box)];
+	Root->AddSlot().AutoHeight().Padding(0.0f, 12.0f, 0.0f, 0.0f).HAlign(HAlign_Right)
+	[
+		MakeButton(LOCTEXT("CloseDebrief", "Close"), Click(OnClose), &Close)
+	];
+	return {MakeModalFrame(Root, 1000.0f), Close};
+}
+
+FText BriefingText(bool bHints)
+{
+	FText Text = LOCTEXT("Briefing",
+		"Welcome to Valtren Coldline Logistics. Straight to it: Bay 3 at our Northgate cold store had another temperature excursion last night. "
+		"42,000 of client stock written off, and that is the third excursion in six months.\n\n"
+		"Our register still rates R-014 as Medium with Effective controls, and nobody has reviewed it in 14 months. "
+		"I want your independent assessment. Start with the incident report in your inbox and the R-014 entry, both on your workstation in the analyst workspace. "
+		"Then find out whether the controls actually work.\n\n"
+		"When you are ready, complete the assessment form on your workstation and come back here for a debrief.");
+	if (bHints)
+	{
+		Text = FText::Format(LOCTEXT("BriefingHints", "{0}\n\nHint: the alarm log is on the monitoring room terminal, the maintenance binder is in the meeting room, "
+			"and the manual temperature checks are on a clipboard in the training area. My filing cabinet has the insurance schedule; the client contract is in the boardroom."), Text);
+	}
+	return Text;
+}
+
+FText RegisterEntryText(const FKcRegisterEntryView& E)
+{
+	if (!E.bFound) return LOCTEXT("NoEntry", "Register entry not found.");
+	FString S = FString::Printf(TEXT("Current register record %s: %s\nCategory: %s    Owner: %s\nCause: %s\nEvent: %s\nConsequence: %s\n"),
+		*E.Id, *E.Title, *E.Category, *E.Owner, *E.Cause, *E.Event, *E.Consequence);
+	S += FString::Printf(TEXT("Inherent: L%d x I%d (%s)    Residual: L%d x I%d (%s)\nAppetite: %s    Treatment: %s    Status: %s\n"),
+		E.InherentLikelihood, E.InherentImpact, *E.InherentRating, E.ResidualLikelihood, E.ResidualImpact, *E.ResidualRating,
+		*E.Appetite, *E.Treatment, *E.Status);
+	if (!E.ActionOwner.IsEmpty()) S += FString::Printf(TEXT("Action owner: %s\n"), *E.ActionOwner);
+	if (!E.Controls.IsEmpty()) S += TEXT("Recorded controls: ") + FString::Join(E.Controls, TEXT("; "));
+	return FText::FromString(S);
+}
+} // namespace KcScreens
+
+#undef LOCTEXT_NAMESPACE

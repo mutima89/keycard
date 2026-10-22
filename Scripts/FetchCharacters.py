@@ -14,7 +14,10 @@ RAW2 = "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/master/"
 # The cast is Data/People.json: every avatar named there is fetched.
 _people = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "Data", "People.json"), encoding="utf-8"))["people"]
 _PROFESSIONS = ("Business_", "Construction_", "Fire_", "Police_", "Security_", "Medical_", "Chef_")
-AV = sorted({("Professions/" if c["avatar"].startswith(_PROFESSIONS) else "Adults/") + c["avatar"] for c in _people if c.get("avatar")})
+# Background staff and guests (KcCast.cpp "Extras"): avatars no named person uses.
+_EXTRAS = ["Male_Adult_01", "Female_Adult_01", "Male_Adult_02", "Female_Adult_03", "Male_Adult_03", "Female_Adult_05", "Male_Adult_04",
+           "Business_Male_01", "Business_Female_01"]
+AV = sorted({("Professions/" if a.startswith(_PROFESSIONS) else "Adults/") + a for a in [c["avatar"] for c in _people if c.get("avatar")] + _EXTRAS})
 AN = [p + n for p in ("m_", "f_") for n in (
     "idle_neutral_01", "idle_neutral_02", "idle_breathe_01", "idle_look_around_01", "documents_idle", "gestic_listen_neutral_01", "cell_phone_listen_01",
     # talking, listening and reactions (KcPerson)

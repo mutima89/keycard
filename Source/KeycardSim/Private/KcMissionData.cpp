@@ -106,6 +106,7 @@ void ReadAction(const JsonValue& V, const std::string& Where, ActionDef& A, std:
 	if (!Kind.empty() && !ActionKindFromName(Kind, A.Kind)) R.Error(V.Line, "unknown action kind \"" + Kind + "\"");
 	R.Str("at", A.At, true);
 	R.Str("person", A.Person, false);
+	R.Str("spot", A.Spot, false);
 	R.Int("minutes", A.Minutes, false);
 	R.Strings("requires", A.Requires);
 	R.Bool("required", A.bRequired);

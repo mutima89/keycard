@@ -208,6 +208,38 @@ const LocationDef* FindLocation(const std::string& Id)
 	return nullptr;
 }
 
+const std::vector<SpotDef>& KnownSpots()
+{
+	static const std::vector<SpotDef> S = {
+		{"lp_desk", "lp_office", "Your desk"},
+		{"lp_radio", "lp_office", "LP radio base"},
+		{"evidence_locker", "lp_office", "Evidence locker"},
+		{"report_terminal", "lp_office", "Incident report terminal"},
+		{"cctv_console", "cctv_room", "CCTV console"},
+		{"key_encoder", "front_desk", "Keycard encoder"},
+		{"desk_phone", "front_desk", "Front desk phone"},
+		{"lost_property", "front_desk", "Lost property safe"},
+		{"door_1406", "f14_corridor", "Door of 1406"},
+		{"door_1412", "f14_corridor", "Lock on 1412"},
+		{"door_1418", "f14_corridor", "Door of 1418"},
+		{"corridor_14", "f14_corridor", "Floor 14 corridor"},
+		{"room_1412_desk", "room_1412", "Desk in 1412"},
+		{"room_1412_safe", "room_1412", "Safe in 1412"},
+		{"room_1406_threshold", "guest_room", "Doorway of 1406"},
+		{"service_cart", "f14_service", "Housekeeping trolley"},
+	};
+	return S;
+}
+
+const SpotDef* FindSpot(const std::string& Id)
+{
+	for (const SpotDef& S : KnownSpots())
+	{
+		if (S.Id == Id) return &S;
+	}
+	return nullptr;
+}
+
 std::string LocationName(const std::string& Id)
 {
 	const LocationDef* L = FindLocation(Id);
@@ -524,6 +556,12 @@ std::vector<std::string> ValidateMission(const MissionDef& M)
 		if (!ValidId(A.Id) || !ActionIds.insert(A.Id).second) Err(AP + ": id missing or duplicated");
 		if (A.Label.empty()) Err(AP + ": missing label");
 		if (!FindLocation(A.At)) Err(AP + ": unknown location '" + A.At + "'");
+		if (!A.Spot.empty())
+		{
+			const SpotDef* Spot = FindSpot(A.Spot);
+			if (!Spot) Err(AP + ": unknown spot '" + A.Spot + "'");
+			else if (Spot->Location != A.At) Err(AP + ": spot '" + A.Spot + "' is not in " + A.At);
+		}
 		else Places.insert(A.At);
 		if (A.Minutes < 0 || A.Minutes > 240) Err(AP + ": minutes outside 0..240");
 		if (A.Finding.empty()) Err(AP + ": needs a finding");

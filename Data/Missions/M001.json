@@ -57,6 +57,7 @@
       "label": "Look over the room with the guest",
       "kind": "look",
       "at": "room_1412",
+      "spot": "room_1412_desk",
       "minutes": 4,
       "requires": [
         "interview_guest"
@@ -69,6 +70,7 @@
       "label": "Photograph the desk, door and safe",
       "kind": "photograph",
       "at": "room_1412",
+      "spot": "room_1412_safe",
       "minutes": 3,
       "requires": [
         "interview_guest"
@@ -83,6 +85,7 @@
       "label": "Interrogate the lock on 1412",
       "kind": "lockAudit",
       "at": "f14_corridor",
+      "spot": "door_1412",
       "minutes": 6,
       "findingTitle": "Kessly lock audit trail, room 1412",
       "finding": [
@@ -164,6 +167,7 @@
       "label": "Search the attendant's trolley and locker",
       "kind": "search",
       "at": "f14_service",
+      "spot": "service_cart",
       "minutes": 5,
       "findingTitle": "Trolley and locker search",
       "finding": "Nothing. No laptop, no bag. Marisol Duarte is in tears, and by morning the whole housekeeping department will know LP searched her without a word to her manager or HR.",
@@ -236,6 +240,7 @@
       "label": "Sign the laptop out of the safe",
       "kind": "bagEvidence",
       "at": "front_desk",
+      "spot": "lost_property",
       "minutes": 2,
       "requires": [
         "check_lost_property"
@@ -276,6 +281,7 @@
       "label": "Review corridor and Lobby Bar CCTV",
       "kind": "cctvReview",
       "at": "cctv_room",
+      "spot": "cctv_console",
       "minutes": 12,
       "findingTitle": "Ardwyn Vision review: cameras 14-03 and L-07",
       "finding": "The corridor camera shows the guest leaving 1412 at 22:03 with a black laptop bag and coming back at 23:44 without it. Nobody else goes near 1412. The bar camera shows him at table 6 with the bag beside him until 23:39, and a server carrying it to the front desk at 23:51.",
@@ -327,6 +333,7 @@
       "label": "Export the clips with a custody record",
       "kind": "exportFootage",
       "at": "cctv_room",
+      "spot": "cctv_console",
       "minutes": 10,
       "requires": [
         "cctv_review"
@@ -341,6 +348,7 @@
       "label": "Log the evidence in the LP locker",
       "kind": "logEvidence",
       "at": "lp_office",
+      "spot": "evidence_locker",
       "minutes": 4,
       "requires": [
         "export_footage"
@@ -355,6 +363,7 @@
       "label": "Radio the night manager with the facts",
       "kind": "call",
       "at": "lp_office",
+      "spot": "lp_radio",
       "person": "night_manager",
       "minutes": 3,
       "findingTitle": "Night manager briefed",

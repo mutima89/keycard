@@ -107,6 +107,17 @@ struct LocationDef
 KC_API const std::vector<LocationDef>& KnownLocations();
 KC_API const LocationDef* FindLocation(const std::string& Id);
 KC_API std::string LocationName(const std::string& Id); // "" if unknown
+// Named places inside a location where a piece of work is done (the CCTV console, the lock on 1412).
+// The hotel builds a prop for each; an action names one with "spot" (Docs/MissionData.md).
+struct SpotDef
+{
+	std::string Id;
+	std::string Location;
+	std::string Name;
+};
+
+KC_API const std::vector<SpotDef>& KnownSpots();
+KC_API const SpotDef* FindSpot(const std::string& Id);
 // Minutes to walk between two places: 0 in place, 2 on the same floor, 5 by lift or stairs.
 KC_API int TravelMinutes(const std::string& From, const std::string& To);
 // "02:41" for a clock minute (minutes after midnight, wraps past 24:00).
@@ -154,6 +165,7 @@ struct ActionDef
 	EActionKind Kind = EActionKind::Look;
 	std::string At;                    // location id where it is done
 	std::string Person;                // character met (interviews, calls), may be empty
+	std::string Spot;                  // where in the location it is done (KnownSpots), may be empty
 	int Minutes = 2;                   // clock time it takes
 	std::vector<std::string> Requires; // actions that must be done first
 	bool bRequired = false;            // must be done before the report can be filed

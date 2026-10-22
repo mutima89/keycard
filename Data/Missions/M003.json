@@ -27,6 +27,7 @@
       "label": "Radio Ines to meet you on 14",
       "kind": "call",
       "at": "lp_office",
+      "spot": "lp_radio",
       "person": "partner",
       "minutes": 1,
       "required": true,
@@ -74,6 +75,7 @@
       "label": "Count arrivals to 1406 on the floor 14 camera",
       "kind": "cctvReview",
       "at": "cctv_room",
+      "spot": "cctv_console",
       "minutes": 5,
       "findingTitle": "Floor 14 corridor camera",
       "finding": "Nine people have gone into 1406 since 23:40. None has come out. The room is booked for two.",
@@ -100,6 +102,7 @@
       "label": "Listen at the door of 1406",
       "kind": "look",
       "at": "f14_corridor",
+      "spot": "door_1406",
       "minutes": 2,
       "requires": [
         "radio_partner"
@@ -151,6 +154,7 @@
       "label": "Step into the room to turn the music off",
       "kind": "enter",
       "at": "guest_room",
+      "spot": "room_1406_threshold",
       "minutes": 2,
       "requires": [
         "knock_1406"
@@ -184,6 +188,7 @@
       "label": "Photograph the covered detector from the doorway",
       "kind": "photograph",
       "at": "guest_room",
+      "spot": "room_1406_threshold",
       "minutes": 1,
       "requires": [
         "knock_1406"
@@ -224,6 +229,7 @@
       "label": "Wait and recheck the corridor",
       "kind": "look",
       "at": "f14_corridor",
+      "spot": "corridor_14",
       "minutes": 15,
       "requires": [
         "follow_up_complainant"

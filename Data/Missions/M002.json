@@ -77,6 +77,7 @@
       "label": "Read his keycard on the encoder",
       "kind": "check",
       "at": "front_desk",
+      "spot": "key_encoder",
       "minutes": 3,
       "requires": [
         "talk_visitor"
@@ -109,6 +110,7 @@
       "label": "Tell the desk to make him a key",
       "kind": "other",
       "at": "front_desk",
+      "spot": "key_encoder",
       "minutes": 2,
       "findingTitle": "A key for 1418",
       "finding": "Tariq encodes a key and hands it over. Mr Haskett walks to the lifts without a word.",
@@ -137,6 +139,7 @@
       "label": "Call the registered guest in 1418",
       "kind": "call",
       "at": "front_desk",
+      "spot": "desk_phone",
       "person": "guest_achterberg",
       "minutes": 4,
       "requires": [
@@ -172,6 +175,7 @@
       "label": "Keep the keycard as evidence",
       "kind": "bagEvidence",
       "at": "lobby",
+      "person": "visitor_haskett",
       "minutes": 3,
       "requires": [
         "test_card"
@@ -186,6 +190,7 @@
       "label": "Check floor 14 and speak to Ms Achterberg",
       "kind": "secure",
       "at": "f14_corridor",
+      "spot": "door_1418",
       "minutes": 6,
       "requires": [
         "call_guest"
@@ -198,6 +203,7 @@
       "label": "Review lobby and lift CCTV",
       "kind": "cctvReview",
       "at": "cctv_room",
+      "spot": "cctv_console",
       "minutes": 8,
       "findingTitle": "Lobby and lifts",
       "finding": "He came in from the street at 02:58 and tried the card in the lift reader for floor 14 twice before going to the desk.",
@@ -229,6 +235,7 @@
       "label": "Export the clips with a custody record",
       "kind": "exportFootage",
       "at": "cctv_room",
+      "spot": "cctv_console",
       "minutes": 8,
       "requires": [
         "cctv_review"
@@ -243,6 +250,7 @@
       "label": "Log the evidence in the LP locker",
       "kind": "logEvidence",
       "at": "lp_office",
+      "spot": "evidence_locker",
       "minutes": 4,
       "requires": [
         "bag_card",

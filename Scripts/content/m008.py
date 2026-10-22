@@ -29,7 +29,7 @@ M = {
    "findingTitle": "1415 and 1417",
    "finding": "1415: vacant, made up, nothing disturbed, minibar sealed. 1417: you do not knock; the door is locked, the deadbolt indicator shows engaged, no sound of distress. You leave a note for the morning to speak to the guest with the duty manager."},
   {"id": "cctv_f14", "label": "Review the floor 14 corridor camera", "kind": "cctvReview", "at": "cctv_room", "spot": "cctv_console", "minutes": 8, "requires": ["lock_audit"],
-   "findingTitle": "F14-02 Corridor, 22:30-23:00",
+   "findingTitle": "14-02 Corridor, 22:30-23:00",
    "finding": ["22:33 the trolley stands outside 1411 with nobody near it. 22:38 a man in a grey cap and dark jacket walks from the lifts, lifts something from the top tray without breaking stride and goes to the far end.",
      "22:52 he enters 1415 and comes out at 22:53 with nothing in his hands. 22:54 he tries 1417, waits, and leaves by Stair A at 22:55. His face is never clear; the cap hides it."],
    "columns": ["Time", "What it shows"],
@@ -83,7 +83,7 @@ M = {
   {"id": "r_facts", "kind": "multi", "prompt": "Incident report, which of these belong in the findings?", "dimension": "Report", "competency": "Investigation", "weight": 8, "section": "facts",
    "options": [
     {"id": "f_audit", "label": "Lock audit: 1411 22:31 (attendant), 1415 22:52 opened, 1417 22:54 refused (deadbolt).", "correct": True},
-    {"id": "f_cctv", "label": "F14-02: a man in a grey cap takes an item from the trolley tray at 22:38 and leaves by Stair A at 22:55.", "correct": True},
+    {"id": "f_cctv", "label": "14-02: a man in a grey cap takes an item from the trolley tray at 22:38 and leaves by Stair A at 22:55.", "correct": True},
     {"id": "f_log", "label": "Key log: both items signed out to M. Duarte at 15:00, not returned.", "correct": True},
     {"id": "f_void", "label": "Card voided at 23:2x; closet locks re-cored; police reference obtained.", "correct": True},
     {"id": "o_inside", "label": "It was probably an inside job.", "feedback": "Nothing you have shows that. Speculation in a report can damage people who did nothing."}]}

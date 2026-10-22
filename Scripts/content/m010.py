@@ -26,11 +26,11 @@ M = {
    "finding": "At 05:10 a man said he was collecting his wife's case, \"Lindgren, 4471, she's in the cab\". He knew the name and the number, was in a hurry and was polite. Owen did not ask for the ticket \"because he had the number\". He gets the luggage room key from the hook by the stand; it is not signed out.",
    "lines": [{"speaker": "bell_captain", "text": "He knew the name and the number. Who knows that if it's not their bag? I've done it that way for years."}]},
   {"id": "cctv_bell", "label": "Review the bell stand and entrance cameras", "kind": "cctvReview", "at": "cctv_room", "spot": "cctv_console", "minutes": 8, "requires": ["talk_bell_captain"],
-   "findingTitle": "LOBBY-03 and ENT-01, 22:30-05:15",
+   "findingTitle": "L-03 and L-01, 22:30-05:15",
    "finding": ["22:41 Ms Lindgren hands over the case. A man at the bar end of the lobby is watching the bell stand; he is close enough to read the tag as Owen writes it.",
      "05:08 the same man arrives in a taxi, talks to Owen for under a minute, takes the case at 05:10 and leaves in the same taxi. The roof number is readable."],
    "columns": ["Time", "Camera", "What it shows"],
-   "rows": [["22:41", "LOBBY-03", "Case handed over; man in the lobby watching the stand"], ["05:08", "ENT-01", "Same man arrives by taxi"], ["05:10", "LOBBY-03", "Owen hands him the case, no ticket"], ["05:11", "ENT-01", "Leaves in the same taxi, roof number visible"]]},
+   "rows": [["22:41", "L-03", "Case handed over; man in the lobby watching the stand"], ["05:08", "L-01", "Same man arrives by taxi"], ["05:10", "L-03", "Owen hands him the case, no ticket"], ["05:11", "L-01", "Leaves in the same taxi, roof number visible"]]},
   {"id": "call_taxi", "label": "Call the taxi office with the roof number", "kind": "other", "at": "front_desk", "spot": "desk_phone", "minutes": 4, "requires": ["cctv_bell"],
    "findingTitle": "Taxi office", "finding": "The dispatcher will not give out passenger details to you, but confirms the fare went to the ferry terminal at 05:30 and will give the driver's account to the police."},
   {"id": "call_police", "label": "Report the theft to the police", "kind": "call", "at": "front_desk", "spot": "desk_phone", "person": "police_liaison", "minutes": 4, "requires": ["cctv_bell"],
@@ -76,7 +76,7 @@ M = {
   {"id": "r_facts", "kind": "multi", "prompt": "Incident report, which of these belong in the findings?", "dimension": "Report", "competency": "Investigation", "weight": 8, "section": "facts",
    "options": [
     {"id": "f_book", "label": "Tag book: 4471 released 05:10, signed \"M. Lind\", no ticket collected.", "correct": True},
-    {"id": "f_cctv", "label": "LOBBY-03 22:41: a man watches the stand as the tag is written; ENT-01 05:08-05:11: the same man arrives and leaves by taxi with the case.", "correct": True},
+    {"id": "f_cctv", "label": "L-03 22:41: a man watches the stand as the tag is written; L-01 05:08-05:11: the same man arrives and leaves by taxi with the case.", "correct": True},
     {"id": "f_taxi", "label": "Taxi roof number recorded; the fare went to the ferry terminal at 05:30.", "correct": True},
     {"id": "f_room", "label": "Luggage room found unlocked; its key hangs unsigned by the stand.", "correct": True},
     {"id": "o_owen", "label": "Owen may have been working with the thief.", "feedback": "Nothing points to it, and the camera shows how the man got the number. A guess like this follows a person for years."}]}

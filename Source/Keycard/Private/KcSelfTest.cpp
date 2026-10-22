@@ -240,6 +240,27 @@ void AddCase(TSharedRef<FScript> S, TSharedRef<FReport> R, UWorld* World, AKcHUD
 	});
 }
 
+// A promotion's ceremony in the lobby: it plays by itself after the case that earns it, then ends.
+void AddCeremony(TSharedRef<FScript> S, TSharedRef<FReport> R, AKcHUD* Hud, int32 Level)
+{
+	TWeakObjectPtr<AKcHUD> H(Hud);
+	S->Steps.Add([R, H, Level]()
+	{
+		if (!H.IsValid()) return true;
+		if (!H->IsCeremonyPlaying()) return false;
+		R->Check(FString::Printf(TEXT("ceremony_%d"), Level), true, H->Game()->GetLevelTitle());
+		return true;
+	});
+	S->Steps.Add([R, H, Level]()
+	{
+		if (!H.IsValid()) return true;
+		if (H->IsCeremonyPlaying()) return false;
+		const kc::GameState& G = H->Game()->GetState();
+		R->Check(FString::Printf(TEXT("promoted_%d"), Level), G.Career.Level == Level && !G.bCeremonyPending, FString::Printf(TEXT("level %d %s"), G.Career.Level, *H->Game()->GetLevelTitle()));
+		return true;
+	});
+}
+
 void RunPlay(TSharedRef<FReport> R, AKcHUD* Hud, UWorld* World)
 {
 	TSharedRef<FScript> S = MakeShared<FScript>();
@@ -255,22 +276,19 @@ void RunPlay(TSharedRef<FReport> R, AKcHUD* Hud, UWorld* World)
 		return true;
 	});
 	S->Steps.Add([]() { return true; }); // a tick for the hotel to place people
+	// Levels 1 to 3, every case played as the expert would, each promotion with its ceremony.
 	for (const TCHAR* Id : {TEXT("M001"), TEXT("M002"), TEXT("M003")}) AddCase(S, R, World, Hud, Id);
-	// The first promotion and its ceremony in the lobby.
+	AddCeremony(S, R, Hud, 2);
+	for (const TCHAR* Id : {TEXT("M004"), TEXT("M005"), TEXT("M006"), TEXT("M007")}) AddCase(S, R, World, Hud, Id);
+	AddCeremony(S, R, Hud, 3);
+	for (const TCHAR* Id : {TEXT("M008"), TEXT("M009"), TEXT("M010"), TEXT("M011")}) AddCase(S, R, World, Hud, Id);
+	AddCeremony(S, R, Hud, 4);
 	S->Steps.Add([R, H]()
 	{
 		if (!H.IsValid()) return true;
-		if (!H->IsCeremonyPlaying()) return false;
-		R->Check(TEXT("ceremony"), true, H->Game()->GetLevelTitle());
-		return true;
-	});
-	S->Steps.Add([R, H]()
-	{
-		if (!H.IsValid()) return true;
-		if (H->IsCeremonyPlaying()) return false;
 		const kc::GameState& G = H->Game()->GetState();
-		R->Check(TEXT("promoted"), G.Career.Level == 2 && !G.bCeremonyPending, FString::Printf(TEXT("level %d %s"), G.Career.Level, *H->Game()->GetLevelTitle()));
-		R->Check(TEXT("field_manual"), G.FieldManual.size() >= 3, FString::Printf(TEXT("%d cards"), static_cast<int32>(G.FieldManual.size())));
+		R->Check(TEXT("field_manual"), G.FieldManual.size() >= 12, FString::Printf(TEXT("%d cards"), static_cast<int32>(G.FieldManual.size())));
+		R->Check(TEXT("inbox"), G.World.Inbox.size() >= 6, FString::Printf(TEXT("%d messages"), static_cast<int32>(G.World.Inbox.size())));
 		const UKcAudioSubsystem* Audio = H->GetGameInstance()->GetSubsystem<UKcAudioSubsystem>();
 		R->Check(TEXT("audio"), Audio && Audio->LoadedSoundCount() >= 10, FString::Printf(TEXT("%d sounds"), Audio ? Audio->LoadedSoundCount() : 0));
 		FString Message;
@@ -293,11 +311,11 @@ void RunResume(FReport& R, AKcHUD* Hud)
 	if (Outcome != EKcLoadOutcome::Ok && Outcome != EKcLoadOutcome::RecoveredFromBackup) return;
 	const kc::GameState& G = Hud->Game()->GetState();
 	TArray<FString> Passed = KcConvert::ToFStrings(G.Career.PassedMissions);
-	R.Check(TEXT("passed"), Passed.Contains(TEXT("M001")) && Passed.Contains(TEXT("M002")) && Passed.Contains(TEXT("M003")), FString::Join(Passed, TEXT(",")));
-	R.Check(TEXT("level"), G.Career.Level == 2, Hud->Game()->GetLevelTitle());
+	R.Check(TEXT("passed"), Passed.Contains(TEXT("M001")) && Passed.Contains(TEXT("M007")) && Passed.Contains(TEXT("M011")), FString::Join(Passed, TEXT(",")));
+	R.Check(TEXT("level"), G.Career.Level == 4, Hud->Game()->GetLevelTitle());
 	R.Check(TEXT("ceremony_played"), !G.bCeremonyPending, FString::Printf(TEXT("pending %d"), G.bCeremonyPending ? 1 : 0));
-	R.Check(TEXT("field_manual"), G.FieldManual.size() >= 3, FString::Printf(TEXT("%d cards"), static_cast<int32>(G.FieldManual.size())));
-	R.Check(TEXT("records"), G.Campaign.Records.size() >= 3, FString::Printf(TEXT("%d records"), static_cast<int32>(G.Campaign.Records.size())));
+	R.Check(TEXT("field_manual"), G.FieldManual.size() >= 12, FString::Printf(TEXT("%d cards"), static_cast<int32>(G.FieldManual.size())));
+	R.Check(TEXT("records"), G.Campaign.Records.size() >= 11, FString::Printf(TEXT("%d records"), static_cast<int32>(G.Campaign.Records.size())));
 	R.Check(TEXT("no_case_open"), G.Campaign.ActiveMissionId.empty(), ToFString(G.Campaign.ActiveMissionId));
 	R.Check(TEXT("objective"), !Hud->Campaign()->Objective().IsEmpty(), Hud->Campaign()->Objective());
 }

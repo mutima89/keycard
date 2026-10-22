@@ -69,6 +69,178 @@
           }
         }
       ]
+    },
+    {
+      "id": "paramedic_feedback",
+      "category": "team",
+      "from": "paramedic_sethna",
+      "subject": "Last night at the Lobby Bar",
+      "body": [
+        "The gentleman from your bar is awake and talking. The AED was on him and shocking before we were through the door, and your staff had the lift held. That is what saves people.",
+        "Whoever trained your bar team on the AED: keep doing it."
+      ],
+      "when": {
+        "passed": [
+          "M005"
+        ]
+      }
+    },
+    {
+      "id": "adjuster_export",
+      "category": "request",
+      "from": "adjuster",
+      "subject": "Claim TM-55102",
+      "body": "Thank you for the preserved footage. Our counsel would like a copy before the 30th. I understand you have a release policy; what do you need from us?",
+      "when": {
+        "passed": [
+          "M007"
+        ]
+      },
+      "deadlineWeeks": 2,
+      "defaultChoice": "ignore",
+      "choices": [
+        {
+          "id": "policy",
+          "label": "Send the footage release form and route it to Desmond Okafor for approval",
+          "outcome": "The request comes back signed. Desmond approves the release with counsel, and the adjuster notes how cleanly it was handled.",
+          "relations": {
+            "adjuster": 5,
+            "mentor": 3
+          },
+          "effects": {
+            "InsurerConfidence": 2
+          }
+        },
+        {
+          "id": "send",
+          "label": "Email the clip to the adjuster yourself",
+          "outcome": "Counsel hears that footage left LP without approval. Desmond asks you to his office.",
+          "relations": {
+            "mentor": -8
+          },
+          "effects": {
+            "InsurerConfidence": 1,
+            "SafetyCompliance": -2
+          }
+        },
+        {
+          "id": "ignore",
+          "label": "Leave it",
+          "outcome": "The adjuster chases twice, then writes to the General Manager.",
+          "relations": {
+            "adjuster": -5,
+            "gm": -2
+          },
+          "effects": {
+            "InsurerConfidence": -2
+          }
+        }
+      ]
+    },
+    {
+      "id": "supervisor_welcome",
+      "category": "team",
+      "from": "mentor",
+      "subject": "Supervisor",
+      "body": [
+        "You run the night shift now. Ines and the Tessmore guards report to you, and you will be audited on keys and doors, not only on cases.",
+        "Two habits: read the alarm log every week, and never let anyone fear telling you they lost a key."
+      ],
+      "when": {
+        "minLevel": 3
+      }
+    },
+    {
+      "id": "marisol_coil",
+      "category": "personal",
+      "from": "attendant_duarte",
+      "subject": "Thank you",
+      "body": "Lucia got us the soft wrist coils. Everyone on my floor wears them now. Thank you for telling them it was not my fault.",
+      "when": {
+        "passed": [
+          "M008"
+        ]
+      }
+    },
+    {
+      "id": "fnb_dock_bell",
+      "category": "politics",
+      "from": "fnb_director",
+      "subject": "Bread deliveries",
+      "body": "Chef tells me deliveries now need an LP officer at the dock. It is slowing the morning. Can we go back to the old way until the intercom is in?",
+      "when": {
+        "passed": [
+          "M009"
+        ]
+      },
+      "deadlineWeeks": 1,
+      "defaultChoice": "ignore",
+      "choices": [
+        {
+          "id": "hold",
+          "label": "Explain the theft and keep the door shut; offer a fixed delivery window with an officer standing by",
+          "outcome": "Rafael grumbles, then agrees once he sees the clip. The bakery moves to 05:00.",
+          "relations": {
+            "fnb_director": 2
+          },
+          "effects": {
+            "SecurityPosture": 2
+          }
+        },
+        {
+          "id": "relent",
+          "label": "Agree to let the clerk prop it for ten minutes",
+          "outcome": "The door is propped again within a week. The alarm log fills up.",
+          "relations": {
+            "fnb_director": 4,
+            "mentor": -4
+          },
+          "effects": {
+            "SecurityPosture": -3,
+            "LossExposure": 2
+          }
+        },
+        {
+          "id": "ignore",
+          "label": "Leave it",
+          "outcome": "Rafael takes it to the General Manager as LP being unhelpful.",
+          "relations": {
+            "fnb_director": -4,
+            "gm": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "lindgren_letter",
+      "category": "incident",
+      "from": "guest_lindgren",
+      "subject": "My case",
+      "body": "The police found my case at the ferry terminal, without the laptop but with my mother's watch. Thank you for getting them there so fast, and for being honest with me that morning.",
+      "when": {
+        "passed": [
+          "M010"
+        ]
+      },
+      "probability": 0.6,
+      "headline": "Harbourfront thief stopped at the ferry terminal",
+      "headlineTone": 1
+    },
+    {
+      "id": "encoder_vendor",
+      "category": "story",
+      "from": "mentor",
+      "subject": "E-77",
+      "body": [
+        "The vendor confirms E-77 is a genuine portable encoder from a batch sold to another hotel group two years ago and reported stolen. DS Calloway is interested.",
+        "Thirty-one keys in nineteen nights, and a man in a grey cap who knew where the trolleys stand. Somebody is shopping in our building. Keep your notebook close."
+      ],
+      "when": {
+        "passed": [
+          "M011"
+        ],
+        "minClues": 3
+      }
     }
   ],
   "fallout": [
@@ -107,6 +279,59 @@
         "GuestSatisfaction": -3,
         "Reputation": -2,
         "IncidentCosts": 800
+      }
+    },
+    {
+      "topic": "medical",
+      "description": "A guest collapses in the spa. Staff repeat the approach from \"{mission}\" ({choice}) and the response is minutes slower than it should be.",
+      "effects": {
+        "SafetyCompliance": -3,
+        "Reputation": -2,
+        "IncidentCosts": 1200
+      }
+    },
+    {
+      "topic": "suspicious_item",
+      "description": "Another unattended bag turns up at the ballroom. The team handles it the way \"{mission}\" went ({choice}) and the evening is disrupted for nothing, or not taken seriously enough.",
+      "effects": {
+        "SafetyCompliance": -2,
+        "GuestSatisfaction": -2,
+        "IncidentCosts": 900
+      }
+    },
+    {
+      "topic": "cctv",
+      "description": "Footage a claimant needed is gone or cannot be verified, the way \"{mission}\" went ({choice}). The insurer pays out and asks questions.",
+      "effects": {
+        "InsurerConfidence": -3,
+        "IncidentCosts": 2000
+      }
+    },
+    {
+      "topic": "keys",
+      "description": "A key control gap from \"{mission}\" ({choice}) is still open when someone tries the same door again.",
+      "effects": {
+        "SecurityPosture": -3,
+        "LossExposure": 3,
+        "IncidentCosts": 1800
+      }
+    },
+    {
+      "topic": "perimeter",
+      "description": "A back door is found propped again, the habit left from \"{mission}\" ({choice}). Stock goes missing from receiving.",
+      "effects": {
+        "SecurityPosture": -3,
+        "LossExposure": 2,
+        "IncidentCosts": 1100
+      }
+    },
+    {
+      "topic": "luggage",
+      "description": "The bell stand releases another bag on a name and a number, the gap from \"{mission}\" ({choice}). The guest's lawyer writes to the GM.",
+      "effects": {
+        "GuestSatisfaction": -3,
+        "InsurerConfidence": -2,
+        "IncidentCosts": 1600
       }
     }
   ]

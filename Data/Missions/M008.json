@@ -127,7 +127,7 @@
       "requires": [
         "lock_audit"
       ],
-      "findingTitle": "F14-02 Corridor, 22:30-23:00",
+      "findingTitle": "14-02 Corridor, 22:30-23:00",
       "finding": [
         "22:33 the trolley stands outside 1411 with nobody near it. 22:38 a man in a grey cap and dark jacket walks from the lifts, lifts something from the top tray without breaking stride and goes to the far end.",
         "22:52 he enters 1415 and comes out at 22:53 with nothing in his hands. 22:54 he tries 1417, waits, and leaves by Stair A at 22:55. His face is never clear; the cap hides it."
@@ -385,7 +385,7 @@
         },
         {
           "id": "f_cctv",
-          "label": "F14-02: a man in a grey cap takes an item from the trolley tray at 22:38 and leaves by Stair A at 22:55.",
+          "label": "14-02: a man in a grey cap takes an item from the trolley tray at 22:38 and leaves by Stair A at 22:55.",
           "correct": true
         },
         {

@@ -49,6 +49,10 @@ constexpr float CoreX1 = 2700.0f;
 constexpr float LiftDoorX[2] = {2250.0f, 2550.0f};
 constexpr float LiftPanelX = 2400.0f;
 constexpr float StairDoorX = 2185.0f;
+constexpr float DockDoorX = 4250.0f;     // B1 dock door in the south wall
+constexpr float LuggageY0 = 760.0f;      // luggage room behind the bell stand: Y 760..1000, X 0..480
+constexpr float LuggageX1 = 480.0f;
+constexpr float LuggageDoorX = 240.0f;
 constexpr float StairY0 = -460.0f;       // stair inner faces
 constexpr float StairY1 = -168.0f;
 constexpr float StairSpineY = -310.0f;
@@ -114,6 +118,12 @@ const FPost Posts[] = {
 	{TEXT("guest_achterberg"), TEXT("f14_corridor"), 14, FVector2D(3825.0f, -95.0f), 60.0f},
 	{TEXT("guest_pike"), TEXT("guest_room"), 14, FVector2D(2775.0f, 205.0f), -90.0f},
 	{TEXT("partner"), TEXT("cctv_room"), -1, FVector2D(4520.0f, 560.0f), 160.0f},
+	{TEXT("bell_captain"), TEXT("bell_stand"), 0, FVector2D(270.0f, 560.0f), -45.0f},
+	{TEXT("guest_lindgren"), TEXT("bell_stand"), 0, FVector2D(440.0f, 420.0f), 140.0f},
+	{TEXT("guest_halasz"), TEXT("lobby"), 0, FVector2D(760.0f, -170.0f), 25.0f},
+	{TEXT("paramedic_sethna"), TEXT("lobby"), 0, FVector2D(420.0f, -60.0f), 0.0f},
+	{TEXT("guest_nyholt"), TEXT("lobby_bar"), 0, FVector2D(1470.0f, -820.0f), 10.0f},
+	{TEXT("receiving_clerk"), TEXT("loading_dock"), -1, FVector2D(3220.0f, -560.0f), -150.0f},
 	{TEXT("partner"), TEXT("f14_corridor"), 14, FVector2D(2470.0f, -70.0f), 160.0f},
 };
 
@@ -205,6 +215,9 @@ FTransform AKcHotel::GetArrival(const FString& Location) const
 		{TEXT("lp_office"), -1, FVector2D(2930.0f, 560.0f), 70.0f},
 		{TEXT("cctv_room"), -1, FVector2D(4250.0f, 330.0f), 90.0f},
 		{TEXT("back_of_house"), -1, FVector2D(2400.0f, -40.0f), 0.0f},
+		{TEXT("housekeeping"), -1, FVector2D(1000.0f, -260.0f), -90.0f},
+		{TEXT("loading_dock"), -1, FVector2D(3500.0f, -260.0f), -90.0f},
+		{TEXT("kitchen"), 0, FVector2D(3300.0f, -60.0f), -90.0f},
 		{TEXT("front_desk"), 0, FVector2D(1100.0f, 470.0f), 90.0f},
 		{TEXT("lobby"), 0, FVector2D(2350.0f, -40.0f), 180.0f},
 		{TEXT("lobby_bar"), 0, FVector2D(1050.0f, -480.0f), -90.0f},
@@ -244,8 +257,13 @@ void AKcHotel::GetTourViewpoints(TArray<FString>& OutNames, TArray<FTransform>& 
 	Add(TEXT("CCTV control room"), -1, FVector2D(4250.0f, 260.0f), FVector(4250.0f, 1000.0f, 210.0f));
 	Add(TEXT("Back-of-house corridor"), -1, FVector2D(4700.0f, 0.0f), FVector(0.0f, 0.0f, 140.0f));
 	Add(TEXT("Stair A"), -1, FVector2D(2185.0f, -220.0f), FVector(2600.0f, -240.0f, 260.0f));
+	Add(TEXT("Housekeeping and laundry"), -1, FVector2D(1000.0f, -230.0f), FVector(400.0f, -900.0f, 90.0f));
+	Add(TEXT("Housekeeping key cabinet"), -1, FVector2D(1250.0f, -420.0f), FVector(1250.0f, -170.0f, 150.0f));
+	Add(TEXT("Loading dock"), -1, FVector2D(3500.0f, -230.0f), FVector(4300.0f, -980.0f, 110.0f));
+	Add(TEXT("Receiving office"), -1, FVector2D(3300.0f, -600.0f), FVector(2800.0f, -950.0f, 100.0f));
 	Add(TEXT("Lobby from the street doors"), 0, FVector2D(380.0f, -60.0f), FVector(1600.0f, 500.0f, 130.0f));
 	Add(TEXT("Front desk"), 0, FVector2D(1100.0f, 380.0f), FVector(1100.0f, 900.0f, 150.0f));
+	Add(TEXT("Bell stand and luggage room"), 0, FVector2D(560.0f, 380.0f), FVector(240.0f, 800.0f, 110.0f));
 	Add(TEXT("Lobby bar"), 0, FVector2D(1050.0f, -470.0f), FVector(900.0f, -980.0f, 140.0f));
 	Add(TEXT("Lift lobby, ground floor"), 0, FVector2D(2400.0f, -130.0f), FVector(2400.0f, 160.0f, 160.0f));
 	Add(TEXT("Fire command centre"), 0, FVector2D(3100.0f, 260.0f), FVector(3100.0f, 1000.0f, 150.0f));
@@ -879,7 +897,7 @@ void AKcHotel::BuildCore()
 			const FVector D(2470.0f, SouthFace + 0.8f, Zf(Floor, 160.0f));
 			AddBox(D, FVector(1.6f, 90.0f, 34.0f), Mat(TEXT("MI_Paper")), 0.0f, false);
 			AddLabel(TEXT("B1  BACK OF HOUSE  STAFF ONLY"), D + FVector(0, 1.2f, 9.0f), 90.0f, 3.0f, Ink, Floor);
-			AddLabel(TEXT("LP office  CCTV control  >"), D + FVector(0, 1.2f, -1.0f), 90.0f, 3.0f, Ink, Floor);
+			AddLabel(TEXT("LP office  CCTV  Receiving  >"), D + FVector(0, 1.2f, -1.0f), 90.0f, 3.0f, Ink, Floor);
 			AddLabel(TEXT("< Lockers  Housekeeping  Stair B"), D + FVector(0, 1.2f, -10.0f), 90.0f, 3.0f, Ink, Floor);
 			FireExtinguisher(Floor, FVector(2640.0f, SouthFace - 0.5f, 0.0f), 90.0f);
 		}
@@ -1003,7 +1021,10 @@ void AKcHotel::BuildFacade(int32 Floor, float Height)
 	if (Floor == LowestFloor)
 	{
 		Solid(true, HalfY, 0.0f, MaxX);
-		Solid(true, -HalfY, 0.0f, MaxX);
+		// South side: the dock door (X 4200..4300) opens onto the covered dock apron under the plaza.
+		Solid(true, -HalfY, 0.0f, DockDoorX - 50.0f);
+		Solid(true, -HalfY, DockDoorX + 50.0f, MaxX);
+		AddBox(FVector(DockDoorX, -HalfY, Zf(Floor, (DoorH + Height) * 0.5f)), FVector(100.0f, 30.0f, Height - DoorH), Mat(TEXT("MI_Concrete")));
 		Solid(false, 0.0f, -HalfY, HalfY);
 		Solid(false, MaxX, -HalfY, HalfY);
 		return;
@@ -1102,10 +1123,9 @@ void AKcHotel::BuildBasement()
 		TEXT("Staff locker room. LP opens a locker only with the employee and HR present, under the locker policy."), TEXT("back_of_house"));
 	for (float Side : {-1.0f, 1.0f})
 	{
-		DoorLeaf(F, FVector(1000.0f + Side * 40.0f, -CorrY, 0.0f), 90.0f, 80.0f, Side < 0.0f ? TEXT("HOUSEKEEPING") : FString(), false, false, TEXT("Housekeeping and laundry"),
-			TEXT("Housekeeping and laundry. The night linen run is done; the laundry starts again at 05:00."), TEXT("back_of_house"), Side > 0.0f);
-		DoorLeaf(F, FVector(3500.0f + Side * 40.0f, -CorrY, 0.0f), 90.0f, 80.0f, Side < 0.0f ? TEXT("RECEIVING") : FString(), false, false, TEXT("Loading dock and receiving"),
-			TEXT("Loading dock and receiving: shut until the 06:00 deliveries. The dock door is alarmed and on camera B1-05."), TEXT("back_of_house"), Side > 0.0f);
+		// Double doors held open on their closers: housekeeping and receiving work through the night.
+		DoorLeaf(F, FVector(1000.0f + Side * 40.0f, -CorrY, 0.0f), 90.0f, 80.0f, Side < 0.0f ? TEXT("HOUSEKEEPING") : FString(), false, true, FString(), FString(), FString(), Side > 0.0f);
+		DoorLeaf(F, FVector(3500.0f + Side * 40.0f, -CorrY, 0.0f), 90.0f, 80.0f, Side < 0.0f ? TEXT("RECEIVING") : FString(), false, true, FString(), FString(), FString(), Side > 0.0f);
 	}
 	// Stair B at the west end: an alarmed exit, not tonight's route.
 	DoorLeaf(F, FVector(17.0f, 0.0f, 0.0f), 0.0f, 100.0f, TEXT("STAIR B"), false, false, TEXT("Stair B"),
@@ -1146,6 +1166,8 @@ void AKcHotel::BuildBasement()
 	FireExtinguisher(F, FVector(4600.0f, -CorrY + Wall * 0.5f, 0.0f), 90.0f);
 	BuildLpOffice();
 	BuildCctvRoom();
+	BuildHousekeeping();
+	BuildLoadingDock();
 }
 
 void AKcHotel::BuildLpOffice()
@@ -1324,6 +1346,315 @@ void AKcHotel::BuildCctvRoom()
 	SmokeDetector(F, FVector2D(4250.0f, 420.0f), CeilB1);
 }
 
+void AKcHotel::BuildHousekeeping()
+{
+	// Housekeeping and laundry, west of the core: washers, linen shelving, the folding table, parked
+	// trolleys, the supervisor's desk and the master key cabinet by the door (M008).
+	const int32 F = -1;
+	const float X0 = 15.0f, X1 = CoreX0, Y0 = -HalfY + 15.0f, Y1 = -CorrY - Wall * 0.5f;
+	UMaterialInterface* Paint = Mat(TEXT("MI_WallPaint"));
+	UMaterialInterface* Steel = Mat(TEXT("MI_Steel"));
+	FloorFinish(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), Mat(TEXT("MI_FloorTile")));
+	Ceiling(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), CeilB1, Mat(TEXT("MI_CeilingSoft")));
+	AddBox(FVector(X1 - 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilB1 * 0.5f)), FVector(1.0f, Y1 - Y0, CeilB1), Paint, 0.0f, false);
+	AddBox(FVector((X0 + X1) * 0.5f, Y0 + 0.5f, Zf(F, CeilB1 * 0.5f)), FVector(X1 - X0, 1.0f, CeilB1), Paint, 0.0f, false);
+	AddBox(FVector(X0 + 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilB1 * 0.5f)), FVector(1.0f, Y1 - Y0, CeilB1), Paint, 0.0f, false);
+
+	// Three washer-extractors on plinths along the west wall, glass doors facing the room.
+	for (int32 i = 0; i < 3; ++i)
+	{
+		const float Y = -420.0f - i * 150.0f;
+		AddBox(FVector(X0 + 10.0f + 50.0f, Y, Zf(F, 8.0f)), FVector(100.0f, 110.0f, 16.0f), Mat(TEXT("MI_Concrete")));
+		AddBox(FVector(X0 + 60.0f, Y, Zf(F, 16.0f + 60.0f)), FVector(90.0f, 100.0f, 120.0f), Steel);
+		AddInstance(Cylinder, FTransform(FRotator(90.0f, 0.0f, 0.0f), FVector(X0 + 106.0f, Y, Zf(F, 72.0f)), FVector(0.56f, 0.56f, 0.03f)), Mat(TEXT("MI_Chrome")), false, false);
+		AddInstance(Cylinder, FTransform(FRotator(90.0f, 0.0f, 0.0f), FVector(X0 + 107.5f, Y, Zf(F, 72.0f)), FVector(0.44f, 0.44f, 0.02f)), Mat(TEXT("MI_GlassDark")), false, false);
+		AddBox(FVector(X0 + 105.5f, Y, Zf(F, 122.0f)), FVector(1.0f, 80.0f, 14.0f), Mat(TEXT("MI_DeviceBlack")), 0.0f, false);
+		AddBox(FVector(X0 + 106.2f, Y + 30.0f, Zf(F, 122.0f)), FVector(0.4f, 6.0f, 2.0f), Mat(i == 1 ? TEXT("MI_LedAmber") : TEXT("MI_LedGreen")), 0.0f, false);
+		AddLabel(FString::Printf(TEXT("W%d"), i + 1), FVector(X0 + 106.4f, Y - 25.0f, Zf(F, 123.0f)), 0.0f, 3.0f, Cream, F);
+	}
+	AddLabel(TEXT("Laundry restarts 05:00"), FVector(X0 + 1.4f, -570.0f, Zf(F, 190.0f)), 0.0f, 3.0f, Ink, F);
+
+	// Linen shelving along the south wall: sheets, pillowcases, bath and hand towels, bathrobes.
+	for (int32 Bay = 0; Bay < 4; ++Bay)
+	{
+		const float Xc = 380.0f + Bay * 260.0f;
+		for (float Side : {-1.0f, 1.0f}) AddBox(FVector(Xc + Side * 120.0f, Y0 + 28.0f, Zf(F, 100.0f)), FVector(3.0f, 50.0f, 200.0f), Steel);
+		for (int32 L = 0; L < 5; ++L)
+		{
+			const float Z = 10.0f + L * 46.0f;
+			AddBox(FVector(Xc, Y0 + 28.0f, Zf(F, Z)), FVector(240.0f, 50.0f, 2.0f), Steel, 0.0f, false);
+			if (L == 4) break;
+			for (int32 k = 0; k < 5; ++k)
+			{
+				const float H = (L + k + Bay) % 3 == 0 ? 20.0f : 30.0f;
+				if ((Bay * 7 + L * 3 + k) % 9 == 0) continue; // a gap where tonight's turn-down took them
+				AddBox(FVector(Xc - 92.0f + k * 46.0f, Y0 + 28.0f, Zf(F, Z + 1.0f + H * 0.5f)), FVector(40.0f, 42.0f, H),
+					Mat(Bay == 3 && L > 1 ? TEXT("MI_Paper") : TEXT("MI_Linen")), 0.0f, false);
+			}
+		}
+	}
+	// Folding table with the night's pressed linen, and the linen cages waiting for the morning.
+	Desk(FVector(700.0f, -620.0f, Zf(F, 0.0f)), 0.0f, FVector(240.0f, 90.0f, 90.0f), Steel);
+	for (int32 k = 0; k < 4; ++k)
+	{
+		AddBox(FVector(620.0f + k * 50.0f, -620.0f, Zf(F, 91.0f + 6.0f + (k % 2) * 3.0f)), FVector(42.0f, 40.0f, 12.0f + (k % 2) * 6.0f), Mat(TEXT("MI_Linen")), 2.0f * k, false);
+	}
+	for (float X : {1150.0f, 1290.0f})
+	{
+		AddBox(FVector(X, -560.0f, Zf(F, 80.0f)), FVector(110.0f, 70.0f, 150.0f), Steel, 0.0f, true);
+		AddBox(FVector(X, -560.0f, Zf(F, 60.0f)), FVector(100.0f, 62.0f, 100.0f), Mat(TEXT("MI_Linen")), 0.0f, false);
+	}
+	// Trolleys parked for the night, each loaded for the morning.
+	for (int32 i = 0; i < 3; ++i)
+	{
+		const FVector T(300.0f + i * 150.0f, -300.0f, Zf(F, 0.0f));
+		AddBox(T + FVector(0, 0, 52.0f), FVector(60.0f, 130.0f, 86.0f), Mat(TEXT("MI_PlasticGrey")), 90.0f, true);
+		AddBox(T + FVector(0, 0, 100.0f), FVector(40.0f, 50.0f, 12.0f), Mat(TEXT("MI_FabricAccent")), 90.0f, false);
+		AddBox(T + FVector(-70.0f, 0, 70.0f), FVector(14.0f, 52.0f, 70.0f), Mat(TEXT("MI_Linen")), 0.0f, false);
+		AddLabel(FString::Printf(TEXT("FLOOR %d"), 12 + i), T + FVector(0.0f, -31.0f, 80.0f), -90.0f, 3.0f, Ink, F);
+	}
+
+	// Supervisor's desk against the core wall, with the allocation sheets and the radio charger.
+	Desk(FVector(X1 - 50.0f, -380.0f, Zf(F, 0.0f)), 90.0f, FVector(160.0f, 80.0f, DeskH), Mat(TEXT("MI_WoodOak")));
+	Monitor(FVector(X1 - 30.0f, -380.0f, Zf(F, DeskH)), 180.0f, Mat(TEXT("MI_ScreenFrontOffice")));
+	TaskChair(FVector(X1 - 130.0f, -380.0f, Zf(F, 0.0f)), 0.0f);
+	AddBox(FVector(X1 - 60.0f, -320.0f, Zf(F, DeskH + 1.0f)), FVector(23.0f, 30.0f, 1.2f), Mat(TEXT("MI_Paper")), 6.0f, false);
+	// Room assignments board: tonight's turn-downs by floor (the room's own case point).
+	SpawnCasePoint(TEXT("housekeeping"), FString(), TEXT("Room assignments board"), FVector(X1 - 2.5f, -560.0f, Zf(F, 160.0f)), 180.0f, Cube,
+		FVector(0.03f, 1.8f, 1.0f), Mat(TEXT("MI_Whiteboard")), EKcUseStyle::Screen);
+	AddLabel(TEXT("TONIGHT: FLOORS 12-14 TURN-DOWN  M. DUARTE"), FVector(X1 - 4.4f, -560.0f, Zf(F, 204.0f)), 180.0f, 2.4f, Ink, F);
+
+	// Master key cabinet on the corridor wall by the door: glazed, a hook per key, the log on the shelf
+	// under it, and its own camera.
+	const float Face = Y1 - 1.0f;
+	// The back panel is the case point; the hooks and keys hang in front of it behind the glass door.
+	const FVector Cab(1250.0f, Face - 2.0f, Zf(F, 150.0f));
+	SpawnCasePoint(TEXT("housekeeping"), TEXT("key_cabinet"), FString(), Cab, -90.0f, Cube, FVector(0.04f, 0.8f, 0.9f), Steel, EKcUseStyle::Screen, Cab - FVector(0, 30.0f, 0));
+	for (float Side : {-1.0f, 1.0f})
+	{
+		AddBox(Cab + FVector(Side * 39.0f, -5.0f, 0), FVector(2.0f, 10.0f, 90.0f), Steel, 0.0f, false);
+		AddBox(Cab + FVector(0, -5.0f, Side * 44.0f), FVector(80.0f, 10.0f, 2.0f), Steel, 0.0f, false);
+	}
+	AddBox(Cab - FVector(0, 9.8f, 0), FVector(76.0f, 0.4f, 86.0f), Mat(TEXT("MI_Glass")), 0.0f, false);
+	for (int32 r = 0; r < 3; ++r)
+	{
+		for (int32 c = 0; c < 6; ++c)
+		{
+			// One empty hook: HK-M12-14-03 (M008).
+			const bool bEmpty = r == 1 && c == 2;
+			AddBox(Cab + FVector(-28.0f + c * 11.0f, -3.0f, 24.0f - r * 24.0f), FVector(1.5f, 2.0f, 1.5f), Mat(TEXT("MI_Brass")), 0.0f, false);
+			if (!bEmpty) AddBox(Cab + FVector(-28.0f + c * 11.0f, -4.4f, 18.0f - r * 24.0f), FVector(5.4f, 0.6f, 8.6f), Mat(c % 2 ? TEXT("MI_PlasticGrey") : TEXT("MI_DeviceBlack")), 0.0f, false);
+		}
+	}
+	AddBox(FVector(1250.0f, Face - 15.0f, Zf(F, 95.0f)), FVector(80.0f, 30.0f, 3.0f), Steel, 0.0f, false);
+	AddBox(FVector(1235.0f, Face - 16.0f, Zf(F, 98.0f)), FVector(30.0f, 23.0f, 3.0f), Mat(TEXT("MI_SuitNavy")), -8.0f, false);
+	AddLabel(TEXT("MASTER KEYS"), FVector(1250.0f, Face - 0.6f, Zf(F, 210.0f)), -90.0f, 4.0f, Ink, F);
+	AddLabel(TEXT("Sign out. Sign in. Keys stay on the person."), FVector(1250.0f, Face - 0.6f, Zf(F, 202.0f)), -90.0f, 2.0f, Ink, F);
+	CctvDome(F, FVector(1250.0f, -360.0f, Zf(F, CeilB1)), TEXT("B1-03"));
+
+	// Chemical store (locked) in the south-east corner, and the sink.
+	AddBox(FVector(X1 - 40.0f, Y0 + 40.0f, Zf(F, 90.0f)), FVector(70.0f, 70.0f, 180.0f), Mat(TEXT("MI_SafetyYellow")), 0.0f, true);
+	AddLabel(TEXT("CHEMICALS: KEEP LOCKED"), FVector(X1 - 76.0f, Y0 + 40.0f, Zf(F, 150.0f)), 180.0f, 2.4f, Ink, F);
+	AddLabel(TEXT("Data sheets: red folder"), FVector(X1 - 76.0f, Y0 + 40.0f, Zf(F, 143.0f)), 180.0f, 1.8f, Ink, F);
+	AddBox(FVector(X1 - 40.0f, Y0 + 150.0f, Zf(F, 45.0f)), FVector(60.0f, 80.0f, 90.0f), Steel, 0.0f, true);
+
+	for (float X : {400.0f, 1000.0f, 1600.0f})
+	{
+		AddBox(FVector(X, -560.0f, Zf(F, CeilB1 - 3.0f)), FVector(124.0f, 14.0f, 6.0f), Mat(TEXT("MI_LedStrip")), 0.0f, false);
+		AddLight(F, FVector(X, -560.0f, Zf(F, CeilB1 - 16.0f)), 800.0f, 700.0f, Cool, X == 1000.0f);
+	}
+	for (float X : {500.0f, 1500.0f}) SmokeDetector(F, FVector2D(X, -700.0f), CeilB1);
+	FireExtinguisher(F, FVector(1800.0f, Face, 0.0f), -90.0f);
+}
+
+void AKcHotel::BuildLoadingDock()
+{
+	// Loading dock and receiving, east of the core: the receiving office, two roller shutters, the
+	// alarmed dock door to the apron, the liquor cage and the night's deliveries (M009).
+	const int32 F = -1;
+	const float X0 = CoreX1, X1 = MaxX - 15.0f, Y0 = -HalfY + 15.0f, Y1 = -CorrY - Wall * 0.5f;
+	UMaterialInterface* Paint = Mat(TEXT("MI_WallPaint"));
+	UMaterialInterface* Steel = Mat(TEXT("MI_Steel"));
+	UMaterialInterface* Yellow = Mat(TEXT("MI_SafetyYellow"));
+	FloorFinish(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), Mat(TEXT("MI_FloorConcrete")));
+	Ceiling(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), CeilB1, Mat(TEXT("MI_CeilingSoft")));
+	AddBox(FVector(X0 + 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilB1 * 0.5f)), FVector(1.0f, Y1 - Y0, CeilB1), Paint, 0.0f, false);
+	AddBox(FVector(X1 - 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilB1 * 0.5f)), FVector(1.0f, Y1 - Y0, CeilB1), Paint, 0.0f, false);
+	// Walkway lines: a yellow-edged pedestrian route from the corridor doors to the office.
+	for (float Y : {-260.0f, -340.0f}) AddBox(FVector(3300.0f, Y, Zf(F, 0.7f)), FVector(800.0f, 6.0f, 0.4f), Yellow, 0.0f, false);
+
+	// Receiving office: a glazed booth in the south-west corner looking over the dock.
+	const float OffX = 3150.0f, OffY = -650.0f;
+	UMaterialInterface* Glass = Mat(TEXT("MI_Glass"));
+	AddBox(FVector((X0 + OffX - 90.0f) * 0.5f, OffY, Zf(F, 45.0f)), FVector(OffX - 90.0f - X0, Wall, 90.0f), Paint);
+	AddBox(FVector((X0 + OffX - 90.0f) * 0.5f, OffY, Zf(F, 90.0f + (CeilB1 - 90.0f) * 0.5f)), FVector(OffX - 90.0f - X0, 3.0f, CeilB1 - 90.0f), Glass);
+	WallY(F, OffX, Y0, OffY + 4.0f, {}, Paint, 90.0f);
+	AddBox(FVector(OffX, (Y0 + OffY) * 0.5f, Zf(F, 90.0f + (CeilB1 - 90.0f) * 0.5f)), FVector(3.0f, OffY - Y0, CeilB1 - 90.0f), Glass);
+	DoorLeaf(F, FVector(OffX - 45.0f, OffY, 0.0f), 90.0f, 90.0f, TEXT("RECEIVING OFFICE"), false, true);
+	AddBox(FVector(OffX - 45.0f, OffY, Zf(F, (DoorH + CeilB1) * 0.5f)), FVector(90.0f, Wall, CeilB1 - DoorH), Paint);
+	Desk(FVector(2860.0f, Y0 + 45.0f, Zf(F, 0.0f)), 0.0f, FVector(220.0f, 80.0f, DeskH), Mat(TEXT("MI_WoodOak")));
+	Monitor(FVector(2830.0f, Y0 + 30.0f, Zf(F, DeskH)), 90.0f, Mat(TEXT("MI_ScreenFrontOffice")));
+	TaskChair(FVector(2850.0f, Y0 + 130.0f, Zf(F, 0.0f)), -90.0f);
+	AddBox(FVector(2920.0f, Y0 + 55.0f, Zf(F, DeskH + 1.0f)), FVector(23.0f, 30.0f, 1.2f), Mat(TEXT("MI_Paper")), -5.0f, false);
+	AddBox(FVector(2950.0f, Y0 + 35.0f, Zf(F, DeskH + 8.0f)), FVector(16.0f, 12.0f, 16.0f), Mat(TEXT("MI_DeviceBlack")), 0.0f, false);
+	Shelf(FVector(3080.0f, Y0 + 22.0f, Zf(F, 0.0f)), 90.0f, 100.0f, 41);
+	// The dock bell's indoor chime over the office door: broken, with its work order taped on (M009).
+	AddBox(FVector(OffX - 45.0f, OffY + 6.0f, Zf(F, 240.0f)), FVector(14.0f, 6.0f, 14.0f), Mat(TEXT("MI_PlasticGrey")), 0.0f, false);
+	AddBox(FVector(OffX - 45.0f, OffY + 9.2f, Zf(F, 226.0f)), FVector(12.0f, 0.4f, 9.0f), Mat(TEXT("MI_Paper")), 4.0f, false);
+	AddLabel(TEXT("OUT OF ORDER  WO 4471"), FVector(OffX - 45.0f, OffY + 9.6f, Zf(F, 226.0f)), 90.0f, 1.2f, FColor(170, 30, 30), F);
+
+	// Two roller shutters on the south wall, closed, with their bollards and the dock leveller plates.
+	for (int32 i = 0; i < 2; ++i)
+	{
+		const float Xc = 3400.0f + i * 450.0f;
+		AddBox(FVector(Xc, Y0 + 4.0f, Zf(F, 125.0f)), FVector(320.0f, 6.0f, 250.0f), Steel, 0.0f, false);
+		for (int32 r = 0; r < 12; ++r) AddBox(FVector(Xc, Y0 + 7.4f, Zf(F, 10.0f + r * 20.0f)), FVector(318.0f, 1.0f, 2.0f), Mat(TEXT("MI_Graphite")), 0.0f, false);
+		AddBox(FVector(Xc, Y0 + 20.0f, Zf(F, 262.0f)), FVector(340.0f, 36.0f, 28.0f), Mat(TEXT("MI_Graphite")), 0.0f, false);
+		AddBox(FVector(Xc, Y0 + 60.0f, Zf(F, 1.0f)), FVector(260.0f, 100.0f, 2.0f), Mat(TEXT("MI_Chrome")), 0.0f, false);
+		for (float Side : {-1.0f, 1.0f}) AddInstance(Cylinder, FVector(Xc + Side * 175.0f, Y0 + 30.0f, Zf(F, 55.0f)), 0.0f, FVector(0.16f, 0.16f, 1.1f), Yellow, true);
+		AddLabel(FString::Printf(TEXT("DOCK %d"), i + 1), FVector(Xc, Y0 + 39.0f, Zf(F, 262.0f)), 90.0f, 7.0f, FColor::White, F);
+	}
+
+	// The dock door: alarmed, push bar, a held-open alarm after 30 seconds; it opens out onto the apron.
+	DynamicDoor(TEXT("dock"), F, FVector(DockDoorX, -HalfY, 0.0f), 90.0f, 100.0f, FString());
+	const float DoorFace = -HalfY + 15.0f;
+	for (float Side : {-1.0f, 1.0f}) AddBox(FVector(DockDoorX + Side * 53.0f, DoorFace + 1.0f, Zf(F, DoorH * 0.5f + 3.0f)), FVector(6.0f, 2.0f, DoorH + 6.0f), Steel, 0.0f, false);
+	AddBox(FVector(DockDoorX, DoorFace + 1.0f, Zf(F, DoorH + 3.0f)), FVector(112.0f, 2.0f, 6.0f), Steel, 0.0f, false);
+	AddBox(FVector(DockDoorX + 80.0f, DoorFace + 0.6f, Zf(F, 152.0f)), FVector(36.0f, 1.2f, 9.0f), Mat(TEXT("MI_Paper")), 0.0f, false);
+	AddLabel(TEXT("DOCK DOOR"), FVector(DockDoorX + 80.0f, DoorFace + 1.4f, Zf(F, 152.0f)), 90.0f, 3.2f, Ink, F);
+	AddBox(FVector(DockDoorX, DoorFace + 4.0f, Zf(F, DoorH + 30.0f)), FVector(22.0f, 8.0f, 14.0f), Mat(TEXT("MI_FireRed")), 0.0f, false);
+	AddBox(FVector(DockDoorX + 30.0f, DoorFace + 2.0f, Zf(F, DoorH + 6.0f)), FVector(10.0f, 4.0f, 4.0f), Mat(TEXT("MI_PlasticGrey")), 0.0f, false);
+	AddBox(FVector(DockDoorX - 90.0f, DoorFace + 1.0f, Zf(F, 150.0f)), FVector(40.0f, 1.0f, 30.0f), Mat(TEXT("MI_Paper")), 0.0f, false);
+	AddLabel(TEXT("ALARMED DOOR"), FVector(DockDoorX - 90.0f, DoorFace + 1.7f, Zf(F, 158.0f)), 90.0f, 2.8f, FColor(170, 30, 30), F);
+	AddLabel(TEXT("Held-open alarm after 30 s."), FVector(DockDoorX - 90.0f, DoorFace + 1.7f, Zf(F, 150.0f)), 90.0f, 1.6f, Ink, F);
+	AddLabel(TEXT("Never prop this door."), FVector(DockDoorX - 90.0f, DoorFace + 1.7f, Zf(F, 144.0f)), 90.0f, 1.6f, Ink, F);
+	if (AKcCasePoint* P = SpawnCasePoint(TEXT("loading_dock"), TEXT("dock_door"), FString(), FVector(DockDoorX, -HalfY + 8.0f, Zf(F, 100.0f)), 90.0f, Cube,
+			FVector(0.05f, 0.8f, 0.06f), Steel, EKcUseStyle::Screen, FVector(DockDoorX, -HalfY + 20.0f, Zf(F, 130.0f))))
+	{
+		if (const FDynDoor* Dyn = Doors.Find(TEXT("dock")))
+		{
+			if (Dyn->Pivot.IsValid()) P->AttachToComponent(Dyn->Pivot.Get(), FAttachmentTransformRules::KeepWorldTransform);
+		}
+	}
+	ExitSign(F, FVector(DockDoorX, DoorFace + 2.0f, Zf(F, DoorH + 52.0f)), 90.0f);
+
+	// The covered dock apron under the plaza: asphalt, retaining walls, a sodium lamp.
+	AddBox(FVector(4200.0f, -1300.0f, Zf(F, -10.0f)), FVector(1200.0f, 570.0f, 20.0f), Mat(TEXT("MI_Asphalt")));
+	AddBox(FVector(4200.0f, -1600.0f, Zf(F, 200.0f)), FVector(1200.0f, 30.0f, 400.0f), Mat(TEXT("MI_Concrete")));
+	for (float X : {3600.0f, 4800.0f}) AddBox(FVector(X, -1300.0f, Zf(F, 200.0f)), FVector(30.0f, 600.0f, 400.0f), Mat(TEXT("MI_Concrete")));
+	for (float X : {3800.0f, 4100.0f, 4400.0f}) AddBox(FVector(X, -1250.0f, Zf(F, 0.6f)), FVector(10.0f, 400.0f, 0.4f), Yellow, 0.0f, false);
+	AddBox(FVector(4250.0f, -1580.0f, Zf(F, 300.0f)), FVector(40.0f, 12.0f, 14.0f), Mat(TEXT("MI_LampWarm")), 0.0f, false);
+	AddLight(F, FVector(4250.0f, -1560.0f, Zf(F, 290.0f)), 1200.0f, 900.0f, FLinearColor(1.0f, 0.62f, 0.3f));
+	AddBox(FVector(DockDoorX + 80.0f, -HalfY - 17.0f, Zf(F, 130.0f)), FVector(10.0f, 4.0f, 12.0f), Mat(TEXT("MI_PlasticGrey")), 0.0f, false);
+	AddLabel(TEXT("DELIVERIES: RING"), FVector(DockDoorX + 80.0f, -HalfY - 19.2f, Zf(F, 146.0f)), -90.0f, 2.4f, Cream, F);
+
+	// Liquor cage in the south-east corner: steel bars, a gate with its padlock, the evening's cases.
+	const float CageX0 = 4380.0f, CageY1 = -720.0f;
+	for (float X = CageX0; X <= X1 - 4.0f; X += 12.0f) AddInstance(Cylinder, FVector(X, CageY1, Zf(F, 120.0f)), 0.0f, FVector(0.015f, 0.015f, 2.4f), Steel, false);
+	for (float Y = Y0 + 4.0f; Y <= CageY1; Y += 12.0f) AddInstance(Cylinder, FVector(CageX0, Y, Zf(F, 120.0f)), 0.0f, FVector(0.015f, 0.015f, 2.4f), Steel, false);
+	for (float Z : {2.0f, 120.0f, 238.0f})
+	{
+		AddBox(FVector((CageX0 + X1) * 0.5f, CageY1, Zf(F, Z)), FVector(X1 - CageX0, 4.0f, 4.0f), Steel, 0.0f, false);
+		AddBox(FVector(CageX0, (Y0 + CageY1) * 0.5f, Zf(F, Z)), FVector(4.0f, CageY1 - Y0, 4.0f), Steel, 0.0f, false);
+	}
+	AddCollider(FVector((CageX0 + X1) * 0.5f, CageY1, Zf(F, 120.0f)), FVector(X1 - CageX0, 4.0f, 240.0f), FRotator::ZeroRotator);
+	AddCollider(FVector(CageX0, (Y0 + CageY1) * 0.5f, Zf(F, 120.0f)), FVector(4.0f, CageY1 - Y0, 240.0f), FRotator::ZeroRotator);
+	for (int32 Stack = 0; Stack < 4; ++Stack)
+	{
+		for (int32 h = 0; h < 4 - (Stack == 1); ++h)
+		{
+			AddBox(FVector(CageX0 + 70.0f + Stack * 90.0f, Y0 + 60.0f, Zf(F, 16.0f + h * 30.0f)), FVector(40.0f, 30.0f, 30.0f), Mat(TEXT("MI_Cardboard")), (h % 2) * 4.0f, false);
+		}
+	}
+	SpawnCasePoint(TEXT("loading_dock"), FString(), TEXT("Liquor cage"), FVector(4560.0f, CageY1 + 4.0f, Zf(F, 105.0f)), 90.0f, Cube, FVector(0.04f, 0.06f, 0.08f),
+		Mat(TEXT("MI_Brass")), EKcUseStyle::Screen, FVector(4560.0f, CageY1 - 80.0f, Zf(F, 80.0f)));
+	AddBox(FVector(4560.0f, CageY1 + 1.0f, Zf(F, 200.0f)), FVector(80.0f, 1.0f, 20.0f), Mat(TEXT("MI_Paper")), 0.0f, false);
+	AddLabel(TEXT("LIQUOR CAGE: LOCK IT EVERY TIME"), FVector(4560.0f, CageY1 + 1.7f, Zf(F, 200.0f)), 90.0f, 2.0f, Ink, F);
+
+	// Tonight's deliveries on pallets by Dock 1, the pallet jack beside them.
+	for (int32 p = 0; p < 2; ++p)
+	{
+		const FVector Pal(3300.0f + p * 170.0f, -560.0f, Zf(F, 0.0f));
+		AddBox(Pal + FVector(0, 0, 7.0f), FVector(120.0f, 100.0f, 14.0f), Mat(TEXT("MI_WoodOak")), 0.0f, true);
+		for (int32 k = 0; k < 6; ++k)
+		{
+			AddBox(Pal + FVector(-30.0f + (k % 2) * 60.0f, -25.0f + ((k / 2) % 2) * 50.0f, 34.0f + (k / 4) * 40.0f), FVector(56.0f, 46.0f, 40.0f), Mat(TEXT("MI_Cardboard")), 0.0f, false);
+		}
+	}
+	// (The pallet jack is a scene prop: parked here, or wedged in the dock door in M009.)
+
+	for (float X : {3000.0f, 3600.0f, 4200.0f})
+	{
+		AddBox(FVector(X, -560.0f, Zf(F, CeilB1 - 3.0f)), FVector(124.0f, 14.0f, 6.0f), Mat(TEXT("MI_LedStrip")), 0.0f, false);
+		AddLight(F, FVector(X, -560.0f, Zf(F, CeilB1 - 16.0f)), 900.0f, 750.0f, Cool, X == 3600.0f);
+	}
+	for (float X : {3300.0f, 4200.0f}) SmokeDetector(F, FVector2D(X, -450.0f), CeilB1);
+	CctvDome(F, FVector(4100.0f, -760.0f, Zf(F, CeilB1)), TEXT("B1-05"));
+	CctvDome(F, FVector(4300.0f, -400.0f, Zf(F, CeilB1)), TEXT("B1-06"));
+	FireExtinguisher(F, FVector(X0 + 1.0f, -400.0f, 0.0f), 0.0f);
+}
+
+void AKcHotel::BuildLuggageRoom()
+{
+	// Behind the bell stand: racks of tagged bags, the window filmed for privacy, the door on a
+	// closer (open while the case is at the bell stand, M010).
+	const int32 F = 0;
+	const float X0 = 15.0f, X1 = LuggageX1 - Wall * 0.5f, Y0 = LuggageY0 + Wall * 0.5f, Y1 = HalfY - 15.0f;
+	UMaterialInterface* Plaster = Mat(TEXT("MI_WallPlaster"));
+	UMaterialInterface* Steel = Mat(TEXT("MI_Steel"));
+	WallX(F, LuggageY0, 15.0f, LuggageX1, {FVector2D(LuggageDoorX, 100.0f)}, Plaster, CeilLobby);
+	WallY(F, LuggageX1, LuggageY0, HalfY - 15.0f, {}, Plaster, CeilLobby);
+	DynamicDoor(TEXT("luggage"), F, FVector(LuggageDoorX, LuggageY0, 0.0f), -90.0f, 100.0f, TEXT("LUGGAGE"));
+	FloorFinish(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), Mat(TEXT("MI_FloorTile")), 0.8f);
+	Ceiling(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), 260.0f, Mat(TEXT("MI_CeilingSoft")));
+	AddBox(FVector((X0 + X1) * 0.5f, Y1 - 2.0f, Zf(F, 165.0f)), FVector(X1 - X0, 1.0f, 330.0f), Mat(TEXT("MI_Sheer")), 0.0f, false);
+	AddBox(FVector(X0 + 0.5f, (Y0 + Y1) * 0.5f, Zf(F, 130.0f)), FVector(1.0f, Y1 - Y0, 260.0f), Plaster, 0.0f, false);
+	// Two-tier racks along the window and the west wall.
+	struct FRack { FVector Center; float Yaw; float Length; };
+	const FRack Racks[] = {{FVector((X0 + X1) * 0.5f + 30.0f, Y1 - 32.0f, 0.0f), 0.0f, X1 - X0 - 80.0f}, {FVector(X0 + 32.0f, (Y0 + Y1) * 0.5f - 20.0f, 0.0f), 90.0f, Y1 - Y0 - 110.0f}};
+	FRandomStream R(4471);
+	static const TCHAR* const BagMats[] = {TEXT("MI_FabricDark"), TEXT("MI_Leather"), TEXT("MI_SuitNavy"), TEXT("MI_PlasticGrey"), TEXT("MI_FabricAccent")};
+	int32 Tag = 4460;
+	for (const FRack& Rk : Racks)
+	{
+		const FRotator Rot(0.0f, Rk.Yaw, 0.0f);
+		auto At = [&](float U, float V, float Z) { return FVector(Rk.Center.X, Rk.Center.Y, Zf(F, Z)) + Rot.RotateVector(FVector(U, V, 0.0f)); };
+		for (float Z : {8.0f, 92.0f}) AddBox(At(0, 0, Z), FVector(Rk.Length, 56.0f, 3.0f), Steel, Rk.Yaw, Z < 50.0f);
+		for (float Side : {-1.0f, 1.0f}) AddBox(At(Side * Rk.Length * 0.5f, 0, 90.0f), FVector(3.0f, 56.0f, 180.0f), Steel, Rk.Yaw);
+		for (float Tier : {9.5f, 93.5f})
+		{
+			float U = -Rk.Length * 0.5f + 8.0f;
+			while (U < Rk.Length * 0.5f - 30.0f)
+			{
+				const float W = R.FRandRange(26.0f, 46.0f);
+				const float H = R.FRandRange(40.0f, 66.0f);
+				// One gap on the window rack: where 4471 stood (M010).
+				if (Tag == 4471)
+				{
+					++Tag;
+					U += 42.0f;
+					continue;
+				}
+				AddBox(At(U + W * 0.5f, 0, Tier + H * 0.5f), FVector(W, R.FRandRange(34.0f, 50.0f), H), Mat(BagMats[R.RandRange(0, 4)]), Rk.Yaw, false);
+				AddBox(At(U + W * 0.5f, -26.0f, Tier + H - 8.0f), FVector(5.0f, 0.4f, 8.0f), Mat(TEXT("MI_Paper")), Rk.Yaw, false);
+				U += W + R.FRandRange(4.0f, 10.0f);
+				++Tag;
+			}
+		}
+	}
+	SpawnCasePoint(TEXT("bell_stand"), TEXT("luggage_room"), FString(), FVector((X0 + X1) * 0.5f + 30.0f, Y1 - 60.0f, Zf(F, 96.0f)), 0.0f, Cube, FVector(0.6f, 0.04f, 0.03f),
+		Steel, EKcUseStyle::Screen, FVector((X0 + X1) * 0.5f, Y1 - 40.0f, Zf(F, 90.0f)));
+	AddBox(FVector(LuggageDoorX + 80.0f, LuggageY0 - Wall * 0.5f - 0.6f, Zf(F, 130.0f)), FVector(26.0f, 1.0f, 34.0f), Mat(TEXT("MI_Paper")), 0.0f, false);
+	AddLabel(TEXT("Release against the ticket only."), FVector(LuggageDoorX + 80.0f, LuggageY0 - Wall * 0.5f - 1.2f, Zf(F, 138.0f)), -90.0f, 1.4f, Ink, F);
+	AddLabel(TEXT("No ticket: photo ID and a description."), FVector(LuggageDoorX + 80.0f, LuggageY0 - Wall * 0.5f - 1.2f, Zf(F, 132.0f)), -90.0f, 1.4f, Ink, F);
+	AddLabel(TEXT("Key: signed out to the bell captain."), FVector(LuggageDoorX + 80.0f, LuggageY0 - Wall * 0.5f - 1.2f, Zf(F, 126.0f)), -90.0f, 1.4f, Ink, F);
+	// The key, on its hook by the stand instead of signed out (M010).
+	AddBox(FVector(LuggageDoorX + 140.0f, LuggageY0 - Wall * 0.5f - 1.0f, Zf(F, 150.0f)), FVector(3.0f, 2.0f, 3.0f), Mat(TEXT("MI_Brass")), 0.0f, false);
+	AddBox(FVector(LuggageDoorX + 140.0f, LuggageY0 - Wall * 0.5f - 1.6f, Zf(F, 143.0f)), FVector(2.2f, 0.6f, 6.0f), Mat(TEXT("MI_Brass")), 0.0f, false);
+	CeilingLight(F, FVector((X0 + X1) * 0.5f, (Y0 + Y1) * 0.5f, Zf(F, 260.0f)), 500.0f, Neutral, 400.0f);
+	SmokeDetector(F, FVector2D((X0 + X1) * 0.5f - 100.0f, (Y0 + Y1) * 0.5f), 260.0f);
+}
+
 // ---------------------------------------------------------------------------- G: lobby and staff corridor
 
 void AKcHotel::BuildGround()
@@ -1406,21 +1737,33 @@ void AKcHotel::BuildGround()
 	for (float Y : {-700.0f, 700.0f}) Sconce(F, FVector(CoreX0 - 1.0f, Y, Zf(F, 200.0f)), 180.0f);
 	ArtPrint(FVector(CoreX0 - 1.0f, 600.0f, Zf(F, 190.0f)), 180.0f, TEXT("MI_ArtHarbourA"), FVector2D(160.0f, 110.0f));
 	for (float X : {700.0f, 1400.0f}) SmokeDetector(F, FVector2D(X, -200.0f), CeilLobby);
+	// The lobby AED on the core wall by the lifts, a green sign above it (M005).
+	const FVector Aed(CoreX0 - 7.0f, -280.0f, Zf(F, 125.0f));
+	SpawnCasePoint(TEXT("lobby"), TEXT("aed_cabinet"), FString(), Aed, 180.0f, Cube, FVector(0.12f, 0.42f, 0.5f), Mat(TEXT("MI_Paper")), EKcUseStyle::Screen);
+	AddBox(Aed - FVector(6.2f, 0, -4.0f), FVector(0.4f, 34.0f, 30.0f), Mat(TEXT("MI_Glass")), 0.0f, false);
+	AddBox(Aed - FVector(5.0f, 0, 6.0f), FVector(8.0f, 24.0f, 20.0f), Mat(TEXT("MI_SafetyYellow")), 0.0f, false);
+	AddBox(FVector(CoreX0 - 3.0f, -280.0f, Zf(F, 215.0f)), FVector(4.0f, 40.0f, 22.0f), Mat(TEXT("MI_LedGreen")), 0.0f, false);
+	AddLabel(TEXT("AED"), FVector(CoreX0 - 5.4f, -280.0f, Zf(F, 215.0f)), 180.0f, 9.0f, FColor::White, F);
+	// The holdall by the sofa: only there in the case that has it (M006).
+	BagPoint = SpawnCasePoint(TEXT("lobby"), TEXT("unattended_bag"), FString(), FVector(1250.0f, -175.0f, Zf(F, 18.0f)), 14.0f, Cube, FVector(0.55f, 0.28f, 0.34f),
+		Mat(TEXT("MI_FabricDark")), EKcUseStyle::Screen, FVector(1250.0f, -175.0f, Zf(F, 30.0f)));
 	// Bell stand, the brass luggage cart, and the luggage room behind its partition.
 	AddBox(FVector(320.0f, 520.0f, Zf(F, 52.0f)), FVector(60.0f, 46.0f, 104.0f), Mat(TEXT("MI_WoodWalnut")), -40.0f);
 	AddBox(FVector(320.0f, 520.0f, Zf(F, 106.0f)), FVector(66.0f, 52.0f, 4.0f), Mat(TEXT("MI_StoneCounter")), -40.0f, false);
-	AddBox(FVector(150.0f, 700.0f, Zf(F, 12.0f)), FVector(110.0f, 60.0f, 6.0f), Mat(TEXT("MI_Rug")), 0.0f, true);
+	AddBox(FVector(150.0f, 640.0f, Zf(F, 12.0f)), FVector(110.0f, 60.0f, 6.0f), Mat(TEXT("MI_Rug")), 0.0f, true);
 	for (float X : {98.0f, 202.0f})
 	{
-		AddInstance(Cylinder, FVector(X, 700.0f, Zf(F, 100.0f)), 0.0f, FVector(0.04f, 0.04f, 1.8f), Mat(TEXT("MI_Brass")), false);
+		AddInstance(Cylinder, FVector(X, 640.0f, Zf(F, 100.0f)), 0.0f, FVector(0.04f, 0.04f, 1.8f), Mat(TEXT("MI_Brass")), false);
 	}
-	AddInstance(Cylinder, FTransform(FRotator(90.0f, 0.0f, 0.0f), FVector(150.0f, 700.0f, Zf(F, 190.0f)), FVector(0.04f, 0.04f, 1.08f)), Mat(TEXT("MI_Brass")), false, false);
-	AddBox(FVector(140.0f, 700.0f, Zf(F, 40.0f)), FVector(70.0f, 45.0f, 50.0f), Mat(TEXT("MI_FabricDark")), 4.0f, false);
-	AddBox(FVector(165.0f, 690.0f, Zf(F, 80.0f)), FVector(45.0f, 30.0f, 30.0f), Mat(TEXT("MI_Leather")), -6.0f, false);
-	WallX(F, 860.0f, 15.0f, 480.0f, {FVector2D(240.0f, 100.0f)}, Plaster, CeilLobby);
-	WallY(F, 480.0f, 860.0f, HalfY - 15.0f, {}, Plaster, CeilLobby);
-	DoorLeaf(F, FVector(240.0f, 860.0f, 0.0f), -90.0f, 100.0f, TEXT("LUGGAGE"), false, false, TEXT("Luggage room"),
-		TEXT("Luggage room: locked. The bell captain holds the key overnight; every bag in there has a numbered tag and a matching stub."), TEXT("bell_stand"));
+	AddInstance(Cylinder, FTransform(FRotator(90.0f, 0.0f, 0.0f), FVector(150.0f, 640.0f, Zf(F, 190.0f)), FVector(0.04f, 0.04f, 1.08f)), Mat(TEXT("MI_Brass")), false, false);
+	AddBox(FVector(140.0f, 640.0f, Zf(F, 40.0f)), FVector(70.0f, 45.0f, 50.0f), Mat(TEXT("MI_FabricDark")), 4.0f, false);
+	AddBox(FVector(165.0f, 630.0f, Zf(F, 80.0f)), FVector(45.0f, 30.0f, 30.0f), Mat(TEXT("MI_Leather")), -6.0f, false);
+	// The tag book on the stand (M006, M010), the stand's camera, and the luggage room.
+	SpawnCasePoint(TEXT("bell_stand"), TEXT("luggage_log"), FString(), FVector(318.0f, 522.0f, Zf(F, 109.5f)), -40.0f, Cube, FVector(0.22f, 0.3f, 0.03f),
+		Mat(TEXT("MI_SuitNavy")), EKcUseStyle::PickUp);
+	AddBox(FVector(340.0f, 500.0f, Zf(F, 109.0f)), FVector(8.0f, 12.0f, 2.0f), Mat(TEXT("MI_Paper")), -40.0f, false);
+	CctvDome(F, FVector(420.0f, 600.0f, Zf(F, CeilLobby)), TEXT("L-03"));
+	BuildLuggageRoom();
 	BuildFrontDesk();
 	BuildLobbyBar();
 
@@ -1484,6 +1827,12 @@ void AKcHotel::BuildFrontDesk()
 		Monitor(FVector(X, 668.0f, Zf(F, 76.5f)), 90.0f, Mat(TEXT("MI_ScreenFrontOffice")));
 		AddBox(FVector(X, 708.0f, Zf(F, 77.5f)), FVector(44.0f, 15.0f, 2.0f), Mat(TEXT("MI_DeviceBlack")), 0.0f, false);
 		const FVector Enc(X + 62.0f, 690.0f, Zf(F, 80.5f));
+		if (i == 0)
+		{
+			// Station 1's screen: the front office and lock system terminal (M008, M011).
+			SpawnCasePoint(TEXT("front_desk"), TEXT("front_office_pc"), FString(), FVector(X, 669.6f, Zf(F, 76.5f + 38.5f)), 90.0f, Cube, FVector(0.003f, 0.59f, 0.33f),
+				Mat(TEXT("MI_ScreenFrontOffice")), EKcUseStyle::Screen);
+		}
 		if (i == 1)
 		{
 			SpawnCasePoint(TEXT("front_desk"), TEXT("key_encoder"), TEXT("Keycard encoder E-02"), Enc, 0.0f, Cube, FVector(0.16f, 0.2f, 0.08f), Mat(TEXT("MI_PlasticGrey")),
@@ -1581,6 +1930,10 @@ void AKcHotel::BuildLobbyBar()
 	}
 	CctvDome(F, FVector(1050.0f, -760.0f, Zf(F, CeilLobby)), TEXT("L-07"));
 	SmokeDetector(F, FVector2D(600.0f, -760.0f), CeilLobby);
+	// The bar's own case point: the night bar log on the counter (M005 moves it to the casualty).
+	LobbyBarCounter = FVector(1742.0f, -600.0f, Zf(F, 112.5f));
+	LobbyBarPoint = SpawnCasePoint(TEXT("lobby_bar"), FString(), TEXT("Lobby bar"), LobbyBarCounter, -84.0f, Cube, FVector(0.22f, 0.3f, 0.02f), Mat(TEXT("MI_Paper")),
+		EKcUseStyle::PickUp);
 }
 
 void AKcHotel::BuildFireCommand()
@@ -2158,6 +2511,7 @@ void AKcHotel::PlaceFixedInteractables()
 		{TEXT("door_1406"), TEXT("1406"), 2700.0f, true},
 		{TEXT("door_1412"), TEXT("1412"), 750.0f, false},
 		{TEXT("door_1418"), TEXT("1418"), 3750.0f, false},
+		{TEXT("door_1409"), TEXT("1409"), 3960.0f, true},
 	};
 	for (const FDoorSpot& D : DoorSpots)
 	{
@@ -2370,6 +2724,11 @@ void AKcHotel::RefreshScenes()
 	const bool bReturned = Done(TEXT("return_laptop"));
 	const bool b1412 = WorkAt("room_1412");
 	const bool bCloset = WorkAt("f14_service");
+	const bool bBag = Has(TEXT("observe_bag")) && !Done(TEXT("secure_bag"));
+	const bool bCodeBlue = Has(TEXT("assess")) && !Done(TEXT("handover"));
+	const bool bAed = Done(TEXT("use_aed"));
+	const bool bPropped = Has(TEXT("respond_alarm")) && !Done(TEXT("respond_alarm"));
+	const bool bLuggage = Has(TEXT("check_luggage_room"));
 
 	// Guests behind doors: the door offers their work until they open it.
 	for (AKcCasePoint* P : CasePoints)
@@ -2386,8 +2745,8 @@ void AKcHotel::RefreshScenes()
 		}
 	}
 
-	const FString Key = FString::Printf(TEXT("%s|%d%d%d%d%d%d%d%d"), M ? *KcConvert::ToFString(M->Id) : TEXT(""), bParty, bKnocked, bCapOff, bQuiet, bReturned, b1412, bCloset,
-		G && G->HasGame());
+	const FString Key = FString::Printf(TEXT("%s|%d%d%d%d%d%d%d%d|%d%d%d%d%d"), M ? *KcConvert::ToFString(M->Id) : TEXT(""), bParty, bKnocked, bCapOff, bQuiet, bReturned, b1412,
+		bCloset, G && G->HasGame(), bBag, bCodeBlue, bAed, bPropped, bLuggage);
 	if (Key == SceneKey) return;
 	SceneKey = Key;
 	for (UPrimitiveComponent* S : SceneProps)
@@ -2405,6 +2764,43 @@ void AKcHotel::RefreshScenes()
 	SetDoorOpen(TEXT("1412"), b1412);
 	SetDoorOpen(TEXT("closet"), bCloset);
 	SetDoorOpen(TEXT("1406"), bParty && bKnocked && !bQuiet);
+	SetDoorOpen(TEXT("luggage"), bLuggage);
+	SetDoorOpen(TEXT("dock"), bPropped);
+
+	// M006: the holdall by the sofa, until it is taken to the front office safe.
+	if (BagPoint)
+	{
+		BagPoint->SetActorHiddenInGame(!bBag);
+		BagPoint->SetActorEnableCollision(bBag);
+	}
+	// M005: the bar's case point moves to where the guest went down: a stool on its side, his glass,
+	// his jacket, and once it is used the AED open beside him. Back on the counter after the handover.
+	if (LobbyBarPoint)
+	{
+		LobbyBarPoint->SetActorLocation(bCodeBlue ? FVector(1560.0f, -760.0f, Zf(0, 1.5f)) : LobbyBarCounter);
+		LobbyBarPoint->SetActorRotation(FRotator(0.0f, bCodeBlue ? 20.0f : -84.0f, 0.0f));
+		LobbyBarPoint->SetAppearance(Cube, bCodeBlue ? FVector(0.5f, 0.62f, 0.03f) : FVector(0.22f, 0.3f, 0.02f), Mat(bCodeBlue ? TEXT("MI_SuitNavy") : TEXT("MI_Paper")));
+	}
+	if (bCodeBlue)
+	{
+		SceneBox(FVector(1640.0f, -700.0f, Zf(0, 20.0f)), FVector(38.0f, 38.0f, 76.0f), Mat(TEXT("MI_Leather")), 0.0f, Cylinder);
+		SceneBox(FVector(1520.0f, -700.0f, Zf(0, 1.0f)), FVector(30.0f, 22.0f, 0.4f), Mat(TEXT("MI_Glass")), 0.0f, Cylinder);
+		SceneBox(FVector(1505.0f, -690.0f, Zf(0, 4.0f)), FVector(7.0f, 7.0f, 8.0f), Mat(TEXT("MI_Glass")), 0.0f, Cylinder);
+		if (bAed)
+		{
+			SceneBox(FVector(1620.0f, -820.0f, Zf(0, 7.0f)), FVector(30.0f, 26.0f, 12.0f), Mat(TEXT("MI_SafetyYellow")), 10.0f);
+			SceneBox(FVector(1620.0f, -820.0f, Zf(0, 13.5f)), FVector(14.0f, 10.0f, 1.0f), Mat(TEXT("MI_ScreenPanel")), 10.0f);
+			SceneBox(FVector(1585.0f, -790.0f, Zf(0, 1.2f)), FVector(16.0f, 12.0f, 0.6f), Mat(TEXT("MI_Paper")), 30.0f);
+		}
+	}
+	// M009: the dock door wedged open with the pallet jack; otherwise the jack is parked by the pallets.
+	{
+		const FVector Jack = bPropped ? FVector(DockDoorX - 20.0f, -HalfY + 40.0f, Zf(-1, 0.0f)) : FVector(3650.0f, -640.0f, Zf(-1, 0.0f));
+		const float JackYaw = bPropped ? 75.0f : 0.0f;
+		const FVector Handle = FRotator(0.0f, JackYaw, 0.0f).RotateVector(FVector(-62.0f, 0.0f, 0.0f));
+		SceneBox(Jack + FVector(0, 0, 6.0f), FVector(115.0f, 55.0f, 8.0f), Mat(TEXT("MI_FireRed")), JackYaw);
+		SceneBox(Jack + Handle + FVector(0, 0, 60.0f), FVector(6.0f, 6.0f, 110.0f), Mat(TEXT("MI_Graphite")), JackYaw);
+	}
 
 	const int32 F = TopFloor;
 	if (bReturned && !Desk1412.IsZero())

@@ -24,6 +24,7 @@
 #include "Widgets/Layout/SBox.h"
 #include "Widgets/Layout/SScrollBox.h"
 #include "Widgets/SBoxPanel.h"
+#include "Widgets/SNullWidget.h"
 #include "Widgets/SWindow.h"
 #include "Widgets/Text/STextBlock.h"
 
@@ -170,6 +171,151 @@ TSharedRef<SWidget> Table(const std::vector<std::string>& Columns, const std::ve
 	MakeRow(Columns, true, 0);
 	for (size_t r = 0; r < Rows.size(); ++r) MakeRow(Rows[r], false, static_cast<int32>(r));
 	return SNew(SBorder).BorderImage(CardBrush()).Padding(Space2)[Box];
+}
+
+// The column whose header contains Name (case-insensitive), or -1.
+int32 ColumnOf(const std::vector<std::string>& Columns, const TCHAR* Name)
+{
+	for (size_t c = 0; c < Columns.size(); ++c)
+	{
+		if (ToFString(Columns[c]).Contains(Name, ESearchCase::IgnoreCase)) return static_cast<int32>(c);
+	}
+	return -1;
+}
+
+FString CellAt(const std::vector<std::string>& Row, int32 Column)
+{
+	return Column >= 0 && Column < static_cast<int32>(Row.size()) ? ToFString(Row[Column]) : FString();
+}
+
+FSlateFontInfo MonoFont(int32 Size)
+{
+	return FCoreStyle::GetDefaultFontStyle("Mono", Size);
+}
+
+// CCTV review console: the clips as a strip of time-coded markers, and a viewer showing the selected
+// clip's camera, time and what it shows. Prev and next step through them as on the recorder.
+TSharedRef<SWidget> CctvConsole(const kc::ActionDef& A)
+{
+	const int32 TimeCol = ColumnOf(A.Columns, TEXT("Time"));
+	const int32 CamCol = ColumnOf(A.Columns, TEXT("Camera"));
+	const int32 WhatCol = static_cast<int32>(A.Columns.size()) - 1;
+	// Without a camera column, the camera is the first word of the clip title ("14-02 Corridor, ...").
+	FString TitleCam = ToFString(A.FindingTitle);
+	int32 Cut = INDEX_NONE;
+	if (TitleCam.FindChar(TEXT(' '), Cut)) TitleCam.LeftInline(Cut);
+	TitleCam.RemoveFromEnd(TEXT(","));
+	struct FClip { FString Time; FString Camera; FString What; };
+	TSharedRef<TArray<FClip>> Clips = MakeShared<TArray<FClip>>();
+	for (const std::vector<std::string>& Row : A.Rows)
+	{
+		Clips->Add({CellAt(Row, TimeCol), CamCol >= 0 ? CellAt(Row, CamCol) : TitleCam, CellAt(Row, WhatCol)});
+	}
+	if (Clips->Num() == 0) return SNullWidget::NullWidget;
+	TSharedRef<int32> Selected = MakeShared<int32>(0);
+	const FLinearColor Amber = Warning;
+	const FLinearColor Screen = FLinearColor::FromSRGBColor(FColor(0x05, 0x07, 0x0A));
+
+	TSharedRef<SHorizontalBox> Strip = SNew(SHorizontalBox);
+	for (int32 i = 0; i < Clips->Num(); ++i)
+	{
+		Strip->AddSlot().FillWidth(1.0f).Padding(0.0f, 0.0f, i + 1 < Clips->Num() ? Space1 : 0.0f, 0.0f)
+		[
+			SNew(SButton).ButtonStyle(&FCoreStyle::Get().GetWidgetStyle<FButtonStyle>("NoBorder")).ContentPadding(0.0f)
+			.OnClicked_Lambda([Selected, i]() { *Selected = i; return FReply::Handled(); })
+			[
+				SNew(SBorder).BorderImage(FCoreStyle::Get().GetBrush("WhiteBrush")).Padding(FMargin(Space2, Space1))
+				.BorderBackgroundColor_Lambda([Selected, i, Amber]() { return FSlateColor(*Selected == i ? Amber.CopyWithNewOpacity(0.35f) : FLinearColor(1, 1, 1, 0.06f)); })
+				[
+					SNew(SVerticalBox)
+					+ SVerticalBox::Slot().AutoHeight()[SNew(STextBlock).Text(FText::FromString((*Clips)[i].Time)).Font(MonoFont(12)).ColorAndOpacity(TextPrimary)]
+					+ SVerticalBox::Slot().AutoHeight()[SNew(STextBlock).Text(FText::FromString((*Clips)[i].Camera)).Font(MonoFont(10)).ColorAndOpacity(TextMuted)]
+				]
+			]
+		];
+	}
+	auto Pick = [Clips, Selected](int32 Step) { *Selected = FMath::Clamp(*Selected + Step, 0, Clips->Num() - 1); return FReply::Handled(); };
+	TSharedRef<SVerticalBox> Box = Column();
+	AddRow(Box, SNew(SBorder).BorderImage(FCoreStyle::Get().GetBrush("WhiteBrush")).BorderBackgroundColor(Screen).Padding(Space4)
+		[
+			SNew(SBox).MinDesiredHeight(170.0f)
+			[
+				SNew(SVerticalBox)
+				+ SVerticalBox::Slot().AutoHeight()
+				[
+					SNew(SHorizontalBox)
+					+ SHorizontalBox::Slot().FillWidth(1.0f)
+					[
+						SNew(STextBlock).Font(MonoFont(13)).ColorAndOpacity(Amber)
+						.Text_Lambda([Clips, Selected]() { return FText::FromString(FString::Printf(TEXT("CAM %s"), *(*Clips)[*Selected].Camera)); })
+					]
+					+ SHorizontalBox::Slot().AutoWidth()
+					[
+						SNew(STextBlock).Font(MonoFont(13)).ColorAndOpacity(Amber)
+						.Text_Lambda([Clips, Selected]() { return FText::FromString(FString::Printf(TEXT("%s   PLAYBACK  %d/%d"), *(*Clips)[*Selected].Time, *Selected + 1, Clips->Num())); })
+					]
+				]
+				+ SVerticalBox::Slot().FillHeight(1.0f).VAlign(VAlign_Center).Padding(0.0f, Space4)
+				[
+					SNew(STextBlock).Font(FontW(17, EWeight::Regular)).ColorAndOpacity(TextPrimary).AutoWrapText(true).Justification(ETextJustify::Center)
+					.Text_Lambda([Clips, Selected]() { return FText::FromString((*Clips)[*Selected].What); })
+				]
+			]
+		], Space2);
+	AddRow(Box, Strip, Space2);
+	Box->AddSlot().AutoHeight().HAlign(HAlign_Right)
+	[
+		SNew(SHorizontalBox)
+		+ SHorizontalBox::Slot().AutoWidth().Padding(0.0f, 0.0f, Space2, 0.0f)
+		[
+			MakeButton(LOCTEXT("ClipPrev", "Previous clip"), FOnClicked::CreateLambda([Pick]() { return Pick(-1); }), nullptr,
+				TAttribute<bool>::CreateLambda([Selected]() { return *Selected > 0; }))
+		]
+		+ SHorizontalBox::Slot().AutoWidth()
+		[
+			MakeButton(LOCTEXT("ClipNext", "Next clip"), FOnClicked::CreateLambda([Pick]() { return Pick(1); }), nullptr,
+				TAttribute<bool>::CreateLambda([Selected, Clips]() { return *Selected + 1 < Clips->Num(); }))
+		]
+	];
+	return SNew(SBorder).BorderImage(CardBrush()).Padding(Space2)[Box];
+}
+
+// Lock audit trail, read out as the lock programmer shows it: one line per event, refusals in red,
+// a voided credential in amber.
+TSharedRef<SWidget> AuditReadout(const kc::ActionDef& A)
+{
+	const FLinearColor Screen = FLinearColor::FromSRGBColor(FColor(0x05, 0x07, 0x0A));
+	TSharedRef<SVerticalBox> Lines = Column();
+	if (!A.FindingTitle.empty())
+	{
+		AddRow(Lines, SNew(STextBlock).Text(FText::FromString(ToFString(A.FindingTitle).ToUpper())).Font(MonoFont(12)).ColorAndOpacity(Warning), Space2);
+	}
+	FString Header;
+	for (const std::string& C : A.Columns) Header += ToFString(C).ToUpper().RightPad(16).Left(16) + TEXT(" ");
+	AddRow(Lines, SNew(STextBlock).Text(FText::FromString(Header.TrimEnd())).Font(MonoFont(11)).ColorAndOpacity(TextMuted), Space1);
+	for (const std::vector<std::string>& Row : A.Rows)
+	{
+		FString Line;
+		for (size_t c = 0; c < A.Columns.size(); ++c)
+		{
+			const FString Cell = c < Row.size() ? ToFString(Row[c]) : FString();
+			Line += c + 1 < A.Columns.size() ? Cell.RightPad(16).Left(16) + TEXT(" ") : Cell;
+		}
+		const FString Last = Row.empty() ? FString() : ToFString(Row.back());
+		FLinearColor Color = TextPrimary;
+		if (Last.Contains(TEXT("Refused"))) Color = Bad;
+		else if (Last.Contains(TEXT("void"))) Color = Warning;
+		AddRow(Lines, SNew(STextBlock).Text(FText::FromString(Line)).Font(MonoFont(13)).ColorAndOpacity(Color).AutoWrapText(true), 2.0f);
+	}
+	return SNew(SBorder).BorderImage(FCoreStyle::Get().GetBrush("WhiteBrush")).BorderBackgroundColor(Screen).Padding(Space4)[Lines];
+}
+
+// The right view for a tool's records: the CCTV console, a lock or system readout, or a plain table.
+TSharedRef<SWidget> ToolView(const kc::ActionDef& A)
+{
+	if (A.Kind == kc::EActionKind::CctvReview && !A.Rows.empty()) return CctvConsole(A);
+	if (A.Kind == kc::EActionKind::LockAudit) return AuditReadout(A);
+	return Table(A.Columns, A.Rows);
 }
 
 FString ToolTitle(kc::EActionKind K)
@@ -540,7 +686,7 @@ FKcScreenParts ActionResult(AKcHUD* Hud, const kc::ActionDef& A, TFunction<void(
 	AddRow(Box, MakeEyebrow(FText::FromString(FString::Printf(TEXT("%s  /  %s"), *ToolTitle(A.Kind), *Where))), Space1);
 	AddRow(Box, MakeHeading(FText::FromString(ToFString(A.Label))), 2.0f);
 	AddRow(Box, MakeBody(FText::FromString(FString::Printf(TEXT("Finished at %s"), *Clock)), 13, TextMuted), Space4);
-	if (!A.Columns.empty()) AddRow(Box, Table(A.Columns, A.Rows), Space4);
+	if (!A.Columns.empty()) AddRow(Box, ToolView(A), Space4);
 	const FString Finding = C ? C->FindingFor(A) : ToFString(A.Finding);
 	if (!Finding.IsEmpty())
 	{

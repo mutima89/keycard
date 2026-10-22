@@ -136,6 +136,9 @@ private:
 	void BuildFrontDesk();
 	void BuildLobbyBar();
 	void BuildServiceCloset();
+	void BuildHousekeeping();
+	void BuildLoadingDock();
+	void BuildLuggageRoom();
 
 	// ---- furniture ----
 	void Desk(const FVector& Center, float Yaw, const FVector& Size, UMaterialInterface* Top);
@@ -172,6 +175,11 @@ private:
 	// Rooms 1406 and 1412: the bedroom's smoke detector (the party covers 1406's).
 	FVector Detector1406 = FVector::ZeroVector;
 	FVector Desk1412 = FVector::ZeroVector; // desk top, under the lamp
+	// Case points the scenes move or hide: the lobby bar's (M005 puts it on the casualty) and the
+	// unattended bag (only there in the case that has it).
+	UPROPERTY(Transient) TObjectPtr<AKcCasePoint> LobbyBarPoint;
+	UPROPERTY(Transient) TObjectPtr<AKcCasePoint> BagPoint;
+	FVector LobbyBarCounter = FVector::ZeroVector;
 	FVector Safe1412 = FVector::ZeroVector;
 
 	// ---- night and life ----

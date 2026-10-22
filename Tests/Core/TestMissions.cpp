@@ -147,6 +147,13 @@ TEST(Campaign_BestPlayThroughLevelThreeReachesLevelFour)
 	for (const char* Card : {"lost_master_key", "door_alarm_response", "luggage_room_control", "key_system_audit", "cctv_preservation"}) CHECK(HasCard(S, Card));
 	for (const char* Clue : {"clone_1418", "trolley_master", "rogue_encoder"}) CHECK(HasClue(S, Clue));
 	CHECK_EQ(static_cast<int>(S.Campaign.Records.size()), 11);
+	// The certain level 2-3 inbox events have arrived (lindgren_letter is a 60% chance).
+	for (const char* Event : {"paramedic_feedback", "adjuster_export", "supervisor_welcome", "marisol_coil", "fnb_dock_bell", "encoder_vendor"})
+	{
+		const bool bFired = std::find(S.World.FiredEvents.begin(), S.World.FiredEvents.end(), Event) != S.World.FiredEvents.end();
+		if (!bFired) std::printf("    %s never arrived\n", Event);
+		CHECK(bFired);
+	}
 }
 
 TEST(Campaign_SameSeedSameCareer)

@@ -1,7 +1,16 @@
 # Progress
 
-## Status: Phase 1 built and packaged on the PC (self-test play, resume and tour pass); voices and UE automation tests missing
+## Status: Phase 2 content written (M004-M011, hotel fit-out, tool screens); PC round 3 build pending
 Last update: 2026-10-22
+
+- 2026-10-22 Phase 2 (levels 1-3), cloud session (UE parts not compiled yet).
+  - Missions M004-M011 (sources in Scripts/content): Last Orders, Code Blue at the Bar, The Bag by the Sofa, Footage Before It Overwrites (level 2); The Missing Master, Propped Open, The Wrong Ticket, Encoder E-77 (level 3). Each teaches a Field Manual card (8 new, 12 in all), uses the strict validator, and scores 100 with best play.
+  - Cast: six new people (Docs/FictionalNames.md). Story: clues `trolley_master` and `rogue_encoder` (chapter 1). Inbox: 7 events for levels 2-3 (two need a reply), fallout for medical, suspicious_item, cctv, keys, perimeter and luggage. Mission CCTV clips now name the hotel's own cameras (B1-05, B1-06, L-01, L-03, 14-02).
+  - Core: content test scores each case at its own level (authority); the "two places" rule now counts every action's location. New test `Campaign_BestPlayThroughLevelThreeReachesLevelFour` (all eleven cases at 100, level 4, the new cards and clues, the certain inbox events arrive).
+  - Hotel: B1 housekeeping and laundry (washers, linen, trolleys, master key cabinet with the empty hook, camera B1-03), loading dock (receiving office, two shutters, the alarmed dock door that opens onto a covered apron, liquor cage, pallets), luggage room behind the bell stand (racks, the gap where 4471 stood, release rules), lobby AED, the holdall (shown only in M006), the front office terminal, door 1409's reader, posts for the new people, arrivals for housekeeping, the dock and the kitchen. Scenes: M005 (the bar point moves to where the guest went down, stool, glass, AED once used), M009 (dock door wedged open by the pallet jack until you close it), M010 (luggage room open). Five new tour views. Known gap: no casualty figure in M005 (no lying-down animation in the cast set).
+  - Screens: CCTV review console (clip markers, viewer with camera and time, previous and next) and a lock audit readout; other tools keep the table.
+  - Self-test play now runs M001-M011 with the three ceremonies and expects level 4; resume expects level 4 and 11 records.
+  - Core tests (GCC, ASan + UBSan): `44 test cases, 0 failed, 0 failed checks`. `BuildVoices.py --list`: 203 lines.
 
 - 2026-10-22 Phase 1 follow-up, cloud session (not compiled yet).
   - `Data/VoiceCast.json`: 23 characters, each with their own Kokoro voice; `BuildVoices.py` now collects case calls, action lines, interview replies and the in-passing lines (139 lines, `--list` run here). Core test `Voice_EveryCharacterHasTheirOwnVoice`.

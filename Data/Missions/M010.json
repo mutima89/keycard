@@ -122,7 +122,7 @@
       "requires": [
         "talk_bell_captain"
       ],
-      "findingTitle": "LOBBY-03 and ENT-01, 22:30-05:15",
+      "findingTitle": "L-03 and L-01, 22:30-05:15",
       "finding": [
         "22:41 Ms Lindgren hands over the case. A man at the bar end of the lobby is watching the bell stand; he is close enough to read the tag as Owen writes it.",
         "05:08 the same man arrives in a taxi, talks to Owen for under a minute, takes the case at 05:10 and leaves in the same taxi. The roof number is readable."
@@ -135,22 +135,22 @@
       "rows": [
         [
           "22:41",
-          "LOBBY-03",
+          "L-03",
           "Case handed over; man in the lobby watching the stand"
         ],
         [
           "05:08",
-          "ENT-01",
+          "L-01",
           "Same man arrives by taxi"
         ],
         [
           "05:10",
-          "LOBBY-03",
+          "L-03",
           "Owen hands him the case, no ticket"
         ],
         [
           "05:11",
-          "ENT-01",
+          "L-01",
           "Leaves in the same taxi, roof number visible"
         ]
       ]
@@ -343,7 +343,7 @@
         },
         {
           "id": "f_cctv",
-          "label": "LOBBY-03 22:41: a man watches the stand as the tag is written; ENT-01 05:08-05:11: the same man arrives and leaves by taxi with the case.",
+          "label": "L-03 22:41: a man watches the stand as the tag is written; L-01 05:08-05:11: the same man arrives and leaves by taxi with the case.",
           "correct": true
         },
         {

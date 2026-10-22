@@ -90,7 +90,7 @@ def setup_texture(asset_path, kind):
 def import_texture(rel, dest):
     path = source(rel)
     name = "T_" + os.path.splitext(os.path.basename(path))[0]
-    kind = "normal" if "_nor_dx" in name else "mask" if name.endswith("_arm_1k") else "color"
+    kind = "normal" if "_nor_dx" in name else "mask" if name.endswith(("_arm_1k", "_alpha_1k")) else "color"
     imported = import_file(path, dest, name)
     return setup_texture(dest + "/" + name, kind) if imported else None
 
@@ -170,6 +170,22 @@ def build_surface(defaults):
         link(uvm, "", s, "UVs")
         samples[pname] = s
     pbr_tail(m, (samples["BaseColorMap"], "RGB"), (samples["NormalMap"], "RGB"), (samples["ARMMap"], "RGB"), -400)
+    return finish(m)
+
+
+def build_foliage(defaults):
+    """Leaves: UV PBR like M_KcSurface, alpha-masked by the model's opacity map and two-sided."""
+    m = new_material("M_KcFoliage")
+    m.set_editor_property("blend_mode", unreal.BlendMode.BLEND_MASKED)
+    m.set_editor_property("two_sided", True)
+    samples = {}
+    for i, (pname, tex, sampler) in enumerate([("BaseColorMap", defaults["color"], unreal.MaterialSamplerType.SAMPLERTYPE_COLOR),
+                                               ("NormalMap", defaults["normal"], unreal.MaterialSamplerType.SAMPLERTYPE_NORMAL),
+                                               ("ARMMap", defaults["mask"], unreal.MaterialSamplerType.SAMPLERTYPE_MASKS),
+                                               ("OpacityMap", defaults["mask"], unreal.MaterialSamplerType.SAMPLERTYPE_MASKS)]):
+        samples[pname] = expr(m, unreal.MaterialExpressionTextureSampleParameter2D, -800, -300 + i * 300, parameter_name=pname, texture=tex, sampler_type=sampler)
+    pbr_tail(m, (samples["BaseColorMap"], "RGB"), (samples["NormalMap"], "RGB"), (samples["ARMMap"], "RGB"), -400)
+    prop(samples["OpacityMap"], "R", unreal.MaterialProperty.MP_OPACITY_MASK)
     return finish(m)
 
 
@@ -311,8 +327,10 @@ def texture_set(asset_id, part=""):
     dest = GAME + "/Textures/" + asset_id
     prefix = asset_id + ("_" + part if part else "")
     out = {}
-    for key, pname in [("diff", "BaseColorMap"), ("nor_dx", "NormalMap"), ("arm", "ARMMap")]:
+    for key, pname in [("diff", "BaseColorMap"), ("nor_dx", "NormalMap"), ("arm", "ARMMap"), ("alpha", "OpacityMap")]:
         rel = "polyhaven/%s/%s_%s_1k.jpg" % (asset_id, prefix, key)
+        if not os.path.exists(source(rel)):
+            rel = rel[:-4] + ".png"
         if os.path.exists(source(rel)):
             tex = import_texture(rel, dest)
             if tex:
@@ -348,7 +366,8 @@ def import_model(asset_id):
         slot = str(mat.get_editor_property("material_slot_name"))
         part = next((p for p in parts if p.lower() in slot.lower()), "")
         textures = texture_set(asset_id, part)
-        mi = instance("MI_%s%s" % (asset_id, "_" + part if part else ""), SURFACE, textures)
+        # Leaf cards come with an opacity map: masked and two-sided, or they render as solid blobs.
+        mi = instance("MI_%s%s" % (asset_id, "_" + part if part else ""), FOLIAGE if "OpacityMap" in textures else SURFACE, textures)
         mesh.set_material(i, mi)
         slots.append({"slot": slot, "part": part, "material": mi.get_path_name(), "textures": len(textures)})
         if not textures:
@@ -391,6 +410,7 @@ log("HDRI imported as %s" % (hdri.get_class().get_name() if hdri else "nothing")
 
 SURFACE = build_surface(defaults)
 WORLD = build_world(defaults)
+FOLIAGE = build_foliage(defaults)
 GLASS = build_glass()
 EMISSIVE = build_emissive()
 build_highlight()
@@ -470,6 +490,8 @@ instance("MI_SignGlow", EMISSIVE, {}, {"Intensity": 30.0}, {"Color": (0.29, 0.61
 instance("MI_LedGreen", EMISSIVE, {}, {"Intensity": 25.0}, {"Color": (0.1, 0.9, 0.25, 1)})
 instance("MI_LedRed", EMISSIVE, {}, {"Intensity": 25.0}, {"Color": (0.95, 0.08, 0.05, 1)})
 instance("MI_LedAmber", EMISSIVE, {}, {"Intensity": 25.0}, {"Color": (1.0, 0.55, 0.05, 1)})
+# Back-of-house ceilings: faintly self-lit so they read as bounce-lit white above the down-facing panels, not black.
+instance("MI_CeilingSoft", EMISSIVE, {}, {"Intensity": 6.0}, {"Color": (0.88, 0.89, 0.9, 1)})
 instance("MI_Highlight", unreal.load_asset(MAT + "/M_KcHighlight"))
 
 # Our own textures (Scripts/GenerateTextures.py): screen UIs, signs, whiteboard, prints, carpet and wallpaper patterns.

@@ -1,0 +1,167 @@
+{
+  "schema": 1,
+  "comment": "Voices for Scripts/BuildVoices.py (Kokoro-82M, Apache 2.0). voice: a Kokoro voice id, or a blend {id: weight}. lang: en-gb or en-us pronunciation. speed: 1.0 is the voice's natural pace. One distinct voice per character. Lines are collected from Data/Missions/*.json (case calls, action lines, interview replies) plus the fixed lines below that live in the game code.",
+  "cast": {
+    "mentor": {
+      "voice": "bm_george",
+      "lang": "en-gb",
+      "speed": 0.94,
+      "note": "Director of LP: calm, never raises his voice"
+    },
+    "gm": {
+      "voice": "bf_isabella",
+      "lang": "en-gb",
+      "speed": 0.95,
+      "note": "General Manager: poised, unhurried authority"
+    },
+    "night_manager": {
+      "voice": "bm_daniel",
+      "lang": "en-gb",
+      "speed": 1.02,
+      "note": "Night Manager: courteous, a little stretched"
+    },
+    "rival": {
+      "voice": "am_eric",
+      "lang": "en-us",
+      "speed": 1.05,
+      "note": "LP Supervisor, evenings: brisk, competitive"
+    },
+    "partner": {
+      "voice": "bf_emma",
+      "lang": "en-gb",
+      "speed": 1.02,
+      "note": "LP Officer, nights: steady, dry humour"
+    },
+    "hr_director": {
+      "voice": "af_sarah",
+      "lang": "en-us",
+      "speed": 0.98,
+      "note": "HR Director: careful, precise"
+    },
+    "chief_engineer": {
+      "voice": "am_fenrir",
+      "lang": "en-us",
+      "speed": 0.95,
+      "note": "Chief Engineer: plain-spoken"
+    },
+    "exec_housekeeper": {
+      "voice": "af_nicole",
+      "lang": "en-us",
+      "speed": 0.98,
+      "note": "Executive Housekeeper: exacting, protective of her team"
+    },
+    "front_office_manager": {
+      "voice": "bm_lewis",
+      "lang": "en-gb",
+      "speed": 1.0,
+      "note": "Front Office Manager: polished, revenue-minded"
+    },
+    "fnb_director": {
+      "voice": "am_puck",
+      "lang": "en-us",
+      "speed": 1.05,
+      "note": "F&B Director: warm, salesman energy"
+    },
+    "night_auditor": {
+      "voice": "bf_lily",
+      "lang": "en-gb",
+      "speed": 1.0,
+      "note": "Night Auditor: quiet, exact with numbers"
+    },
+    "guard_lead": {
+      "voice": "am_michael",
+      "lang": "en-us",
+      "speed": 0.97,
+      "note": "Tessmore site lead: by the book"
+    },
+    "adjuster": {
+      "voice": "af_kore",
+      "lang": "en-us",
+      "speed": 0.98,
+      "note": "Claims adjuster: courteous, sceptical"
+    },
+    "police_liaison": {
+      "voice": "bf_alice",
+      "lang": "en-gb",
+      "speed": 0.97,
+      "note": "Detective Sergeant: formal, economical"
+    },
+    "fire_marshal": {
+      "voice": "am_onyx",
+      "lang": "en-us",
+      "speed": 0.93,
+      "note": "Fire Marshal: deep, measured"
+    },
+    "guest_whitlock": {
+      "voice": "bm_fable",
+      "lang": "en-gb",
+      "speed": 1.04,
+      "note": "Guest 1412: angry at first, calms when heard"
+    },
+    "attendant_duarte": {
+      "voice": "af_heart",
+      "lang": "en-us",
+      "speed": 1.0,
+      "note": "Room attendant: friendly, a bit nervous"
+    },
+    "server_kerr": {
+      "voice": "af_jessica",
+      "lang": "en-us",
+      "speed": 1.05,
+      "note": "Bar server: quick, observant"
+    },
+    "desk_agent": {
+      "voice": "am_liam",
+      "lang": "en-us",
+      "speed": 1.03,
+      "note": "Front desk agent: eager, young"
+    },
+    "visitor_haskett": {
+      "voice": "am_adam",
+      "lang": "en-us",
+      "speed": 1.0,
+      "note": "Man at the desk: smooth, evasive"
+    },
+    "guest_achterberg": {
+      "voice": "af_river",
+      "lang": "en-us",
+      "speed": 1.0,
+      "note": "Guest 1418: tired, polite"
+    },
+    "guest_pike": {
+      "voice": "am_echo",
+      "lang": "en-us",
+      "speed": 1.05,
+      "note": "Guest 1406: cheerful, a little loud"
+    },
+    "guest_morrow": {
+      "voice": "af_aoede",
+      "lang": "en-us",
+      "speed": 0.97,
+      "note": "Guest 1407: elderly-sounding, firm"
+    }
+  },
+  "passing": {
+    "comment": "Mirrors PassingLine in Source/Keycard/Private/UI/KcHUD.cpp: a word in passing when a person has no casework. Every person gets every line of their group (the game picks one by id).",
+    "met": "I've told you what I know. Shout if you need me again.",
+    "staff": [
+      "Evening. Quiet so far, touch wood.",
+      "All good here. I'll radio if anything comes up.",
+      "Long one tonight. Coffee's fresh in the back."
+    ],
+    "guest": [
+      "Evening.",
+      "Oh, hello. Everything all right?",
+      "Just heading up."
+    ]
+  },
+  "fixed": [],
+  "pronounce": {
+    "comment": "Regex -> spoken form for the TTS only; the clip key always uses the written line.",
+    "\\bLP\\b": "L P",
+    "\\bGM\\b": "G M",
+    "\\bCCTV\\b": "C C T V",
+    "\\bF&B\\b": "F and B",
+    "\\bB1\\b": "B one"
+  }
+}

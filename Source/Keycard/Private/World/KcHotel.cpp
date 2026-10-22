@@ -1089,8 +1089,8 @@ void AKcHotel::BuildBasement()
 	const int32 F = -1;
 	UMaterialInterface* Paint = Mat(TEXT("MI_WallPaint"));
 	FloorFinish(F, FBox2D(FVector2D(0.0f, -CorrY), FVector2D(MaxX, CorrY)), Mat(TEXT("MI_FloorConcrete")));
-	Ceiling(F, FBox2D(FVector2D(0.0f, -CorrY), FVector2D(CoreX0, CorrY)), CeilB1, Mat(TEXT("MI_CeilingWhite")));
-	Ceiling(F, FBox2D(FVector2D(CoreX1, -CorrY), FVector2D(MaxX, CorrY)), CeilB1, Mat(TEXT("MI_CeilingWhite")));
+	Ceiling(F, FBox2D(FVector2D(0.0f, -CorrY), FVector2D(CoreX0, CorrY)), CeilB1, Mat(TEXT("MI_CeilingSoft")));
+	Ceiling(F, FBox2D(FVector2D(CoreX1, -CorrY), FVector2D(MaxX, CorrY)), CeilB1, Mat(TEXT("MI_CeilingSoft")));
 	// Corridor walls and doors.
 	WallX(F, CorrY, 15.0f, CoreX0, {FVector2D(600.0f, 100.0f), FVector2D(1400.0f, 100.0f)}, Paint, CeilB1);
 	WallX(F, CorrY, CoreX1, MaxX - 15.0f, {FVector2D(3200.0f, 100.0f), FVector2D(4250.0f, 100.0f)}, Paint, CeilB1);
@@ -1153,7 +1153,7 @@ void AKcHotel::BuildLpOffice()
 	const int32 F = -1;
 	const float X0 = CoreX1, X1 = 3700.0f, Y0 = CorrY + Wall * 0.5f, Y1 = HalfY - 15.0f;
 	FloorFinish(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), Mat(TEXT("MI_Carpet")));
-	Ceiling(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), CeilB1, Mat(TEXT("MI_CeilingWhite")));
+	Ceiling(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), CeilB1, Mat(TEXT("MI_CeilingSoft")));
 	WallY(F, X1, Y0, Y1, {}, Mat(TEXT("MI_WallPaint")), CeilB1);
 	AddBox(FVector(X0 + 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilB1 * 0.5f)), FVector(1.0f, Y1 - Y0, CeilB1), Mat(TEXT("MI_WallPaint")), 0.0f, false);
 	AddBox(FVector((X0 + X1) * 0.5f, Y1 - 0.5f, Zf(F, CeilB1 * 0.5f)), FVector(X1 - X0, 1.0f, CeilB1), Mat(TEXT("MI_WallPaint")), 0.0f, false);
@@ -1275,7 +1275,7 @@ void AKcHotel::BuildCctvRoom()
 	const int32 F = -1;
 	const float X0 = 3700.0f + Wall * 0.5f, X1 = MaxX - 15.0f, Y0 = CorrY + Wall * 0.5f, Y1 = HalfY - 15.0f;
 	FloorFinish(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), Mat(TEXT("MI_FabricDark")));
-	Ceiling(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), CeilB1, Mat(TEXT("MI_CeilingWhite")));
+	Ceiling(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), CeilB1, Mat(TEXT("MI_CeilingSoft")));
 	AddBox(FVector(X0 + 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilB1 * 0.5f)), FVector(1.0f, Y1 - Y0, CeilB1), Mat(TEXT("MI_AcousticPanel")), 0.0f, false);
 	AddBox(FVector(X1 - 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilB1 * 0.5f)), FVector(1.0f, Y1 - Y0, CeilB1), Mat(TEXT("MI_AcousticPanel")), 0.0f, false);
 	// Video wall: four by two monitors, each a different camera page.
@@ -1335,7 +1335,12 @@ void AKcHotel::BuildGround()
 	FloorFinish(F, FBox2D(FVector2D(CoreX0, -CorrY), FVector2D(CoreX1, CorrY)), Mat(TEXT("MI_FloorMarble")));
 	Ceiling(F, FBox2D(FVector2D(0.0f, -HalfY), FVector2D(CoreX0, HalfY)), CeilLobby, Mat(TEXT("MI_CeilingWhite")));
 	AddBox(FVector(1050.0f, 60.0f, Zf(F, CeilLobby - 22.0f)), FVector(1300.0f, 900.0f, 4.0f), Mat(TEXT("MI_CeilingWhite")), 0.0f, false);
-	AddBox(FVector(1050.0f, 60.0f, Zf(F, CeilLobby - 25.0f)), FVector(1290.0f, 890.0f, 1.0f), Mat(TEXT("MI_LedStrip")), 0.0f, false);
+	// Cove: LED strips on top of the island's rim wash the ceiling above it; from the floor only the glow shows.
+	for (float Side : {-1.0f, 1.0f})
+	{
+		AddBox(FVector(1050.0f, 60.0f + Side * 440.0f, Zf(F, CeilLobby - 19.5f)), FVector(1280.0f, 4.0f, 1.0f), Mat(TEXT("MI_LedStrip")), 0.0f, false);
+		AddBox(FVector(1050.0f + Side * 640.0f, 60.0f, Zf(F, CeilLobby - 19.5f)), FVector(4.0f, 880.0f, 1.0f), Mat(TEXT("MI_LedStrip")), 0.0f, false);
+	}
 	// Skins on the core and stair faces, and the step down from the lobby ceiling to the lift lobby.
 	AddBox(FVector(CoreX0 - 0.5f, (CorrY + HalfY) * 0.5f, Zf(F, CeilLobby * 0.5f)), FVector(1.0f, HalfY - CorrY, CeilLobby), Plaster, 0.0f, false);
 	AddBox(FVector(CoreX0 - 0.5f, (-HalfY - CorrY) * 0.5f, Zf(F, CeilLobby * 0.5f)), FVector(1.0f, HalfY - CorrY, CeilLobby), Plaster, 0.0f, false);
@@ -1423,7 +1428,7 @@ void AKcHotel::BuildGround()
 	const float StaffCeil = CeilBack;
 	UMaterialInterface* Paint = Mat(TEXT("MI_WallPaint"));
 	FloorFinish(F, FBox2D(FVector2D(CoreX1, -CorrY), FVector2D(MaxX - 15.0f, CorrY)), Mat(TEXT("MI_FloorTile")));
-	Ceiling(F, FBox2D(FVector2D(CoreX1, -CorrY), FVector2D(MaxX, CorrY)), StaffCeil, Mat(TEXT("MI_CeilingWhite")));
+	Ceiling(F, FBox2D(FVector2D(CoreX1, -CorrY), FVector2D(MaxX, CorrY)), StaffCeil, Mat(TEXT("MI_CeilingSoft")));
 	WallY(F, CoreX1 + 8.0f, -CorrY, CorrY, {FVector2D(0.0f, 100.0f)}, Plaster, 300.0f);
 	DoorLeaf(F, FVector(CoreX1 + 8.0f, 0.0f, 0.0f), 180.0f, 100.0f, TEXT("STAFF ONLY"), false, true);
 	WallX(F, CorrY, CoreX1, MaxX - 15.0f, {FVector2D(3100.0f, 100.0f), FVector2D(4100.0f, 100.0f)}, Paint, StaffCeil);
@@ -1583,7 +1588,7 @@ void AKcHotel::BuildFireCommand()
 	const int32 F = 0;
 	const float X0 = CoreX1, X1 = 3500.0f - Wall * 0.5f, Y0 = CorrY + Wall * 0.5f, Y1 = HalfY - 15.0f;
 	FloorFinish(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), Mat(TEXT("MI_FloorTile")));
-	Ceiling(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), CeilBack, Mat(TEXT("MI_CeilingWhite")));
+	Ceiling(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), CeilBack, Mat(TEXT("MI_CeilingSoft")));
 	AddBox(FVector(X0 + 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilBack * 0.5f)), FVector(1.0f, Y1 - Y0, CeilBack), Mat(TEXT("MI_WallPaint")), 0.0f, false);
 	AddBox(FVector((X0 + X1) * 0.5f, Y1 - 0.5f, Zf(F, CeilBack * 0.5f)), FVector(X1 - X0, 1.0f, CeilBack), Mat(TEXT("MI_WallPaint")), 0.0f, false);
 	// Fire alarm control panel: a quiet night reads SYSTEM NORMAL.

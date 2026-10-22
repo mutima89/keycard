@@ -3,6 +3,12 @@
 ## Status: Phase 1 built and packaged on the PC (self-test play, resume and tour pass); voices and UE automation tests missing
 Last update: 2026-10-22
 
+- 2026-10-22 Phase 1 follow-up, cloud session (not compiled yet).
+  - `Data/VoiceCast.json`: 23 characters, each with their own Kokoro voice; `BuildVoices.py` now collects case calls, action lines, interview replies and the in-passing lines (139 lines, `--list` run here). Core test `Voice_EveryCharacterHasTheirOwnVoice`.
+  - UE automation tests `Keycard.*` (Source/Keycard/Private/Tests/KcGameTests.cpp): content loads, M001-M003 best play promotes with the ceremony, step place and order rules with the rubric hidden, save round trip, voice lookup.
+  - Visual fixes from the tour: lobby cove light (the whole coffer underside was a 13 m emissive panel; now rim strips on top of the island), back-of-house ceilings get a faint self-lit `MI_CeilingSoft` instead of reading black, leaf cards fetch their opacity map and use a masked two-sided `M_KcFoliage`.
+  - Core tests (GCC, ASan + UBSan): `43 test cases, 0 failed, 0 failed checks`.
+
 - 2026-10-22 Phase 1 PC build, PC session (Remote Control, UE 5.8.4, MSVC). Nothing changed in C:\Downloads\Riskbound.
   - Branch `claude/project-thread-mjihsh` at b53fa7b.
   - `FetchAssets.py --resolve`: all 22 Poly Haven ids resolved, no MISSING slot (`white_bathroom_tiles` and `bathroom_tiles` 404, fell back to `square_tiles_02`); Inter fonts installed; AssetManifest.json, AssetCredits.md and KcAssetCredits.inl written. `GenerateTextures.py` and `BuildAudio.py` exit 0. `FetchCharacters.py` done with one gap: `missing anim f_cell_phone_listen_01`.

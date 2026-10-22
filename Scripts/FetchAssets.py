@@ -80,11 +80,12 @@ def polyhaven_files(asset_id, kind):
         f = files["fbx"]["1k"]["fbx"]
         out.append((f["url"], f"{asset_id}/{asset_id}_1k.fbx"))
     for key, res in files.items():
-        # diffuse, DirectX normal and packed AO/Rough/Metal per material part.
-        if key in ("Diffuse", "nor_dx", "arm") or key.endswith(("_diff", "_nor_dx", "_arm")):
-            jpg = res.get("1k", {}).get("jpg")
-            if jpg:
-                out.append((jpg["url"], f"{asset_id}/{os.path.basename(jpg['url'])}"))
+        # diffuse, DirectX normal, packed AO/Rough/Metal and (leaf cards) opacity, per material part.
+        if key in ("Diffuse", "nor_dx", "arm", "alpha") or key.endswith(("_diff", "_nor_dx", "_arm", "_alpha")):
+            one = res.get("1k", {})
+            f = one.get("jpg") or one.get("png")
+            if f:
+                out.append((f["url"], f"{asset_id}/{os.path.basename(f['url'])}"))
     return out
 
 

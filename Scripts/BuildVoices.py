@@ -2,9 +2,8 @@
 Scripts/ImportAudio.py (which imports them to /Game/Keycard/Audio/Voice/VO_<key>; KC_AUDIO_GROUPS=Voice
 imports only these).
 
-Every line a colleague says aloud is collected from the content (Data/Dialogue.json conversations,
-Data/Missions/*.json interviews, Data/Events.json messages delivered in person) and from the fixed lines
-in Data/VoiceCast.json, then spoken offline by Kokoro-82M (Apache 2.0) through kokoro-onnx (MIT), with one
+Every line a character says aloud is collected from the content (Data/Missions/*.json: the case call,
+action lines and interview replies) and from the passing and fixed lines in Data/VoiceCast.json, then spoken offline by Kokoro-82M (Apache 2.0) through kokoro-onnx (MIT), with one
 voice per character as cast in Data/VoiceCast.json. Nothing runs at game time: the game ships the clips.
 
 <key> is kc::VoiceLineKey (Source/KeycardSim/Public/KcVoice.h): speaker id plus a hash of the exact
@@ -77,11 +76,6 @@ def paragraphs(value):
     return "\n\n".join(value) if isinstance(value, list) else value
 
 
-def approach_line(prefix, subject):
-    # Mirrors ARbHUD::TickApproach.
-    return prefix + subject + ("" if subject[-1:] in ".?!" else ".")
-
-
 def collect(cast):
     lines = {}  # key -> (person, text, source)
 
@@ -90,22 +84,26 @@ def collect(cast):
         if key and person in cast["cast"]:
             lines.setdefault(key, (person, normalize(text), source))
 
-    for c in load(os.path.join(DATA, "Dialogue.json"))["conversations"]:
-        for n in c["nodes"]:
-            add(c["person"], paragraphs(n["line"]), "Dialogue %s/%s" % (c["id"], n["id"]))
+    people = {p["id"]: p for p in load(os.path.join(DATA, "People.json"))["people"]}
     for path in sorted(glob.glob(os.path.join(DATA, "Missions", "*.json"))):
         m = load(path)
-        for e in m.get("evidence", []):
-            if e.get("person"):
-                add(e["person"], paragraphs(e["body"]), "%s interview %s" % (m.get("id", os.path.basename(path)), e["id"]))
-    a = cast["approach"]
-    senders = set()
-    for e in load(os.path.join(DATA, "Events.json"))["events"]:
-        if e.get("category") in a["categories"] and e.get("from") and e["from"] not in a["excludeFrom"]:
-            add(e["from"], approach_line(a["prefix"], e["subject"]), "Event %s (walks over)" % e["id"])
-            senders.add(e["from"])
-    for person in sorted(senders):
-        add(person, a["busy"], "Walks over while the player is busy")
+        mid = m.get("id", os.path.basename(path))
+        o = m.get("opening")
+        if o and o.get("from"):
+            add(o["from"], paragraphs(o["text"]), "%s case call" % mid)
+        for a in m.get("actions", []):
+            for i, l in enumerate(a.get("lines", [])):
+                add(l["speaker"], paragraphs(l["text"]), "%s action %s line %d" % (mid, a["id"], i + 1))
+        for q in m.get("questions", []):
+            for opt in q.get("options", []):
+                r = opt.get("reply")
+                if r:
+                    add(r["speaker"], paragraphs(r["text"]), "%s question %s/%s" % (mid, q["id"], opt["id"]))
+    passing = cast["passing"]
+    for person in sorted(cast["cast"]):
+        staff = people.get(person, {}).get("staff", True) is not False
+        for text in [passing["met"]] + passing["staff" if staff else "guest"]:
+            add(person, text, "In passing")
     for f in cast["fixed"]:
         add(f["person"], f["text"], f["where"])
     return lines

@@ -429,6 +429,70 @@
         "Cutting nights because they look quiet",
         "No transition plan"
       ]
+    },
+    {
+      "id": "missing_child_code",
+      "title": "Code Beacon: missing child",
+      "topic": "missing_child",
+      "steps": [
+        "Get the description and the time last seen; keep the parent at the last-seen point with a member of staff.",
+        "Call Code Beacon on the radio with the description: every member of staff stops and looks.",
+        "Staff to every exit (street doors, staff entrance, dock, garage): watch and politely check anyone leaving with a child. Never lock an exit.",
+        "Call the police once the child has been missing ten minutes from when last seen, or at once if anything suggests abduction.",
+        "Search every area, including stairs, toilets, function rooms and back of house, while CCTV is reviewed.",
+        "If the child is with someone other than the parent, delay them politely and call the police.",
+        "Reunite, confirm the parent, check welfare, stand the code down, tell the police.",
+        "Record the times and fix what the search found."
+      ],
+      "why": "Most missing children are found quickly inside the building, and the first ten minutes decide the outcome. A code everyone knows turns the whole staff into searchers.",
+      "pitfalls": [
+        "Searching before calling the code",
+        "Counting ten minutes from the report",
+        "Locking exits",
+        "Skipping places with no camera"
+      ]
+    },
+    {
+      "id": "death_on_property",
+      "title": "A death on the property",
+      "topic": "guest_death",
+      "steps": [
+        "If death is not obvious: start CPR, call an ambulance, send for the AED.",
+        "If death is obvious: touch and move nothing. Call the emergency services as local procedure requires.",
+        "Close and guard the door; start an entry log (who, when, why); block the room on the lock system.",
+        "Run a lock audit and preserve the CCTV for the police.",
+        "Hand over to the police; they inform the next of kin. The hotel confirms nothing to anyone else.",
+        "Look after the staff who found the person: relieve, support, follow up.",
+        "The GM leads any statement; freeze the account; release the room only when the police and coroner say so."
+      ],
+      "why": "Dignity and evidence point the same way: leave the room alone and control who knows what, so the family hears it the right way.",
+      "pitfalls": [
+        "Tidying the room",
+        "Telling a caller",
+        "Forgetting the finder",
+        "Charging the account"
+      ]
+    },
+    {
+      "id": "fire_inspection",
+      "title": "Fire authority inspection",
+      "topic": "fire_inspection",
+      "steps": [
+        "Keep the fire safety records current: alarm, sprinklers, extinguishers, emergency lighting, kitchen suppression, impairments, hot work, drills, training.",
+        "Check them yourself before any inspection, and know the gaps.",
+        "Walk the building with the inspector: exits, stairs, kitchen, function rooms.",
+        "Fix unsafe conditions on the spot: stored items in stairs, blocked exits.",
+        "Occupancy limits are set by the exits; never exceed them, whatever has been sold.",
+        "Accept the findings, agree dates, and send an action plan with owners.",
+        "Track the plan to the follow-up visit."
+      ],
+      "why": "Fire safety lives between departments. LP is the one that has to see all of it, and the inspector is an ally when findings are closed on time.",
+      "pitfalls": [
+        "Arguing findings",
+        "Letting sales set occupancy",
+        "Counting a briefing as a drill",
+        "Planning a fix that could be done today"
+      ]
     }
   ]
 }

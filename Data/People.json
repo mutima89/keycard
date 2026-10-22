@@ -427,6 +427,17 @@
       "avatar": "Male_Adult_14",
       "outfit": "executive",
       "staff": true
+    },
+    {
+      "id": "mother_dunmore",
+      "name": "Rosalie Dunmore",
+      "role": "Wedding guest, Harbour Ballroom",
+      "department": "Guest",
+      "bio": "Here for her sister's wedding with her son Theo, who is seven and fast.",
+      "location": "ballroom",
+      "avatar": "Female_Adult_17",
+      "outfit": "guest",
+      "staff": false
     }
   ]
 }

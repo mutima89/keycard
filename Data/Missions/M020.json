@@ -1,0 +1,480 @@
+{
+  "schema": 1,
+  "id": "M020",
+  "title": "Code Beacon",
+  "kind": "mission",
+  "topic": "missing_child",
+  "minLevel": 6,
+  "opening": {
+    "channel": "radio",
+    "from": "banquet_manager",
+    "at": "ballroom",
+    "text": "LP, Celia, Harbour Ballroom. I've got a mother here whose little boy has gone. Seven, at the wedding, she can't find him anywhere. Can you come up now?"
+  },
+  "briefing": [
+    "21:05, Saturday. A wedding of 140 in the Harbour Ballroom. A guest reports her son, seven, missing. She last saw him at about 20:58 by the ballroom doors.",
+    "Veldane Code Beacon (missing child): get a description in the first minutes; call Code Beacon on the radio with the description so every staff member stops and looks; staff to every exit to watch for a child matching it (exits stay unlocked: you watch and ask, you never lock people in); search every area, stairs included, while CCTV is reviewed; call the police once the child has been missing ten minutes from when last seen, or at once if anything suggests he was taken. When found: reunite, check welfare, stand the code down, and record the times. Your authority is 150,000."
+  ],
+  "learningObjectives": [
+    "Running a missing-child code in the first minutes",
+    "Watching exits without locking them",
+    "The ten minutes run from when the child was last seen"
+  ],
+  "start": "21:05",
+  "actions": [
+    {
+      "id": "talk_mother",
+      "label": "Get Theo's description from his mother",
+      "kind": "interview",
+      "at": "ballroom",
+      "person": "mother_dunmore",
+      "minutes": 2,
+      "required": true,
+      "findingTitle": "Theo Dunmore, 7",
+      "finding": "Theo Dunmore, seven, about 120 cm, fair hair, blue waistcoat and white shirt, grey trousers, trainers that light up red. Last seen about 20:58 by the ballroom doors, playing hide and seek with two cousins. His mother stays at the doors with Celia, in case he comes back.",
+      "lines": [
+        {
+          "speaker": "mother_dunmore",
+          "text": "He was right there. He's never gone off like this. Please."
+        }
+      ]
+    },
+    {
+      "id": "call_code",
+      "label": "Call Code Beacon on the radio",
+      "kind": "call",
+      "at": "ballroom",
+      "person": "partner",
+      "minutes": 1,
+      "requires": [
+        "talk_mother"
+      ],
+      "required": true,
+      "findingTitle": "Code Beacon, 21:0x",
+      "finding": "\"Code Beacon, Code Beacon. Boy, seven, Theo, fair hair, blue waistcoat, white shirt, light-up red trainers. Last seen 20:58, Harbour Ballroom doors, floor 1.\" Every department acknowledges. Ines starts on the cameras from the ballroom foyer.",
+      "lines": [
+        {
+          "speaker": "partner",
+          "text": "Code Beacon received. On the cameras from 20:55, foyer first."
+        }
+      ]
+    },
+    {
+      "id": "call_police",
+      "label": "Call the police",
+      "kind": "call",
+      "at": "ballroom",
+      "person": "police_liaison",
+      "minutes": 2,
+      "requires": [
+        "call_code"
+      ],
+      "findingTitle": "Police called, 21:1x",
+      "finding": "Theo has been missing more than ten minutes since 20:58. The police log a missing child at the hotel, take the description and send a unit; DS Calloway asks to be told the moment he is found."
+    },
+    {
+      "id": "cover_exits",
+      "label": "Get staff on every exit",
+      "kind": "call",
+      "at": "ballroom",
+      "person": "night_manager",
+      "minutes": 2,
+      "requires": [
+        "call_code"
+      ],
+      "required": true,
+      "findingTitle": "Exits covered",
+      "finding": "Felix Amadi puts someone on the street doors, the staff entrance, the dock door and the garage ramp: watch for a boy matching the description, and politely check anyone leaving with a child. Doors stay unlocked. The lift lobby on G is watched."
+    },
+    {
+      "id": "lock_exits",
+      "label": "Lock the street doors and the staff entrance",
+      "kind": "other",
+      "at": "ballroom",
+      "minutes": 1,
+      "requires": [
+        "call_code"
+      ],
+      "findingTitle": "Exits locked",
+      "finding": "Two exit routes out of a full building are locked, with 140 wedding guests upstairs. Guests trying to leave find the doors shut and start to panic. The fire authority would call it what it is.",
+      "effects": {
+        "SafetyCompliance": -6,
+        "GuestSatisfaction": -3
+      },
+      "schedules": [
+        {
+          "id": "locked_exits_complaint",
+          "description": "A guest who could not leave during the Code Beacon writes to the fire authority. They inspect the exit arrangements and find the code procedure tells staff to lock the doors.",
+          "delayWeeks": 2,
+          "probability": 0.7,
+          "effects": {
+            "SafetyCompliance": -5,
+            "OwnerTrust": -3
+          },
+          "flagIfOccurs": "exits_locked_finding"
+        }
+      ]
+    },
+    {
+      "id": "cctv_check",
+      "label": "Ask Ines what the cameras show",
+      "kind": "call",
+      "at": "ballroom",
+      "person": "partner",
+      "minutes": 2,
+      "requires": [
+        "call_code"
+      ],
+      "required": true,
+      "findingTitle": "1-03 foyer, 20:59",
+      "finding": "20:59:12: a small boy in a blue waistcoat runs out of the ballroom, across the foyer and into the lift lobby, looks back, and goes through the Stair A door, which stands open on its magnet. Nothing shows him coming out on G (L-04) or B1. There are no cameras in the stairs."
+    },
+    {
+      "id": "search_ballroom",
+      "label": "Search the ballroom and the banquet back of house",
+      "kind": "check",
+      "at": "ballroom",
+      "minutes": 3,
+      "requires": [
+        "call_code"
+      ],
+      "findingTitle": "Not in the ballroom",
+      "finding": "Under the tables, behind the stage drape, the service corridor, the banquet office and the bar store: no sign. One cousin says Theo said he was \"hiding where nobody goes\"."
+    },
+    {
+      "id": "search_stairs",
+      "label": "Search Stair A",
+      "kind": "check",
+      "at": "stair_a",
+      "minutes": 3,
+      "requires": [
+        "cctv_check"
+      ],
+      "required": true,
+      "findingTitle": "Found, 21:2x",
+      "finding": "On the floor 2 landing, sitting against the locked stair door with his trainers flashing: Theo, crying but unhurt. He went up to hide, then could not get out: the doors on unfitted floors don't open from the stair side, and he was too scared to go back down past the floor 1 door, which had swung shut."
+    },
+    {
+      "id": "reunite",
+      "label": "Bring Theo back to his mother",
+      "kind": "interview",
+      "at": "ballroom",
+      "person": "mother_dunmore",
+      "minutes": 3,
+      "requires": [
+        "search_stairs"
+      ],
+      "required": true,
+      "findingTitle": "Reunited",
+      "finding": "Theo goes straight to his mother. A first aider checks him over: a grazed knee, nothing else. His mother confirms he is her son and that nobody else was with him.",
+      "lines": [
+        {
+          "speaker": "mother_dunmore",
+          "text": "Thank you. Thank you. Theo, you never, ever do that again."
+        }
+      ]
+    },
+    {
+      "id": "stand_down",
+      "label": "Stand down Code Beacon and tell the police",
+      "kind": "call",
+      "at": "ballroom",
+      "person": "partner",
+      "minutes": 1,
+      "requires": [
+        "reunite"
+      ],
+      "findingTitle": "Stood down",
+      "finding": "\"Code Beacon stand down, child found safe at 21:2x.\" Exits released; Ines tells the police control room and DS Calloway that Theo is found and with his mother."
+    },
+    {
+      "id": "stair_reentry",
+      "label": "Record the stair re-entry finding",
+      "kind": "logEvidence",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 4,
+      "requires": [
+        "stand_down"
+      ],
+      "findingTitle": "Stair re-entry",
+      "finding": "Times logged from the report to the stand-down. Finding for engineering and the fire authority: a child (or anyone) can be trapped in Stair A between floors whose doors do not open from the stair side. Recommended: re-entry floors marked on every landing, or a stair phone at floor 2, and Stair A added to the Code Beacon search list."
+    }
+  ],
+  "questions": [
+    {
+      "id": "d_first",
+      "kind": "order",
+      "prompt": "Put the first steps of Code Beacon in order",
+      "dimension": "Procedure",
+      "competency": "CrisisLeadership",
+      "weight": 10,
+      "explanation": "The description comes first because nobody can look for a child they can't picture. The code puts every member of staff on it at once, with the exits watched. The police call depends on when he was last seen, not when you heard. The search runs with the cameras.",
+      "options": [
+        {
+          "id": "o1",
+          "label": "Get the description and the last-seen time"
+        },
+        {
+          "id": "o2",
+          "label": "Call Code Beacon with the description, staff to the exits"
+        },
+        {
+          "id": "o3",
+          "label": "Call the police: ten minutes since he was last seen"
+        },
+        {
+          "id": "o4",
+          "label": "Search every area, stairs included, with the CCTV review"
+        }
+      ]
+    },
+    {
+      "id": "d_exits",
+      "prompt": "How do you control the exits?",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 8,
+      "options": [
+        {
+          "id": "watch",
+          "label": "Staff at every exit watching for a child matching the description, politely checking anyone leaving with a child. Doors stay unlocked.",
+          "score": 100,
+          "feedback": "You can watch and ask at a door without taking away anyone's way out of a full building."
+        },
+        {
+          "id": "lock",
+          "label": "Lock every exit until he is found.",
+          "score": 10,
+          "critical": true,
+          "feedback": "Locked exits in an occupied building are how fires kill people. Watch the doors; never lock them."
+        },
+        {
+          "id": "front",
+          "label": "Watch the street doors only.",
+          "score": 30,
+          "feedback": "A child, or someone with a child, can leave by the staff entrance, the dock or the garage just as easily."
+        }
+      ]
+    },
+    {
+      "id": "d_police",
+      "prompt": "At 21:08, when do you call the police?",
+      "dimension": "Compliance",
+      "competency": "CrisisLeadership",
+      "weight": 8,
+      "options": [
+        {
+          "id": "now",
+          "label": "Now: he was last seen at 20:58, so he has been missing ten minutes.",
+          "score": 100,
+          "feedback": "The clock starts when the child was last seen. Calling early costs a police unit a wasted trip; calling late can cost the child."
+        },
+        {
+          "id": "after",
+          "label": "After the hotel has been searched.",
+          "score": 20,
+          "feedback": "A full search of a hotel takes far longer than ten minutes. The police search alongside you, not after you."
+        },
+        {
+          "id": "cctv",
+          "label": "Only if the cameras show someone taking him.",
+          "score": 30,
+          "feedback": "The absence of a clip is not evidence he is safe. Many places have no camera, the stairs included."
+        }
+      ]
+    },
+    {
+      "id": "d_found",
+      "kind": "multi",
+      "prompt": "Theo is found. What happens next?",
+      "dimension": "Care",
+      "competency": "GuestServiceDeescalation",
+      "weight": 7,
+      "options": [
+        {
+          "id": "reunite",
+          "label": "Reunite him with his mother and confirm she is his parent",
+          "correct": true
+        },
+        {
+          "id": "check",
+          "label": "A first aider checks him over",
+          "correct": true
+        },
+        {
+          "id": "stand",
+          "label": "Stand the code down on the radio and tell the police",
+          "correct": true
+        },
+        {
+          "id": "times",
+          "label": "Log the times from report to stand-down",
+          "correct": true
+        },
+        {
+          "id": "blame",
+          "label": "Tell his mother she should have been watching him",
+          "feedback": "It helps nobody, and she has had the worst fifteen minutes of her life. Save your findings for the stair doors."
+        }
+      ]
+    },
+    {
+      "id": "r_what",
+      "prompt": "Code Beacon report, summary (one line)",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 7,
+      "section": "what",
+      "options": [
+        {
+          "id": "facts",
+          "label": "Theo Dunmore (7) reported missing 21:05, last seen 20:58; Code Beacon 21:0x, police 21:1x, exits covered; found unhurt on Stair A floor 2 landing 21:2x; stood down; stair re-entry finding raised.",
+          "score": 100,
+          "feedback": "The times, the actions, where he was found and the lesson for the building."
+        },
+        {
+          "id": "fine",
+          "label": "Missing child found safe, no further action.",
+          "score": 25,
+          "feedback": "There is further action: a child was trapped in a stair. That finding is the most useful line in the report."
+        },
+        {
+          "id": "blame",
+          "label": "Child wandered off while unsupervised by his parent.",
+          "score": 15,
+          "feedback": "Blame, not facts, and it misses the building's part in it."
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "c_code_fast",
+      "label": "Code in minutes",
+      "kind": "byMinute",
+      "action": "call_code",
+      "by": "21:10",
+      "dimension": "Procedure",
+      "competency": "CrisisLeadership",
+      "weight": 8,
+      "pass": "Code Beacon was called within minutes of the report.",
+      "fail": "The code went out too late for the first minutes to count."
+    },
+    {
+      "id": "c_exits",
+      "label": "Exits covered",
+      "kind": "done",
+      "action": "cover_exits",
+      "dimension": "Procedure",
+      "competency": "CrisisLeadership",
+      "weight": 8,
+      "pass": "Every exit was watched.",
+      "fail": "Nobody was watching the exits."
+    },
+    {
+      "id": "c_no_lock",
+      "label": "Exits stay open",
+      "kind": "notDone",
+      "action": "lock_exits",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 10,
+      "pass": "Nobody was locked in.",
+      "fail": "You locked exits in an occupied building."
+    },
+    {
+      "id": "c_police",
+      "label": "Police at ten minutes",
+      "kind": "byMinute",
+      "action": "call_police",
+      "by": "21:12",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 9,
+      "pass": "The police were called once he had been missing ten minutes.",
+      "fail": "The police were called late, or not at all."
+    },
+    {
+      "id": "c_stairs",
+      "label": "Search the stairs",
+      "kind": "done",
+      "action": "search_stairs",
+      "dimension": "Procedure",
+      "competency": "IncidentResponse",
+      "weight": 7,
+      "pass": "You followed the camera to the one place it couldn't see.",
+      "fail": "Nobody searched the stairs."
+    },
+    {
+      "id": "c_reunite",
+      "label": "Reunite",
+      "kind": "done",
+      "action": "reunite",
+      "dimension": "Care",
+      "competency": "GuestServiceDeescalation",
+      "weight": 6,
+      "pass": "Theo was back with his mother and checked over.",
+      "fail": "Theo was found but not properly handed back."
+    },
+    {
+      "id": "c_stand_down",
+      "label": "Stand down",
+      "kind": "done",
+      "action": "stand_down",
+      "dimension": "Communication",
+      "competency": "CrisisLeadership",
+      "weight": 6,
+      "pass": "Staff and police were told he was found.",
+      "fail": "Staff are still watching the doors and the police are still on their way."
+    },
+    {
+      "id": "c_lesson",
+      "label": "Fix the building",
+      "kind": "done",
+      "action": "stair_reentry",
+      "dimension": "Report",
+      "competency": "ComplianceAudit",
+      "weight": 6,
+      "pass": "The stair re-entry finding went to engineering and the fire authority.",
+      "fail": "The stair that trapped him is unchanged."
+    }
+  ],
+  "bestOrder": [
+    "talk_mother",
+    "call_code",
+    "call_police",
+    "cover_exits",
+    "cctv_check",
+    "search_stairs",
+    "reunite",
+    "stand_down",
+    "stair_reentry"
+  ],
+  "debrief": {
+    "whatHappened": "A seven-year-old missing from a wedding. You had his description and the code out within minutes, exits watched but never locked, the police called at ten minutes from last seen, and the cameras led you to the one place they couldn't see: a stair whose doors don't open from inside. He was found unhurt.",
+    "bestPractice": [
+      "Description and last-seen time first.",
+      "Code Beacon on the radio with the description: everyone stops and looks.",
+      "Staff on every exit; watch and ask, never lock.",
+      "Police at ten minutes from last seen, or at once if anything suggests he was taken.",
+      "Search everywhere, stairs and back of house included, while CCTV is reviewed.",
+      "Reunite, check welfare, stand down, record the times, and fix what the search found."
+    ],
+    "why": "Most missing children are found in the building within minutes, and the first ten minutes decide the rest. A code that everyone knows turns two hundred staff into searchers.",
+    "commonMistakes": [
+      "Searching before the code goes out.",
+      "Counting the ten minutes from the report.",
+      "Locking exits.",
+      "Forgetting the stairs because there's no camera."
+    ]
+  },
+  "procedureCards": [
+    "missing_child_code"
+  ],
+  "reportAt": "lp_office",
+  "passMark": 60,
+  "xp": 340,
+  "weeks": 2,
+  "lesson": "Description, code, exits watched, police at ten minutes, search where the cameras can't see."
+}

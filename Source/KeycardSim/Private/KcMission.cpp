@@ -191,6 +191,7 @@ const std::vector<LocationDef>& KnownLocations()
 		{"exec_offices", "Executive offices", 4},
 		{"gm_office", "General Manager's office", 4},
 		{"boardroom", "Boardroom", 4},
+		{"stair_a", "Stair A", 2},
 		{"f14_corridor", "Floor 14 corridor", 14},
 		{"room_1412", "Room 1412", 14},
 		{"f14_service", "Floor 14 service closet", 14},

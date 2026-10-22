@@ -277,6 +277,15 @@
       "lang": "en-gb",
       "speed": 0.97,
       "note": "Director of Finance: dry, numerate"
+    },
+    "mother_dunmore": {
+      "voice": {
+        "bf_lily": 0.6,
+        "af_jessica": 0.4
+      },
+      "lang": "en-gb",
+      "speed": 1.1,
+      "note": "Mother of a missing child: frightened, fast"
     }
   },
   "passing": {

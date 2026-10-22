@@ -113,6 +113,9 @@
         "SafetyCompliance": -6,
         "GuestSatisfaction": -3
       },
+      "setsFlags": [
+        "c001_forced_doors"
+      ],
       "schedules": [
         {
           "id": "lift_injury_claim",
@@ -201,6 +204,9 @@
         "GuestSatisfaction": -6,
         "IncidentCosts": 6000
       },
+      "setsFlags": [
+        "c001_dark_evacuation"
+      ],
       "schedules": [
         {
           "id": "dark_evacuation",

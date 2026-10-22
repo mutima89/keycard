@@ -202,6 +202,9 @@
       "effects": {
         "Reputation": -4
       },
+      "setsFlags": [
+        "m021_told_caller"
+      ],
       "schedules": [
         {
           "id": "family_learned_from_office",

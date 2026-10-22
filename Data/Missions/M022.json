@@ -163,6 +163,9 @@
         "SafetyCompliance": -6,
         "OwnerTrust": -3
       },
+      "setsFlags": [
+        "m022_oversold"
+      ],
       "schedules": [
         {
           "id": "gala_prohibition",

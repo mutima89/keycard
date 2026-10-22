@@ -39,7 +39,7 @@ M = {
    "findingTitle": "Over the limit",
    "finding": "The marshal hears it. He explains that a known breach of a posted occupancy limit is a matter for a prohibition notice, and that he will be back on Saturday night.",
    "effects": {"SafetyCompliance": -6, "OwnerTrust": -3},
-   "schedules": [{"id": "gala_prohibition", "description": "On the night of the gala the fire authority finds 320 seated against a limit of 280 and stops the event until forty guests leave the room. The story is in the paper on Monday.", "delayWeeks": 1, "probability": 0.9,
+   "setsFlags": ["m022_oversold"], "schedules": [{"id": "gala_prohibition", "description": "On the night of the gala the fire authority finds 320 seated against a limit of 280 and stops the event until forty guests leave the room. The story is in the paper on Monday.", "delayWeeks": 1, "probability": 0.9,
      "effects": {"Reputation": -8, "GuestSatisfaction": -5, "IncidentCosts": 12000}, "flagIfOccurs": "gala_stopped"}]},
   {"id": "brief_gm", "label": "Take the gala numbers to the GM", "kind": "interview", "at": "gm_office", "person": "gm", "minutes": 5, "requires": ["walk_ballroom"], "required": True,
    "findingTitle": "Gala capped",

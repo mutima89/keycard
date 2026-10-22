@@ -25,6 +25,18 @@
       "title": "The airport hotel",
       "summary": "E-77 came from a reseller that also supplied the Veldane Airport Port Avener, where eleven rooms were entered with valid keys this year using the same shared-login trick. Whoever it is knows Veldane systems from the inside.",
       "chapter": 2
+    },
+    {
+      "id": "former_admin",
+      "title": "The administrator who left",
+      "summary": "Dorian Vessey ran the front office systems at both Port Avener hotels and resigned seven months ago. His shared login fo_support and his vendor remote-support access were never removed, and fo_support registered E-77 eleven weeks after he left.",
+      "chapter": 3
+    },
+    {
+      "id": "blank_stock",
+      "title": "Four hundred blank cards",
+      "summary": "The police found a second encoder, a card printer and four hundred blank Veldane cards at Vessey's flat. Someone has been buying cards from him, and the police are looking for them.",
+      "chapter": 3
     }
   ]
 }

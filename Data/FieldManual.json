@@ -536,6 +536,28 @@
         "Public league tables",
         "Exempting the flagship"
       ]
+    },
+    {
+      "id": "access_revocation",
+      "title": "Removing a leaver's access",
+      "topic": "access_revocation",
+      "steps": [
+        "On the last day, every system owner removes the leaver's access and signs it off.",
+        "No shared logins: everyone has a named account.",
+        "Vendor remote access by call-back only, with named contacts kept current.",
+        "If a former employee's access is found in use: preserve the logs first.",
+        "Then disable (never delete) every account at once, at every site.",
+        "Find every system with its own logins and check them all.",
+        "Give the evidence to the police; nobody from the hotel contacts the person.",
+        "Review every account on every system quarterly."
+      ],
+      "why": "Locks, cameras, parking and the property system all keep their own users. A leaver process that stops at the network leaves the doors open.",
+      "pitfalls": [
+        "Stopping at the network login",
+        "Deleting accounts and their history",
+        "Warning the suspect",
+        "Shared convenience logins"
+      ]
     }
   ]
 }

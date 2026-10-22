@@ -509,6 +509,212 @@
           }
         }
       ]
+    },
+    {
+      "id": "dunmore_letter",
+      "category": "team",
+      "from": "mother_dunmore",
+      "subject": "Theo",
+      "body": [
+        "I don't think I said thank you properly. I was too frightened to say anything. Theo has drawn a picture of 'the lady on the radio and the man who found me'.",
+        "Please tell everyone who looked for him."
+      ],
+      "when": {
+        "passed": [
+          "M020"
+        ]
+      },
+      "deadlineWeeks": 1,
+      "defaultChoice": "keep",
+      "choices": [
+        {
+          "id": "share",
+          "label": "Pin it up in the staff canteen with the Code Beacon times",
+          "outcome": "Staff stop to read it for a week. Three departments ask for a Code Beacon refresher.",
+          "relations": {
+            "banquet_manager": 3,
+            "partner": 2
+          },
+          "effects": {
+            "StaffMorale": 2
+          }
+        },
+        {
+          "id": "keep",
+          "label": "File it with the case",
+          "outcome": "It sits in the file. The staff who searched never see it.",
+          "effects": {}
+        }
+      ]
+    },
+    {
+      "id": "treharne_family",
+      "category": "team",
+      "from": "police_liaison",
+      "subject": "Mr Treharne's family",
+      "body": "Mr Treharne's daughter asked me to pass this on: she was told by the right people, in the right way, and the room was left as he left it. She'd like to thank the room attendant who found him.",
+      "when": {
+        "passed": [
+          "M021"
+        ],
+        "notFlags": [
+          "m021_told_caller"
+        ]
+      }
+    },
+    {
+      "id": "marshal_followup",
+      "category": "request",
+      "from": "fire_marshal",
+      "subject": "Follow-up visit",
+      "body": "Your action plan was received. I'll be back in eight weeks to see the hood serviced, the drill records and the emergency lighting tests. If the ballroom is over its limit when I come, I will close it.",
+      "when": {
+        "passed": [
+          "M022"
+        ]
+      },
+      "deadlineWeeks": 2,
+      "defaultChoice": "later",
+      "choices": [
+        {
+          "id": "book",
+          "label": "Book the follow-up and send him the drill dates now",
+          "outcome": "He confirms the date. The drill on Stair A runs a week before he arrives.",
+          "relations": {
+            "fire_marshal": 4
+          },
+          "effects": {
+            "SafetyCompliance": 2
+          }
+        },
+        {
+          "id": "later",
+          "label": "Reply after the gala season",
+          "outcome": "He books it himself, for the week of the biggest gala.",
+          "relations": {
+            "fire_marshal": -3
+          },
+          "effects": {
+            "SafetyCompliance": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "generator_test",
+      "category": "request",
+      "from": "chief_engineer",
+      "subject": "Transfer switch",
+      "body": [
+        "The transfer switch had never been tested with a real changeover. I want to do a full load test on a Sunday night: lifts, fire pump, the lot. It means overtime and the generator contractor on site, about 4,800.",
+        "Or I can bench-test the switch for free and hope."
+      ],
+      "when": {
+        "passed": [
+          "C001"
+        ]
+      },
+      "deadlineWeeks": 2,
+      "defaultChoice": "bench",
+      "choices": [
+        {
+          "id": "load",
+          "label": "Approve the load test and put it on the annual calendar",
+          "outcome": "The test finds a second fault in the switch's control relay. It's replaced before the next outage.",
+          "relations": {
+            "chief_engineer": 5
+          },
+          "effects": {
+            "SafetyCompliance": 3,
+            "IncidentCosts": 4800
+          }
+        },
+        {
+          "id": "bench",
+          "label": "Bench test only",
+          "outcome": "The bench test passes. Tomasz notes in writing that it proves nothing about a real changeover.",
+          "relations": {
+            "chief_engineer": -3
+          },
+          "effects": {
+            "SafetyCompliance": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "airport_calendar",
+      "category": "team",
+      "from": "airport_lp",
+      "subject": "First monthly review",
+      "body": "Our first month on the cluster standard: night keys with ID 100% here, and yours? The six cameras are back. Can we review on the 3rd, and can my officers shadow your CCTV team for a night?",
+      "when": {
+        "passed": [
+          "M023"
+        ],
+        "notFlags": [
+          "airport_underreporting"
+        ]
+      },
+      "deadlineWeeks": 1,
+      "defaultChoice": "later",
+      "choices": [
+        {
+          "id": "yes",
+          "label": "Yes to both, and send our own night-key figure",
+          "outcome": "Ours is 97%. Rhosyn is gracious about it. Her officers spend a night with Ines and go home with three new habits.",
+          "relations": {
+            "airport_lp": 5,
+            "partner": 2
+          },
+          "effects": {
+            "SecurityPosture": 2
+          }
+        },
+        {
+          "id": "later",
+          "label": "Reschedule the review",
+          "outcome": "The first review slips to the second month. Rhosyn stops sending her figures early.",
+          "relations": {
+            "airport_lp": -3
+          }
+        }
+      ]
+    },
+    {
+      "id": "vessey_arrest",
+      "category": "story",
+      "from": "police_liaison",
+      "subject": "Vessey",
+      "body": [
+        "We executed the warrant at Dorian Vessey's flat this morning. A second portable encoder, a card printer and four hundred blank cards printed in the Veldane design. He's been charged with the room entries at both hotels.",
+        "He wasn't working alone: someone has been buying the cards from him. That's mine now. Thank you for not ringing him."
+      ],
+      "clue": "blank_stock",
+      "when": {
+        "passed": [
+          "M024"
+        ],
+        "notFlags": [
+          "m024_called_suspect"
+        ],
+        "minLevel": 7
+      }
+    },
+    {
+      "id": "vessey_cleared",
+      "category": "story",
+      "from": "police_liaison",
+      "subject": "Vessey's flat",
+      "body": "We searched Vessey's flat. Nothing: no encoder, no cards, freshly painted. He told us a hotel manager had rung to warn him. We'll build it from the logs, but it's harder now.",
+      "when": {
+        "passed": [
+          "M024"
+        ],
+        "flags": [
+          "m024_called_suspect"
+        ]
+      }
     }
   ],
   "fallout": [
@@ -653,6 +859,54 @@
         "SecurityPosture": -3,
         "StaffMorale": -2,
         "IncidentCosts": 2400
+      }
+    },
+    {
+      "topic": "missing_child",
+      "description": "How \"{mission}\" was handled ({choice}) comes back: a parent's complaint about the search reaches the owners.",
+      "effects": {
+        "Reputation": -2,
+        "OwnerTrust": -2
+      }
+    },
+    {
+      "topic": "guest_death",
+      "description": "The handling of \"{mission}\" ({choice}) reaches the family through the coroner's officer.",
+      "effects": {
+        "Reputation": -3,
+        "OwnerTrust": -2
+      }
+    },
+    {
+      "topic": "fire_inspection",
+      "description": "The fire authority's follow-up on \"{mission}\" ({choice}) finds the plan only half done.",
+      "effects": {
+        "SafetyCompliance": -3,
+        "InsurerConfidence": -2
+      }
+    },
+    {
+      "topic": "power_outage",
+      "description": "The outage review of \"{mission}\" ({choice}) reaches the insurer.",
+      "effects": {
+        "InsurerConfidence": -3,
+        "SafetyCompliance": -2
+      }
+    },
+    {
+      "topic": "cluster_standards",
+      "description": "The cluster standard from \"{mission}\" ({choice}) isn't holding at the airport.",
+      "effects": {
+        "SecurityPosture": -2,
+        "LossExposure": 2
+      }
+    },
+    {
+      "topic": "access_revocation",
+      "description": "An access review after \"{mission}\" ({choice}) finds more leavers still on the systems.",
+      "effects": {
+        "SecurityPosture": -3,
+        "LossExposure": 3
       }
     }
   ]

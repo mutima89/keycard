@@ -47,7 +47,7 @@ M = {
    "findingTitle": "Told by the wrong person",
    "finding": "His colleague hears it from the hotel before his family do. Within the hour his brother has a phone call from the office.",
    "effects": {"Reputation": -4},
-   "schedules": [{"id": "family_learned_from_office", "description": "Mr Treharne's brother writes to the GM: the family learned of his death from his office, who learned it from the hotel, before the police reached them.", "delayWeeks": 2, "probability": 0.9,
+   "setsFlags": ["m021_told_caller"], "schedules": [{"id": "family_learned_from_office", "description": "Mr Treharne's brother writes to the GM: the family learned of his death from his office, who learned it from the hotel, before the police reached them.", "delayWeeks": 2, "probability": 0.9,
      "effects": {"Reputation": -4, "OwnerTrust": -3}, "flagIfOccurs": "nok_breach"}]},
   {"id": "brief_gm", "label": "Brief the GM", "kind": "interview", "at": "gm_office", "person": "gm", "minutes": 4, "requires": ["meet_police"],
    "findingTitle": "GM briefed",

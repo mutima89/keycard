@@ -28,7 +28,7 @@ M = {
    "finding": "The hood suppression tag is a month out of date. The wet chemical extinguisher is in date, the release is clear, the permit board shows every hot work permit closed. The marshal notes the overdue service as a deficiency."},
   {"id": "walk_stairs", "label": "Walk Stair A top to bottom", "kind": "check", "at": "stair_a", "minutes": 6, "requires": ["opening_meeting"],
    "findingTitle": "Stair A",
-   "finding": "Doors on magnetic hold-opens release when tested. On the floor 1 landing: a stack of twenty banquet chairs left from last night's breakdown, narrowing the stair. The marshal photographs it."},
+   "finding": "Doors on magnetic hold-opens release when tested. On the floor 2 landing, one flight up from the ballroom: a stack of twenty banquet chairs put there out of sight after last night's breakdown, narrowing the stair. The marshal photographs it."},
   {"id": "clear_landing", "label": "Get the chairs off the landing now", "kind": "secure", "at": "stair_a", "minutes": 4, "requires": ["walk_stairs"],
    "findingTitle": "Stair cleared",
    "finding": "Celia's team carries the chairs back to the ballroom store while the marshal watches. You add Stair A landings to the banquet breakdown checklist and the night patrol."},

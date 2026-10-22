@@ -181,6 +181,7 @@ const TArray<AKcHotel::FZone>& AKcHotel::Zones()
 		{TEXT("kitchen"), 0, FBox2D(FVector2D(2700, -1000), FVector2D(4800, -160))},
 		{TEXT("lobby"), 0, FBox2D(FVector2D(0, -1000), FVector2D(2700, 1000))},
 		{TEXT("ballroom"), 1, FBox2D(FVector2D(0, -1000), FVector2D(4800, 1000))},
+		{TEXT("stair_a"), 2, FBox2D(FVector2D(StairIn0, StairY0), FVector2D(StairIn1, StairY1))},
 		{TEXT("gm_office"), 4, FBox2D(FVector2D(0, -1000), FVector2D(800, -160))},
 		{TEXT("boardroom"), 4, FBox2D(FVector2D(800, -1000), FVector2D(2100, -160))},
 		{TEXT("exec_offices"), 4, FBox2D(FVector2D(0, -1000), FVector2D(4800, 1000))},
@@ -268,6 +269,7 @@ FTransform AKcHotel::GetArrival(const FString& Location) const
 		{TEXT("bell_stand"), 0, FVector2D(420.0f, 380.0f), 135.0f},
 		{TEXT("fire_command"), 0, FVector2D(3100.0f, 300.0f), 90.0f},
 		{TEXT("ballroom"), 1, FVector2D(3200.0f, 0.0f), 0.0f},
+		{TEXT("stair_a"), 2, FVector2D(2190.0f, -330.0f), 90.0f},
 		{TEXT("exec_offices"), 4, FVector2D(1000.0f, 245.0f), 90.0f},
 		{TEXT("gm_office"), 4, FVector2D(400.0f, -300.0f), -90.0f},
 		{TEXT("boardroom"), 4, FVector2D(1450.0f, -260.0f), -90.0f},
@@ -2723,6 +2725,10 @@ void AKcHotel::FurnishRoom(const FString& Number, const FBox2D& Area, bool bNort
 			EKcUseStyle::None, Detector1406);
 		// Nobody walks past the guest into the room: the doorway is held, the work is offered at its threshold.
 		AddCollider(R.P(75.0f, VIn + 60.0f, 110.0f), FVector(100.0f, 10.0f, 220.0f), FRotator::ZeroRotator);
+		// Just inside, on the wall by the door: the keycard power slot and light switches, for work done
+		// from the doorway that has no prop of its own.
+		SpawnCasePoint(TEXT("guest_room"), FString(), TEXT("Inside 1406, by the door"), R.P(150.0f, VIn + 1.5f, 120.0f), 0.0f, Cube,
+			FVector(0.12f, 0.012f, 0.16f), Mat(TEXT("MI_Ceramic")), EKcUseStyle::Screen, R.P(75.0f, VIn + 30.0f, 150.0f));
 	}
 }
 
@@ -3011,6 +3017,9 @@ void AKcHotel::PlaceFixedInteractables()
 	SpawnCasePoint(TEXT("back_of_house"), FString(), TEXT("Back-of-house corridor"), FVector(2470.0f, -CorrY + Wall * 0.5f + 2.6f, Zf(-1, 160.0f)), 90.0f, Cube,
 		FVector(0.004f, 0.92f, 0.36f), Mat(TEXT("MI_Paper")), EKcUseStyle::Screen);
 	Shelf(FVector(3700.0f - Wall * 0.5f - 20.0f, 850.0f, Zf(-1, 0.0f)), 180.0f, 120.0f, 31);
+	// Stair A at floor 2, a landing nobody uses: the stair identification sign is where its work is done.
+	SpawnCasePoint(TEXT("stair_a"), FString(), TEXT("Stair A, floor 2 landing"), FVector(StairIn0 + 2.0f, -314.0f, Zf(2, 140.0f)), 0.0f, Cube,
+		FVector(0.006f, 0.36f, 0.22f), Mat(TEXT("MI_Paper")), EKcUseStyle::Screen, FVector(StairIn0 + 120.0f, -314.0f, Zf(2, 150.0f)));
 
 	// Every spot the missions can use must have its prop here (KnownSpots).
 	for (const kc::SpotDef& S : kc::KnownSpots())
@@ -3210,6 +3219,10 @@ void AKcHotel::RefreshScenes()
 	const bool bPrepped = Done(TEXT("walk_area"));
 	const bool bK2Off = (Done(TEXT("isolate_zone")) || Done(TEXT("isolate_all"))) && !Done(TEXT("restore_zone"));
 	const bool bAllOff = Done(TEXT("isolate_all")) && !Done(TEXT("restore_zone"));
+	const bool bTheo = Has(TEXT("search_stairs")) && !Done(TEXT("search_stairs"));
+	const bool bDeath = Has(TEXT("attend_room"));
+	const bool bSecured = Done(TEXT("secure_scene"));
+	const bool bChairs = Has(TEXT("clear_landing")) && !Done(TEXT("clear_landing"));
 
 	// Guests behind doors: the door offers their work until they open it.
 	for (AKcCasePoint* P : CasePoints)
@@ -3226,9 +3239,9 @@ void AKcHotel::RefreshScenes()
 		}
 	}
 
-	const FString Key = FString::Printf(TEXT("%s|%d%d%d%d%d%d%d%d|%d%d%d%d%d|%d%d%d%d%d%d%d%d%d%d"), M ? *KcConvert::ToFString(M->Id) : TEXT(""), bParty, bKnocked, bCapOff, bQuiet, bReturned,
+	const FString Key = FString::Printf(TEXT("%s|%d%d%d%d%d%d%d%d|%d%d%d%d%d|%d%d%d%d%d%d%d%d%d%d|%d%d%d%d"), M ? *KcConvert::ToFString(M->Id) : TEXT(""), bParty, bKnocked, bCapOff, bQuiet, bReturned,
 		b1412, bCloset, G && G->HasGame(), bBag, bCodeBlue, bAed, bPropped, bLuggage, bFireAlarm, bSilenced, bImpaired, bSlip, bConed, bMopped, bHotWork, bPrepped, bK2Off,
-		bAllOff);
+		bAllOff, bTheo, bDeath, bSecured, bChairs);
 	if (Key == SceneKey) return;
 	SceneKey = Key;
 	for (UPrimitiveComponent* S : SceneProps)
@@ -3245,7 +3258,7 @@ void AKcHotel::RefreshScenes()
 	// Mr Pike opens up, until the party has thinned out.
 	SetDoorOpen(TEXT("1412"), b1412);
 	SetDoorOpen(TEXT("closet"), bCloset);
-	SetDoorOpen(TEXT("1406"), bParty && bKnocked && !bQuiet);
+	SetDoorOpen(TEXT("1406"), (bParty && bKnocked && !bQuiet) || (bDeath && !bSecured));
 	SetDoorOpen(TEXT("luggage"), bLuggage);
 	SetDoorOpen(TEXT("dock"), bPropped);
 
@@ -3348,6 +3361,50 @@ void AKcHotel::RefreshScenes()
 			for (float Side : {-1.0f, 1.0f}) SceneBox(L + FVector(Side * 22.0f, 0.0f, 85.0f), FVector(4.0f, 8.0f, 170.0f), Mat(TEXT("MI_SafetyYellow")), 0.0f);
 			for (int32 r = 0; r < 5; ++r) SceneBox(L + FVector(0.0f, 0.0f, 30.0f + r * 32.0f), FVector(44.0f, 10.0f, 2.0f), Mat(TEXT("MI_Steel")), 0.0f);
 			SceneBox(L + FVector(90.0f, 20.0f, 30.0f), FVector(40.0f, 28.0f, 60.0f), Mat(TEXT("MI_FireRed")), 0.0f);
+		}
+	}
+	// M020: Theo on the floor 2 landing of Stair A, sitting with his back to the locked stair door and his
+	// knees up: blue waistcoat, white shirt, fair hair, trainers blinking red, until the search reaches him.
+	if (bTheo)
+	{
+		const FVector T(StairDoorX, StairY1 - 16.0f, Zf(2, 0.0f));
+		const float Yaw = -90.0f;
+		const FRotator R(0.0f, Yaw, 0.0f);
+		auto At = [&](float Fwd, float Side, float Up) { return T + R.RotateVector(FVector(Fwd, Side, Up)); };
+		SceneBox(At(0.0f, 0.0f, 6.0f), FVector(24.0f, 22.0f, 12.0f), Mat(TEXT("MI_UniformBlack")), Yaw);             // seat
+		SceneBox(At(1.0f, 0.0f, 33.0f), FVector(16.0f, 23.0f, 40.0f), Mat(TEXT("MI_SuitNavy")), Yaw, Cylinder);       // waistcoat
+		SceneBox(At(1.0f, 0.0f, 51.0f), FVector(8.0f, 8.0f, 4.0f), Mat(TEXT("MI_Linen")), Yaw, Cylinder);             // collar
+		SceneBox(At(3.0f, 0.0f, 61.0f), FVector(16.0f, 16.0f, 18.0f), Mat(TEXT("MI_Cork")), Yaw, Sphere);             // head, bowed
+		SceneBox(At(0.0f, 0.0f, 66.0f), FVector(17.0f, 17.0f, 11.0f), Mat(TEXT("MI_WoodOak")), Yaw, Sphere);          // fair hair
+		for (float Side : {-6.0f, 6.0f})
+		{
+			SceneBox(At(17.0f, Side, 22.0f), FVector(24.0f, 8.0f, 9.0f), Mat(TEXT("MI_UniformBlack")), Yaw);          // knees up
+			SceneBox(At(28.0f, Side, 7.0f), FVector(8.0f, 8.0f, 20.0f), Mat(TEXT("MI_UniformBlack")), Yaw);
+			SceneBox(At(32.0f, Side, 2.5f), FVector(15.0f, 7.0f, 5.0f), Mat(TEXT("MI_Ceramic")), Yaw);              // trainers
+			SceneBox(At(32.0f, Side, 0.6f), FVector(15.5f, 7.5f, 1.2f), Mat(TEXT("MI_LedRed")), Yaw);
+			SceneBox(At(15.0f, Side * 2.2f, 31.0f), FVector(20.0f, 6.0f, 6.0f), Mat(TEXT("MI_Linen")), Yaw);         // arms round the knees
+		}
+	}
+	// M021: the housekeeping cart left outside 1406 where the room attendant stopped; once the scene is
+	// secured the door is shut with a notice on it and nobody else goes in.
+	if (bDeath)
+	{
+		SceneBox(FVector(2880.0f, CorrY - 45.0f, Zf(TopFloor, 50.0f)), FVector(110.0f, 48.0f, 100.0f), Mat(TEXT("MI_PlasticGrey")), 0.0f);
+		SceneBox(FVector(2880.0f, CorrY - 45.0f, Zf(TopFloor, 101.0f)), FVector(104.0f, 44.0f, 2.0f), Mat(TEXT("MI_Linen")), 0.0f);
+		if (bSecured)
+		{
+			SceneBox(FVector(2775.0f + 40.0f, CorrY - Wall * 0.5f - 1.0f, Zf(TopFloor, 150.0f)), FVector(21.0f, 0.6f, 30.0f), Mat(TEXT("MI_Paper")), 0.0f);
+			if (UTextRenderComponent* L = AddLabel(TEXT("NO ENTRY  LP"), FVector(2775.0f + 40.0f, CorrY - Wall * 0.5f - 1.5f, Zf(TopFloor, 155.0f)), -90.0f, 2.0f, Ink, TopFloor)) SceneProps.Add(L);
+		}
+	}
+	// M022: banquet chairs stacked on the Stair A floor 2 landing, narrowing the exit route.
+	if (bChairs)
+	{
+		for (int32 s = 0; s < 3; ++s)
+		{
+			const FVector B(StairIn0 + 40.0f + s * 46.0f, StairY0 + 40.0f, Zf(2, 0.0f));
+			for (int32 c = 0; c < 6; ++c) SceneBox(B + FVector(0, 0, 45.0f + c * 8.0f), FVector(42.0f, 42.0f, 4.0f), Mat(TEXT("MI_Brass")), 4.0f * (c % 2));
+			SceneBox(B + FVector(0, -18.0f, 95.0f + 40.0f), FVector(40.0f, 4.0f, 50.0f), Mat(TEXT("MI_FabricAccent")), 0.0f);
 		}
 	}
 	// M009: the dock door wedged open with the pallet jack; otherwise the jack is parked by the pallets.

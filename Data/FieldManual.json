@@ -622,6 +622,48 @@
         "Radios near it",
         "Unsearched assembly points"
       ]
+    },
+    {
+      "id": "insurance_renewal",
+      "title": "Insurance renewal",
+      "topic": "insurance_renewal",
+      "steps": [
+        "Build the loss history for every site: frequency, severity, trends.",
+        "Check the reserve on every open claim: incurred = paid + reserve.",
+        "Disclose every known claim and circumstance.",
+        "Show the risk improvements with dated records.",
+        "Compare programmes on total cost of risk: premium plus retained losses.",
+        "Promise only what is funded; conditions become part of the policy.",
+        "Track the risk engineer's recommendations to closure and report them."
+      ],
+      "why": "The renewal price is the insurer's view of how well the risk is run. Honest, complete evidence lowers it and keeps the cover sound.",
+      "pitfalls": [
+        "Non-disclosure",
+        "Stale reserves",
+        "Premium-only comparisons",
+        "Unfunded promises"
+      ]
+    },
+    {
+      "id": "food_illness",
+      "title": "Suspected food illness",
+      "topic": "food_illness",
+      "steps": [
+        "Find out who is ill and look after them first.",
+        "Hold every retained sample, leftover and opened pack, labelled for the health department.",
+        "Copy the menus, recipes, delivery notes, temperature and cleaning logs and the rota.",
+        "Keep ill food handlers off work until 48 hours symptom-free, on pay.",
+        "Work openly with the health department.",
+        "Tell the insurer the same day; no admission, no denial, no speculation.",
+        "Fix the cause the investigation finds and check the fix."
+      ],
+      "why": "Only the held evidence can show what did and didn't cause it. Cleaning up first destroys the hotel's own defence.",
+      "pitfalls": [
+        "Throwing food away",
+        "Blaming a supplier",
+        "Punishing ill staff",
+        "Guessing in public"
+      ]
     }
   ]
 }

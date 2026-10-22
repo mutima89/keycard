@@ -471,6 +471,28 @@
       "avatar": "Security_Male_02",
       "outfit": "lp",
       "staff": true
+    },
+    {
+      "id": "health_officer",
+      "name": "Harriet Oyelaran",
+      "role": "Environmental Health Officer, Port Avener Health Department",
+      "department": "Health Department",
+      "bio": "Investigates outbreaks across the city's kitchens. Wants samples, logs and the truth, early.",
+      "location": "kitchen",
+      "avatar": "Business_Female_06",
+      "outfit": "executive",
+      "staff": false
+    },
+    {
+      "id": "claimant_tamsett",
+      "name": "Garrick Tamsett",
+      "role": "Guest, claiming an injury",
+      "department": "Guest",
+      "bio": "Says he fell on the lobby steps last month and has a solicitor's letter to prove it.",
+      "location": "lobby",
+      "avatar": "Male_Adult_15",
+      "outfit": "guest",
+      "staff": false
     }
   ]
 }

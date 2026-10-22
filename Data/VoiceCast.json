@@ -313,6 +313,24 @@
       "lang": "en-gb",
       "speed": 1.04,
       "note": "Evening LP officer: easy-going, defensive"
+    },
+    "health_officer": {
+      "voice": {
+        "af_sarah": 0.5,
+        "bf_emma": 0.5
+      },
+      "lang": "en-gb",
+      "speed": 0.98,
+      "note": "Health officer: brisk, fair"
+    },
+    "claimant_tamsett": {
+      "voice": {
+        "am_eric": 0.6,
+        "bm_daniel": 0.4
+      },
+      "lang": "en-gb",
+      "speed": 1.0,
+      "note": "Claimant: confident, rehearsed"
     }
   },
   "passing": {

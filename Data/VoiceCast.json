@@ -331,6 +331,15 @@
       "lang": "en-gb",
       "speed": 1.0,
       "note": "Claimant: confident, rehearsed"
+    },
+    "resort_gm": {
+      "voice": {
+        "bf_isabella": 0.4,
+        "af_bella": 0.6
+      },
+      "lang": "en-gb",
+      "speed": 1.0,
+      "note": "Resort GM: warm, stubborn, under pressure"
     }
   },
   "passing": {

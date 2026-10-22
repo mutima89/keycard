@@ -493,6 +493,17 @@
       "avatar": "Male_Adult_15",
       "outfit": "guest",
       "staff": false
+    },
+    {
+      "id": "resort_gm",
+      "name": "Isolde Marchbank",
+      "role": "General Manager, Veldane Cliffside Resort",
+      "department": "Executive",
+      "bio": "Runs the cliffside resort with a small team and a big heart. Has ridden out storms before and doesn't like being told how.",
+      "location": "boardroom",
+      "avatar": "Business_Female_07",
+      "outfit": "executive",
+      "staff": true
     }
   ]
 }

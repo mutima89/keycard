@@ -728,6 +728,49 @@
         "Opening the door",
         "Forgetting the refuge"
       ]
+    },
+    {
+      "id": "security_business_case",
+      "title": "A security business case",
+      "topic": "lock_business_case",
+      "steps": [
+        "State the risk from the data: incidents, losses, audits.",
+        "Expected annual loss = events per year x average cost. An average, never a worst case.",
+        "Set out the options with whole-life costs.",
+        "Say what each option won't fix.",
+        "Phase it so the highest risk falls first.",
+        "Get the departments that will run it to own their parts.",
+        "Make one recommendation, and say how the benefit will be measured."
+      ],
+      "why": "Decision-makers check the numbers. A case that is honest about risk, cost and limits gets approved; one inflated figure sinks it.",
+      "pitfalls": [
+        "Worst case as the average",
+        "Hardware-only costs",
+        "No limits stated",
+        "No benefit measures"
+      ]
+    },
+    {
+      "id": "cctv_privacy",
+      "title": "CCTV and privacy",
+      "topic": "cctv_privacy",
+      "steps": [
+        "Give every camera a stated purpose; no more intrusive than the purpose needs.",
+        "Never in guest rooms (or looking into them), toilets, changing, locker or rest areas. No audio.",
+        "Signs where cameras operate, and a privacy notice.",
+        "Named, trained users only; every view and export logged.",
+        "30-day retention unless an incident hold is placed.",
+        "Release footage only on a written, approved request, with custody.",
+        "A privacy impact assessment and counsel's review before any new use, analytics included.",
+        "Consult staff before back-of-house changes; review yearly."
+      ],
+      "why": "CCTV is surveillance of people. Clear rules keep it lawful, keep evidence usable, and keep staff and guests on side.",
+      "pitfalls": [
+        "Cameras where people change",
+        "Face recognition without basis",
+        "Shared logins",
+        "Releasing on an email"
+      ]
     }
   ]
 }

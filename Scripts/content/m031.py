@@ -1,0 +1,110 @@
+# Source for Data/Missions/M031.json.
+import json, os
+M = {
+ "schema": 1, "id": "M031", "title": "Lock System Business Case", "kind": "mission", "topic": "lock_business_case", "minLevel": 9,
+ "opening": {"channel": "email", "from": "finance_director", "at": "exec_offices",
+   "text": "The owners will look at one security capital project this year across the region. You've asked for new locks three times. Bring me a business case I can defend to them: costs, losses, options. Hamish."},
+ "briefing": [
+   "09:30, Monday. You are Regional Director of Safety and Security. The Harbourfront's locks are fifteen-year-old magnetic stripe readers; the blank-card case showed they can be cloned and their audit trail is thin.",
+   "Veldane business case method: state the risk in evidence (incidents, losses, audits); size the expected annual loss as an average, never a worst case; set out options with whole-life costs (hardware, installation, keys, maintenance, batteries, staff time); include what each option doesn't fix; phase it if it lowers risk sooner; get engineering and front office to own their parts; take it to the decision-makers with one recommendation. Your authority is 3,000,000."],
+ "context": [
+  {"ifFlag": "harbourfront_counts_dropped", "text": "The Harbourfront charges against Vessey were dropped because the hotel's own lock log couldn't be relied on. The owners know why."}
+ ],
+ "learningObjectives": ["Expected annual loss as an average, not a worst case", "Whole-life cost of the options", "One recommendation, owned by the departments"],
+ "start": "09:30",
+ "actions": [
+  {"id": "loss_data", "label": "Pull three years of key-related losses", "kind": "check", "at": "lp_office", "spot": "report_terminal", "minutes": 5, "required": True,
+   "findingTitle": "26 a year",
+   "finding": "Room entries with a valid key and no forced entry, lost master keys and rekeys, guest property claims where the lock audit was inconclusive: about 26 a year across the Harbourfront, at an average cost of 2,900 each (claims, rekeys, staff time, goodwill). The blank-card case was the largest single loss, and an outlier."},
+  {"id": "lock_test", "label": "See how the current system fails", "kind": "lockAudit", "at": "front_desk", "spot": "key_encoder", "minutes": 4, "requires": ["loss_data"], "required": True,
+   "findingTitle": "What the old locks can't do",
+   "finding": "Magnetic stripe cards copy with a cheap reader; the locks keep only the last 100 entries and need a handheld to read; the encoders log to a local PC; there is no way to cancel a lost master key at the door without visiting every lock. The audit trail failed the prosecution in the Vessey case."},
+  {"id": "engineering", "label": "Get Tomasz's view on installation and upkeep", "kind": "call", "at": "lp_office", "spot": "lp_desk", "person": "chief_engineer", "minutes": 3, "requires": ["loss_data"], "required": True,
+   "findingTitle": "Batteries and doors",
+   "finding": "Encrypted card locks fit the existing door preparations on 640 of 685 doors; 45 fire-rated doors need new hardware certified for them. Batteries every 18 months: about 20 minutes per lock, done floor by floor. He wants online locks on the back-of-house doors so he isn't walking the building for every audit."},
+  {"id": "options", "label": "Cost the options with Hamish", "kind": "interview", "at": "exec_offices", "spot": "finance_office", "person": "finance_director", "minutes": 5, "requires": ["lock_test", "engineering"], "required": True,
+   "findingTitle": "Three options",
+   "finding": "A: keep the old locks, rekey as needed: no capital, losses continue. B: encrypted card locks on every door, offline, 410,000 installed, 9,000 a year in batteries and keys. C: B plus online readers and a central audit on 85 back-of-house and master-key doors, 520,000, and mobile keys later at no extra hardware. Hamish's finance view: B and C both pay back in under ten years on losses alone, before the audit and claims benefits.",
+   "lines": [{"speaker": "finance_director", "text": "Expected loss, not the worst night you can imagine. The owners have seen enough horror stories. Give them averages they can check."}]},
+  {"id": "worst_case", "label": "Present the blank-card case as the yearly loss", "kind": "other", "at": "boardroom", "minutes": 1, "requires": ["loss_data"],
+   "findingTitle": "Worst case as the average",
+   "finding": "The slide says the hotel 'loses up to 600,000 a year to key fraud', the blank-card case multiplied out. The owners' advisers check it against the claims history in five minutes. Every other number in the case is doubted after that.",
+   "effects": {"OwnerTrust": -5},
+   "schedules": [{"id": "case_discredited", "description": "The owners decline the lock project for this year: the business case 'overstated the risk by an order of magnitude'. Next year's case has to start from zero trust.", "delayWeeks": 6, "probability": 0.7,
+     "effects": {"OwnerTrust": -3, "SecurityPosture": -3}, "flagIfOccurs": "lock_case_rejected"}]},
+  {"id": "front_office", "label": "Agree the key procedures with Gideon", "kind": "interview", "at": "front_desk", "person": "front_office_manager", "minutes": 3, "requires": ["options"],
+   "findingTitle": "Front office owns the keys",
+   "finding": "Gideon's team owns guest key issuing on the new system: ID for every key, named encoder logins, keys cancelled at checkout and on any report of loss. He asks for training before go-live and a fallback if the encoders are down.",
+   "lines": [{"speaker": "front_office_manager", "text": "If I own it, I want it to work at 3 a.m. with one agent on the desk. Show me that and you've got my signature."}]},
+  {"id": "present", "label": "Present the recommendation to the owners' committee", "kind": "interview", "at": "boardroom", "person": "gm", "minutes": 6, "requires": ["options", "front_office"], "required": True,
+   "findingTitle": "Approved, phased",
+   "finding": "Recommendation C, phased: back-of-house and master-key doors online first (the doors whose keys open everything), then the guest floors over twelve months. The owners approve 520,000 over two years with a quarterly report on key-related losses.",
+   "lines": [{"speaker": "gm", "text": "Average losses, honest costs, and what it won't fix. That is the first business case I've seen them approve in the room."}]},
+  {"id": "plan_record", "label": "Write the project plan and the benefit measures", "kind": "logEvidence", "at": "lp_office", "spot": "report_terminal", "minutes": 4, "requires": ["present"], "required": True,
+   "findingTitle": "Plan",
+   "finding": "Phases, owners and dates; fire-rated door hardware certified; the new key procedures; and the measures: key-related losses per 1,000 room nights, master keys unaccounted for, audit trail requests answered, all reported quarterly against this year's baseline."}
+ ],
+ "questions": [
+  {"id": "q_annual", "kind": "numeric", "prompt": "About 26 key-related losses a year at an average of 2,900 each. What is the expected annual loss?", "dimension": "Cost", "competency": "FinancialAcumen", "weight": 10,
+   "formula": {"name": "AnnualisedLoss", "inputs": {"eventsPerYear": 26, "averageCost": 2900}}, "tolerance": 0.02, "unit": "",
+   "explanation": "Annualised loss = events per year x average cost = 26 x 2,900 = 75,400 a year. It is an average: some years more, some less. The blank-card case is an outlier, mentioned as such, not multiplied out.",
+   "mistakes": [{"value": 600000, "feedback": "That is the worst case presented as the yearly loss. Expected annual loss is an average, and owners will check it."},
+     {"value": 2900, "feedback": "That is one event. Multiply by how many happen in a year."}]},
+  {"id": "d_option", "prompt": "Which option do you recommend?", "dimension": "Procedure", "competency": "KeyAccessControl", "weight": 9,
+   "options": [
+    {"id": "c", "label": "C, phased: online master-key and back-of-house doors first, guest floors over twelve months.", "score": 100,
+     "feedback": "The doors whose keys open everything get a live audit first; the rest follows within the year. The highest risk falls soonest."},
+    {"id": "b", "label": "B: card locks everywhere, offline.", "score": 60, "feedback": "A real improvement, and cheaper, but master-key and back-of-house audits still mean walking to each lock."},
+    {"id": "a", "label": "A: keep the old locks and rekey when needed.", "score": 15, "feedback": "75,400 a year in expected losses, a system that can be cloned and an audit trail that failed in court."}]},
+  {"id": "d_costs", "kind": "multi", "prompt": "Which belong in the whole-life cost?", "dimension": "Cost", "competency": "FinancialAcumen", "weight": 13,
+   "options": [
+    {"id": "hardware", "label": "Locks, encoders and certified hardware for fire-rated doors", "correct": True},
+    {"id": "install", "label": "Installation, training and the fallback for encoder outages", "correct": True},
+    {"id": "upkeep", "label": "Batteries, keys and maintenance staff time each year", "correct": True},
+    {"id": "worst", "label": "The cost of the worst theft you can imagine, every year", "feedback": "That is a risk scenario, not a cost. Expected loss is an average."}]},
+  {"id": "d_limits", "prompt": "What should the case say the new locks won't fix?", "dimension": "Communication", "competency": "CrisisLeadership", "weight": 12,
+   "options": [
+    {"id": "honest", "label": "Keys given to the wrong person at the desk, shared logins and leavers' access: procedures, not locks, fix those.", "score": 100,
+     "feedback": "Saying what it won't do is what makes the rest of the case believable."},
+    {"id": "nothing", "label": "Nothing: new locks fix key security.", "score": 20, "feedback": "The blank-card case started with a shared login, not a lock."},
+    {"id": "omit", "label": "Leave limitations out: they weaken the case.", "score": 25, "feedback": "Owners trust the case that tells them the limits."}]},
+  {"id": "r_what", "prompt": "Business case, summary (one line)", "dimension": "Report", "competency": "EvidenceReporting", "weight": 7, "section": "what",
+   "options": [
+    {"id": "facts", "label": "Expected key-related loss 75,400 a year on three years' data; option C (520,000, phased: master-key and back-of-house online first) approved; front office owns key procedures; quarterly loss and audit measures against baseline.", "score": 100,
+     "feedback": "The risk as an average, the decision, the owners and how benefit is measured."},
+    {"id": "fear", "label": "Locks can be cloned; up to 600,000 a year at risk.", "score": 10, "feedback": "A worst case as an average. It discredits everything else."},
+    {"id": "cost", "label": "New locks approved at 520,000.", "score": 30, "feedback": "The cost without the why or the how it will be judged."}]}
+ ],
+ "checks": [
+  {"id": "c_data", "label": "Losses from the data", "kind": "done", "action": "loss_data", "dimension": "Evidence", "competency": "Investigation", "weight": 7,
+   "pass": "The case starts from three years of real losses.", "fail": "The case had no loss data."},
+  {"id": "c_no_worst", "label": "Average, not worst case", "kind": "notDone", "action": "worst_case", "dimension": "Compliance", "competency": "FinancialAcumen", "weight": 10,
+   "pass": "The expected loss was an average the owners could check.", "fail": "A worst case was presented as the yearly loss."},
+  {"id": "c_eng", "label": "Engineering owns installation", "kind": "done", "action": "engineering", "dimension": "Procedure", "competency": "PeopleLeadership", "weight": 6,
+   "pass": "Engineering's costs and constraints are in the case.", "fail": "Fire-rated doors and batteries were left out."},
+  {"id": "c_fo", "label": "Front office owns keys", "kind": "done", "action": "front_office", "dimension": "Communication", "competency": "PeopleLeadership", "weight": 6,
+   "pass": "Front office signed up to the key procedures.", "fail": "The department that issues the keys wasn't asked."},
+  {"id": "c_present", "label": "One recommendation", "kind": "done", "action": "present", "dimension": "Communication", "competency": "CrisisLeadership", "weight": 6,
+   "pass": "The owners got one clear, phased recommendation.", "fail": "The owners never saw the case."},
+  {"id": "c_measures", "label": "Measure the benefit", "kind": "done", "action": "plan_record", "dimension": "Report", "competency": "ComplianceAudit", "weight": 7,
+   "pass": "Benefits will be measured against this year's baseline.", "fail": "Nobody will know if the locks worked."},
+  {"id": "c_test", "label": "Show the failure", "kind": "done", "action": "lock_test", "dimension": "Evidence", "competency": "KeyAccessControl", "weight": 7,
+   "pass": "The weaknesses of the old system were shown, not asserted.", "fail": "The old system's failures were never demonstrated."}
+ ],
+ "bestOrder": ["loss_data", "lock_test", "engineering", "options", "front_office", "present", "plan_record"],
+ "debrief": {
+  "whatHappened": "You built a lock business case the owners approved in the room: three years of losses sized as an average, the old system's failures shown, whole-life costs with engineering and finance, what new locks won't fix, and a phased option that protects the master-key doors first.",
+  "bestPractice": ["Start from the loss data.",
+    "Expected annual loss = events x average cost: an average, never a worst case.",
+    "Whole-life costs: hardware, installation, keys, batteries, staff time.",
+    "Say what it won't fix.",
+    "Phase it so the highest risk falls first.",
+    "Departments that run it own their parts; measure the benefit."],
+  "why": "Owners approve cases they can check. One overstated number spends all the credibility the rest of the case earned.",
+  "commonMistakes": ["Worst case as the average.", "Hardware cost only.", "Promising locks fix procedures.", "No benefit measures."]},
+ "procedureCards": ["security_business_case"],
+ "reportAt": "lp_office", "passMark": 60, "xp": 440, "weeks": 2,
+ "lesson": "Data, average loss, whole-life cost, honest limits, phased, owned and measured."
+}
+out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "Data", "Missions", "M031.json")
+json.dump(M, open(out, "w"), indent=2, ensure_ascii=False)

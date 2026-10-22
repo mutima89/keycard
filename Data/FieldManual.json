@@ -558,6 +558,48 @@
         "Warning the suspect",
         "Shared convenience logins"
       ]
+    },
+    {
+      "id": "payment_fraud",
+      "title": "Card-not-present fraud",
+      "topic": "payment_fraud",
+      "steps": [
+        "Find what the disputed bookings have in common: domains, phone numbers, timing, card origin.",
+        "Flag matching bookings still to arrive.",
+        "At check-in, ask everyone the same way for the booking card or the cardholder's signed authorisation.",
+        "Without it, the guest pays by their own means or cancels at no cost. Never say 'fraud'.",
+        "Observe and record anyone who seems to be running it; tell the police. Don't detain.",
+        "Give the evidence to the police and the card acquirer.",
+        "Dispute the chargebacks your records can win; review chargebacks monthly with credit."
+      ],
+      "why": "The loss arrives weeks after the stay. A fair, consistent payment check at the desk is the one point where it can be stopped.",
+      "pitfalls": [
+        "Accusing guests",
+        "Profiling by nationality",
+        "Detaining a suspect",
+        "Disputing what can't be won"
+      ]
+    },
+    {
+      "id": "misconduct_investigation",
+      "title": "Investigating your own team",
+      "topic": "lp_misconduct",
+      "steps": [
+        "Pull the records and check them against the cameras before speaking to anyone.",
+        "Bring HR in from the start.",
+        "Take anyone involved, supervisors included, out of the investigation.",
+        "Interview each person separately with HR present, show the evidence, and let them answer.",
+        "Protect whoever reported it: build the case on the records and never name them.",
+        "Keep findings to the conduct; record welfare context; outcomes are decided in HR's process.",
+        "Cover the gap and fix the control the same day."
+      ],
+      "why": "LP is trusted with the records everyone else relies on. When its own records are false, how you investigate decides whether anyone believes them again.",
+      "pitfalls": [
+        "Letting the supervisor handle it",
+        "Exposing the reporter",
+        "Locker searches outside policy",
+        "Sanctions decided in the interview"
+      ]
     }
   ]
 }

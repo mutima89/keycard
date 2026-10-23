@@ -394,52 +394,67 @@ def floor_plan():
     return im
 
 
-def skyline(seed, panel_h_cm, min_m, max_m, tower_chance):
-    """The city across the water or behind the streets at night, for a 1200 m wide panel (KcHotel BuildSkyline):
-    dark blocks with scattered lit windows and red aviation lights, transparent above the roofs. Pixels are not
-    square: 4096 px across 1200 m, 1024 px up panel_h_cm, so every size is converted from metres on each axis."""
-    w, h = 4096, 1024
-    px_x = w / 1200.0           # px per metre across
-    px_y = h / (panel_h_cm / 100.0)  # px per metre up
+def skyline(seed, panel_w_m, panel_h_m, min_m, max_m, tower_chance, lit=0.2, h=1024):
+    """The city round the harbour at night for one panel (KcHotel BuildLighting) panel_w_m by panel_h_m:
+    near-black blocks with scattered lit windows and red aviation lights, transparent above the roofs.
+    Pixels are not square (4096 px across, h px up), so every size is converted from metres on each axis."""
+    w = 4096
+    px_x = w / float(panel_w_m)
+    px_y = h / float(panel_h_m)
     rng = random.Random(seed)
     im = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     d = ImageDraw.Draw(im)
-    warm, cool, dim = (255, 196, 128, 255), (196, 216, 255, 255), (120, 100, 80, 255)
-    for layer, (shade, lit) in enumerate([((9, 11, 16), 0.12), ((13, 15, 21), 0.22)]):  # back row, then front
+    warm, cool, dim = (255, 196, 128, 255), (196, 216, 255, 255), (110, 92, 74, 255)
+    for layer, (shade, share) in enumerate([((5, 6, 9), lit * 0.6), ((8, 9, 13), lit)]):  # back row, then front
         x = rng.uniform(-30, 0) * px_x
         while x < w:
-            bw = rng.uniform(18, 55) * px_x
+            bw = rng.uniform(16, 50) * px_x
             tall = rng.random() < tower_chance
             bh_m = rng.uniform(max_m * 0.6, max_m) if tall else rng.uniform(min_m, min_m + (max_m - min_m) * 0.35)
             if layer == 0:
-                bh_m *= 1.15
-            bh_m = min(bh_m, panel_h_cm / 100.0 - 2.0)
+                bh_m *= 1.2
+            bh_m = min(bh_m, panel_h_m - 1.0)
             top = h - bh_m * px_y
             x0, x1 = int(x), int(x + bw)
             d.rectangle([x0, int(top), x1, h], fill=shade + (255,))
-            # Windows: 3 m bays, 3.5 m storeys; a share lit, warm or cool, a few dim.
+            # Windows: 3 m bays, 3.5 m storeys; a share lit, warm or cool, a few dim; whole dark floors here and there.
             fy = 3.5 * px_y
             bay = 3.0 * px_x
-            ww, wh = max(1, int(1.6 * px_x)), max(2, int(1.8 * px_y))
+            ww, wh = max(1, int(1.4 * px_x)), max(1, int(1.6 * px_y))
             yy = h - fy
             while yy - wh > top + fy * 0.5:
+                floor_share = share * (0.2 if rng.random() < 0.25 else 1.0)
                 xx = x0 + bay * 0.5
                 while xx + ww < x1 - bay * 0.3:
                     r = rng.random()
-                    if r < lit:
-                        d.rectangle([int(xx), int(yy - wh), int(xx) + ww, int(yy)], fill=warm if rng.random() < 0.65 else cool)
-                    elif r < lit + 0.05:
-                        d.rectangle([int(xx), int(yy - wh), int(xx) + ww, int(yy)], fill=dim)
+                    if r < floor_share:
+                        d.rectangle([int(xx), int(yy - wh), int(xx) + ww - 1, int(yy)], fill=warm if rng.random() < 0.65 else cool)
+                    elif r < floor_share + 0.04:
+                        d.rectangle([int(xx), int(yy - wh), int(xx) + ww - 1, int(yy)], fill=dim)
                     xx += bay
                 yy -= fy
             if tall:
-                d.rectangle([int((x0 + x1) / 2) - 2, int(top) - 4, int((x0 + x1) / 2) + 2, int(top)], fill=(255, 40, 30, 255))
-            x += bw + rng.uniform(-6, 10) * px_x
-    # A lit street or quay edge along the foot of the panel.
-    for xx in range(0, w, 7):
-        if rng.random() < 0.5:
-            d.rectangle([xx, h - 4, xx + 2, h - 2], fill=warm)
+                cx = int((x0 + x1) / 2)
+                d.rectangle([cx - 1, int(top) - 3, cx + 1, int(top)], fill=(255, 40, 30, 255))
+            x += bw + rng.uniform(-5, 12) * px_x
+    # Street or quay lights along the foot of the panel.
+    for xx in range(0, w, 6):
+        if rng.random() < 0.45:
+            d.rectangle([xx, h - 3, xx + 1, h - 2], fill=warm)
     return im
+
+
+# Skyline panels (KcHotel.cpp BuildLighting): far ring 1 km out on every side, near low-rise 300 m out on the
+# street sides. Sizes in metres must match the panels there.
+SKYLINES = {
+    "T_SkylineFarN": (71, 2000, 120, 15, 90, 0.10, 0.18),   # the far shore, across the harbour
+    "T_SkylineFarS": (72, 2000, 120, 20, 115, 0.18, 0.2),
+    "T_SkylineFarW": (73, 2000, 120, 20, 115, 0.16, 0.2),
+    "T_SkylineFarE": (74, 2000, 120, 20, 115, 0.2, 0.2),
+    "T_SkylineNearS": (81, 700, 40, 9, 36, 0.08, 0.4),
+    "T_SkylineNearW": (82, 400, 40, 9, 36, 0.08, 0.4),
+    "T_SkylineNearE": (83, 400, 40, 9, 36, 0.08, 0.4),
+}
 
 
 def main():
@@ -458,8 +473,9 @@ def main():
         "T_ArtHarbourA": harbour_art(11), "T_ArtHarbourB": harbour_art(29), "T_ArtHarbourC": harbour_art(53),
         "T_ExitSign": exit_sign(), "T_CorridorCarpet": corridor_carpet(), "T_Wallpaper": wallpaper(), "T_QuarryTile": quarry_tile(),
         "T_DndTag": dnd_tag(), "T_FloorPlan": floor_plan(),
-        "T_SkylineHarbour": skyline(71, 9000, 12, 80, 0.12), "T_SkylineCity": skyline(97, 14000, 18, 135, 0.2),
     }
+    for name, (seed, pw, ph, lo, hi, towers, lit) in SKYLINES.items():
+        items[name] = skyline(seed, pw, ph, lo, hi, towers, lit, 1024 if ph > 60 else 512)
     for name, im in items.items():
         im.save(os.path.join(OUT, name + ".png"))
         print("wrote", name)

@@ -190,22 +190,22 @@ def build_foliage(defaults):
 
 
 def build_world(defaults):
+    """World-aligned colour and roughness; the surface's own normal (no normal map). The WorldAlignedNormal path
+    left walls facing X black and the top of B1 walls dark (its normals tilted), and the bump is invisible at 2-4 m repeats."""
     m = new_material("M_KcWorld")
-    m.set_editor_property("tangent_space_normal", False)  # world-aligned normals are in world space
     wat = unreal.load_asset("/Engine/Functions/Engine_MaterialFunctions01/Texturing/WorldAlignedTexture.WorldAlignedTexture")
-    wan = unreal.load_asset("/Engine/Functions/Engine_MaterialFunctions01/Texturing/WorldAlignedNormal.WorldAlignedNormal")
     size = expr(m, unreal.MaterialExpressionVectorParameter, -1400, 0, parameter_name="TileSize", default_value=unreal.LinearColor(200, 200, 200, 0))
     outs = {}
-    for i, (pname, tex, sampler, fn) in enumerate([("BaseColorMap", defaults["color"], unreal.MaterialSamplerType.SAMPLERTYPE_COLOR, wat),
-                                                   ("NormalMap", defaults["normal"], unreal.MaterialSamplerType.SAMPLERTYPE_NORMAL, wan),
-                                                   ("ARMMap", defaults["mask"], unreal.MaterialSamplerType.SAMPLERTYPE_MASKS, wat)]):
+    for i, (pname, tex, sampler) in enumerate([("BaseColorMap", defaults["color"], unreal.MaterialSamplerType.SAMPLERTYPE_COLOR),
+                                               ("ARMMap", defaults["mask"], unreal.MaterialSamplerType.SAMPLERTYPE_MASKS)]):
         obj = expr(m, unreal.MaterialExpressionTextureObjectParameter, -1200, -300 + i * 300, parameter_name=pname, texture=tex, sampler_type=sampler)
         call = expr(m, unreal.MaterialExpressionMaterialFunctionCall, -900, -300 + i * 300)
-        call.set_editor_property("material_function", fn)
+        call.set_editor_property("material_function", wat)
         link(obj, "", call, "TextureObject")
         link(size, "", call, "TextureSize")
         outs[pname] = call
-    pbr_tail(m, (outs["BaseColorMap"], "XYZ Texture"), (outs["NormalMap"], "XYZ Texture"), (outs["ARMMap"], "XYZ Texture"), -500)
+    flat = expr(m, unreal.MaterialExpressionConstant3Vector, -900, 300, constant=unreal.LinearColor(0, 0, 1, 1))
+    pbr_tail(m, (outs["BaseColorMap"], "XYZ Texture"), (flat, ""), (outs["ARMMap"], "XYZ Texture"), -500)
     return finish(m)
 
 
@@ -261,7 +261,7 @@ def build_sky():
     link(k, "", steep, "B")
     t = expr(m, unreal.MaterialExpressionSaturate, -550, 0)
     link(steep, "", t, "")
-    horizon = expr(m, unreal.MaterialExpressionVectorParameter, -550, -250, parameter_name="Horizon", default_value=unreal.LinearColor(0.05, 0.04, 0.045, 1))
+    horizon = expr(m, unreal.MaterialExpressionVectorParameter, -550, -250, parameter_name="Horizon", default_value=unreal.LinearColor(0.1, 0.075, 0.07, 1))
     zenith = expr(m, unreal.MaterialExpressionVectorParameter, -550, -100, parameter_name="Zenith", default_value=unreal.LinearColor(0.004, 0.006, 0.014, 1))
     sky = expr(m, unreal.MaterialExpressionLinearInterpolate, -350, -150)
     link(horizon, "", sky, "A")
@@ -504,7 +504,7 @@ for name, slot, tile, tint, rough in [
         ("MI_WallPlaster", "plaster", 260, (0.93, 0.91, 0.88), 1.0),
         ("MI_WallPaint", "plaster", 260, (0.82, 0.83, 0.82), 1.1),         # back-of-house corridors
         ("MI_StairPaint", "plaster", 260, (0.7, 0.72, 0.7), 1.1),
-        ("MI_WoodOak", "oak", 140, (1, 1, 1), 1.5),                         # satin: at 0.9 the glossy grain lines streaked white
+        ("MI_WoodOak", "oak", 140, (0.8, 0.75, 0.7), 1.5),                   # less orange; satin: at 0.9 the glossy grain lines streaked white
         ("MI_WoodWalnut", "walnut", 140, (1, 1, 1), 0.85),
         ("MI_DoorPaint", "oak", 140, (0.42, 0.33, 0.24), 0.8),             # guest-room doors: stained oak
         ("MI_Cork", "wool", 25, (0.62, 0.46, 0.3), 1.8)]:                  # LP office notice board
@@ -577,9 +577,10 @@ for mi, tex, tile, rough in [("MI_CorridorCarpet", "T_CorridorCarpet", 120, 2.0)
                  {"Tint": (1, 1, 1, 1), "TileSize": (tile, tile, tile, 0)})
 instance("MI_Sky", unreal.load_asset(MAT + "/M_KcSky"), {}, {"Intensity": 1.0})
 skyline = build_skyline()
-for mi, tex in [("MI_SkylineHarbour", "T_SkylineHarbour"), ("MI_SkylineCity", "T_SkylineCity")]:
+for side in ["FarN", "FarS", "FarW", "FarE", "NearS", "NearW", "NearE"]:
+    tex = "T_Skyline" + side
     if tex in gen:
-        instance(mi, skyline, {"SkylineTexture": gen[tex]}, {"Intensity": 4.0})
+        instance("MI_Skyline" + side, skyline, {"SkylineTexture": gen[tex]}, {"Intensity": 3.0})
     else:
         err("%s missing: run python Scripts/GenerateTextures.py" % tex)
 

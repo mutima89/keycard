@@ -1198,7 +1198,7 @@ void AKcHotel::BuildOutside()
 	AddBox(FVector(-1700.0f, 0.0f, -8.0f), FVector(1600.0f, 9000.0f, 6.0f), Mat(TEXT("MI_Asphalt")));
 	AddBox(FVector(-905.0f, 0.0f, -3.0f), FVector(14.0f, 9000.0f, 12.0f), Mat(TEXT("MI_Concrete")));
 	AddBox(FVector(2400.0f, 2560.0f, -60.0f), FVector(9600.0f, 120.0f, 120.0f), Mat(TEXT("MI_Concrete")));
-	AddBox(FVector(2400.0f, 30000.0f, -160.0f), FVector(60000.0f, 54800.0f, 10.0f), Mat(TEXT("MI_Water")), 0.0f, false);
+	AddBox(FVector(2400.0f, 51300.0f, -160.0f), FVector(200000.0f, 97400.0f, 10.0f), Mat(TEXT("MI_Water")), 0.0f, false); // to the far shore
 	for (float X = -600.0f; X < MaxX + 600.0f; X += 600.0f)
 	{
 		AddInstance(Cylinder, FVector(X, 2420.0f, 45.0f), 0.0f, FVector(0.22f, 0.22f, 0.9f), Mat(TEXT("MI_Graphite")), true);
@@ -1305,7 +1305,7 @@ void AKcHotel::BuildLpOffice()
 	for (const FVector2D& P : {FVector2D(2950.0f, 420.0f), FVector2D(3450.0f, 420.0f), FVector2D(2950.0f, 800.0f), FVector2D(3450.0f, 800.0f)})
 	{
 		AddBox(FVector(P.X, P.Y, Zf(F, CeilB1 - 0.5f)), FVector(120.0f, 60.0f, 1.0f), Mat(TEXT("MI_LightPanel")), 0.0f, false);
-		AddLight(F, FVector(P.X, P.Y, Zf(F, CeilB1 - 6.0f)), 1200.0f, 750.0f, Neutral, P.X < 3000.0f && P.Y > 700.0f, true, FVector2D(120.0f, 60.0f));
+		AddLight(F, FVector(P.X, P.Y, Zf(F, CeilB1 - 6.0f)), 900.0f, 750.0f, Neutral, P.X < 3000.0f && P.Y > 700.0f, true, FVector2D(120.0f, 60.0f));
 	}
 	// The panels light only below them: two soft fills keep the upper walls from going black.
 	for (float X : {2950.0f, 3450.0f}) AddLight(F, FVector(X, 610.0f, Zf(F, CeilB1 - 45.0f)), 220.0f, 520.0f, Neutral);
@@ -3655,25 +3655,29 @@ void AKcHotel::BuildLighting()
 	Moon->SetLightColor(FLinearColor(0.62f, 0.72f, 1.0f));
 	Moon->SetCastShadows(false);
 	Moon->RegisterComponent();
-	if (UStaticMeshComponent* Sky = AddMesh(Sphere, FVector(2400.0f, 0.0f, 2000.0f), 0.0f, FVector(1400.0f), Mat(TEXT("MI_Sky")), false))
+	if (UStaticMeshComponent* Sky = AddMesh(Sphere, FVector(2400.0f, 0.0f, 2000.0f), 0.0f, FVector(3000.0f), Mat(TEXT("MI_Sky")), false)) // 1.5 km: outside the far skyline ring
 	{
 		if (UMaterialInterface* SkyMat = Mat(TEXT("MI_Sky"))) SkyMaterial = Sky->CreateDynamicMaterialInstance(0, SkyMat);
 		Sky->SetCastShadow(false);
 		Sky->bAffectDistanceFieldLighting = false;
 		Sky->bVisibleInRayTracing = false;
 	}
-	// The city round the harbour: lit-window skylines on four panels, the far shore 450 m north across the water,
-	// the streets 250 m off on the other sides. Seen from 14 they sit below the eye; from G they rise above it.
-	struct FSkyline { FVector At; float Yaw; float Width; float Height; const TCHAR* Material; };
-	for (const FSkyline& K : {FSkyline{FVector(2400.0f, 45000.0f, 0.0f), -90.0f, 120000.0f, 9000.0f, TEXT("MI_SkylineHarbour")},
-			 FSkyline{FVector(2400.0f, -25000.0f, 0.0f), 90.0f, 120000.0f, 14000.0f, TEXT("MI_SkylineCity")},
-			 FSkyline{FVector(-25000.0f, 0.0f, 0.0f), 0.0f, 120000.0f, 14000.0f, TEXT("MI_SkylineCity")},
-			 FSkyline{FVector(30000.0f, 0.0f, 0.0f), 180.0f, 120000.0f, 14000.0f, TEXT("MI_SkylineCity")}})
+	// The city round the harbour: lit-window skylines, a far ring 1 km out on every side (the far shore north
+	// across the water) and nearer low-rise 300 m out on the street sides. From 14 the near roofs are below the
+	// eye and the far towers on the horizon; from G both rise above it. Sizes match SKYLINES in GenerateTextures.py.
+	struct FSkyline { FVector2D At; float Yaw; float Width; float Height; const TCHAR* Material; };
+	for (const FSkyline& K : {FSkyline{FVector2D(2400.0f, 100000.0f), -90.0f, 200000.0f, 12000.0f, TEXT("MI_SkylineFarN")},
+			 FSkyline{FVector2D(2400.0f, -100000.0f), 90.0f, 200000.0f, 12000.0f, TEXT("MI_SkylineFarS")},
+			 FSkyline{FVector2D(-97600.0f, 0.0f), 0.0f, 200000.0f, 12000.0f, TEXT("MI_SkylineFarW")},
+			 FSkyline{FVector2D(102400.0f, 0.0f), 180.0f, 200000.0f, 12000.0f, TEXT("MI_SkylineFarE")},
+			 FSkyline{FVector2D(2400.0f, -30000.0f), 90.0f, 70000.0f, 4000.0f, TEXT("MI_SkylineNearS")},
+			 FSkyline{FVector2D(-30000.0f, -10000.0f), 0.0f, 40000.0f, 4000.0f, TEXT("MI_SkylineNearW")},
+			 FSkyline{FVector2D(35000.0f, -10000.0f), 180.0f, 40000.0f, 4000.0f, TEXT("MI_SkylineNearE")}})
 	{
 		// Thin along local X, which faces the hotel, so the drawing reads unmirrored (as the screens do).
 		UMaterialInterface* M = Mat(K.Material);
 		if (!M) continue;
-		if (UStaticMeshComponent* C = AddMesh(Cube, K.At + FVector(0.0f, 0.0f, K.Height * 0.5f - 200.0f), K.Yaw, FVector(0.1f, K.Width / 100.0f, K.Height / 100.0f), M, false))
+		if (UStaticMeshComponent* C = AddMesh(Cube, FVector(K.At.X, K.At.Y, K.Height * 0.5f - 200.0f), K.Yaw, FVector(0.1f, K.Width / 100.0f, K.Height / 100.0f), M, false))
 		{
 			C->SetCastShadow(false);
 			C->bAffectDistanceFieldLighting = false;

@@ -545,7 +545,7 @@ void BuildRoute(FState& S, AKcHotel* Hotel)
 	// Into 1412 past the wardrobe (open, as in the missions that send you in): the bedroom towards the window,
 	// then the bathroom from its door.
 	S.Steps.Add(Door(TEXT("1412"), true));
-	S.Steps.Add(PathTo(AKcHotel::TopFloor, FVector2D(1000.0f, -620.0f), TEXT("1412 bedroom")));
+	S.Steps.Add(PathTo(AKcHotel::TopFloor, FVector2D(880.0f, -540.0f), TEXT("1412 bedroom")));
 	S.Steps.Add(Shot(-90.0f, TEXT("1412 bedroom")));
 	S.Steps.Add(PathTo(AKcHotel::TopFloor, FVector2D(970.0f, -330.0f), TEXT("1412 bathroom")));
 	S.Steps.Add(Shot(0.0f, TEXT("1412 bathroom")));

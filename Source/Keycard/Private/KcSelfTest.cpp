@@ -171,7 +171,7 @@ FVector AimPoint(const AKcInteractable* Target)
 // within reach, looking at it, with the interaction sweep (a 9 cm sphere from the camera, 3 m)
 // reaching it first. Spots are searched on a 20 cm grid, nearest to a comfortable 1.3 m first.
 // False when no spot can see it.
-bool StandAt(AKcHUD* Hud, AKcInteractable* Target, FString* Why = nullptr)
+bool StandAt(AKcHUD* Hud, AKcInteractable* Target, FString* Why = nullptr, const FString& Prefer = FString())
 {
 	APlayerController* PC = Hud->GetOwningPlayerController();
 	APawn* Pawn = PC ? PC->GetPawn() : nullptr;
@@ -191,8 +191,13 @@ bool StandAt(AKcHUD* Hud, AKcInteractable* Target, FString* Why = nullptr)
 			if (D >= 60.0f && D <= 280.0f) Spots.Add(FVector(Focus.X + X, Focus.Y + Y, Z));
 		}
 	}
+	// Spots in the place the case names come first (the dock door from the dock, not the yard).
+	const AKcHotel* Hotel = Hud->Hotel();
+	auto InPlace = [&](const FVector& V) { return !Prefer.IsEmpty() && Hotel && Hotel->LocationAt(V) == Prefer; };
 	Spots.Sort([&](const FVector& L, const FVector& R)
 	{
+		const bool bL = InPlace(L), bR = InPlace(R);
+		if (bL != bR) return bL;
 		return FMath::Abs(FVector::Dist2D(L, Focus) - 130.0f) < FMath::Abs(FVector::Dist2D(R, Focus) - 130.0f);
 	});
 	FCollisionQueryParams Params(SCENE_QUERY_STAT(KcSelfTestStand), false, Pawn);
@@ -383,7 +388,7 @@ void AddCase(TSharedRef<FScript> S, TSharedRef<FReport> R, UWorld* World, AKcHUD
 				const bool bThroughDoor = Door && !Door->DoorPersonId.IsEmpty() && Door->DoorPersonId == ToFString(A->Person);
 				const FString Where = WhereIs(H.Get(), Offer);
 				FString Why;
-				const bool bStand = StandAt(H.Get(), Offer, &Why);
+				const bool bStand = StandAt(H.Get(), Offer, &Why, bThroughDoor ? FString() : ToFString(A->At));
 				// Used from where the case says: the thing itself stands there, or the player does to use it
 				// (a door lock in the corridor, the dock door from the dock).
 				const APawn* Pawn = H->GetOwningPlayerController() ? H->GetOwningPlayerController()->GetPawn() : nullptr;

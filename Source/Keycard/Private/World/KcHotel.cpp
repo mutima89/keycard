@@ -121,7 +121,7 @@ const FPost Posts[] = {
 	{TEXT("attendant_duarte"), TEXT("f14_service"), 14, FVector2D(205.0f, -470.0f), 110.0f},
 	{TEXT("guest_morrow"), TEXT("f14_corridor"), 14, FVector2D(3195.0f, 95.0f), -130.0f},
 	{TEXT("guest_achterberg"), TEXT("f14_corridor"), 14, FVector2D(3825.0f, -95.0f), 60.0f},
-	{TEXT("guest_pike"), TEXT("guest_room"), 14, FVector2D(2775.0f, 205.0f), -90.0f},
+	{TEXT("guest_pike"), TEXT("guest_room"), 14, FVector2D(2900.0f, 300.0f), -135.0f}, // inside, clear of the doorway
 	{TEXT("partner"), TEXT("cctv_room"), -1, FVector2D(4520.0f, 560.0f), 160.0f},
 	{TEXT("bell_captain"), TEXT("bell_stand"), 0, FVector2D(270.0f, 560.0f), -45.0f},
 	{TEXT("guest_lindgren"), TEXT("bell_stand"), 0, FVector2D(440.0f, 420.0f), 140.0f},
@@ -2998,7 +2998,8 @@ AKcCasePoint* AKcHotel::SpawnCasePoint(const FString& Location, const FString& S
 void AKcHotel::PlaceFixedInteractables()
 {
 	const int32 F = TopFloor;
-	// The door spots on 14 sit on each door's keycard reader; on 1406 and 1412 they swing with the leaf.
+	// The door spots on 14 sit on each door's keycard reader, on the corridor wall beside the latch side:
+	// on the leaf they swung into the room once the door was open, out of reach from the corridor (M001, M021).
 	struct FDoorSpot { const TCHAR* Spot; const TCHAR* Room; float X0; bool bNorth; };
 	const FDoorSpot DoorSpots[] = {
 		{TEXT("door_1406"), TEXT("1406"), 2700.0f, true},
@@ -3013,13 +3014,9 @@ void AKcHotel::PlaceFixedInteractables()
 		const FVector Out = FRotator(0.0f, Yaw, 0.0f).Vector();
 		const FVector Right = FRotator(0.0f, Yaw + (D.bNorth ? -90.0f : 90.0f), 0.0f).Vector();
 		const FVector Base(RoomDoorX(D.X0), D.bNorth ? CorrY : -CorrY, Zf(F, 0.0f));
-		const FVector Reader = Base + Right * ((GuestDoorW - 6.0f) * 0.5f - 9.0f) + Out * 3.2f + FVector(0, 0, 128.0f);
+		const FVector Reader = Base + Right * (GuestDoorW * 0.5f + 14.0f) + Out * (Wall * 0.5f + 1.0f) + FVector(0, 0, 128.0f);
 		AKcCasePoint* P = SpawnCasePoint(TEXT("f14_corridor"), D.Spot, FString(), Reader, Yaw, Cube, FVector(0.016f, 0.074f, 0.134f), Mat(TEXT("MI_DeviceBlack")),
 			EKcUseStyle::Screen, Base + Out * 2.0f + FVector(0, 0, 150.0f));
-		if (const FDynDoor* Dyn = Doors.Find(D.Room))
-		{
-			if (P && Dyn->Pivot.IsValid()) P->AttachToComponent(Dyn->Pivot.Get(), FAttachmentTransformRules::KeepWorldTransform);
-		}
 	}
 	// The floor's sprinkler control valve on the Stair A landing: the red riser, a gauge, the valve
 	// wheel with its supervisory switch, and the chained padlock that holds it open (M013).

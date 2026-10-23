@@ -49,7 +49,7 @@ WANTED = [
     ("model", "dining_chair_02", ["dining_chair_02"], "Guest-room desk chairs, LP office"),
     ("model", "potted_plant_02", ["potted_plant_02"], "Large plants"),
     ("model", "potted_plant_04", ["potted_plant_04"], "Desk plants"),
-    ("hdri", "night_sky", ["shanghai_bund", "dikhololo_night", "satara_night"], "Night harbour city through the windows"),
+    ("hdri", "night_sky", ["rooftop_night", "shanghai_bund", "dikhololo_night", "satara_night"], "Night city seen from a height, through the windows"),
 ]
 # Real-world brand marks found in downloaded textures (Docs/AssetCredits.md "Logo and brand check"):
 # each box is painted over with the average colour of a 6 px ring around it. None found in the hotel set yet.

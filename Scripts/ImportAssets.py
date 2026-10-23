@@ -240,7 +240,7 @@ def build_emissive():
 
 
 def build_sky(hdri):
-    """Unlit HDRI cubemap on an inside-out sphere, sampled along the view direction; marked IsSky."""
+    """Unlit HDRI cubemap on an inside-out sphere, sampled along the view direction; dark below the horizon."""
     m = new_material("M_KcSky")
     m.set_editor_property("shading_model", unreal.MaterialShadingModel.MSM_UNLIT)
     m.set_editor_property("two_sided", True)
@@ -256,7 +256,29 @@ def build_sky(hdri):
     mul = expr(m, unreal.MaterialExpressionMultiply, -250, 50)
     link(tex, "RGB", mul, "A")
     link(inten, "", mul, "B")
-    prop(mul, "", unreal.MaterialProperty.MP_EMISSIVE_COLOR)
+    # Below the horizon the photo shows its own street or rooftop from the photographer's height, which
+    # never matches the floor the player stands on: fade it into a dark night ground with a trace of its lights.
+    up = expr(m, unreal.MaterialExpressionComponentMask, -850, 300, r=False, g=False, b=True, a=False)
+    link(neg, "", up, "")
+    shift = expr(m, unreal.MaterialExpressionAdd, -650, 300)
+    link(up, "", shift, "A")
+    edge = expr(m, unreal.MaterialExpressionConstant, -850, 450, r=0.02)
+    link(edge, "", shift, "B")
+    gain = expr(m, unreal.MaterialExpressionMultiply, -450, 300)
+    link(shift, "", gain, "A")
+    k = expr(m, unreal.MaterialExpressionConstant, -650, 450, r=25.0)
+    link(k, "", gain, "B")
+    alpha = expr(m, unreal.MaterialExpressionSaturate, -300, 300)
+    link(gain, "", alpha, "")
+    ground = expr(m, unreal.MaterialExpressionMultiply, -250, 200)
+    link(mul, "", ground, "A")
+    dim = expr(m, unreal.MaterialExpressionScalarParameter, -450, 450, parameter_name="GroundLevel", default_value=0.08)
+    link(dim, "", ground, "B")
+    mix = expr(m, unreal.MaterialExpressionLinearInterpolate, -100, 100)
+    link(ground, "", mix, "A")
+    link(mul, "", mix, "B")
+    link(alpha, "", mix, "Alpha")
+    prop(mix, "", unreal.MaterialProperty.MP_EMISSIVE_COLOR)
     return finish(m)
 
 

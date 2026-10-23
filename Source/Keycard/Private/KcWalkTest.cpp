@@ -527,11 +527,19 @@ void BuildRoute(FState& S, AKcHotel* Hotel)
 		S.Steps.Add(Walk(StairLanding, Z(F + 1, 0.0f), TEXT("Stair A landing ") + AKcHotel::FloorLabel(F + 1)));
 		// The floor sign on the landing's west wall, from where the player turns off the flight.
 		S.Steps.Add(Walk(FVector2D(2214.0f, -228.0f), Z(F + 1, 0.0f))); // west of 14's balustrade, 1.25 m from the sign
-		S.Steps.Add(Shot(222.0f, TEXT("Stair A ") + AKcHotel::FloorLabel(F + 1), 2.0f));
+		S.Steps.Add(Shot(222.0f, TEXT("Stair A ") + AKcHotel::FloorLabel(F + 1), 4.0f)); // 2 clipped the STAIR A header
 		S.Steps.Add(Walk(StairDoorIn, Z(F + 1, 0.0f)));
 	}
 	S.Steps.Add(Walk(StairDoorOut, Z(AKcHotel::TopFloor, 0.0f), TEXT("out of Stair A at 14")));
-	for (const TCHAR* L : {TEXT("f14_corridor"), TEXT("room_1412"), TEXT("f14_service"), TEXT("guest_room")}) Visit(L);
+	for (const TCHAR* L : {TEXT("f14_corridor"), TEXT("room_1412")}) Visit(L);
+	// Into 1412 past the wardrobe: the bedroom towards the window, then the bathroom from its door.
+	S.Steps.Add(PathTo(AKcHotel::TopFloor, FVector2D(1000.0f, -620.0f), TEXT("1412 bedroom")));
+	S.Steps.Add(Shot(-90.0f, TEXT("1412 bedroom")));
+	S.Steps.Add(PathTo(AKcHotel::TopFloor, FVector2D(970.0f, -330.0f), TEXT("1412 bathroom")));
+	S.Steps.Add(Shot(0.0f, TEXT("1412 bathroom")));
+	for (const TCHAR* L : {TEXT("f14_service"), TEXT("guest_room")}) Visit(L);
+	S.Steps.Add(PathTo(AKcHotel::TopFloor, FVector2D(2775.0f, 185.0f), TEXT("1406 threshold")));
+	S.Steps.Add(Shot(90.0f, TEXT("1406 from the doorway")));
 
 	// Down again, 14 to B1.
 	S.Steps.Add(PathTo(AKcHotel::TopFloor, StairDoorOut, TEXT("stair door 14")));

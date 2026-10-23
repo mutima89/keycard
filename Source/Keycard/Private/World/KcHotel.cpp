@@ -1226,8 +1226,8 @@ void AKcHotel::BuildBasement()
 	const int32 F = -1;
 	UMaterialInterface* Paint = Mat(TEXT("MI_WallPaint"));
 	FloorFinish(F, FBox2D(FVector2D(0.0f, -CorrY), FVector2D(MaxX, CorrY)), Mat(TEXT("MI_FloorConcrete")));
-	Ceiling(F, FBox2D(FVector2D(0.0f, -CorrY), FVector2D(CoreX0, CorrY)), CeilB1, Mat(TEXT("MI_CeilingSoft")));
-	Ceiling(F, FBox2D(FVector2D(CoreX1, -CorrY), FVector2D(MaxX, CorrY)), CeilB1, Mat(TEXT("MI_CeilingSoft")));
+	Ceiling(F, FBox2D(FVector2D(0.0f, -CorrY), FVector2D(CoreX0, CorrY)), CeilB1, Mat(TEXT("MI_CeilingDim"))); // Soft glared white over the battens
+	Ceiling(F, FBox2D(FVector2D(CoreX1, -CorrY), FVector2D(MaxX, CorrY)), CeilB1, Mat(TEXT("MI_CeilingDim")));
 	// Corridor walls and doors.
 	WallX(F, CorrY, 15.0f, CoreX0, {FVector2D(600.0f, 100.0f), FVector2D(1400.0f, 100.0f)}, Paint, CeilB1);
 	WallX(F, CorrY, CoreX1, MaxX - 15.0f, {FVector2D(3200.0f, 100.0f), FVector2D(4250.0f, 100.0f)}, Paint, CeilB1);
@@ -1266,8 +1266,14 @@ void AKcHotel::BuildBasement()
 		if (FMath::Fmod(X, 600.0f) < 1.0f && (X < CoreX0 || X > CoreX1))
 		{
 			AddBox(FVector(X, 0.0f, Zf(F, CeilB1 - 3.0f)), FVector(124.0f, 14.0f, 6.0f), Mat(TEXT("MI_LedStrip")), 0.0f, false);
-			AddLight(F, FVector(X, 0.0f, Zf(F, CeilB1 - 16.0f)), 700.0f, 650.0f, Cool);
+			AddLight(F, FVector(X, 0.0f, Zf(F, CeilB1 - 30.0f)), 700.0f, 650.0f, Cool);
 		}
+	}
+	// The two dead ends, 600 cm past the last batten, read black: a batten over each.
+	for (float X : {180.0f, MaxX - 180.0f})
+	{
+		AddBox(FVector(X, 0.0f, Zf(F, CeilB1 - 3.0f)), FVector(124.0f, 14.0f, 6.0f), Mat(TEXT("MI_LedStrip")), 0.0f, false);
+		AddLight(F, FVector(X, 0.0f, Zf(F, CeilB1 - 30.0f)), 600.0f, 600.0f, Cool);
 	}
 	for (float X : {450.0f, 1350.0f, 3050.0f, 3950.0f}) SmokeDetector(F, FVector2D(X, 30.0f), CeilB1);
 	CctvDome(F, FVector(3700.0f, 0.0f, Zf(F, CeilB1)), TEXT("B1-02"));
@@ -1301,6 +1307,8 @@ void AKcHotel::BuildLpOffice()
 		AddBox(FVector(P.X, P.Y, Zf(F, CeilB1 - 0.5f)), FVector(120.0f, 60.0f, 1.0f), Mat(TEXT("MI_LightPanel")), 0.0f, false);
 		AddLight(F, FVector(P.X, P.Y, Zf(F, CeilB1 - 6.0f)), 1500.0f, 750.0f, Neutral, P.X < 3000.0f && P.Y > 700.0f, true, FVector2D(120.0f, 60.0f));
 	}
+	// The panels light only below them: two soft fills keep the upper walls from going black.
+	for (float X : {2950.0f, 3450.0f}) AddLight(F, FVector(X, 610.0f, Zf(F, CeilB1 - 45.0f)), 350.0f, 520.0f, Neutral);
 	SmokeDetector(F, FVector2D(3200.0f, 600.0f), CeilB1);
 
 	// Your desk, against the north wall: two screens (shift board and report system), in-tray, radio.
@@ -1459,6 +1467,8 @@ void AKcHotel::BuildCctvRoom()
 	// Dim, cool light so the screens read.
 	for (float X : {4000.0f, 4500.0f}) CeilingLight(F, FVector(X, 450.0f, Zf(F, CeilB1)), 650.0f, Cool, 600.0f); // 420 left the desk and labels unreadable
 	AddLight(F, FVector(4250.0f, 900.0f, Zf(F, 180.0f)), 220.0f, 420.0f, FLinearColor(0.6f, 0.75f, 1.0f));
+	// The door end and the side walls, away from the screens.
+	for (float X : {3950.0f, 4550.0f}) CeilingLight(F, FVector(X, 250.0f, Zf(F, CeilB1)), 450.0f, Cool, 500.0f);
 	SmokeDetector(F, FVector2D(4250.0f, 420.0f), CeilB1);
 }
 
@@ -1577,7 +1587,7 @@ void AKcHotel::BuildHousekeeping()
 	for (float X : {400.0f, 1000.0f, 1600.0f})
 	{
 		AddBox(FVector(X, -560.0f, Zf(F, CeilB1 - 3.0f)), FVector(124.0f, 14.0f, 6.0f), Mat(TEXT("MI_LedStrip")), 0.0f, false);
-		AddLight(F, FVector(X, -560.0f, Zf(F, CeilB1 - 16.0f)), 800.0f, 700.0f, Cool, X == 1000.0f);
+		AddLight(F, FVector(X, -560.0f, Zf(F, CeilB1 - 30.0f)), 800.0f, 700.0f, Cool, X == 1000.0f); // 16 below left the upper walls black
 	}
 	for (float X : {500.0f, 1500.0f}) SmokeDetector(F, FVector2D(X, -700.0f), CeilB1);
 	FireExtinguisher(F, FVector(1800.0f, Face, 0.0f), -90.0f);
@@ -1702,7 +1712,7 @@ void AKcHotel::BuildLoadingDock()
 	for (float X : {3000.0f, 3600.0f, 4200.0f})
 	{
 		AddBox(FVector(X, -560.0f, Zf(F, CeilB1 - 3.0f)), FVector(124.0f, 14.0f, 6.0f), Mat(TEXT("MI_LedStrip")), 0.0f, false);
-		AddLight(F, FVector(X, -560.0f, Zf(F, CeilB1 - 16.0f)), 900.0f, 750.0f, Cool, X == 3600.0f);
+		AddLight(F, FVector(X, -560.0f, Zf(F, CeilB1 - 30.0f)), 900.0f, 750.0f, Cool, X == 3600.0f);
 	}
 	for (float X : {3300.0f, 4200.0f}) SmokeDetector(F, FVector2D(X, -450.0f), CeilB1);
 	CctvDome(F, FVector(4100.0f, -760.0f, Zf(F, CeilB1)), TEXT("B1-05"));
@@ -2201,6 +2211,8 @@ void AKcHotel::BuildKitchen()
 		AddLight(F, FVector(X, -760.0f, Zf(F, CeilBack - 16.0f)), 700.0f, 650.0f, Neutral);
 	}
 	CeilingLight(F, FVector(3900.0f, CanY + 30.0f, Zf(F, 210.0f)), DownLumens, Neutral, 300.0f);
+	// The west wall by the doors: a wash, or it reads black behind the pass.
+	AddLight(F, FVector(X0 + 60.0f, (Y0 + Y1) * 0.5f, Zf(F, CeilBack - 50.0f)), 500.0f, 550.0f, Neutral);
 }
 
 // ---------------------------------------------------------------------------- 1: ballroom floor
@@ -2298,10 +2310,13 @@ void AKcHotel::BuildBallroomFloor()
 		{
 			AddInstance(Cylinder, FVector(X, Y, Zf(F, CeilBallroom - 25.0f)), 0.0f, FVector(0.02f, 0.02f, 0.5f), Mat(TEXT("MI_Brass")), false);
 			AddInstance(Cylinder, FVector(X, Y, Zf(F, CeilBallroom - 70.0f)), 0.0f, FVector(1.1f, 1.1f, 0.4f), Mat(TEXT("MI_LampWarm")), false);
-			AddLight(F, FVector(X, Y, Zf(F, CeilBallroom - 100.0f)), 2400.0f, 1100.0f, Warm);
+			AddLight(F, FVector(X, Y, Zf(F, CeilBallroom - 100.0f)), 3000.0f, 1100.0f, Warm);
 		}
 	}
 	CeilingLight(F, FVector(4500.0f, 0.0f, Zf(F, CeilBallroom)), DownLumens * 1.5f, Warm, 900.0f);
+	// Downlights round the edge: the doors' end and the walls fell dark between the chandeliers.
+	for (float X : {3000.0f, 3550.0f, 4100.0f}) for (float Y : {-620.0f, 820.0f}) CeilingLight(F, FVector(X, Y, Zf(F, CeilBallroom)), DownLumens, Warm, 700.0f);
+	CeilingLight(F, FVector(2950.0f, 0.0f, Zf(F, CeilBallroom)), DownLumens, Warm, 700.0f);
 	for (float X : {3200.0f, 4200.0f}) for (float Y : {-400.0f, 500.0f}) SmokeDetector(F, FVector2D(X, Y), CeilBallroom);
 	CctvDome(F, FVector(2800.0f, 900.0f, Zf(F, CeilBallroom)), TEXT("1-01"));
 	ExitSign(F, FVector(X0 + 2.0f, 0.0f, Zf(F, DoorH + 30.0f)), 0.0f);
@@ -2647,12 +2662,12 @@ void AKcHotel::FurnishRoom(const FString& Number, const FBox2D& Area, bool bNort
 	WallX(F, VBath, R.X0 + 150.0f, R.X0 + W, {}, Mat(TEXT("MI_Tile")), Ceil14);
 	LBox((150.0f + W) * 0.5f, 250.0f + Wall * 0.5f + 0.5f, Ceil14 * 0.5f, W - 150.0f, 1.0f, Ceil14, TEXT("MI_WallPaint")); // bedroom face
 	const FVector2D BathY = YRange(VIn, 250.0f);
-	WallY(F, R.X0 + 150.0f, BathY.X, BathY.Y, {FVector2D(R.P2(0, 175.0f).Y, 75.0f)}, Paint, Ceil14);
-	for (const FVector2D& Seg : {FVector2D(VIn, 137.5f), FVector2D(212.5f, 250.0f)})
+	WallY(F, R.X0 + 150.0f, BathY.X, BathY.Y, {FVector2D(R.P2(0, 171.25f).Y, 82.5f)}, Paint, Ceil14); // 75 cm less the leaf left no room for the player
+	for (const FVector2D& Seg : {FVector2D(VIn, 130.0f), FVector2D(212.5f, 250.0f)})
 	{
 		LBox(150.0f + Wall * 0.5f + 0.5f, (Seg.X + Seg.Y) * 0.5f, Ceil14 * 0.5f, 1.0f, Seg.Y - Seg.X, Ceil14, TEXT("MI_Tile")); // bathroom face
 	}
-	LBox(195.0f, 210.0f, 106.0f, 86.0f, 4.0f, 210.0f, TEXT("MI_DoorPaint"), true); // the bathroom door, open
+	LBox(192.0f, 216.0f, 106.0f, 80.0f, 4.0f, 210.0f, TEXT("MI_DoorPaint"), true); // the bathroom door, open past the jamb
 	LBox(230.0f, VIn + 27.0f, 42.0f, 120.0f, 50.0f, 84.0f, TEXT("MI_WoodWalnut"), true);
 	LBox(230.0f, VIn + 27.0f, 86.0f, 124.0f, 54.0f, 4.0f, TEXT("MI_StoneCounter"));
 	AddInstance(Cylinder, R.P(230.0f, VIn + 30.0f, 86.5f), 0.0f, FVector(0.38f, 0.32f, 0.02f), Mat(TEXT("MI_Ceramic")), false);
@@ -2784,10 +2799,11 @@ void AKcHotel::FurnishRoom(const FString& Number, const FBox2D& Area, bool bNort
 			EKcUseStyle::None, Detector1406);
 		// Nobody walks past the guest into the room: the doorway is held, the work is offered at its threshold.
 		AddCollider(R.P(75.0f, VIn + 60.0f, 110.0f), FVector(100.0f, 10.0f, 220.0f), FRotator::ZeroRotator);
-		// Just inside, on the latch-side wall: the keycard power slot and light switches, for work done
-		// from the doorway that has no prop of its own (in sight from the threshold).
-		SpawnCasePoint(TEXT("guest_room"), FString(), TEXT("Inside 1406, by the door"), R.P(3.5f, 60.0f, 120.0f), 0.0f, Cube,
-			FVector(0.012f, 0.12f, 0.16f), Mat(TEXT("MI_Ceramic")), EKcUseStyle::Screen, R.P(75.0f, VIn + 30.0f, 150.0f));
+		// Just inside, on the latch-side wall: the light switch bank over the keycard slot, for work done
+		// from the doorway that has no prop of its own. Wide and close to the jamb, so the use sweep (9 cm)
+		// meets it before the wall even at the slant the threshold gives (at V 60 it met the wall first).
+		SpawnCasePoint(TEXT("guest_room"), FString(), TEXT("Inside 1406, by the door"), R.P(3.5f, 40.0f, 146.0f), 0.0f, Cube,
+			FVector(0.012f, 0.24f, 0.12f), Mat(TEXT("MI_Ceramic")), EKcUseStyle::Screen, R.P(75.0f, VIn + 30.0f, 150.0f));
 	}
 }
 
@@ -3077,8 +3093,9 @@ void AKcHotel::PlaceFixedInteractables()
 		FVector(0.004f, 0.92f, 0.36f), Mat(TEXT("MI_Paper")), EKcUseStyle::Screen);
 	Shelf(FVector(3700.0f - Wall * 0.5f - 20.0f, 850.0f, Zf(-1, 0.0f)), 180.0f, 120.0f, 31);
 	// Stair A at floor 2, a landing nobody uses: the stair identification sign is where its work is done.
-	SpawnCasePoint(TEXT("stair_a"), FString(), TEXT("Stair A, floor 2 landing"), FVector(StairIn0 + 2.0f, -314.0f, Zf(2, 140.0f)), 0.0f, Cube,
-		FVector(0.006f, 0.36f, 0.22f), Mat(TEXT("MI_Paper")), EKcUseStyle::Screen, FVector(StairIn0 + 120.0f, -314.0f, Zf(2, 150.0f)));
+	// The point is the sign board itself, just behind its lettering (a smaller card hid the lower lines).
+	SpawnCasePoint(TEXT("stair_a"), FString(), TEXT("Stair A, floor 2 landing"), FVector(StairIn0 + 1.0f, -314.0f, Zf(2, 170.0f)), 0.0f, Cube,
+		FVector(0.014f, 1.12f, 1.22f), Mat(TEXT("MI_Paper")), EKcUseStyle::Screen, FVector(StairIn0 + 120.0f, -314.0f, Zf(2, 150.0f)));
 
 	// Every spot the missions can use must have its prop here (KnownSpots).
 	for (const kc::SpotDef& S : kc::KnownSpots())
@@ -3520,9 +3537,24 @@ void AKcHotel::RefreshScenes()
 	{
 		const FVector Jack = bPropped ? FVector(DockDoorX - 20.0f, -HalfY + 40.0f, Zf(-1, 0.0f)) : FVector(3650.0f, -640.0f, Zf(-1, 0.0f));
 		const float JackYaw = bPropped ? 75.0f : 0.0f;
-		const FVector Handle = FRotator(0.0f, JackYaw, 0.0f).RotateVector(FVector(-62.0f, 0.0f, 0.0f));
-		SceneBox(Jack + FVector(0, 0, 6.0f), FVector(115.0f, 55.0f, 8.0f), Mat(TEXT("MI_FireRed")), JackYaw);
-		SceneBox(Jack + Handle + FVector(0, 0, 60.0f), FVector(6.0f, 6.0f, 110.0f), Mat(TEXT("MI_Graphite")), JackYaw);
+		const FRotator Turn(0.0f, JackYaw, 0.0f);
+		auto Part = [&](const FVector& Local, const FVector& Size, const TCHAR* Material, UStaticMesh* Mesh = nullptr)
+		{
+			SceneBox(Jack + Turn.RotateVector(Local), Size, Mat(Material), JackYaw, Mesh);
+		};
+		// Two forks with load rollers at the tips, the pump housing and steer wheels at the back, the tiller and its grip.
+		for (float Y : {-17.0f, 17.0f})
+		{
+			Part(FVector(5.0f, Y, 6.0f), FVector(110.0f, 16.0f, 5.0f), TEXT("MI_FireRed"));
+			Part(FVector(5.0f, Y + (Y > 0 ? 7.0f : -7.0f), 4.5f), FVector(110.0f, 2.0f, 6.0f), TEXT("MI_FireRed"));
+			Part(FVector(54.0f, Y, 3.5f), FVector(7.0f, 7.0f, 7.0f), TEXT("MI_Graphite"));
+		}
+		Part(FVector(-55.0f, 0.0f, 12.0f), FVector(16.0f, 52.0f, 16.0f), TEXT("MI_FireRed"));
+		Part(FVector(-64.0f, 0.0f, 24.0f), FVector(14.0f, 14.0f, 28.0f), TEXT("MI_Graphite"));
+		Part(FVector(-64.0f, 0.0f, 9.0f), FVector(18.0f, 24.0f, 18.0f), TEXT("MI_DeviceBlack"));
+		Part(FVector(-72.0f, 0.0f, 76.0f), FVector(4.0f, 4.0f, 90.0f), TEXT("MI_Graphite"));
+		Part(FVector(-72.0f, 0.0f, 124.0f), FVector(5.0f, 34.0f, 5.0f), TEXT("MI_DeviceBlack"));
+		Part(FVector(-72.0f, 0.0f, 112.0f), FVector(3.0f, 26.0f, 22.0f), TEXT("MI_Graphite"));
 	}
 
 	const int32 F = TopFloor;

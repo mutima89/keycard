@@ -1,7 +1,7 @@
 """Draws Keycard's own textures for the Veldane Grand Harbourfront: CCTV wall feeds, the LP office
 shift board, the front office system, the incident report and clip export screens, the fire panel,
 the LP whiteboard, harbour art prints, the exit sign, the corridor carpet, the wallpaper, the kitchen quarry tile, the
-do-not-disturb hanger and the floor 14 evacuation plan.
+do-not-disturb hanger and the typical guest floor evacuation plan.
 
 Everything is invented (Docs/FictionalNames.md); nothing on a screen hints at a case's rubric.
 Output: Data/Assets/generated/*.png, imported by Scripts/ImportAssets.py. Deterministic: the same
@@ -353,11 +353,12 @@ def dnd_tag():
 
 
 def floor_plan():
-    """Floor 14 evacuation plan: corridor, rooms, both stairs, you-are-here, assembly point."""
+    """Typical guest floor (2-14) evacuation plan for the back offices: corridor, rooms, both stairs, lifts, assembly point.
+    It hangs on B1 and G, so it carries no you-are-here mark."""
     w, h = 1024, 512
     im = Image.new("RGB", (w, h), (248, 248, 244))
     d = ImageDraw.Draw(im)
-    d.text((24, 16), "FLOOR 14  -  EVACUATION PLAN", font=font(28, "Bold"), fill=(30, 30, 34))
+    d.text((24, 16), "TYPICAL GUEST FLOOR (2-14)  -  EVACUATION PLAN", font=font(28, "Bold"), fill=(30, 30, 34))
     d.text((24, 52), "In a fire: do not use the lifts. Go to the nearest stair. Assembly point: Quay Promenade.", font=font(16), fill=(60, 60, 64))
     x0, y0, x1, y1 = 40, 110, 984, 470
     d.rectangle([x0, y0, x1, y1], outline=(30, 30, 34), width=4)
@@ -367,8 +368,8 @@ def floor_plan():
         x = x0 + i * (x1 - x0) / 10
         d.line([x, y0, x, cy - 22], fill=(30, 30, 34), width=2)
         d.line([x, cy + 22, x, y1], fill=(30, 30, 34), width=2)
-        d.text((x + 8, y0 + 8), f"14{i + 1:02d}", font=font(14), fill=(60, 60, 64))
-        d.text((x + 8, y1 - 26), f"14{20 - i:02d}", font=font(14), fill=(60, 60, 64))
+        d.text((x + 8, y0 + 8), f"x{i + 1:02d}", font=font(14), fill=(60, 60, 64))
+        d.text((x + 8, y1 - 26), f"x{20 - i:02d}", font=font(14), fill=(60, 60, 64))
     for sx, label in [(x0 + 430, "STAIR A"), (x1 - 40, "STAIR B")]:
         d.rectangle([sx - 30, cy - 70, sx + 30, cy - 22], fill=(20, 150, 70))
         d.text((sx - 28, cy - 64), label, font=font(12, "Bold"), fill=(255, 255, 255))
@@ -380,13 +381,15 @@ def floor_plan():
         tip = ax + sgn * 46
         d.line([ax, cy, tip - sgn * 14, cy], fill=green, width=6)
         d.polygon([(tip, cy), (tip - sgn * 16, cy - 11), (tip - sgn * 16, cy + 11)], fill=green)
-    # You are here: the lift lobby notice board, labelled on a white card below the corridor.
+    # The lift lobby, marked on a white card below the corridor (room numbers: x = the floor).
     hx = x0 + 500
-    d.ellipse([hx - 10, cy - 10, hx + 10, cy + 10], fill=(210, 40, 40))
+    d.rectangle([hx - 26, cy - 20, hx + 26, cy + 20], fill=(255, 255, 255), outline=(30, 30, 34), width=3)
+    d.line([hx, cy - 20, hx, cy + 20], fill=(30, 30, 34), width=2)
     label = font(14, "Bold")
-    tw = d.textlength("YOU ARE HERE", font=label)
-    d.rectangle([hx - tw / 2 - 6, cy + 28, hx + tw / 2 + 6, cy + 50], fill=(255, 255, 255), outline=(210, 40, 40), width=2)
-    d.text((hx, cy + 39), "YOU ARE HERE", font=label, fill=(210, 40, 40), anchor="mm")
+    tw = d.textlength("LIFTS", font=label)
+    d.rectangle([hx - tw / 2 - 6, cy + 28, hx + tw / 2 + 6, cy + 50], fill=(255, 255, 255), outline=(30, 30, 34), width=2)
+    d.text((hx, cy + 39), "LIFTS", font=label, fill=(30, 30, 34), anchor="mm")
+    d.text((x0, y1 + 12), "Room numbers: x = floor (e.g. 1406). In a fire alarm the lifts return to G.", font=font(14), fill=(60, 60, 64))
     return im
 
 

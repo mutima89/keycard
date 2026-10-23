@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.0 (release candidate, not yet tagged)
+## 1.0.0 (2026-10-23)
 The first complete release: the whole career from the night shift to Vice President, Global Safety & Security.
 
 ### The career

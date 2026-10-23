@@ -1,7 +1,9 @@
 # Progress
 
-## Status: 1.0.0 release candidate built on the PC: Shipping play and full walkthrough (career and challenge) pass; portable zip and installer made, not published
+## Status: Keycard 1.0.0 released (tag v1.0.0 at a3c46bb)
 Last update: 2026-10-23
+
+- 2026-10-23 Release 1.0.0: https://github.com/mutima89/keycard/releases/tag/v1.0.0 (published 2026-10-23T00:35:59Z, not a draft or pre-release). Tag v1.0.0 at a3c46bb, created and pushed by the owner with `gh release create`. Assets checked through the GitHub API: Keycard-1.0.0-Win64-Portable.zip 530,095,089 bytes, sha256 2cdcf79a181c6e7fe03c84b3b733f3e2d997cdd7b872a0746481994802183a70; Keycard-Setup-1.0.0.exe 499,125,603 bytes, sha256 6113a7cc88334a3f144305de7b2d0cdf61dde7ca33d2876ebc43e19fcdf151d5 (both match PC round 5). Release notes are CHANGELOG.md. Hands-on playtest checklist: project files keycard/playtest-1.0.0.md.
 
 - 2026-10-23 PC session round 5 (Remote Control, UE 5.8.4, MSVC). Built at 5efa383 (74c21f6 + round 4) plus the changes below. Nothing changed in C:\Downloads\Riskbound.
   - Core tests (MSVC): `44 test cases, 0 failed, 0 failed checks`. `KeycardEditor` and `Keycard` Win64 Development: `Result: Succeeded`. `RunUnrealTests.bat`: six `Keycard.*` tests `Success`, exit 0 (before and after the NextCase fix).

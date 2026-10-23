@@ -524,8 +524,8 @@ void BuildRoute(FState& S, AKcHotel* Hotel)
 		S.Steps.Add(Walk(FVector2D(2190.0f, -387.0f), Z(F + 1, 0.0f)));
 		S.Steps.Add(Walk(StairLanding, Z(F + 1, 0.0f), TEXT("Stair A landing ") + AKcHotel::FloorLabel(F + 1)));
 		// The floor sign on the landing's west wall, from where the player turns off the flight.
-		S.Steps.Add(Walk(FVector2D(2240.0f, -250.0f), Z(F + 1, 0.0f)));
-		S.Steps.Add(Shot(207.0f, TEXT("Stair A ") + AKcHotel::FloorLabel(F + 1)));
+		S.Steps.Add(Walk(FVector2D(2210.0f, -250.0f), Z(F + 1, 0.0f))); // west of 14's balustrade
+		S.Steps.Add(Shot(216.0f, TEXT("Stair A ") + AKcHotel::FloorLabel(F + 1)));
 		S.Steps.Add(Walk(StairDoorIn, Z(F + 1, 0.0f)));
 	}
 	S.Steps.Add(Walk(StairDoorOut, Z(AKcHotel::TopFloor, 0.0f), TEXT("out of Stair A at 14")));

@@ -438,7 +438,7 @@ def world_surface(name, slot, tile, tint, rough, metal=0.0):
 for name, slot, tile, tint, rough in [
         ("MI_FloorParquet", "parquet", 160, (1, 1, 1), 2.4),               # LP office, manager's office
         ("MI_FloorMarble", "marble", 240, (0.95, 0.94, 0.92), 0.6),        # lobby
-        ("MI_StoneCounter", "marble", 120, (0.22, 0.22, 0.24), 0.5),       # front desk and bar tops: dark stone
+        ("MI_StoneCounter", "marble", 120, (0.22, 0.22, 0.24), 0.9),       # front desk and bar tops: dark stone (0.5 sparkled)
         ("MI_FloorTile", "tiles", 60, (0.93, 0.93, 0.92), 0.8),            # guest bathrooms, staff toilets
         ("MI_Tile", "tiles", 30, (0.85, 0.87, 0.88), 0.7),                 # bathroom walls, kitchen splashback
         ("MI_FloorConcrete", "concrete_floor", 300, (0.8, 0.8, 0.8), 1.3), # B1 back of house, loading dock

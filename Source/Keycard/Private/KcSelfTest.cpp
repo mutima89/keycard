@@ -179,7 +179,7 @@ bool StandAt(AKcHUD* Hud, AKcInteractable* Target)
 			const float Yaw = Target->GetActorRotation().Yaw + i * 30.0f;
 			const FVector Dir = FRotator(0.0f, Yaw, 0.0f).Vector();
 			const FVector Stand(Focus.X + Dir.X * Dist, Focus.Y + Dir.Y * Dist, Z);
-			const FVector Eye = Stand + FVector(0.0f, 0.0f, Pawn->BaseEyeHeight);
+			const FVector Eye = Stand + FVector(0.0f, 0.0f, 70.0f); // the character's camera height
 			FHitResult Hit;
 			if (World->LineTraceSingleByChannel(Hit, Eye, Focus, ECC_Visibility, Params)) continue;
 			if (!Pawn->TeleportTo(Stand, FRotator(0.0f, Yaw + 180.0f, 0.0f), false, false)) continue;
@@ -198,6 +198,25 @@ AKcInteractable* Focused(AKcHUD* Hud)
 	const AKcCharacter* Character = PC ? Cast<AKcCharacter>(PC->GetPawn()) : nullptr;
 	const UKcInteractionComponent* Interaction = Character ? Character->GetInteraction() : nullptr;
 	return Interaction ? Interaction->GetFocused() : nullptr;
+}
+
+// What the player's look sweep (the interaction component's) actually hits, for a focus failure.
+FString LookHit(AKcHUD* Hud)
+{
+	APlayerController* PC = Hud->GetOwningPlayerController();
+	UWorld* World = Hud->GetWorld();
+	if (!PC || !World) return FString(TEXT("no view"));
+	FVector From;
+	FRotator Rot;
+	PC->GetPlayerViewPoint(From, Rot);
+	FCollisionQueryParams Params(SCENE_QUERY_STAT(KcSelfTestLook), false, PC->GetPawn());
+	FHitResult Hit;
+	if (!World->SweepSingleByChannel(Hit, From, From + Rot.Vector() * 300.0f, FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(9.0f), Params))
+	{
+		return FString(TEXT("nothing within 3 m"));
+	}
+	return FString::Printf(TEXT("%s/%s at %.0f cm"), Hit.GetActor() ? *Hit.GetActor()->GetName() : TEXT("?"),
+		Hit.GetComponent() ? *Hit.GetComponent()->GetName() : TEXT("?"), Hit.Distance);
 }
 
 FString NameOf(const AActor* Actor)
@@ -316,9 +335,15 @@ void AddCase(TSharedRef<FScript> S, TSharedRef<FReport> R, UWorld* World, AKcHUD
 				const AKcCasePoint* Door = Cast<AKcCasePoint>(Offer);
 				const bool bThroughDoor = Door && !Door->DoorPersonId.IsEmpty() && Door->DoorPersonId == ToFString(A->Person);
 				const FString Where = WhereIs(H.Get(), Offer);
-				R->Check(Name + TEXT("_place"), bThroughDoor || Where == ToFString(A->At),
-					FString::Printf(TEXT("stands in %s, case says %s"), Where.IsEmpty() ? TEXT("no zone") : *Where, *ToFString(A->At)));
-				R->Check(Name + TEXT("_stand"), StandAt(H.Get(), Offer), TEXT("somewhere to stand in sight of it"));
+				const bool bStand = StandAt(H.Get(), Offer);
+				// Used from where the case says: the thing itself stands there, or the player does to use it
+				// (a door lock in the corridor, the dock door from the dock).
+				const APawn* Pawn = H->GetOwningPlayerController() ? H->GetOwningPlayerController()->GetPawn() : nullptr;
+				const FString From = bStand ? WhereIs(H.Get(), Pawn) : FString();
+				R->Check(Name + TEXT("_place"), bThroughDoor || Where == ToFString(A->At) || From == ToFString(A->At),
+					FString::Printf(TEXT("stands in %s, used from %s, case says %s"), Where.IsEmpty() ? TEXT("no zone") : *Where,
+						From.IsEmpty() ? TEXT("no zone") : *From, *ToFString(A->At)));
+				R->Check(Name + TEXT("_stand"), bStand, TEXT("somewhere to stand in sight of it"));
 				*Target = Offer;
 			}
 			// Questions open now are put to people the player can reach.
@@ -332,15 +357,18 @@ void AddCase(TSharedRef<FScript> S, TSharedRef<FReport> R, UWorld* World, AKcHUD
 			AnswerOpenQuestions(H.Get());
 			return true;
 		});
-		// A frame later: the look trace sees it (the prompt a player gets), then the step is done.
-		S->Steps.Add([R, H, A, MissionId, Target]()
+		// A few frames later: the look trace sees it (the prompt a player gets), then the step is done. The
+		// script ticks before the world, so the look trace catches up with a new view a frame or two late.
+		TSharedRef<int32> Looks = MakeShared<int32>(0);
+		S->Steps.Add([R, H, A, MissionId, Target, Looks]()
 		{
 			if (!H.IsValid()) return true;
 			const FString Name = MissionId + TEXT("_") + ToFString(A->Id);
+			if (Target->IsValid() && Focused(H.Get()) != Target->Get() && ++*Looks < 6) return false;
 			if (Target->IsValid())
 			{
 				const AKcInteractable* Seen = Focused(H.Get());
-				R->Check(Name + TEXT("_focus"), Seen == Target->Get(), TEXT("looking at ") + NameOf(Seen));
+				R->Check(Name + TEXT("_focus"), Seen == Target->Get(), TEXT("looking at ") + NameOf(Seen) + (Seen == Target->Get() ? FString() : TEXT(", sweep hits ") + LookHit(H.Get())));
 			}
 			const EKcCaseResult Done = H->DoAction(*A);
 			R->Check(Name + TEXT("_do"), Done == EKcCaseResult::Ok, Done == EKcCaseResult::Ok ? H->Campaign()->ClockText() : UKcCampaignSubsystem::ResultText(Done));
@@ -377,11 +405,13 @@ void AddCase(TSharedRef<FScript> S, TSharedRef<FReport> R, UWorld* World, AKcHUD
 		if (Desk->IsValid()) R->Check(MissionId + TEXT("_report_stand"), StandAt(H.Get(), Desk->Get()), TEXT("somewhere to stand at the terminal"));
 		return true;
 	});
-	S->Steps.Add([R, H, MissionId, Desk]()
+	TSharedRef<int32> Looks = MakeShared<int32>(0);
+	S->Steps.Add([R, H, MissionId, Desk, Looks]()
 	{
 		if (!H.IsValid()) return true;
 		UKcCampaignSubsystem* C = H->Campaign();
 		AKcReportTerminal* Terminal = Desk->Get();
+		if (Terminal && Focused(H.Get()) != Terminal && ++*Looks < 6) return false;
 		if (Terminal)
 		{
 			R->Check(MissionId + TEXT("_report_focus"), Focused(H.Get()) == Terminal, TEXT("looking at ") + NameOf(Focused(H.Get())));

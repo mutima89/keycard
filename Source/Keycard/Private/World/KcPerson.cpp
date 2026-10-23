@@ -718,6 +718,9 @@ void UKcPersonComponent::SetShape(int32 Shape, float Weight)
 {
 	if (!ShapeNames.IsValidIndex(Shape) || ShapeNames[Shape].IsNone()) return;
 	if (FMath::IsNearlyEqual(ShapeWeights[Shape], Weight, 0.002f)) return;
+	// Faces off screen keep still: shapes start once the body is drawn (the engine's morph buffers are
+	// first written by a visible frame). The weight is applied on the first tick it is seen.
+	if (!WasRecentlyRendered(0.25f)) return;
 	ShapeWeights[Shape] = Weight;
 	SetMorphTarget(ShapeNames[Shape], Weight, false);
 }

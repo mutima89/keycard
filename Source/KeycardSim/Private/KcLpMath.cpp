@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
 
 namespace kc
 {
@@ -142,5 +143,132 @@ int ScoreByCloseness(double Answer, double Truth, double RelativeTolerance)
 	if (Err <= 10.0 * RelativeTolerance) return CloseScoreNear;
 	return 0;
 }
+namespace
+{
+struct FormulaSpec
+{
+	const char* Name;
+	std::vector<std::string> Inputs;
+};
+
+const std::vector<FormulaSpec>& Specs()
+{
+	static const std::vector<FormulaSpec> S = {
+		{"ShrinkPercent", {"book", "counted"}},
+		{"CostVariancePoints", {"actual", "ideal", "sales"}},
+		{"LossRatePer1000RoomNights", {"value", "roomNights"}},
+		{"ClaimReserve", {"medical", "indemnity", "expense", "paid"}},
+		{"ClaimIncurred", {"medical", "indemnity", "expense", "paid"}},
+		{"IncidentCost", {"uninsured", "hours", "rate", "repairs", "recovery", "insured", "deductible"}},
+		{"InsurerRecovery", {"uninsured", "hours", "rate", "repairs", "recovery", "insured", "deductible"}},
+		{"PatrolCompliancePercent", {"onTime", "scheduled"}},
+		{"PostHoursPerWeek", {"hoursPerDay", "daysPerWeek", "posts"}},
+		{"FtesRequired", {"postHours", "productiveHours"}},
+		{"StaffingCoveragePercent", {"scheduled", "required"}},
+		{"RekeyCost", {"doors", "costPerDoor", "labourMinutes", "rate", "keys", "costPerKey"}},
+		{"AnnualisedLoss", {"eventsPerYear", "averageCost"}},
+	};
+	return S;
+}
+} // namespace
+
+const std::vector<std::string>& FormulaNames()
+{
+	static const std::vector<std::string> N = [] {
+		std::vector<std::string> Out;
+		for (const FormulaSpec& F : Specs()) Out.push_back(F.Name);
+		return Out;
+	}();
+	return N;
+}
+
+bool EvaluateFormula(const std::string& Name, const std::vector<std::pair<std::string, double>>& Inputs, double& OutValue, std::string& OutError)
+{
+	const FormulaSpec* Spec = nullptr;
+	for (const FormulaSpec& F : Specs())
+	{
+		if (Name == F.Name) Spec = &F;
+	}
+	if (!Spec)
+	{
+		OutError = "unknown formula \"" + Name + "\"";
+		return false;
+	}
+	std::vector<double> V(Spec->Inputs.size(), 0.0);
+	std::vector<bool> Given(Spec->Inputs.size(), false);
+	for (const auto& In : Inputs)
+	{
+		size_t i = 0;
+		while (i < Spec->Inputs.size() && Spec->Inputs[i] != In.first) ++i;
+		if (i == Spec->Inputs.size())
+		{
+			OutError = Name + " has no input \"" + In.first + "\"";
+			return false;
+		}
+		V[i] = In.second;
+		Given[i] = true;
+	}
+	// Every input is named: a forgotten one must not silently count as zero.
+	for (size_t i = 0; i < Given.size(); ++i)
+	{
+		if (!Given[i])
+		{
+			OutError = Name + " needs input \"" + Spec->Inputs[i] + "\"";
+			return false;
+		}
+	}
+	auto I = [&](size_t i) { return static_cast<int>(std::lround(V[i])); };
+	Result R;
+	const std::string& N = Name;
+	if (N == "ShrinkPercent") R = ShrinkPercent(V[0], V[1]);
+	else if (N == "CostVariancePoints") R = CostVariancePoints(V[0], V[1], V[2]);
+	else if (N == "LossRatePer1000RoomNights") R = LossRatePer1000RoomNights(V[0], V[1]);
+	else if (N == "ClaimReserve" || N == "ClaimIncurred")
+	{
+		const ClaimEstimate E{V[0], V[1], V[2], V[3]};
+		R = N == "ClaimReserve" ? ClaimReserve(E) : ClaimIncurred(E);
+	}
+	else if (N == "IncidentCost" || N == "InsurerRecovery")
+	{
+		const IncidentCostInputs E{V[0], V[1], V[2], V[3], V[4], V[5], V[6]};
+		R = N == "IncidentCost" ? IncidentCost(E) : InsurerRecovery(E);
+	}
+	else if (N == "PatrolCompliancePercent") R = PatrolCompliancePercent(I(0), I(1));
+	else if (N == "PostHoursPerWeek") R = PostHoursPerWeek(V[0], V[1], I(2));
+	else if (N == "FtesRequired") R = FtesRequired(V[0], V[1]);
+	else if (N == "StaffingCoveragePercent") R = StaffingCoveragePercent(V[0], V[1]);
+	else if (N == "RekeyCost") R = RekeyCost({I(0), V[1], V[2], V[3], I(4), V[5]});
+	else if (N == "AnnualisedLoss") R = AnnualisedLoss(V[0], V[1]);
+	if (!R.bValid)
+	{
+		OutError = Name + ": invalid inputs";
+		return false;
+	}
+	OutValue = R.Value;
+	return true;
+}
 } // namespace lp
+
+std::string FormatMoney(double Value)
+{
+	if (!std::isfinite(Value)) return "?";
+	const bool bNeg = Value < 0.0;
+	const double Abs = std::fabs(Value);
+	const long long Whole = static_cast<long long>(std::floor(Abs + 1e-9));
+	const int Cents = static_cast<int>(std::lround((Abs - static_cast<double>(Whole)) * 100.0));
+	std::string Digits = std::to_string(Cents == 100 ? Whole + 1 : Whole);
+	std::string Out;
+	for (size_t i = 0; i < Digits.size(); ++i)
+	{
+		if (i > 0 && (Digits.size() - i) % 3 == 0) Out += ',';
+		Out += Digits[i];
+	}
+	if (Cents > 0 && Cents < 100)
+	{
+		char Buf[8];
+		std::snprintf(Buf, sizeof(Buf), ".%02d", Cents);
+		Out += Buf;
+	}
+	return (bNeg ? "-" : "") + Out;
+}
 } // namespace kc

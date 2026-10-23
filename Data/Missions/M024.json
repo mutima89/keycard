@@ -1,0 +1,492 @@
+{
+  "schema": 1,
+  "id": "M024",
+  "title": "Former Employee Access Not Removed",
+  "kind": "mission",
+  "topic": "access_revocation",
+  "minLevel": 7,
+  "opening": {
+    "channel": "phone",
+    "from": "airport_lp",
+    "at": "lp_office",
+    "text": "Rhosyn. Your cluster standard made us list every login on our lock system. One of them belongs to Dorian Vessey. He left Veldane seven months ago, and his account logged in last Thursday at 03:10."
+  },
+  "briefing": [
+    "08:15, Monday. Dorian Vessey was Front Office Systems Administrator for both Port Avener hotels until he resigned seven months ago. At the airport his lock-system account is still active and was used last week.",
+    "Veldane access method: when someone leaves, every account on every system is removed the same day, not just the network login; shared logins are not allowed. When a former employee's access is found in use: preserve the logs first, then remove the access at once, everywhere; find every system with its own logins; take the evidence to the police and do not contact the person yourself; tell HR, the system owners and counsel; fix the leaver process so it can't happen again. Your authority is 400,000."
+  ],
+  "context": [
+    {
+      "ifClues": 4,
+      "text": "The blank-card case: a cloned key for 1418, a man in a grey cap with a floor master, E-77 registered at 03:12 through a shared login, and eleven airport rooms entered the same way. A Front Office Systems Administrator would have known all of it."
+    },
+    {
+      "ifFlag": "airport_underreporting",
+      "text": "Since the league table the airport has been reporting less. Rhosyn found this anyway, and called you first."
+    }
+  ],
+  "learningObjectives": [
+    "Preserve the logs, then remove the access everywhere",
+    "Every system with its own logins, not just the network",
+    "The police, not you, deal with the suspect"
+  ],
+  "start": "08:15",
+  "actions": [
+    {
+      "id": "lock_users",
+      "label": "Pull the lock system's user list and audit log",
+      "kind": "lockAudit",
+      "at": "front_desk",
+      "spot": "key_encoder",
+      "minutes": 4,
+      "required": true,
+      "findingTitle": "dvessey and fo_support",
+      "finding": "At the Harbourfront: account dvessey disabled the day he left, but the shared login fo_support he set up is still active, and the lock vendor's remote-support portal still lists Vessey as an authorised contact. fo_support registered E-77 at 03:12, eleven weeks after he resigned, through the vendor's remote-support connection.",
+      "clue": "former_admin"
+    },
+    {
+      "id": "preserve_logs",
+      "label": "Export and hash the lock, vendor and network logs",
+      "kind": "logEvidence",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 4,
+      "requires": [
+        "lock_users"
+      ],
+      "required": true,
+      "evidence": "KC-2401",
+      "findingTitle": "KC-2401",
+      "finding": "Lock-system audit log, vendor remote-session log and firewall log for both hotels, exported, hashed (SHA-256) and logged as KC-2401 with who did it and when. The originals stay on the systems untouched."
+    },
+    {
+      "id": "remove_access",
+      "label": "Have every account and shared login removed now",
+      "kind": "call",
+      "at": "front_desk",
+      "spot": "desk_phone",
+      "person": "front_office_manager",
+      "minutes": 3,
+      "requires": [
+        "preserve_logs"
+      ],
+      "required": true,
+      "findingTitle": "Access removed, 09:0x",
+      "finding": "Gideon Marsh and the lock vendor, on one call: fo_support disabled, every person given a named account, Vessey removed from the vendor portal, E-77 deregistered, the vendor's remote access switched to call-back only. The same changes at the airport through Rhosyn, all within the hour.",
+      "lines": [
+        {
+          "speaker": "front_office_manager",
+          "text": "Every one of my agents knew the fo_support password. I thought it was a convenience."
+        }
+      ]
+    },
+    {
+      "id": "delete_now",
+      "label": "Delete the accounts before anyone reads the logs",
+      "kind": "other",
+      "at": "front_desk",
+      "minutes": 1,
+      "requires": [
+        "lock_users"
+      ],
+      "findingTitle": "Deleted",
+      "finding": "Deleting fo_support also deletes the link between that login and its history: the audit log now shows actions by 'unknown user'. The police will have to rebuild it from the vendor's own records, if the vendor still has them.",
+      "effects": {
+        "SecurityPosture": -3
+      },
+      "schedules": [
+        {
+          "id": "case_weakened",
+          "description": "The vendor's records only go back ninety days. Without the hotel's own log linking fo_support to E-77, the prosecution drops the charges for the Harbourfront entries.",
+          "delayWeeks": 6,
+          "probability": 0.6,
+          "effects": {
+            "OwnerTrust": -3,
+            "InsurerConfidence": -3
+          },
+          "flagIfOccurs": "harbourfront_counts_dropped"
+        }
+      ]
+    },
+    {
+      "id": "all_systems",
+      "label": "List every system with its own logins",
+      "kind": "check",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 4,
+      "requires": [
+        "remove_access"
+      ],
+      "required": true,
+      "findingTitle": "Four more",
+      "finding": "Systems outside the network login: lock system, CCTV recorders, property management, parking, fire panel software, the HR time clock. Vessey still had working accounts on the CCTV recorder at the airport and the parking system here. Both removed; 23 other leavers' accounts found and removed with them."
+    },
+    {
+      "id": "call_vessey",
+      "label": "Phone Vessey and ask him to explain",
+      "kind": "other",
+      "at": "lp_office",
+      "minutes": 2,
+      "requires": [
+        "lock_users"
+      ],
+      "findingTitle": "He hangs up",
+      "finding": "He says he has no idea what you mean and hangs up. By the time the police reach his flat two days later, it has been cleared.",
+      "effects": {
+        "SecurityPosture": -4
+      },
+      "setsFlags": [
+        "m024_called_suspect"
+      ],
+      "schedules": [
+        {
+          "id": "suspect_warned",
+          "description": "The police search of Vessey's flat finds nothing: no encoder, no blank cards. Counsel says the hotel's call to him will be raised by his defence.",
+          "delayWeeks": 2,
+          "probability": 0.8,
+          "effects": {
+            "OwnerTrust": -4,
+            "LossExposure": 3
+          },
+          "flagIfOccurs": "suspect_warned"
+        }
+      ]
+    },
+    {
+      "id": "police",
+      "label": "Take KC-2401 to DS Calloway",
+      "kind": "interview",
+      "at": "lobby",
+      "person": "police_liaison",
+      "minutes": 4,
+      "requires": [
+        "preserve_logs"
+      ],
+      "required": true,
+      "findingTitle": "With the police",
+      "finding": "DS Calloway takes KC-2401 with its hashes and the chain-of-custody log, the 1418 clone and the trolley footage from the earlier cases, and the airport's eleven entries. She asks you not to contact Vessey or discuss him with staff. A warrant application goes in that afternoon.",
+      "lines": [
+        {
+          "speaker": "police_liaison",
+          "text": "Hashed, logged, and nobody's rung him. That's the first time a hotel has handed me one this clean."
+        }
+      ]
+    },
+    {
+      "id": "hr_counsel",
+      "label": "Brief HR on the leaver process",
+      "kind": "interview",
+      "at": "exec_offices",
+      "spot": "hr_office",
+      "person": "hr_director",
+      "minutes": 4,
+      "requires": [
+        "all_systems"
+      ],
+      "required": true,
+      "findingTitle": "The leaver process",
+      "finding": "Priyanka Venn's leaver checklist covers the network login, the badge and the uniform. Nothing else. Together you rewrite it: every system owner removes access on the last day and signs it off; a quarterly access review of every system; no shared logins. Counsel is told the same day.",
+      "lines": [
+        {
+          "speaker": "hr_director",
+          "text": "Our checklist ends at the network. I'll have every system owner on it by Friday."
+        }
+      ]
+    },
+    {
+      "id": "case_record",
+      "label": "Write up the access case",
+      "kind": "logEvidence",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 4,
+      "requires": [
+        "police",
+        "hr_counsel"
+      ],
+      "findingTitle": "Recorded",
+      "finding": "Timeline from his resignation to the removal, every account found and removed, KC-2401 and its custody, the police reference, the new leaver process and the access review dates."
+    }
+  ],
+  "questions": [
+    {
+      "id": "d_first",
+      "kind": "order",
+      "prompt": "Put the first steps in order",
+      "dimension": "Procedure",
+      "competency": "KeyAccessControl",
+      "weight": 10,
+      "explanation": "You need to see what the access is before you can preserve it, and you preserve it before you change anything, because removing access changes what the logs show. Then it goes at once, everywhere, before you go looking for the rest.",
+      "options": [
+        {
+          "id": "o1",
+          "label": "Pull the user list and audit log"
+        },
+        {
+          "id": "o2",
+          "label": "Export and hash the logs"
+        },
+        {
+          "id": "o3",
+          "label": "Remove every account and shared login"
+        },
+        {
+          "id": "o4",
+          "label": "Find every other system with its own logins"
+        }
+      ]
+    },
+    {
+      "id": "q_recode",
+      "kind": "numeric",
+      "prompt": "Re-coding every lock to cancel all keys made by E-77: 685 doors at 4 minutes each at 36 an hour, and 260 staff keys reissued at 1.50. What does it cost?",
+      "dimension": "Cost",
+      "competency": "FinancialAcumen",
+      "weight": 8,
+      "formula": {
+        "name": "RekeyCost",
+        "inputs": {
+          "doors": 685,
+          "costPerDoor": 0,
+          "labourMinutes": 4,
+          "rate": 36,
+          "keys": 260,
+          "costPerKey": 1.5
+        }
+      },
+      "tolerance": 0.02,
+      "unit": "",
+      "explanation": "Rekey cost = doors x (cost per door + minutes / 60 x rate) + keys x cost per key = 685 x (0 + 4 / 60 x 36) + 260 x 1.50 = 1,644 + 390 = 2,034. Against 31 unlogged keys that open guest rooms, it is a small price.",
+      "mistakes": [
+        {
+          "value": 1644,
+          "feedback": "That is the door work only. The 260 staff keys have to be reissued too."
+        },
+        {
+          "value": 99030,
+          "feedback": "The minutes have to be turned into hours before they are multiplied by the hourly rate."
+        }
+      ]
+    },
+    {
+      "id": "d_contact",
+      "prompt": "Who speaks to Vessey?",
+      "dimension": "Compliance",
+      "competency": "Investigation",
+      "weight": 9,
+      "options": [
+        {
+          "id": "police",
+          "label": "Nobody from the hotel. The police, when they are ready.",
+          "score": 100,
+          "feedback": "A call from you tells him what you know and gives him time to clear his flat. The evidence you hand over is worth more than any answer he gives you."
+        },
+        {
+          "id": "you",
+          "label": "You, to give him a chance to explain.",
+          "score": 10,
+          "critical": true,
+          "feedback": "That warns a suspect in a criminal case and can lose the evidence. Leave it to the police."
+        },
+        {
+          "id": "hr",
+          "label": "HR, because he is a former employee.",
+          "score": 30,
+          "feedback": "He is a suspect in a crime now, not an HR matter. HR doesn't contact him either."
+        }
+      ]
+    },
+    {
+      "id": "d_fix",
+      "kind": "multi",
+      "prompt": "What stops this happening again?",
+      "dimension": "Procedure",
+      "competency": "ComplianceAudit",
+      "weight": 8,
+      "options": [
+        {
+          "id": "owners",
+          "label": "Every system owner removes access on the last day and signs it off",
+          "correct": true
+        },
+        {
+          "id": "review",
+          "label": "A quarterly review of every account on every system",
+          "correct": true
+        },
+        {
+          "id": "shared",
+          "label": "No shared logins: named accounts only",
+          "correct": true
+        },
+        {
+          "id": "vendor",
+          "label": "Vendor remote access by call-back only",
+          "correct": true
+        },
+        {
+          "id": "network",
+          "label": "Disable the network login on the last day: that covers everything",
+          "feedback": "It covered nothing that mattered here. Locks, cameras and parking each have their own logins."
+        }
+      ]
+    },
+    {
+      "id": "r_what",
+      "prompt": "Access case, summary (one line)",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 7,
+      "section": "what",
+      "options": [
+        {
+          "id": "facts",
+          "label": "Former administrator's vendor access and shared login fo_support active seven months after he left; used to register E-77; logs preserved as KC-2401 and given to the police; all access removed at both hotels; leaver process rebuilt.",
+          "score": 100,
+          "feedback": "What was open, what it was used for, what you preserved, who has it now and what changed."
+        },
+        {
+          "id": "name",
+          "label": "Dorian Vessey has been stealing from guest rooms.",
+          "score": 20,
+          "feedback": "That is for a court. Your report states what the logs show."
+        },
+        {
+          "id": "it",
+          "label": "IT failed to disable an account.",
+          "score": 25,
+          "feedback": "The network account was disabled. The leaver process missed every other system."
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "c_preserve",
+      "label": "Preserve first",
+      "kind": "before",
+      "action": "preserve_logs",
+      "other": "remove_access",
+      "dimension": "Evidence",
+      "competency": "EvidenceReporting",
+      "weight": 8,
+      "pass": "The logs were preserved before anything was changed.",
+      "fail": "The access was changed before the logs were safe."
+    },
+    {
+      "id": "c_fast",
+      "label": "Removed the same morning",
+      "kind": "byMinute",
+      "action": "remove_access",
+      "by": "09:30",
+      "dimension": "Procedure",
+      "competency": "KeyAccessControl",
+      "weight": 8,
+      "pass": "The access was gone within the hour.",
+      "fail": "The access stayed open for most of the day."
+    },
+    {
+      "id": "c_no_delete",
+      "label": "Disable, don't delete",
+      "kind": "notDone",
+      "action": "delete_now",
+      "dimension": "Evidence",
+      "competency": "Investigation",
+      "weight": 7,
+      "pass": "Disabled accounts keep their history.",
+      "fail": "Deleting the accounts broke the link to what they did."
+    },
+    {
+      "id": "c_no_call",
+      "label": "Don't warn him",
+      "kind": "notDone",
+      "action": "call_vessey",
+      "dimension": "Compliance",
+      "competency": "Investigation",
+      "weight": 9,
+      "pass": "The suspect heard nothing from the hotel.",
+      "fail": "You warned the suspect."
+    },
+    {
+      "id": "c_systems",
+      "label": "Every system",
+      "kind": "done",
+      "action": "all_systems",
+      "dimension": "Procedure",
+      "competency": "ComplianceAudit",
+      "weight": 7,
+      "pass": "You found the other systems with their own logins.",
+      "fail": "Accounts were still open on systems nobody checked."
+    },
+    {
+      "id": "c_police",
+      "label": "To the police",
+      "kind": "done",
+      "action": "police",
+      "dimension": "Communication",
+      "competency": "Investigation",
+      "weight": 6,
+      "pass": "DS Calloway has KC-2401 with its custody.",
+      "fail": "The evidence never reached the police."
+    },
+    {
+      "id": "c_hr",
+      "label": "Fix the process",
+      "kind": "done",
+      "action": "hr_counsel",
+      "dimension": "Communication",
+      "competency": "PeopleLeadership",
+      "weight": 6,
+      "pass": "The leaver process now covers every system.",
+      "fail": "The next leaver will keep their access too."
+    },
+    {
+      "id": "c_record",
+      "label": "Record it",
+      "kind": "done",
+      "action": "case_record",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 7,
+      "pass": "The case file is complete.",
+      "fail": "The case was never written up."
+    }
+  ],
+  "bestOrder": [
+    "lock_users",
+    "preserve_logs",
+    "remove_access",
+    "all_systems",
+    "police",
+    "hr_counsel",
+    "case_record"
+  ],
+  "debrief": {
+    "whatHappened": "The blank cards came from inside. A systems administrator who left seven months ago still had a shared login and vendor access, and used them to register the encoder that made the clone keys. You preserved the logs, closed the access at both hotels within the hour, found four more systems he could still reach, gave the evidence to the police without warning him, and fixed the leaver process.",
+    "bestPractice": [
+      "Preserve the logs before you change anything.",
+      "Disable, don't delete: disabled accounts keep their history.",
+      "Remove the access everywhere at once, both sites, vendor portals included.",
+      "List every system with its own logins: locks, cameras, PMS, parking, fire software.",
+      "Give the evidence to the police; nobody from the hotel contacts the suspect.",
+      "Make every system owner part of the leaver process, and review access quarterly."
+    ],
+    "why": "Most insider access cases are not clever hacking: they are accounts nobody removed. The leaver checklist decides whether a former employee can still open your doors.",
+    "commonMistakes": [
+      "Disabling before preserving.",
+      "Deleting accounts.",
+      "Calling the suspect.",
+      "Stopping at the network login.",
+      "Shared logins."
+    ]
+  },
+  "procedureCards": [
+    "access_revocation"
+  ],
+  "reportAt": "lp_office",
+  "passMark": 60,
+  "xp": 400,
+  "weeks": 2,
+  "lesson": "Preserve, then remove everywhere at once; every system's logins; police, not you; fix the leaver process."
+}

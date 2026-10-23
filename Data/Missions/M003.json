@@ -1,0 +1,702 @@
+{
+  "schema": 1,
+  "id": "M003",
+  "title": "The 2 a.m. Noise Complaint",
+  "kind": "mission",
+  "topic": "guest",
+  "minLevel": 1,
+  "opening": {
+    "channel": "radio",
+    "from": "night_manager",
+    "at": "lp_office",
+    "text": "LP, Felix. Second call from 1407 about a party next door in 1406. She sounds at the end of her rope. Can you take it? Don't go up alone."
+  },
+  "briefing": [
+    "02:05. Room 1407 has complained twice about music and shouting from 1406. The night manager has asked LP to deal with it.",
+    "Veldane policy: go in pairs, never enter a guest room uninvited, follow the warning policy. Eviction is the night manager's decision under policy and local law."
+  ],
+  "learningObjectives": [
+    "Handling a noise complaint safely and politely",
+    "Spotting the life-safety issue behind the noise",
+    "Following up and recording every visit"
+  ],
+  "start": "02:05",
+  "actions": [
+    {
+      "id": "radio_partner",
+      "label": "Radio Ines to meet you on 14",
+      "kind": "call",
+      "at": "lp_office",
+      "spot": "lp_radio",
+      "person": "partner",
+      "minutes": 1,
+      "required": true,
+      "findingTitle": "Partner on the way",
+      "finding": "Ines Dalca leaves the CCTV room and will meet you at the floor 14 lift lobby.",
+      "lines": [
+        {
+          "speaker": "partner",
+          "text": "On my way. Meet you at the lifts on fourteen."
+        }
+      ]
+    },
+    {
+      "id": "check_complaints",
+      "label": "Check the complaint log at the desk",
+      "kind": "check",
+      "at": "front_desk",
+      "person": "night_auditor",
+      "minutes": 3,
+      "findingTitle": "Complaint log, 1406",
+      "finding": "Two calls from 1407 (00:58 and 01:52). 1406 is registered to Jordan Pike, two guests, one night. No earlier warnings.",
+      "columns": [
+        "Time",
+        "Caller",
+        "About",
+        "Action"
+      ],
+      "rows": [
+        [
+          "00:58",
+          "1407",
+          "Music, 1406",
+          "Desk called 1406, no answer"
+        ],
+        [
+          "01:52",
+          "1407",
+          "Music and shouting, 1406",
+          "Passed to night manager"
+        ]
+      ]
+    },
+    {
+      "id": "cctv_count",
+      "label": "Count arrivals to 1406 on the floor 14 camera",
+      "kind": "cctvReview",
+      "at": "cctv_room",
+      "spot": "cctv_console",
+      "minutes": 5,
+      "findingTitle": "Floor 14 corridor camera",
+      "finding": "Nine people have gone into 1406 since 23:40. None has come out. The room is booked for two.",
+      "columns": [
+        "Camera",
+        "Time",
+        "What it shows"
+      ],
+      "rows": [
+        [
+          "F14-02 Corridor",
+          "23:40",
+          "Guest and one other enter 1406."
+        ],
+        [
+          "F14-02 Corridor",
+          "00:15-01:20",
+          "Seven more arrive in small groups, carrying bags from the off-licence."
+        ]
+      ]
+    },
+    {
+      "id": "listen_door",
+      "label": "Listen at the door of 1406",
+      "kind": "look",
+      "at": "f14_corridor",
+      "spot": "door_1406",
+      "minutes": 2,
+      "requires": [
+        "radio_partner"
+      ],
+      "findingTitle": "At the door, 02:2x",
+      "finding": "Loud music with bass, several voices, laughter, one man shouting a toast. No sounds of a fight or distress. A faint smell of smoke near the door."
+    },
+    {
+      "id": "talk_complainant",
+      "label": "Speak to the guest in 1407",
+      "kind": "interview",
+      "at": "f14_corridor",
+      "person": "guest_morrow",
+      "minutes": 4,
+      "findingTitle": "Helen Morrow, 1407",
+      "finding": "She has an early flight and has not slept. It has been loud since about midnight. She does not want anyone thrown out, she wants to sleep.",
+      "lines": [
+        {
+          "speaker": "guest_morrow",
+          "text": "I don't want to get anyone in trouble. I've a six o'clock flight. I just need it to stop."
+        }
+      ]
+    },
+    {
+      "id": "knock_1406",
+      "label": "Knock at 1406 with Ines beside you",
+      "kind": "interview",
+      "at": "guest_room",
+      "person": "guest_pike",
+      "minutes": 5,
+      "requires": [
+        "radio_partner"
+      ],
+      "required": true,
+      "findingTitle": "Jordan Pike, 1406",
+      "finding": [
+        "Mr Pike opens the door after the second knock. It is his thirtieth birthday. He is merry but steady, and apologetic once he hears it is 2 a.m.",
+        "Over his shoulder: about nine people, and a shower cap pulled over the ceiling smoke detector. Someone is smoking by the window."
+      ],
+      "lines": [
+        {
+          "speaker": "guest_pike",
+          "text": "Oh, no. Is it that loud? Sorry, it's my birthday, we got carried away."
+        }
+      ]
+    },
+    {
+      "id": "enter_room",
+      "label": "Step into the room to turn the music off",
+      "kind": "enter",
+      "at": "guest_room",
+      "spot": "room_1406_threshold",
+      "minutes": 2,
+      "requires": [
+        "knock_1406"
+      ],
+      "findingTitle": "Inside 1406",
+      "finding": "You walk past Mr Pike into the room. The mood changes at once. Someone films you on a phone, and a man squares up to Ines.",
+      "effects": {
+        "GuestSatisfaction": -4,
+        "Reputation": -4
+      },
+      "relations": {
+        "partner": -6
+      },
+      "schedules": [
+        {
+          "id": "entry_complaint",
+          "description": "A guest from the 1406 party posts a video of an LP officer walking uninvited into a guest room at 2 a.m. The complaint reaches the general manager.",
+          "delayWeeks": 1,
+          "probability": 0.8,
+          "effects": {
+            "Reputation": -6,
+            "OwnerTrust": -4,
+            "IncidentCosts": 1500
+          },
+          "flagIfOccurs": "uninvited_room_entry"
+        }
+      ]
+    },
+    {
+      "id": "photograph_detector",
+      "label": "Photograph the covered detector from the doorway",
+      "kind": "photograph",
+      "at": "guest_room",
+      "spot": "room_1406_threshold",
+      "minutes": 1,
+      "requires": [
+        "knock_1406"
+      ],
+      "findingTitle": "Photo, 02:3x",
+      "finding": "Taken from the doorway with Mr Pike's agreement: a shower cap over the ceiling smoke detector in 1406.",
+      "evidence": "PH-1406-01",
+      "custody": "Photo PH-1406-01 of the covered detector taken by you from the doorway of 1406."
+    },
+    {
+      "id": "detector",
+      "label": "Ask for the detector to be uncovered and the smoking to stop",
+      "kind": "secure",
+      "at": "guest_room",
+      "person": "guest_pike",
+      "minutes": 3,
+      "requires": [
+        "knock_1406"
+      ],
+      "findingTitle": "Detector uncovered",
+      "finding": "Mr Pike takes the cap off himself while you watch, and the cigarette goes out of the window into an ashtray. You note the detector's light is blinking normally."
+    },
+    {
+      "id": "follow_up_complainant",
+      "label": "Go back to 1407",
+      "kind": "interview",
+      "at": "f14_corridor",
+      "person": "guest_morrow",
+      "minutes": 3,
+      "requires": [
+        "knock_1406"
+      ],
+      "findingTitle": "Back at 1407",
+      "finding": "You tell Ms Morrow what has been agreed and that you will be back in fifteen minutes to check."
+    },
+    {
+      "id": "recheck",
+      "label": "Wait and recheck the corridor",
+      "kind": "look",
+      "at": "f14_corridor",
+      "spot": "corridor_14",
+      "minutes": 15,
+      "requires": [
+        "follow_up_complainant"
+      ],
+      "findingTitle": "Recheck, 02:5x",
+      "finding": "Quiet. Five guests have left by the lift; the music is off. 1406 now has its two registered guests and two friends."
+    },
+    {
+      "id": "brief_night_manager",
+      "label": "Brief the night manager",
+      "kind": "interview",
+      "at": "front_desk",
+      "person": "night_manager",
+      "minutes": 3,
+      "findingTitle": "Night manager briefed",
+      "finding": "Felix Amadi logs a first written warning for 1406 and asks housekeeping to check the detector at checkout. He thanks you for not making it a fight.",
+      "relations": {
+        "night_manager": 5
+      }
+    }
+  ],
+  "questions": [
+    {
+      "id": "q_approach",
+      "prompt": "Mr Pike is in the doorway. What do you say?",
+      "dimension": "Care",
+      "competency": "GuestServiceDeescalation",
+      "weight": 8,
+      "at": "guest_room",
+      "person": "guest_pike",
+      "requires": [
+        "knock_1406"
+      ],
+      "options": [
+        {
+          "id": "polite",
+          "label": "\"Happy birthday. It's two in the morning and your neighbours are trying to sleep. I need the music off and the party down to quiet voices, please. Can you do that for me?\"",
+          "score": 100,
+          "feedback": "Friendly, clear, specific, and it asks for his help. Most noise complaints end right here.",
+          "reply": {
+            "speaker": "guest_pike",
+            "text": "Yeah, of course. Sorry. I'll sort it now."
+          }
+        },
+        {
+          "id": "threat",
+          "label": "\"Turn it off now or you're out of the hotel.\"",
+          "score": 20,
+          "feedback": "Eviction is not yours to threaten, and a threat in front of his friends invites a challenge.",
+          "reply": {
+            "speaker": "guest_pike",
+            "text": "Out? We're paying guests! Who are you to say that?"
+          }
+        },
+        {
+          "id": "vague",
+          "label": "\"Could you maybe keep it down a bit?\"",
+          "score": 40,
+          "feedback": "Polite but vague. Without a clear request he cannot know what you need, and you will be back in an hour.",
+          "reply": {
+            "speaker": "guest_pike",
+            "text": "Sure, sure. A bit."
+          }
+        }
+      ]
+    },
+    {
+      "id": "q_visitors",
+      "prompt": "There are nine people in a room for two. What do you ask?",
+      "dimension": "Compliance",
+      "competency": "GuestServiceDeescalation",
+      "weight": 6,
+      "at": "guest_room",
+      "person": "guest_pike",
+      "requires": [
+        "knock_1406"
+      ],
+      "options": [
+        {
+          "id": "wind_down",
+          "label": "\"The room's only for two overnight. Could your friends head off in the next fifteen minutes? You're welcome to carry on in the lobby bar tomorrow.\"",
+          "score": 100,
+          "feedback": "The visitor policy stated plainly, with a time and a friendly alternative.",
+          "reply": {
+            "speaker": "guest_pike",
+            "text": "Fair enough. I'll tell them."
+          }
+        },
+        {
+          "id": "names",
+          "label": "\"I need the names and ID of everyone in the room.\"",
+          "score": 30,
+          "feedback": "You have no reason or authority to identify his friends. It turns a noise problem into a confrontation.",
+          "reply": {
+            "speaker": "guest_pike",
+            "text": "Seriously? They're my friends, not criminals."
+          }
+        },
+        {
+          "id": "ignore",
+          "label": "Say nothing about the numbers; the noise is the complaint.",
+          "score": 40,
+          "feedback": "Nine people in a two-person room is why the noise will start again. Deal with the cause."
+        }
+      ]
+    },
+    {
+      "id": "q_detector",
+      "prompt": "The smoke detector is covered with a shower cap. What do you do?",
+      "dimension": "Compliance",
+      "competency": "FireLifeSafety",
+      "weight": 8,
+      "at": "guest_room",
+      "person": "guest_pike",
+      "requires": [
+        "knock_1406"
+      ],
+      "options": [
+        {
+          "id": "uncover",
+          "label": "Explain it is a fire safety device that protects the whole floor, ask him to take the cover off now while you watch, ask the smoker to stop, and record it.",
+          "score": 100,
+          "feedback": "A covered detector on a floor of sleeping guests is the most serious thing in that room. You fixed it without entering and recorded it.",
+          "reply": {
+            "speaker": "guest_pike",
+            "text": "God, sorry. That was so the smoke didn't set it off. I'll take it off now."
+          }
+        },
+        {
+          "id": "fine",
+          "label": "Tell him the hotel will charge him a smoking fee and leave it.",
+          "score": 25,
+          "feedback": "A fee is the front office's matter. The detector is still covered when you walk away."
+        },
+        {
+          "id": "climb",
+          "label": "Walk in and pull the cap off yourself.",
+          "score": 40,
+          "feedback": "Right instinct, wrong method: you entered a guest room uninvited. Ask him to do it, or call the night manager."
+        }
+      ]
+    },
+    {
+      "id": "q_complainant",
+      "prompt": "Ms Morrow asks whether they'll be thrown out.",
+      "dimension": "Communication",
+      "competency": "GuestServiceDeescalation",
+      "weight": 6,
+      "at": "f14_corridor",
+      "person": "guest_morrow",
+      "requires": [
+        "follow_up_complainant"
+      ],
+      "options": [
+        {
+          "id": "honest",
+          "label": "\"They've agreed to turn it off and his friends are leaving. I'll check again in fifteen minutes, and if it starts again, call the desk and we'll come straight back.\"",
+          "score": 100,
+          "feedback": "What was done, what happens next and what she can do. No promises about another guest's stay.",
+          "reply": {
+            "speaker": "guest_morrow",
+            "text": "Thank you. Really. That's all I wanted."
+          }
+        },
+        {
+          "id": "promise",
+          "label": "\"Don't worry, they'll be gone within the hour.\"",
+          "score": 20,
+          "feedback": "You promised an eviction that is not yours to decide and is not going to happen.",
+          "reply": {
+            "speaker": "guest_morrow",
+            "text": "Gone? I didn't want that. Will they know it was me?"
+          }
+        },
+        {
+          "id": "share",
+          "label": "\"It's a birthday party for Mr Pike. Nine of them in there.\"",
+          "score": 30,
+          "feedback": "You told one guest another guest's name and business. Keep it to what was done about the noise.",
+          "reply": {
+            "speaker": "guest_morrow",
+            "text": "Oh. Well, I hope he enjoys it."
+          }
+        }
+      ]
+    },
+    {
+      "id": "r_what",
+      "prompt": "Incident report, what happened (one line)",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 5,
+      "section": "what",
+      "options": [
+        {
+          "id": "facts",
+          "label": "Noise complaint from 1407 about 1406. LP attended in pairs; music stopped, visitors left, a covered smoke detector was uncovered. Complainant updated; corridor rechecked quiet.",
+          "score": 100,
+          "feedback": "The complaint, the response, the life-safety finding and the follow-up, in one line."
+        },
+        {
+          "id": "party",
+          "label": "Drunken party in 1406, guest warned.",
+          "score": 25,
+          "feedback": "\"Drunken\" is a judgement and the report misses the detector entirely."
+        },
+        {
+          "id": "resolved",
+          "label": "Noise complaint resolved.",
+          "score": 15,
+          "feedback": "Says nothing about how, and leaves out the covered detector."
+        }
+      ]
+    },
+    {
+      "id": "r_facts",
+      "kind": "multi",
+      "prompt": "Incident report, which of these belong in the findings?",
+      "dimension": "Report",
+      "competency": "FireLifeSafety",
+      "weight": 7,
+      "section": "facts",
+      "options": [
+        {
+          "id": "f_calls",
+          "label": "Two complaints from 1407, at 00:58 and 01:52.",
+          "correct": true
+        },
+        {
+          "id": "f_count",
+          "label": "Camera F14-02 shows nine people entered 1406 from 23:40; the room is registered for two.",
+          "correct": true
+        },
+        {
+          "id": "f_detector",
+          "label": "The smoke detector in 1406 was covered with a shower cap; photographed (PH-1406-01) and uncovered by the guest at your request.",
+          "correct": true
+        },
+        {
+          "id": "f_recheck",
+          "label": "Corridor rechecked at 02:5x: quiet.",
+          "correct": true
+        },
+        {
+          "id": "o_drunk",
+          "label": "The guests were drunk.",
+          "feedback": "You did not test anyone. Record what you saw: \"merry\", \"steady on his feet\"."
+        },
+        {
+          "id": "o_morrow",
+          "label": "Ms Morrow seemed oversensitive.",
+          "feedback": "An opinion about the complainant. It has no place in the report."
+        }
+      ]
+    },
+    {
+      "id": "d_manager",
+      "prompt": "Felix asks whether 1406 should be asked to leave.",
+      "dimension": "Communication",
+      "competency": "IncidentResponse",
+      "weight": 8,
+      "options": [
+        {
+          "id": "warning",
+          "label": "\"No. He cooperated straight away. A first written warning under the policy, and the detector checked at checkout. If it starts again, it's your call.\"",
+          "score": 100,
+          "feedback": "Proportionate and by the policy. You advise; the night manager decides."
+        },
+        {
+          "id": "evict",
+          "label": "\"Yes. The detector alone is enough. Throw them out.\"",
+          "score": 30,
+          "feedback": "The detector is serious, but he fixed it as soon as he was asked. Eviction at 3 a.m. is a big step for a cooperative guest."
+        },
+        {
+          "id": "nothing",
+          "label": "\"Nothing to note. It's quiet now.\"",
+          "score": 35,
+          "feedback": "No warning, no record of the detector. If it happens again, there is nothing on file."
+        }
+      ]
+    },
+    {
+      "id": "d_cost",
+      "prompt": "Ms Morrow will check out at 04:30. Felix asks what, if anything, to offer her.",
+      "dimension": "Cost",
+      "competency": "GuestServiceDeescalation",
+      "weight": 6,
+      "options": [
+        {
+          "id": "apology",
+          "label": "Suggest a written apology and a breakfast box for the flight. Felix approves it: his call, within his authority.",
+          "score": 100,
+          "escalates": true,
+          "feedback": "A small, sincere gesture in proportion to a broken night's sleep."
+        },
+        {
+          "id": "comp",
+          "label": "Refund her whole stay.",
+          "score": 35,
+          "cost": 240,
+          "feedback": "Out of proportion and above your authority. The noise was dealt with inside an hour."
+        },
+        {
+          "id": "none",
+          "label": "Nothing. The hotel didn't make the noise.",
+          "score": 30,
+          "feedback": "She lost a night's sleep in the hotel's care. A small gesture keeps a guest who will otherwise write a review."
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "c_pairs",
+      "label": "Go in pairs",
+      "kind": "before",
+      "action": "radio_partner",
+      "other": "knock_1406",
+      "dimension": "Procedure",
+      "competency": "IncidentResponse",
+      "weight": 5,
+      "pass": "Ines was beside you at the door. A second officer keeps both of you safe and is a witness.",
+      "fail": "You knocked on a party room alone at 2 a.m."
+    },
+    {
+      "id": "c_listen",
+      "label": "Listen before you knock",
+      "kind": "before",
+      "action": "listen_door",
+      "other": "knock_1406",
+      "dimension": "Procedure",
+      "competency": "IncidentResponse",
+      "weight": 5,
+      "pass": "You knew what was behind the door before you knocked: music, voices, no fight, a smell of smoke.",
+      "fail": "You knocked without knowing what was behind the door."
+    },
+    {
+      "id": "c_no_enter",
+      "label": "Do not enter the room",
+      "kind": "notDone",
+      "action": "enter_room",
+      "dimension": "Compliance",
+      "competency": "GuestServiceDeescalation",
+      "weight": 6,
+      "critical": true,
+      "pass": "You stayed in the doorway. The room is the guest's space.",
+      "fail": "You entered a guest room uninvited. That is a policy breach and turned a noise problem into a confrontation."
+    },
+    {
+      "id": "c_detector",
+      "label": "Get the detector uncovered",
+      "kind": "done",
+      "action": "detector",
+      "dimension": "Care",
+      "competency": "FireLifeSafety",
+      "weight": 5,
+      "pass": "The detector protecting the floor is working again.",
+      "fail": "You left a covered smoke detector on a floor of sleeping guests."
+    },
+    {
+      "id": "c_photo",
+      "label": "Photograph the detector",
+      "kind": "done",
+      "action": "photograph_detector",
+      "dimension": "Evidence",
+      "competency": "FireLifeSafety",
+      "weight": 3,
+      "pass": "The photo supports the warning and the checkout inspection.",
+      "fail": "No photo: the warning rests on your word alone."
+    },
+    {
+      "id": "c_complaint_log",
+      "label": "Check the complaint log",
+      "kind": "done",
+      "action": "check_complaints",
+      "dimension": "Procedure",
+      "competency": "IncidentResponse",
+      "weight": 4,
+      "pass": "You knew the history: two calls, no earlier warnings.",
+      "fail": "You went up without knowing how many complaints there had been or who was registered."
+    },
+    {
+      "id": "c_count",
+      "label": "Know how many are in the room",
+      "kind": "done",
+      "action": "cctv_count",
+      "dimension": "Evidence",
+      "competency": "Investigation",
+      "weight": 4,
+      "pass": "The camera told you nine people were in a room for two.",
+      "fail": "You did not know how many people were behind the door."
+    },
+    {
+      "id": "c_followup",
+      "label": "Follow up with the complainant",
+      "kind": "done",
+      "action": "follow_up_complainant",
+      "dimension": "Communication",
+      "competency": "GuestServiceDeescalation",
+      "weight": 5,
+      "pass": "The guest who complained knows what was done.",
+      "fail": "Ms Morrow never heard back. To her, nothing was done."
+    },
+    {
+      "id": "c_recheck",
+      "label": "Recheck",
+      "kind": "done",
+      "action": "recheck",
+      "dimension": "Procedure",
+      "competency": "IncidentResponse",
+      "weight": 5,
+      "pass": "You came back and confirmed it was quiet.",
+      "fail": "No recheck. You do not know whether it stayed quiet."
+    },
+    {
+      "id": "c_brief",
+      "label": "Brief the night manager",
+      "kind": "done",
+      "action": "brief_night_manager",
+      "dimension": "Communication",
+      "competency": "IncidentResponse",
+      "weight": 4,
+      "pass": "The warning and the detector are on the night manager's log.",
+      "fail": "The night manager asked you to take it and never heard how it went."
+    }
+  ],
+  "bestOrder": [
+    "radio_partner",
+    "check_complaints",
+    "cctv_count",
+    "listen_door",
+    "talk_complainant",
+    "knock_1406",
+    "photograph_detector",
+    "detector",
+    "follow_up_complainant",
+    "recheck",
+    "brief_night_manager"
+  ],
+  "debrief": {
+    "whatHappened": "A thirtieth birthday party: nine people in a room for two, music at 2 a.m., and a shower cap over the smoke detector so someone could smoke. One polite knock ended the noise. The detector was the real danger to the floor.",
+    "bestPractice": [
+      "Get the details first: complaints log, registration, how many people.",
+      "Go in pairs and tell the night manager where you are.",
+      "Listen at the door before knocking.",
+      "Knock, identify yourself, stand to the side, and stay in the doorway. Never enter uninvited.",
+      "Be friendly and specific: what you need, and by when.",
+      "Look for the safety issue behind the noise: covered detectors, smoking, overcrowding, anyone at risk.",
+      "Follow the warning policy; eviction is the night manager's decision.",
+      "Go back to the complainant, recheck, and record every visit and time."
+    ],
+    "why": "Most noise complaints end with one polite knock. The ones that escalate do so because staff argued, entered, or threatened what they could not deliver. And the noise is often the least dangerous thing in the room.",
+    "commonMistakes": [
+      "Going alone.",
+      "Entering the room to turn off the music.",
+      "Threatening eviction.",
+      "Never telling the complainant what was done.",
+      "Missing the covered detector."
+    ]
+  },
+  "procedureCards": [
+    "noise_complaint"
+  ],
+  "reportAt": "lp_office",
+  "passMark": 60,
+  "xp": 120,
+  "weeks": 1,
+  "lesson": "Pairs, listen, knock, stay in the doorway, and look for the danger behind the noise."
+}

@@ -4,6 +4,10 @@
 #include "KcApi.h"
 
 #include "KcCareer.h"
+#include "KcLearning.h"
+#include "KcMission.h"
+#include "KcProperty.h"
+#include "KcWorld.h"
 
 #include <cstdint>
 #include <string>
@@ -50,8 +54,20 @@ struct GameState
 	std::vector<std::string> FieldManual;     // procedure card ids the player has earned, in order
 	std::vector<std::string> LearningHistory; // one line per debrief
 	std::vector<std::string> Achievements;
+	// Save v2:
+	PropertyState Property;                   // the hotel the player answers for (metrics, flags, consequences)
+	CampaignState Campaign;                   // the case in progress and every attempt
+	WorldState World;                         // relationships, stress, clues, inbox, news
+	ChallengeState Challenge;                 // survival, daily and classroom modes
+	bool bCeremonyPending = false;            // a promotion happened and its ceremony has not played yet
+	int CeremonyLevel = 0;                    // the level the pending ceremony celebrates
 };
 
-// New career: level 1 LP Officer on nights, background starting scores, seed for every random event.
+constexpr int DifficultyIndex(EDifficulty D) { return D == EDifficulty::Trainee ? 0 : (D == EDifficulty::Expert ? 2 : 1); }
+
+// Advances hotel time: resolves due consequences.
+KC_API std::vector<ResolvedConsequence> AdvanceGameWeeks(GameState& State, int Weeks);
+
+// New career: level 1 LP Officer on nights at the Harbourfront, background starting scores, seed for every random event.
 KC_API GameState NewGame(const std::string& ProfileName, EBackground Background, EDifficulty Difficulty, uint64_t Seed);
 } // namespace kc

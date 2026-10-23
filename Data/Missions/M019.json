@@ -1,0 +1,532 @@
+{
+  "schema": 1,
+  "id": "M019",
+  "title": "Contract or In-house",
+  "kind": "mission",
+  "topic": "budget",
+  "minLevel": 5,
+  "opening": {
+    "channel": "email",
+    "from": "finance_director",
+    "at": "lp_office",
+    "text": "Budget season. Every department is finding 6%. Your biggest line is the Tessmore contract, up for renewal in March. Two questions for Friday: would officers of our own be cheaper, and could we run nights with one post instead of two? Numbers, please, not feelings. Hamish"
+  },
+  "briefing": [
+    "14:00, Monday. Tessmore Guard Services provides the hotel's two 24-hour officer posts under a contract that ends in March. Finance wants a recommendation: renew, bring the officers in-house, or cut a night post.",
+    "Veldane staffing method: work out the post hours the risk needs, the FTEs those hours take once leave, training and sickness are allowed for, then compare the total annual cost of each option, not hourly rates, alongside performance, control and transition risk. A recommendation above your authority goes to the GM and the Director of Finance with the numbers. Your authority is 50,000."
+  ],
+  "learningObjectives": [
+    "Post hours and FTEs with the standard formulas",
+    "Comparing total cost, not hourly rates",
+    "Matching staffing to when incidents happen"
+  ],
+  "start": "14:00",
+  "actions": [
+    {
+      "id": "meet_finance",
+      "label": "Meet Hamish in the finance office",
+      "kind": "interview",
+      "at": "exec_offices",
+      "spot": "finance_office",
+      "person": "finance_director",
+      "minutes": 5,
+      "required": true,
+      "findingTitle": "The ask",
+      "finding": "A 6% cut across the hotel. The Tessmore contract is 541,632 a year, the largest line in LP. He wants three options costed: renew, in-house, and one night post instead of two, with what each one means for risk.",
+      "lines": [
+        {
+          "speaker": "finance_director",
+          "text": "I don't mind spending money. I mind not knowing what it buys."
+        }
+      ]
+    },
+    {
+      "id": "review_contract",
+      "label": "Review the Tessmore contract and its KPIs",
+      "kind": "check",
+      "at": "lp_office",
+      "spot": "lp_desk",
+      "minutes": 6,
+      "requires": [
+        "meet_finance"
+      ],
+      "required": true,
+      "findingTitle": "The contract",
+      "finding": "Two posts, 24 hours a day, 7 days a week, 31.00 per hour all-in, three months' notice. KPIs: patrol compliance 95% (actual 86%), officer turnover under 30% (actual 64%), every officer trained on Veldane procedures within two weeks (11 different night officers in six months, 4 never trained).",
+      "columns": [
+        "KPI",
+        "Target",
+        "Actual"
+      ],
+      "rows": [
+        [
+          "Patrol compliance",
+          "95%",
+          "86%"
+        ],
+        [
+          "Officer turnover",
+          "< 30%",
+          "64%"
+        ],
+        [
+          "Trained within 2 weeks",
+          "100%",
+          "64%"
+        ]
+      ]
+    },
+    {
+      "id": "incident_data",
+      "label": "Pull incidents by hour for the last year",
+      "kind": "check",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 6,
+      "requires": [
+        "meet_finance"
+      ],
+      "findingTitle": "When things happen",
+      "finding": "41% of incidents happen between 22:00 and 06:00, including most medical calls, all three fire alarms and every intoxicated-guest case. On the night of the floor 14 fire alarm, both officers were needed at once: one at the panel, one on the floor.",
+      "columns": [
+        "Hours",
+        "Share of incidents"
+      ],
+      "rows": [
+        [
+          "06:00-14:00",
+          "24%"
+        ],
+        [
+          "14:00-22:00",
+          "35%"
+        ],
+        [
+          "22:00-06:00",
+          "41%"
+        ]
+      ]
+    },
+    {
+      "id": "talk_callum",
+      "label": "Talk to Callum Fenwick at Tessmore",
+      "kind": "interview",
+      "at": "loading_dock",
+      "person": "guard_lead",
+      "minutes": 5,
+      "requires": [
+        "review_contract"
+      ],
+      "findingTitle": "Tessmore's side",
+      "finding": "Callum is candid: Tessmore pays close to the minimum and loses officers to warehouses. He offers a dedicated, retained night team at 33.50 per hour (585,312 a year) and accepts the KPIs are being missed."
+    },
+    {
+      "id": "talk_hr_costs",
+      "label": "Get in-house costs from Priyanka",
+      "kind": "interview",
+      "at": "exec_offices",
+      "spot": "hr_office",
+      "person": "hr_director",
+      "minutes": 5,
+      "requires": [
+        "meet_finance"
+      ],
+      "findingTitle": "In-house costs",
+      "finding": "An LP officer costs 46,500 a year fully loaded (pay, employer costs, benefits). Recruitment and training is about 2,400 per hire in the first year; uniforms, kit and supervision about 14,000 a year for the team. Productive hours per FTE after leave, training and sickness: 1,780 a year."
+    },
+    {
+      "id": "rates_only",
+      "label": "Send Hamish the hourly rates: 31.00 contract against 26.10 in-house",
+      "kind": "other",
+      "at": "lp_office",
+      "spot": "lp_desk",
+      "minutes": 1,
+      "requires": [
+        "talk_hr_costs"
+      ],
+      "findingTitle": "Rates, not costs",
+      "finding": "An in-house hourly rate leaves out the hours an officer is paid but not on post, recruitment, kit and supervision. Hamish replies within the hour: \"This isn't a cost comparison.\"",
+      "effects": {
+        "OwnerTrust": -2
+      }
+    },
+    {
+      "id": "build_model",
+      "label": "Build the staffing and cost model",
+      "kind": "logEvidence",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 10,
+      "requires": [
+        "review_contract",
+        "talk_hr_costs",
+        "incident_data"
+      ],
+      "required": true,
+      "findingTitle": "The model",
+      "finding": "Two 24/7 posts need 336 post hours a week, 17,472 a year: 9.8 FTEs, so 10 officers in-house.",
+      "columns": [
+        "Option",
+        "Year 1",
+        "Year 2 on",
+        "Risk and control"
+      ],
+      "rows": [
+        [
+          "Renew Tessmore as is",
+          "541,632",
+          "541,632",
+          "KPIs missed, 64% turnover"
+        ],
+        [
+          "Tessmore retained night team",
+          "585,312",
+          "585,312",
+          "Better retention, still contracted"
+        ],
+        [
+          "In-house, 10 officers",
+          "503,000",
+          "479,000",
+          "Own training and standards; 3-month transition"
+        ],
+        [
+          "One night post (22:00-06:00)",
+          "451,360",
+          "451,360",
+          "One person for 41% of incidents"
+        ]
+      ]
+    },
+    {
+      "id": "plan_transition",
+      "label": "Plan the transition",
+      "kind": "other",
+      "at": "lp_office",
+      "spot": "lp_desk",
+      "minutes": 5,
+      "requires": [
+        "build_model"
+      ],
+      "findingTitle": "Transition",
+      "finding": "Notice to Tessmore in December, recruitment from January, a four-week overlap so new officers are trained before the contract ends. Current Tessmore night officers may apply; HR and counsel to advise on any transfer rights under local employment law."
+    },
+    {
+      "id": "present",
+      "label": "Present the options to Hamish",
+      "kind": "interview",
+      "at": "exec_offices",
+      "spot": "finance_office",
+      "person": "finance_director",
+      "minutes": 8,
+      "requires": [
+        "build_model"
+      ],
+      "required": true,
+      "findingTitle": "Decision",
+      "finding": "Hamish and the GM accept in-house officers for both posts from March, saving 38,632 in year one and 62,632 a year after, with both night posts kept. Tessmore is offered event cover on a small call-off contract with the KPIs written in.",
+      "lines": [
+        {
+          "speaker": "finance_director",
+          "text": "Cheaper, and you can tell me why it's safer. That I can sign."
+        }
+      ]
+    },
+    {
+      "id": "brief_team",
+      "label": "Tell Ines and the team",
+      "kind": "call",
+      "at": "lp_office",
+      "spot": "lp_radio",
+      "person": "partner",
+      "minutes": 3,
+      "requires": [
+        "present"
+      ],
+      "findingTitle": "Team told",
+      "finding": "Ines hears it from you before the rumour arrives: both night posts stay, the hotel will hire its own officers, and the Tessmore night officers she works with can apply."
+    }
+  ],
+  "questions": [
+    {
+      "id": "q_hours",
+      "kind": "numeric",
+      "prompt": "How many post hours a week do two 24-hour posts need?",
+      "dimension": "Cost",
+      "competency": "FinancialAcumen",
+      "weight": 7,
+      "formula": {
+        "name": "PostHoursPerWeek",
+        "inputs": {
+          "hoursPerDay": 24,
+          "daysPerWeek": 7,
+          "posts": 2
+        }
+      },
+      "tolerance": 0.01,
+      "unit": "hours",
+      "explanation": "Post hours = hours per day x days per week x posts = 24 x 7 x 2 = 336 hours a week.",
+      "mistakes": [
+        {
+          "value": 168,
+          "feedback": "That is one post. There are two."
+        }
+      ]
+    },
+    {
+      "id": "q_fte",
+      "kind": "numeric",
+      "prompt": "How many FTEs do 336 post hours a week need, at 1,780 productive hours per FTE a year?",
+      "dimension": "Cost",
+      "competency": "FinancialAcumen",
+      "weight": 8,
+      "formula": {
+        "name": "FtesRequired",
+        "inputs": {
+          "postHours": 336,
+          "productiveHours": 1780
+        }
+      },
+      "tolerance": 0.02,
+      "unit": "FTE",
+      "explanation": "FTEs = post hours a week x 52 / productive hours per FTE = 336 x 52 / 1,780 = 9.8. Paid hours are not productive hours: leave, training and sickness come out first.",
+      "mistakes": [
+        {
+          "value": 8.4,
+          "feedback": "That uses 2,080 paid hours. An officer on leave or in training is not on post, so use productive hours."
+        }
+      ]
+    },
+    {
+      "id": "d_recommend",
+      "prompt": "What do you recommend?",
+      "dimension": "Cost",
+      "competency": "FinancialAcumen",
+      "weight": 9,
+      "options": [
+        {
+          "id": "inhouse",
+          "label": "In-house officers for both posts from March, keeping two at night; Tessmore on a small event contract.",
+          "score": 100,
+          "feedback": "Cheaper over the year, with control of training and turnover, and the risk is covered when most incidents happen."
+        },
+        {
+          "id": "cut",
+          "label": "Keep Tessmore and cut to one night post: saves 90,272.",
+          "score": 25,
+          "schedules": [
+            {
+              "id": "night_understaffed",
+              "description": "With one night officer, a guest collapses in the garage while the only officer is at a fire alarm on floor 9. The paramedics wait at the barrier for four minutes.",
+              "delayWeeks": 6,
+              "probability": 0.6,
+              "effects": {
+                "SafetyCompliance": -5,
+                "Reputation": -4,
+                "IncidentCosts": 5000
+              },
+              "flagIfOccurs": "night_understaffed"
+            }
+          ],
+          "feedback": "It saves the most and leaves one person for 41% of incidents. On a fire alarm, one officer cannot be at the panel and on the floor at once."
+        },
+        {
+          "id": "renew",
+          "label": "Renew Tessmore as it is.",
+          "score": 45,
+          "feedback": "It is more expensive than in-house and the KPIs are being missed. Renewing rewards that."
+        }
+      ]
+    },
+    {
+      "id": "d_compare",
+      "kind": "multi",
+      "prompt": "What belongs in the comparison?",
+      "dimension": "Evidence",
+      "competency": "FinancialAcumen",
+      "weight": 8,
+      "options": [
+        {
+          "id": "total",
+          "label": "Total annual cost of each option",
+          "correct": true
+        },
+        {
+          "id": "onboard",
+          "label": "Recruitment, training and turnover",
+          "correct": true
+        },
+        {
+          "id": "kpi",
+          "label": "Performance against the KPIs and who controls standards",
+          "correct": true
+        },
+        {
+          "id": "transition",
+          "label": "Notice period and transition risk",
+          "correct": true
+        },
+        {
+          "id": "rate",
+          "label": "The hourly rate on its own",
+          "feedback": "An hourly rate hides paid hours off post, recruitment, kit and supervision. Compare total cost."
+        }
+      ]
+    },
+    {
+      "id": "r_what",
+      "prompt": "Recommendation, summary (one line)",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 8,
+      "section": "what",
+      "options": [
+        {
+          "id": "facts",
+          "label": "Two 24/7 posts = 336 h/week = 9.8 FTE. In-house 503,000 (yr 1), 479,000 after, against 541,632 renewal; both night posts kept for 41% of incidents; transition from December.",
+          "score": 100,
+          "feedback": "The need, the cost of each option, the risk reason and the plan, on one line."
+        },
+        {
+          "id": "cheaper",
+          "label": "In-house is cheaper.",
+          "score": 25,
+          "feedback": "By how much, for what, and at what risk?"
+        },
+        {
+          "id": "cut",
+          "label": "We can save 90,272 by cutting a night post.",
+          "score": 20,
+          "feedback": "A saving without its risk is half a recommendation."
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "c_total",
+      "label": "Compare total cost",
+      "kind": "notDone",
+      "action": "rates_only",
+      "dimension": "Cost",
+      "competency": "FinancialAcumen",
+      "weight": 9,
+      "pass": "You compared the total cost of each option.",
+      "fail": "You compared hourly rates as if they were costs."
+    },
+    {
+      "id": "c_data",
+      "label": "Staff to the risk",
+      "kind": "done",
+      "action": "incident_data",
+      "dimension": "Evidence",
+      "competency": "ComplianceAudit",
+      "weight": 8,
+      "pass": "You matched the posts to when incidents actually happen.",
+      "fail": "You never looked at when incidents happen."
+    },
+    {
+      "id": "c_contract",
+      "label": "Know the contract",
+      "kind": "done",
+      "action": "review_contract",
+      "dimension": "Evidence",
+      "competency": "ComplianceAudit",
+      "weight": 7,
+      "pass": "You checked the contract terms and its KPIs.",
+      "fail": "You never read the contract."
+    },
+    {
+      "id": "c_hr",
+      "label": "Real in-house costs",
+      "kind": "done",
+      "action": "talk_hr_costs",
+      "dimension": "Communication",
+      "competency": "PeopleLeadership",
+      "weight": 7,
+      "pass": "HR's loaded costs and productive hours are in the model.",
+      "fail": "The in-house figure is a guess."
+    },
+    {
+      "id": "c_vendor",
+      "label": "Hear the vendor",
+      "kind": "done",
+      "action": "talk_callum",
+      "dimension": "Communication",
+      "competency": "PeopleLeadership",
+      "weight": 6,
+      "pass": "Tessmore had the chance to explain and to offer an alternative.",
+      "fail": "You never spoke to the contractor."
+    },
+    {
+      "id": "c_model",
+      "label": "Build the model",
+      "kind": "done",
+      "action": "build_model",
+      "dimension": "Report",
+      "competency": "FinancialAcumen",
+      "weight": 9,
+      "pass": "Every option is costed for year one and after, with its risk.",
+      "fail": "No model."
+    },
+    {
+      "id": "c_transition",
+      "label": "Plan the change",
+      "kind": "done",
+      "action": "plan_transition",
+      "dimension": "Procedure",
+      "competency": "PeopleLeadership",
+      "weight": 7,
+      "pass": "Notice, recruitment, overlap and transfer advice are planned.",
+      "fail": "No plan for getting from one model to the other."
+    },
+    {
+      "id": "c_team",
+      "label": "Tell the team",
+      "kind": "done",
+      "action": "brief_team",
+      "dimension": "Communication",
+      "competency": "PeopleLeadership",
+      "weight": 7,
+      "pass": "The team heard it from you.",
+      "fail": "The team heard it from the rumour mill."
+    }
+  ],
+  "bestOrder": [
+    "meet_finance",
+    "review_contract",
+    "incident_data",
+    "talk_callum",
+    "talk_hr_costs",
+    "build_model",
+    "plan_transition",
+    "present",
+    "brief_team"
+  ],
+  "debrief": {
+    "whatHappened": "Finance asked for a cheaper LP. You worked out what the risk needs, 336 post hours a week and 9.8 FTEs, costed every option in full, and showed that bringing officers in-house saves money while keeping two people on at night, when most incidents happen.",
+    "bestPractice": [
+      "Start from post hours: hours per day x days x posts.",
+      "Convert to FTEs with productive hours, not paid hours.",
+      "Compare total annual cost, including recruitment, training, kit and supervision.",
+      "Weigh performance, control of standards and transition risk alongside cost.",
+      "Match staffing to when incidents happen before cutting a post.",
+      "Recommend with numbers to the people who decide, and tell the team yourself."
+    ],
+    "why": "Security budgets are easy to cut and hard to defend with feelings. A model built on post hours, productive hours and incident data lets finance see exactly what each option buys.",
+    "commonMistakes": [
+      "Comparing hourly rates.",
+      "Using paid hours for FTEs.",
+      "Cutting the night post because nights are quiet for guests.",
+      "Forgetting the transition."
+    ]
+  },
+  "procedureCards": [
+    "staffing_model"
+  ],
+  "reportAt": "lp_office",
+  "passMark": 60,
+  "xp": 320,
+  "weeks": 2,
+  "lesson": "Post hours, productive hours, total cost, and the hours when things go wrong."
+}

@@ -1,0 +1,100 @@
+{
+  "schema": 1,
+  "endings": [
+    {
+      "id": "inquiry_board",
+      "title": "Half the story",
+      "when": {"flags": ["x001_spun_board"]},
+      "epilogue": [
+        "The owners' audit found the 118 unexplained entries in your own review, the one the board never saw.",
+        "You resigned before the chair could ask. The lock standard you wrote was adopted anyway, under someone else's name.",
+        "Lesson: a board can forgive bad news. It never forgives being kept from it."]
+    },
+    {
+      "id": "inquiry_family",
+      "title": "The inquiry",
+      "when": {"flags": ["x001_withheld"]},
+      "epilogue": [
+        "Maren Varnham learned the truth from a reporter, and the inquiry that followed was about Veldane's silence more than the intruder.",
+        "Counsel kept the company's liability small. The reputation never recovered, and nor did yours.",
+        "Lesson: candour and legal care fit together. Silence fits with neither."]
+    },
+    {
+      "id": "inquiry_records",
+      "title": "The record that wasn't",
+      "when": {"flags": ["records_falsified"]},
+      "epilogue": [
+        "Years later a lawyer asked for the original patrol logs, and the ones on file didn't match the clock.",
+        "Everything you built after that was read in its light. You left the industry quietly.",
+        "Lesson: a record is only worth something if nobody has ever changed it."]
+    },
+    {
+      "id": "inquiry_renewal",
+      "title": "The form",
+      "when": {"flags": ["m027_nondisclosure"]},
+      "epilogue": [
+        "When the big claim came, Tarrowby went back to the renewal form and found the claim that had been left off it.",
+        "Cover was disputed, the owners paid, and the board asked who signed the form.",
+        "Lesson: an insurer prices what it is told. Tell it everything."]
+    },
+    {
+      "id": "burnout",
+      "title": "Running on empty",
+      "when": {"minStress": 85},
+      "epilogue": [
+        "You reached the top with nothing left. Six months into the job your doctor signed you off, and the deputy you never had time to train ran the programme alone.",
+        "Lesson: crisis leaders rest between crises, or they stop being leaders."]
+    },
+    {
+      "id": "got_away",
+      "title": "The one that got away",
+      "when": {"passed": ["X001"], "flags": ["m024_called_suspect"]},
+      "epilogue": [
+        "The board funded the programme and the buyer went to prison. But the cards that opened room 907 came from stock taken by a man you once warned off before the police could act.",
+        "You still think about the phone call.",
+        "Lesson: leave the arrest to the police. A warning only moves the problem."]
+    },
+    {
+      "id": "the_standard",
+      "title": "The Veldane standard",
+      "when": {"passed": ["X001"], "metrics": [
+        {"metric": "GuestSatisfaction", "atLeast": 70}, {"metric": "Reputation", "atLeast": 68},
+        {"metric": "StaffMorale", "atLeast": 60}, {"metric": "SafetyCompliance", "atLeast": 60}]},
+      "epilogue": [
+        "A year after room 907, you went back to the board with the number. Unexplained entries were down by two thirds across the group, and every one had been investigated.",
+        "The night officer you trained on your first shift runs the Harbourfront now. Other companies borrow your field manual; you let them.",
+        "Lesson: observe, report, de-escalate, and tell the truth. It scales."]
+    },
+    {
+      "id": "people_leader",
+      "title": "The people's VP",
+      "when": {"passed": ["X001"], "metrics": [{"metric": "StaffMorale", "atLeast": 60}]},
+      "epilogue": [
+        "Staff across the group knew your name and trusted that a report to you would be heard. Some of the numbers lagged, but the people who would fix them stayed.",
+        "Lesson: a programme is only as good as the people who speak up in it."]
+    },
+    {
+      "id": "numbers_person",
+      "title": "The numbers person",
+      "when": {"passed": ["X001"], "metrics": [{"metric": "InsurerConfidence", "atLeast": 55}, {"metric": "OwnerTrust", "atLeast": 58}]},
+      "epilogue": [
+        "Insurers cut the group's premium and owners funded every case you made. Some floors still felt the strain of the changes, and you knew it.",
+        "Lesson: the numbers win the budget. The people make it work."]
+    },
+    {
+      "id": "safe_hands",
+      "title": "Safe hands",
+      "when": {"passed": ["X001"]},
+      "epilogue": [
+        "Nothing about your tenure made the news, which in this job is the point. The programme was sound, if not yet loved.",
+        "Lesson: safe is the start. The best programmes are trusted too."]
+    },
+    {
+      "id": "unfinished",
+      "title": "Unfinished business",
+      "epilogue": [
+        "Your career came to a pause before the work was done. The field manual you kept is still in the drawer of the LP office, and the night shift still reads it.",
+        "Lesson: every case is a chance to try again, and to do it by the book."]
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "sets": [
+    {
+      "id": "first_nights",
+      "title": "First nights: officer basics",
+      "description": "Room entry, identity checks, de-escalation, keys and CCTV. For new officers and front office staff.",
+      "missions": ["M001", "M002", "M003", "M007", "M008"]
+    },
+    {
+      "id": "life_safety",
+      "title": "Fire and life safety",
+      "description": "Alarm response, impairments, hot work, occupant load and a fire on a guest floor.",
+      "missions": ["M012", "M013", "M015", "M022", "C003"]
+    },
+    {
+      "id": "guest_welfare",
+      "title": "Guest welfare and care",
+      "description": "Medical response, a slip claim, a missing child, a death on property and trafficking awareness.",
+      "missions": ["M005", "M014", "M020", "M021", "M029"]
+    },
+    {
+      "id": "investigations",
+      "title": "Investigations and people",
+      "description": "Workplace complaints, shrink, a supervisor's cover-up, speak-up and retaliation.",
+      "missions": ["M016", "M017", "M026", "M034"]
+    },
+    {
+      "id": "crisis_leadership",
+      "title": "Crisis leadership",
+      "description": "Power outage, bomb threat, guest floor fire and a hurricane, run from the crisis room.",
+      "missions": ["C001", "C002", "C003", "C004"]
+    }
+  ]
+}

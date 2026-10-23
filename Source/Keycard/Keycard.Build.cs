@@ -1,3 +1,4 @@
+using System.IO;
 using UnrealBuildTool;
 
 // Gameplay and presentation: first-person character, interaction, Slate screens, people,
@@ -8,7 +9,18 @@ public class Keycard : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 		PublicDependencyModuleNames.AddRange(new string[] {
-			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "Slate", "SlateCore", "KeycardSim" });
-		// Phase 1 adds Data/ runtime dependencies (missions, people, dialogue, voice cast) as in Riskbound.
+			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "Slate", "SlateCore", "RHI", "KeycardSim" });
+		// RenderCore: the self-test tour reads GGameThreadTime/GRenderThreadTime.
+		PrivateDependencyModuleNames.AddRange(new string[] { "RenderCore" });
+
+		// Content read from disk at startup (validated on load): missions, people, story, events,
+		// the Field Manual, the glossary, endings, the audio manifest, and the UI fonts when present.
+		string ProjectDir = Path.GetFullPath(Path.Combine(ModuleDirectory, "..", ".."));
+		RuntimeDependencies.Add(Path.Combine(ProjectDir, "Data", "*.json"));
+		RuntimeDependencies.Add(Path.Combine(ProjectDir, "Data", "Missions", "*.json"));
+		if (Directory.Exists(Path.Combine(ProjectDir, "Resources", "Fonts")))
+		{
+			RuntimeDependencies.Add(Path.Combine(ProjectDir, "Resources", "Fonts", "*.ttf"));
+		}
 	}
 }

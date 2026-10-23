@@ -1,0 +1,475 @@
+{
+  "schema": 1,
+  "id": "M027",
+  "title": "Insurer Renewal Review",
+  "kind": "mission",
+  "topic": "insurance_renewal",
+  "minLevel": 8,
+  "opening": {
+    "channel": "email",
+    "from": "adjuster",
+    "at": "boardroom",
+    "text": "Ahead of renewal: Tarrowby Mutual's underwriters are proposing 18% on the property and liability programme for the Port Avener hotels. I've asked them to hear your side first. Boardroom, Thursday at ten. Bring evidence, not adjectives. Odile."
+  },
+  "briefing": [
+    "10:00, Thursday. You are Area Director of Safety and Security. The insurance programme for the Harbourfront and the airport renews in six weeks. Tarrowby Mutual proposes an 18% increase on a premium of 610,000.",
+    "Veldane renewal method: know your loss history better than the insurer does; disclose every known claim and circumstance (a non-disclosure can void cover when you need it most); show the risk improvements with evidence, not promises; check that reserves on open claims are right; weigh deductible and limit options on total cost, not premium alone; agree the risk engineer's recommendations with dates. Your authority is 1,000,000."
+  ],
+  "context": [
+    {
+      "ifFlag": "lift_forced_claim",
+      "text": "The lift 2 knee claim from the outage is open, and the file says hotel staff forced the doors."
+    },
+    {
+      "ifFlag": "device_handled",
+      "text": "The insurer has asked twice for the bomb threat procedure and training records since the holdall was opened."
+    },
+    {
+      "ifFlag": "impairment_warranty",
+      "text": "The sprinkler impairment warranty from the floor 14 valve case is on the policy. They will check you've kept it."
+    }
+  ],
+  "learningObjectives": [
+    "Incurred, paid and reserved on an open claim",
+    "Full disclosure at renewal",
+    "Risk improvements with evidence"
+  ],
+  "start": "10:00",
+  "actions": [
+    {
+      "id": "loss_history",
+      "label": "Build the five-year loss history",
+      "kind": "check",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 5,
+      "required": true,
+      "findingTitle": "Five years",
+      "finding": "Five years, both hotels: 61 liability claims, 9 property losses. The frequency is falling since the claims process changed (photos, statements, no admissions). Two large claims drive the increase: a kitchen hood fire four years ago and an open guest injury claim with 8,400 paid so far."
+    },
+    {
+      "id": "open_claim",
+      "label": "Check the reserve on the open injury claim with Odile",
+      "kind": "interview",
+      "at": "exec_offices",
+      "person": "adjuster",
+      "minutes": 4,
+      "requires": [
+        "loss_history"
+      ],
+      "required": true,
+      "findingTitle": "Reserve too low",
+      "finding": "The open claim: medical 6,200 expected, indemnity estimated at 14,000, legal and expert costs 3,500, 8,400 paid to date. The reserve on the file was set at the start and never updated. Odile agrees to correct it before the submission.",
+      "lines": [
+        {
+          "speaker": "adjuster",
+          "text": "Underwriters hate surprises more than they hate losses. If the reserve's wrong, I'd rather we say so now."
+        }
+      ]
+    },
+    {
+      "id": "improvements",
+      "label": "Pull the evidence of the risk improvements",
+      "kind": "check",
+      "at": "fire_command",
+      "spot": "fire_panel",
+      "minutes": 4,
+      "requires": [
+        "loss_history"
+      ],
+      "required": true,
+      "findingTitle": "Evidence pack",
+      "finding": "Impairment log with every notice to the insurer within the hour; hot work permits with fire watches signed off; the kitchen hood service records; drill and emergency lighting test logs; 30-day CCTV at both sites; the cluster standard audits. Each item has a date and a document."
+    },
+    {
+      "id": "hide_circumstance",
+      "label": "Leave the threatened claim from the couple turned away at the desk out of the submission",
+      "kind": "other",
+      "at": "boardroom",
+      "minutes": 1,
+      "requires": [
+        "loss_history"
+      ],
+      "findingTitle": "Not disclosed",
+      "finding": "A known circumstance is left out of the renewal submission to keep the figures down. If it becomes a claim, Tarrowby can argue the risk was misrepresented.",
+      "effects": {
+        "InsurerConfidence": -3
+      },
+      "setsFlags": [
+        "m027_nondisclosure"
+      ],
+      "schedules": [
+        {
+          "id": "cover_disputed",
+          "description": "A claim arrives from a circumstance the hotel knew about and didn't disclose at renewal. Tarrowby reserves its rights and disputes cover.",
+          "delayWeeks": 8,
+          "probability": 0.6,
+          "effects": {
+            "InsurerConfidence": -6,
+            "IncidentCosts": 30000,
+            "OwnerTrust": -4
+          },
+          "flagIfOccurs": "cover_disputed"
+        }
+      ]
+    },
+    {
+      "id": "options",
+      "label": "Go through premium and deductible options with Hamish",
+      "kind": "interview",
+      "at": "exec_offices",
+      "spot": "finance_office",
+      "person": "finance_director",
+      "minutes": 4,
+      "requires": [
+        "open_claim"
+      ],
+      "required": true,
+      "findingTitle": "Total cost of risk",
+      "finding": "Option A: 18% on a 10,000 deductible. Option B: 9% on a 25,000 deductible. With the claims pattern (most under 25,000, about four a year above 10,000), B costs less in total by about 21,000 a year, if the improvements hold. Hamish wants it in writing.",
+      "lines": [
+        {
+          "speaker": "finance_director",
+          "text": "The premium is the number everyone sees. The deductible is the one we pay. Show me both."
+        }
+      ]
+    },
+    {
+      "id": "renewal_meeting",
+      "label": "Present to Tarrowby Mutual",
+      "kind": "interview",
+      "at": "boardroom",
+      "person": "adjuster",
+      "minutes": 6,
+      "requires": [
+        "improvements",
+        "options"
+      ],
+      "required": true,
+      "findingTitle": "Renewal agreed",
+      "finding": "You give the loss history, the corrected reserve, every known circumstance, the evidence pack and the risk engineer's last recommendations with dates closed. Tarrowby offers 7% on the 25,000 deductible, conditional on the kitchen suppression upgrade within six months.",
+      "lines": [
+        {
+          "speaker": "adjuster",
+          "text": "Corrected reserves, disclosed circumstances, and documents for every claim you made. I'll tell them this is what a well-run risk looks like."
+        }
+      ]
+    },
+    {
+      "id": "promise_cameras",
+      "label": "Promise a new CCTV system across both hotels to win the discount",
+      "kind": "other",
+      "at": "boardroom",
+      "minutes": 1,
+      "requires": [
+        "renewal_meeting"
+      ],
+      "findingTitle": "A promise",
+      "finding": "Tarrowby writes your promise into the policy as a condition: a new CCTV system at both hotels by renewal. There is no budget, no business case and no supplier.",
+      "effects": {
+        "OwnerTrust": -2
+      },
+      "schedules": [
+        {
+          "id": "condition_breached",
+          "description": "Renewal comes round and the promised CCTV system doesn't exist. Tarrowby treats it as a breached condition and loads the premium.",
+          "delayWeeks": 10,
+          "probability": 0.8,
+          "effects": {
+            "InsurerConfidence": -5,
+            "LpBudget": -20000
+          },
+          "flagIfOccurs": "condition_breached"
+        }
+      ]
+    },
+    {
+      "id": "recommendations",
+      "label": "Record the risk engineer's recommendations with owners",
+      "kind": "logEvidence",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 4,
+      "requires": [
+        "renewal_meeting"
+      ],
+      "required": true,
+      "findingTitle": "Tracked",
+      "finding": "Four recommendations from Tarrowby's risk engineer, each with an owner, a date and a budget line: kitchen suppression upgrade (engineering, six months), generator load test (annual), lift rescue contract times, CCTV recorder health checks. Reported to the insurer quarterly."
+    }
+  ],
+  "questions": [
+    {
+      "id": "q_incurred",
+      "kind": "numeric",
+      "prompt": "Open injury claim: medical 6,200, indemnity 14,000, expenses 3,500, paid to date 8,400. What is the claim's incurred value?",
+      "dimension": "Evidence",
+      "competency": "FinancialAcumen",
+      "weight": 10,
+      "formula": {
+        "name": "ClaimIncurred",
+        "inputs": {
+          "medical": 6200,
+          "indemnity": 14000,
+          "expense": 3500,
+          "paid": 8400
+        }
+      },
+      "tolerance": 0.02,
+      "unit": "",
+      "explanation": "Reserve = medical + indemnity + expense - paid = 6,200 + 14,000 + 3,500 - 8,400 = 15,300. Incurred = paid + reserve = 8,400 + 15,300 = 23,700: the claim's expected total cost, which is what underwriters price on.",
+      "mistakes": [
+        {
+          "value": 15300,
+          "feedback": "That is the reserve: what is still to pay. Incurred adds what has been paid already."
+        },
+        {
+          "value": 32100,
+          "feedback": "That counts the 8,400 paid twice. Incurred is paid plus the remaining reserve."
+        },
+        {
+          "value": 8400,
+          "feedback": "That is only what has been paid so far."
+        }
+      ]
+    },
+    {
+      "id": "d_disclose",
+      "prompt": "A couple threatened legal action after being turned away at the desk. Do you disclose it at renewal?",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 9,
+      "options": [
+        {
+          "id": "yes",
+          "label": "Yes: every known claim and circumstance goes in the submission.",
+          "score": 100,
+          "feedback": "Disclosure protects the cover. A circumstance left out is the insurer's best argument when that claim arrives."
+        },
+        {
+          "id": "no",
+          "label": "No: it isn't a claim yet, and it would put the price up.",
+          "score": 10,
+          "critical": true,
+          "feedback": "Known circumstances must be disclosed. Leaving one out to keep the price down risks the cover itself."
+        },
+        {
+          "id": "later",
+          "label": "Tell them if it turns into a claim.",
+          "score": 30,
+          "feedback": "By then it is too late: it was known at renewal and not disclosed."
+        }
+      ]
+    },
+    {
+      "id": "d_option",
+      "prompt": "Which programme do you recommend?",
+      "dimension": "Cost",
+      "competency": "FinancialAcumen",
+      "weight": 9,
+      "options": [
+        {
+          "id": "b",
+          "label": "The 25,000 deductible: lower total cost of risk, with the improvements kept and the deductible budgeted.",
+          "score": 100,
+          "feedback": "Total cost of risk is premium plus retained losses. With most claims under 25,000 and fewer of them, retaining more costs less."
+        },
+        {
+          "id": "a",
+          "label": "The 10,000 deductible: the lowest deductible is the safest.",
+          "score": 40,
+          "feedback": "Safest for the budget line, dearest overall: you pay the insurer to handle claims you can predict."
+        },
+        {
+          "id": "none",
+          "label": "Self-insure liability entirely.",
+          "score": 10,
+          "feedback": "One serious injury or fire would cost more than a decade of premiums. Retain the predictable, insure the severe."
+        }
+      ]
+    },
+    {
+      "id": "d_evidence",
+      "kind": "multi",
+      "prompt": "What makes the improvements credible to an underwriter?",
+      "dimension": "Communication",
+      "competency": "CrisisLeadership",
+      "weight": 11,
+      "options": [
+        {
+          "id": "dated",
+          "label": "Dated records: impairment notices, permits, test logs",
+          "correct": true
+        },
+        {
+          "id": "trend",
+          "label": "Claim frequency trends since the changes",
+          "correct": true
+        },
+        {
+          "id": "closed",
+          "label": "The risk engineer's recommendations shown closed, with dates",
+          "correct": true
+        },
+        {
+          "id": "promise",
+          "label": "Promises of new systems next year",
+          "feedback": "A promise becomes a policy condition. Bring what's done, and a funded plan for the rest."
+        }
+      ]
+    },
+    {
+      "id": "r_what",
+      "prompt": "Renewal summary for the executive committee (one line)",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 7,
+      "section": "what",
+      "options": [
+        {
+          "id": "facts",
+          "label": "Renewal agreed at 7% on a 25,000 deductible (offer was 18% on 10,000) after full disclosure, a corrected reserve and dated evidence; condition: kitchen suppression upgrade in six months; four recommendations tracked.",
+          "score": 100,
+          "feedback": "The outcome, why, the condition and what you owe the insurer."
+        },
+        {
+          "id": "win",
+          "label": "Premium increase cut from 18% to 7%.",
+          "score": 35,
+          "feedback": "Half the story: the condition and the higher deductible matter to the committee."
+        },
+        {
+          "id": "insurer",
+          "label": "Insurer tried to overcharge and backed down.",
+          "score": 10,
+          "feedback": "Not true and not useful. The price moved because the risk was shown to be better managed."
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "c_history",
+      "label": "Know the history",
+      "kind": "done",
+      "action": "loss_history",
+      "dimension": "Evidence",
+      "competency": "Investigation",
+      "weight": 6,
+      "pass": "You knew the loss history better than the insurer.",
+      "fail": "You went in without the loss history."
+    },
+    {
+      "id": "c_reserve",
+      "label": "Correct the reserve",
+      "kind": "before",
+      "action": "open_claim",
+      "other": "renewal_meeting",
+      "dimension": "Evidence",
+      "competency": "FinancialAcumen",
+      "weight": 7,
+      "pass": "The open claim's reserve was corrected before the submission.",
+      "fail": "The submission carried a wrong reserve."
+    },
+    {
+      "id": "c_disclose",
+      "label": "Disclose everything",
+      "kind": "notDone",
+      "action": "hide_circumstance",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 10,
+      "pass": "Every known circumstance was disclosed.",
+      "fail": "A known circumstance was left out."
+    },
+    {
+      "id": "c_no_promise",
+      "label": "No unfunded promises",
+      "kind": "notDone",
+      "action": "promise_cameras",
+      "dimension": "Cost",
+      "competency": "FinancialAcumen",
+      "weight": 7,
+      "pass": "Nothing was promised that wasn't funded.",
+      "fail": "An unfunded promise became a policy condition."
+    },
+    {
+      "id": "c_options",
+      "label": "Total cost of risk",
+      "kind": "done",
+      "action": "options",
+      "dimension": "Cost",
+      "competency": "FinancialAcumen",
+      "weight": 6,
+      "pass": "You compared programmes on total cost, with finance.",
+      "fail": "You compared premiums only."
+    },
+    {
+      "id": "c_recs",
+      "label": "Track the recommendations",
+      "kind": "done",
+      "action": "recommendations",
+      "dimension": "Report",
+      "competency": "ComplianceAudit",
+      "weight": 6,
+      "pass": "Every recommendation has an owner, a date and a budget.",
+      "fail": "The recommendations were filed and forgotten."
+    },
+    {
+      "id": "c_meeting",
+      "label": "Present it yourself",
+      "kind": "done",
+      "action": "renewal_meeting",
+      "dimension": "Communication",
+      "competency": "CrisisLeadership",
+      "weight": 6,
+      "pass": "The underwriters heard the risk from the person who runs it.",
+      "fail": "The renewal went through without your side being heard."
+    },
+    {
+      "id": "c_evidence",
+      "label": "Evidence, not adjectives",
+      "kind": "done",
+      "action": "improvements",
+      "dimension": "Communication",
+      "competency": "CrisisLeadership",
+      "weight": 6,
+      "pass": "The improvements came with dated documents.",
+      "fail": "The improvements were described, not shown."
+    }
+  ],
+  "bestOrder": [
+    "loss_history",
+    "open_claim",
+    "improvements",
+    "options",
+    "renewal_meeting",
+    "recommendations"
+  ],
+  "debrief": {
+    "whatHappened": "Facing an 18% increase, you built the loss history, corrected an open claim's reserve, disclosed every known circumstance, showed dated evidence of the improvements, and chose a higher deductible on total cost of risk. Tarrowby renewed at 7% with one condition you can meet.",
+    "bestPractice": [
+      "Know the loss history better than the insurer.",
+      "Check reserves on open claims: incurred = paid + reserve.",
+      "Disclose every known claim and circumstance.",
+      "Show improvements with dated records, not promises.",
+      "Choose limits and deductibles on total cost of risk.",
+      "Track the risk engineer's recommendations to closure."
+    ],
+    "why": "Insurers price on what they can see and what they fear they can't. A risk manager who brings complete, honest, dated evidence is cheaper to insure, and keeps cover that holds up on the worst day.",
+    "commonMistakes": [
+      "Leaving out known circumstances.",
+      "Stale reserves.",
+      "Comparing premiums, not total cost.",
+      "Promising what isn't funded."
+    ]
+  },
+  "procedureCards": [
+    "insurance_renewal"
+  ],
+  "reportAt": "lp_office",
+  "passMark": 60,
+  "xp": 420,
+  "weeks": 2,
+  "lesson": "Know the history, correct the reserves, disclose everything, evidence not promises, total cost of risk."
+}

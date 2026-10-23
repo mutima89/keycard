@@ -1,0 +1,487 @@
+{
+  "schema": 1,
+  "id": "M025",
+  "title": "Chargeback Fraud Ring",
+  "kind": "mission",
+  "topic": "payment_fraud",
+  "minLevel": 7,
+  "opening": {
+    "channel": "phone",
+    "from": "credit_manager",
+    "at": "exec_offices",
+    "text": "It's Anneliese Thorburn in credit. I've had fourteen chargebacks in six weeks, all 'cardholder did not authorise', all website bookings. That isn't bad luck. Can you come up?"
+  },
+  "briefing": [
+    "14:00, Wednesday. Fourteen chargebacks in six weeks at the Harbourfront, every one a stolen-card dispute on a booking made on the Veldane website.",
+    "Veldane payment fraud method: find the pattern in the bookings, not the people; check what is still to arrive; for suspect bookings ask for the cardholder's authorisation, or payment from the guest at check-in, and never accuse a guest; preserve check-in records and footage; dispute the chargebacks the evidence can win; report an organised pattern to the police and the card acquirer; LP does not detain anyone for suspected fraud. Your authority is 400,000."
+  ],
+  "learningObjectives": [
+    "Finding the pattern in the bookings",
+    "Verifying payment without accusing guests",
+    "Annualising a run of losses"
+  ],
+  "start": "14:00",
+  "actions": [
+    {
+      "id": "meet_anneliese",
+      "label": "Go through the chargebacks with Anneliese",
+      "kind": "interview",
+      "at": "exec_offices",
+      "person": "credit_manager",
+      "minutes": 4,
+      "required": true,
+      "findingTitle": "Fourteen disputes",
+      "finding": "Fourteen chargebacks, 10,640 in all with the fees: two or three nights each, booked on the website within 48 hours of arrival, prepaid on cards issued abroad, room service and bar on the folio. The guests checked in with ID that didn't match the cardholder's name. Each dispute arrived five to eight weeks after the stay.",
+      "lines": [
+        {
+          "speaker": "credit_manager",
+          "text": "I can win a dispute with a signature and an ID copy. I can't win one where we never asked."
+        }
+      ]
+    },
+    {
+      "id": "pattern",
+      "label": "Find the pattern in the bookings",
+      "kind": "check",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 5,
+      "requires": [
+        "meet_anneliese"
+      ],
+      "required": true,
+      "findingTitle": "One booker",
+      "finding": "All fourteen came from three email domains registered last spring, through two IP ranges, with the same phone number in nine of them. The guests are different people every time. The pattern points at one booker selling discounted rooms to travellers who may not know the cards are stolen."
+    },
+    {
+      "id": "upcoming",
+      "label": "Check the arrivals still to come",
+      "kind": "check",
+      "at": "front_desk",
+      "spot": "front_office_pc",
+      "minutes": 3,
+      "requires": [
+        "pattern"
+      ],
+      "required": true,
+      "findingTitle": "Four more on the books",
+      "finding": "Four arrivals this week match the pattern, two tonight. Each is flagged on the reservation: verify payment at check-in."
+    },
+    {
+      "id": "cctv_checkins",
+      "label": "Review the check-in footage for the fourteen stays",
+      "kind": "cctvReview",
+      "at": "cctv_room",
+      "spot": "cctv_console",
+      "minutes": 5,
+      "requires": [
+        "pattern"
+      ],
+      "evidence": "KC-2501",
+      "findingTitle": "The same companion",
+      "finding": "In eight of the fourteen check-ins the same man stands beside the guest, handles the conversation and leaves without a key. Clips exported, hashed and logged as KC-2501. Nothing in them shows the guests knew anything."
+    },
+    {
+      "id": "desk_procedure",
+      "label": "Agree the check-in rule for suspect bookings with Gideon",
+      "kind": "interview",
+      "at": "front_desk",
+      "person": "front_office_manager",
+      "minutes": 4,
+      "requires": [
+        "upcoming"
+      ],
+      "required": true,
+      "findingTitle": "Verify, don't accuse",
+      "finding": "For a flagged booking: the desk asks, politely and in the same words as for anyone, for the card used to book or a signed third-party authorisation from the cardholder. Without either, the guest pays by their own card or cash at check-in, or the booking is cancelled at no cost to them. The desk never says 'fraud'.",
+      "lines": [
+        {
+          "speaker": "front_office_manager",
+          "text": "Same script for everyone, and nobody at my desk says the word fraud. Fine. That I can train tonight."
+        }
+      ]
+    },
+    {
+      "id": "refuse_guests",
+      "label": "Tell the desk to turn away the flagged guests as fraudsters",
+      "kind": "other",
+      "at": "front_desk",
+      "minutes": 1,
+      "requires": [
+        "upcoming"
+      ],
+      "findingTitle": "Turned away",
+      "finding": "Tonight's two arrivals, a couple from overseas, are told at the desk that their booking is fraudulent, in front of a queue. They paid a 'travel agent' in good faith. One of them posts the exchange online.",
+      "effects": {
+        "GuestSatisfaction": -4,
+        "Reputation": -4
+      },
+      "schedules": [
+        {
+          "id": "fraud_accusation_review",
+          "description": "The couple turned away as 'fraudsters' have their story picked up by a travel site. Counsel deals with a defamation letter.",
+          "delayWeeks": 3,
+          "probability": 0.6,
+          "effects": {
+            "Reputation": -4,
+            "IncidentCosts": 6000
+          },
+          "flagIfOccurs": "guests_accused"
+        }
+      ]
+    },
+    {
+      "id": "detain_companion",
+      "label": "Hold the companion in the back office when he next appears",
+      "kind": "detain",
+      "at": "lobby",
+      "minutes": 2,
+      "requires": [
+        "cctv_checkins"
+      ],
+      "findingTitle": "Held",
+      "finding": "He walks in with tonight's guests and two officers take him into the back office. He has done nothing at the hotel tonight that anyone saw. He demands to leave; after twenty minutes he is let go, and he does not come back.",
+      "effects": {
+        "SafetyCompliance": -5,
+        "SecurityPosture": -2
+      },
+      "schedules": [
+        {
+          "id": "unlawful_hold_claim",
+          "description": "The companion's lawyer writes: he was held without lawful grounds. The police can no longer approach him quietly.",
+          "delayWeeks": 3,
+          "probability": 0.7,
+          "effects": {
+            "OwnerTrust": -4,
+            "IncidentCosts": 9000
+          },
+          "flagIfOccurs": "companion_detained"
+        }
+      ]
+    },
+    {
+      "id": "report_police",
+      "label": "Report the pattern to DS Calloway and the card acquirer",
+      "kind": "call",
+      "at": "lp_office",
+      "spot": "lp_desk",
+      "person": "police_liaison",
+      "minutes": 3,
+      "requires": [
+        "cctv_checkins"
+      ],
+      "required": true,
+      "findingTitle": "Reported",
+      "finding": "DS Calloway passes it to the financial crime unit, with KC-2501, the booking data and the four upcoming arrivals. The acquirer's fraud team blocks the three email domains across its merchants and tells you the same booker has hit two other hotels in the city."
+    },
+    {
+      "id": "disputes",
+      "label": "Agree which chargebacks to fight with Anneliese",
+      "kind": "interview",
+      "at": "exec_offices",
+      "person": "credit_manager",
+      "minutes": 3,
+      "requires": [
+        "pattern"
+      ],
+      "findingTitle": "Three worth fighting",
+      "finding": "Three stays have a signed registration card and an ID copy that match a named traveller and the dates; Anneliese represents those. The other eleven have nothing that answers 'cardholder did not authorise': accepted, and written off with the lesson attached."
+    },
+    {
+      "id": "case_record",
+      "label": "Write up the fraud case",
+      "kind": "logEvidence",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 4,
+      "requires": [
+        "report_police",
+        "desk_procedure"
+      ],
+      "required": true,
+      "findingTitle": "Recorded",
+      "finding": "The pattern, the fourteen disputes and their outcomes, KC-2501, the police and acquirer references, the new check-in rule for flagged bookings and a monthly chargeback review with credit."
+    }
+  ],
+  "questions": [
+    {
+      "id": "q_annual",
+      "kind": "numeric",
+      "prompt": "Fourteen chargebacks in six weeks is about 120 a year, at an average cost of 760. What is the annualised loss if nothing changes?",
+      "dimension": "Cost",
+      "competency": "FinancialAcumen",
+      "weight": 10,
+      "formula": {
+        "name": "AnnualisedLoss",
+        "inputs": {
+          "eventsPerYear": 120,
+          "averageCost": 760
+        }
+      },
+      "tolerance": 0.02,
+      "unit": "",
+      "explanation": "Annualised loss = events per year x average cost = 120 x 760 = 91,200 a year. That is the average you'd expect, not the worst case, and it is what a check-in rule and a monthly review are weighed against.",
+      "mistakes": [
+        {
+          "value": 10640,
+          "feedback": "That is the six weeks' loss so far. Annualise it: events per year, not events to date."
+        },
+        {
+          "value": 1064,
+          "feedback": "Fourteen events at 760 is 10,640, and that is six weeks, not a year."
+        }
+      ]
+    },
+    {
+      "id": "d_checkin",
+      "prompt": "Two flagged guests arrive tonight. What does the desk do?",
+      "dimension": "Care",
+      "competency": "GuestServiceDeescalation",
+      "weight": 9,
+      "options": [
+        {
+          "id": "verify",
+          "label": "Ask, as for anyone, for the booking card or the cardholder's signed authorisation; otherwise they pay by their own means or cancel at no cost.",
+          "score": 100,
+          "feedback": "The hotel is protected and the guests, who may be victims too, are treated like every other guest."
+        },
+        {
+          "id": "refuse",
+          "label": "Tell them the booking is fraudulent and refuse them.",
+          "score": 10,
+          "critical": true,
+          "feedback": "An accusation at the desk, about people who may have paid in good faith, is a defamation risk and a cruelty. Verify payment; never accuse."
+        },
+        {
+          "id": "nothing",
+          "label": "Check them in as normal and dispute it later.",
+          "score": 25,
+          "feedback": "Then it is chargeback fifteen and sixteen, with nothing to dispute with."
+        }
+      ]
+    },
+    {
+      "id": "d_companion",
+      "prompt": "The companion from the footage walks in with tonight's guests. What do you do?",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 9,
+      "options": [
+        {
+          "id": "observe",
+          "label": "Observe and record; tell DS Calloway at once; the desk follows the payment rule as normal.",
+          "score": 100,
+          "feedback": "He has done nothing at the hotel tonight that gives grounds to hold him. The police can act on what you record."
+        },
+        {
+          "id": "hold",
+          "label": "Hold him in the back office until the police come.",
+          "score": 10,
+          "critical": true,
+          "feedback": "Detention for suspected fraud is outside Veldane policy and, in most places, the law. It also warns him."
+        },
+        {
+          "id": "confront",
+          "label": "Ask him at the desk who he is and what he's doing.",
+          "score": 30,
+          "feedback": "It tells him he has been spotted and gives the police nothing."
+        }
+      ]
+    },
+    {
+      "id": "d_signals",
+      "kind": "multi",
+      "prompt": "Which signs flag a booking for payment checks?",
+      "dimension": "Evidence",
+      "competency": "Investigation",
+      "weight": 7,
+      "options": [
+        {
+          "id": "late",
+          "label": "Booked online within 48 hours of arrival on a card issued abroad",
+          "correct": true
+        },
+        {
+          "id": "domain",
+          "label": "An email domain or phone number linked to past chargebacks",
+          "correct": true
+        },
+        {
+          "id": "name",
+          "label": "Cardholder name different from the guest's, with no authorisation",
+          "correct": true
+        },
+        {
+          "id": "accent",
+          "label": "The guest's accent or nationality",
+          "feedback": "Never. That is profiling, and it says nothing about the booking."
+        }
+      ]
+    },
+    {
+      "id": "r_what",
+      "prompt": "Fraud case, summary (one line)",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 7,
+      "section": "what",
+      "options": [
+        {
+          "id": "facts",
+          "label": "Fourteen stolen-card chargebacks (10,640) in six weeks from one booking source; four upcoming flagged and verified at check-in; footage KC-2501 and booking data to police and acquirer; three disputes represented; check-in rule and monthly review in place.",
+          "score": 100,
+          "feedback": "The pattern, the money, the evidence, who has it, and what changes."
+        },
+        {
+          "id": "guests",
+          "label": "Foreign guests using stolen cards.",
+          "score": 10,
+          "feedback": "Wrong and unfair: the evidence points at one booker, and the guests may be victims."
+        },
+        {
+          "id": "credit",
+          "label": "Credit to dispute all chargebacks.",
+          "score": 25,
+          "feedback": "Eleven of them can't be won. The fix is at the desk and in the bookings."
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "c_pattern",
+      "label": "Find the pattern",
+      "kind": "done",
+      "action": "pattern",
+      "dimension": "Evidence",
+      "competency": "Investigation",
+      "weight": 8,
+      "pass": "You found one booker behind fourteen disputes.",
+      "fail": "You never looked for what the disputes had in common."
+    },
+    {
+      "id": "c_upcoming",
+      "label": "Check what's coming",
+      "kind": "done",
+      "action": "upcoming",
+      "dimension": "Procedure",
+      "competency": "IncidentResponse",
+      "weight": 7,
+      "pass": "The next four bookings were flagged before they arrived.",
+      "fail": "The next four bookings came and went."
+    },
+    {
+      "id": "c_rule",
+      "label": "A fair check-in rule",
+      "kind": "done",
+      "action": "desk_procedure",
+      "dimension": "Procedure",
+      "competency": "GuestServiceDeescalation",
+      "weight": 6,
+      "pass": "The desk has one script for every flagged booking.",
+      "fail": "The desk was left to improvise."
+    },
+    {
+      "id": "c_footage",
+      "label": "Preserve the check-ins",
+      "kind": "done",
+      "action": "cctv_checkins",
+      "dimension": "Evidence",
+      "competency": "EvidenceReporting",
+      "weight": 4,
+      "pass": "The check-in footage was exported and logged.",
+      "fail": "The footage that showed the companion was left to overwrite."
+    },
+    {
+      "id": "c_no_refuse",
+      "label": "No accusations",
+      "kind": "notDone",
+      "action": "refuse_guests",
+      "dimension": "Care",
+      "competency": "GuestServiceDeescalation",
+      "weight": 8,
+      "pass": "No guest was called a fraudster.",
+      "fail": "Guests were accused at the desk."
+    },
+    {
+      "id": "c_no_detain",
+      "label": "No detention",
+      "kind": "notDone",
+      "action": "detain_companion",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 9,
+      "pass": "You observed and reported.",
+      "fail": "You held a man without lawful grounds."
+    },
+    {
+      "id": "c_police",
+      "label": "Police and acquirer",
+      "kind": "done",
+      "action": "report_police",
+      "dimension": "Communication",
+      "competency": "Investigation",
+      "weight": 6,
+      "pass": "The pattern went to the people who can stop it.",
+      "fail": "The booker is still selling rooms."
+    },
+    {
+      "id": "c_disputes",
+      "label": "Fight the winnable ones",
+      "kind": "done",
+      "action": "disputes",
+      "dimension": "Cost",
+      "competency": "FinancialAcumen",
+      "weight": 5,
+      "pass": "The three winnable disputes were represented.",
+      "fail": "Winnable disputes were left to lapse."
+    },
+    {
+      "id": "c_record",
+      "label": "Record it",
+      "kind": "done",
+      "action": "case_record",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 5,
+      "pass": "The case file is complete.",
+      "fail": "The case was never written up."
+    }
+  ],
+  "bestOrder": [
+    "meet_anneliese",
+    "pattern",
+    "upcoming",
+    "cctv_checkins",
+    "desk_procedure",
+    "report_police",
+    "disputes",
+    "case_record"
+  ],
+  "debrief": {
+    "whatHappened": "Fourteen chargebacks in six weeks were one booker selling rooms paid with stolen cards. You found the pattern in the bookings, flagged the next four, set a check-in rule that verifies payment without accusing anyone, gave the footage and data to the police and the acquirer, and fought the three disputes the evidence could win.",
+    "bestPractice": [
+      "Look for the pattern in the bookings: domains, numbers, timing, cards.",
+      "Flag the arrivals still to come.",
+      "Verify payment at check-in with the same words for everyone; never accuse a guest.",
+      "Observe and report; don't detain for suspected fraud.",
+      "Give the evidence to the police and the card acquirer.",
+      "Dispute what the evidence can win; annualise the rest to size the fix."
+    ],
+    "why": "Card-not-present fraud lands on the hotel weeks later, after the guests have gone. The only time to stop it is before check-in, and the only safe way is a payment rule applied the same way to everyone.",
+    "commonMistakes": [
+      "Treating the guests as the criminals.",
+      "Detaining the companion.",
+      "Disputing everything.",
+      "Counting six weeks' loss as the annual figure."
+    ]
+  },
+  "procedureCards": [
+    "payment_fraud"
+  ],
+  "reportAt": "lp_office",
+  "passMark": 60,
+  "xp": 400,
+  "weeks": 2,
+  "lesson": "Pattern in the bookings, verify don't accuse, observe and report, dispute what you can win."
+}

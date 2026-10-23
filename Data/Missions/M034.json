@@ -1,0 +1,482 @@
+{
+  "schema": 1,
+  "id": "M034",
+  "title": "Retaliation Risk",
+  "kind": "mission",
+  "topic": "retaliation",
+  "minLevel": 9,
+  "opening": {
+    "channel": "email",
+    "from": "partner",
+    "at": "cctv_room",
+    "text": "I said I didn't want this to be about me. Since the patrol case my rota's been changed three times, someone's scratched something on my locker, and half the evening team won't speak to me on the radio. I'm not asking for anything. I just thought you should know. Ines."
+  },
+  "briefing": [
+    "10:30, Wednesday. Months after the patrol falsification case, Ines Dalca, who raised it, reports changes to her rota, damage to her locker and being frozen out. Colm Brady returned from a final written warning six weeks ago and now sets the evening rota.",
+    "Veldane speak-up method: treat any report of retaliation against someone who raised a concern as a new, serious complaint; listen first and agree with the person what protection they want; gather the evidence (rotas, messages, damage) before speaking to anyone accused; involve HR and keep the investigation separate from whoever is accused; never move or change the reporter's job without their free choice; reverse any detriment at once; remind the team that retaliation is misconduct; check in with the reporter afterwards. Your authority is 3,000,000."
+  ],
+  "context": [
+    {
+      "ifFlag": "reporter_isolated",
+      "text": "When the patrol case was announced at briefing, everyone worked out who had reported it. This started then."
+    },
+    {
+      "ifFlag": "patrol_cover_up",
+      "text": "The cover-up of the patrol case is on the record. The insurer and the owners will look hard at how LP treats people who speak up."
+    }
+  ],
+  "learningObjectives": [
+    "Retaliation is a new, serious complaint",
+    "Protection chosen with the person, never imposed",
+    "Reverse the detriment, then investigate"
+  ],
+  "start": "10:30",
+  "actions": [
+    {
+      "id": "listen",
+      "label": "Listen to Ines",
+      "kind": "interview",
+      "at": "cctv_room",
+      "person": "partner",
+      "minutes": 5,
+      "required": true,
+      "findingTitle": "In her words",
+      "finding": "Three rota changes in five weeks, each moving her onto the weekend nights nobody wants, each made by Colm. 'GRASS' scratched into her locker door. Radio calls to her go unanswered by two colleagues. She wants to stay on her team and her shifts, and she wants it to stop. She doesn't want a 'big meeting'.",
+      "lines": [
+        {
+          "speaker": "partner",
+          "text": "I don't want to move. I didn't do anything wrong. I want my rota back and I want it to stop."
+        }
+      ]
+    },
+    {
+      "id": "rota_evidence",
+      "label": "Check the rota history",
+      "kind": "check",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 4,
+      "requires": [
+        "listen"
+      ],
+      "required": true,
+      "findingTitle": "Three changes, one author",
+      "finding": "The rota system shows three changes to Ines's shifts in five weeks, each by Colm, each to the weekend night pattern, none requested by her, none made to anyone else. The reason field says 'operational need' each time. Weekend cover didn't change."
+    },
+    {
+      "id": "locker_photos",
+      "label": "Photograph the locker damage",
+      "kind": "photograph",
+      "at": "back_of_house",
+      "minutes": 2,
+      "requires": [
+        "listen"
+      ],
+      "required": true,
+      "evidence": "LP-PH-3401",
+      "findingTitle": "LP-PH-3401",
+      "finding": "Photographs of the locker door, scale shown, date and time recorded, logged as LP-PH-3401. The locker corridor camera B1-02 covers the end of the row but not the locker itself."
+    },
+    {
+      "id": "move_ines",
+      "label": "Move Ines to day shifts so she's out of the way",
+      "kind": "other",
+      "at": "lp_office",
+      "minutes": 1,
+      "requires": [
+        "listen"
+      ],
+      "findingTitle": "Moved",
+      "finding": "Ines is moved to days 'for her own good'. She didn't ask for it. Her pay drops by the night allowance and the evening team takes it as proof that reporting gets you moved.",
+      "relations": {
+        "partner": -25
+      },
+      "effects": {
+        "StaffMorale": -5
+      },
+      "schedules": [
+        {
+          "id": "retaliation_claim_ines",
+          "description": "Ines brings a claim that she suffered a detriment for raising a concern: her rota was changed, and then the hotel moved her. Counsel advises it will not be defended.",
+          "delayWeeks": 5,
+          "probability": 0.8,
+          "effects": {
+            "IncidentCosts": 30000,
+            "StaffMorale": -4,
+            "OwnerTrust": -3
+          },
+          "flagIfOccurs": "speak_up_claim"
+        }
+      ]
+    },
+    {
+      "id": "restore_rota",
+      "label": "Put Ines's rota back and require approval for changes",
+      "kind": "check",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 2,
+      "requires": [
+        "rota_evidence"
+      ],
+      "required": true,
+      "findingTitle": "Rota restored",
+      "finding": "Her original pattern is back from next week, with the lost night allowance paid. Until the investigation ends, any change to her shifts needs your approval, and she is told so in writing."
+    },
+    {
+      "id": "hr_case",
+      "label": "Open a retaliation complaint with HR",
+      "kind": "interview",
+      "at": "exec_offices",
+      "spot": "hr_office",
+      "person": "hr_director",
+      "minutes": 4,
+      "requires": [
+        "rota_evidence",
+        "locker_photos"
+      ],
+      "required": true,
+      "findingTitle": "A new complaint",
+      "finding": "Priyanka opens it as a serious complaint, separate from the patrol case: an HR investigator from the airport hotel leads it, so nobody at the Harbourfront investigates their own team. Colm is told there is a complaint and that he must not discuss it with Ines or the team.",
+      "lines": [
+        {
+          "speaker": "hr_director",
+          "text": "Retaliation against someone who spoke up is a disciplinary matter in its own right. And it's the one that empties the speak-up line if we get it wrong."
+        }
+      ]
+    },
+    {
+      "id": "team_meeting",
+      "label": "Call the evening team in and tell them to stop",
+      "kind": "other",
+      "at": "lp_office",
+      "minutes": 1,
+      "requires": [
+        "listen"
+      ],
+      "findingTitle": "A big meeting",
+      "finding": "In front of everyone you say you know what's been happening to Ines. Ines, who asked for no meeting, sits through it. Afterwards the radio silence gets worse, not better.",
+      "relations": {
+        "partner": -10
+      },
+      "effects": {
+        "StaffMorale": -3
+      }
+    },
+    {
+      "id": "interview_colm",
+      "label": "Have the investigator interview Colm, with you present",
+      "kind": "interview",
+      "at": "lp_office",
+      "person": "rival",
+      "minutes": 5,
+      "requires": [
+        "hr_case"
+      ],
+      "required": true,
+      "findingTitle": "Operational need",
+      "finding": "Colm says the changes were 'operational'. Shown that weekend cover didn't change and nobody else was moved, he says Ines 'needs to learn what being on a team means'. The investigator records it word for word.",
+      "lines": [
+        {
+          "speaker": "rival",
+          "text": "She got a mate of mine a final warning. Don't tell me she's a victim."
+        }
+      ]
+    },
+    {
+      "id": "speak_up_message",
+      "label": "Remind every LP team that retaliation is misconduct",
+      "kind": "logEvidence",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 3,
+      "requires": [
+        "hr_case"
+      ],
+      "required": true,
+      "findingTitle": "Sent",
+      "finding": "A short message to every LP and contract team in the region, without names or details of any case: how to raise a concern, that people who raise concerns are protected, and that retaliation of any kind (rotas, isolation, damage, comments) is treated as gross misconduct."
+    },
+    {
+      "id": "check_in",
+      "label": "Check in with Ines two weeks later",
+      "kind": "interview",
+      "at": "cctv_room",
+      "person": "partner",
+      "minutes": 3,
+      "requires": [
+        "restore_rota",
+        "interview_colm"
+      ],
+      "required": true,
+      "findingTitle": "Two weeks on",
+      "finding": "Her rota is back, her locker door replaced. The radio is answered. The investigation found retaliation by Colm; HR's process takes it from there. She says she would report again, 'but I hope I don't have to'.",
+      "lines": [
+        {
+          "speaker": "partner",
+          "text": "It stopped. That's all I wanted. Thank you for not making me move."
+        }
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "d_first",
+      "prompt": "What do you do first?",
+      "dimension": "Care",
+      "competency": "PeopleLeadership",
+      "weight": 10,
+      "options": [
+        {
+          "id": "listen",
+          "label": "Listen to Ines and agree with her what protection she wants.",
+          "score": 100,
+          "feedback": "Protection is chosen with the person, not done to them. She wants to stay, and to have it stop."
+        },
+        {
+          "id": "move",
+          "label": "Move her somewhere safer straight away.",
+          "score": 15,
+          "critical": true,
+          "feedback": "Moving someone who spoke up, without their free choice, is itself a detriment, and a retaliation claim."
+        },
+        {
+          "id": "team",
+          "label": "Address the whole team at once.",
+          "score": 30,
+          "feedback": "She asked for no meeting, and you don't yet know who did what."
+        }
+      ]
+    },
+    {
+      "id": "d_detriment",
+      "kind": "multi",
+      "prompt": "Which of these can be retaliation?",
+      "dimension": "Evidence",
+      "competency": "Investigation",
+      "weight": 9,
+      "options": [
+        {
+          "id": "rota",
+          "label": "Changing someone's shifts for the worse without reason",
+          "correct": true
+        },
+        {
+          "id": "isolate",
+          "label": "Freezing them out, ignoring them on the radio",
+          "correct": true
+        },
+        {
+          "id": "damage",
+          "label": "Damage to their property or insults",
+          "correct": true
+        },
+        {
+          "id": "move",
+          "label": "Moving them 'for their own good' without their choice",
+          "correct": true
+        },
+        {
+          "id": "investigate",
+          "label": "Investigating the concern they raised",
+          "feedback": "Investigating the concern is the hotel doing its job. Retaliation is what is done to the person for raising it."
+        }
+      ]
+    },
+    {
+      "id": "d_who",
+      "prompt": "Who investigates the retaliation complaint?",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 14,
+      "options": [
+        {
+          "id": "independent",
+          "label": "An HR investigator from another site, independent of the Harbourfront LP team.",
+          "score": 100,
+          "feedback": "The person accused sets the rota you would be investigating. Independence is what makes the outcome stand."
+        },
+        {
+          "id": "you",
+          "label": "You, alone: it's your team.",
+          "score": 35,
+          "feedback": "You're close to the earlier case and to both people. HR with an independent investigator is safer for everyone."
+        },
+        {
+          "id": "colm",
+          "label": "Colm, as the evening supervisor.",
+          "score": 5,
+          "feedback": "He is the person the evidence points at."
+        }
+      ]
+    },
+    {
+      "id": "r_what",
+      "prompt": "Complaint summary (one line)",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 12,
+      "section": "what",
+      "options": [
+        {
+          "id": "facts",
+          "label": "Officer who raised the patrol case reported detriment: three unrequested rota changes by one supervisor, locker damage (LP-PH-3401), isolation; rota restored with lost pay; independent HR investigation found retaliation; team reminded; reporter supported and remains in role.",
+          "score": 100,
+          "feedback": "The detriment, the evidence, the protection, who investigated and the outcome for her."
+        },
+        {
+          "id": "friction",
+          "label": "Team friction on evenings resolved.",
+          "score": 15,
+          "feedback": "It was retaliation, and calling it friction is how it comes back."
+        },
+        {
+          "id": "name",
+          "label": "Colm Brady bullied Ines Dalca.",
+          "score": 30,
+          "feedback": "Names and a conclusion. The record states the evidence and the process."
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "c_listen",
+      "label": "Listen first",
+      "kind": "before",
+      "action": "listen",
+      "other": "rota_evidence",
+      "dimension": "Care",
+      "competency": "PeopleLeadership",
+      "weight": 6,
+      "pass": "You heard her before anything else.",
+      "fail": "You acted before you'd listened."
+    },
+    {
+      "id": "c_no_move",
+      "label": "She stays",
+      "kind": "notDone",
+      "action": "move_ines",
+      "dimension": "Compliance",
+      "competency": "PeopleLeadership",
+      "weight": 10,
+      "pass": "Ines stayed in the role she chose.",
+      "fail": "The person who spoke up was moved."
+    },
+    {
+      "id": "c_restore",
+      "label": "Reverse the detriment",
+      "kind": "done",
+      "action": "restore_rota",
+      "dimension": "Procedure",
+      "competency": "PeopleLeadership",
+      "weight": 7,
+      "pass": "Her rota and pay were restored at once.",
+      "fail": "The rota changes stood."
+    },
+    {
+      "id": "c_evidence",
+      "label": "Evidence before interviews",
+      "kind": "before",
+      "action": "locker_photos",
+      "other": "interview_colm",
+      "dimension": "Evidence",
+      "competency": "EvidenceReporting",
+      "weight": 6,
+      "pass": "The rota history and photos were in hand before anyone was interviewed.",
+      "fail": "Colm was interviewed before the evidence was gathered."
+    },
+    {
+      "id": "c_no_meeting",
+      "label": "No big meeting",
+      "kind": "notDone",
+      "action": "team_meeting",
+      "dimension": "Communication",
+      "competency": "GuestServiceDeescalation",
+      "weight": 5,
+      "pass": "Ines wasn't exposed in front of the team.",
+      "fail": "A team meeting she didn't want made it worse."
+    },
+    {
+      "id": "c_hr",
+      "label": "Independent investigation",
+      "kind": "done",
+      "action": "hr_case",
+      "dimension": "Procedure",
+      "competency": "ComplianceAudit",
+      "weight": 6,
+      "pass": "HR investigated independently.",
+      "fail": "The complaint was never formally investigated."
+    },
+    {
+      "id": "c_message",
+      "label": "Speak-up message",
+      "kind": "done",
+      "action": "speak_up_message",
+      "dimension": "Communication",
+      "competency": "CrisisLeadership",
+      "weight": 6,
+      "pass": "Every team knows retaliation is misconduct.",
+      "fail": "The teams heard nothing."
+    },
+    {
+      "id": "c_check_in",
+      "label": "Check in after",
+      "kind": "done",
+      "action": "check_in",
+      "dimension": "Care",
+      "competency": "PeopleLeadership",
+      "weight": 6,
+      "pass": "You checked it had stopped.",
+      "fail": "Nobody checked whether it stopped."
+    },
+    {
+      "id": "c_colm",
+      "label": "Hear the accused",
+      "kind": "done",
+      "action": "interview_colm",
+      "dimension": "Evidence",
+      "competency": "Investigation",
+      "weight": 3,
+      "pass": "Colm answered the evidence with the investigator.",
+      "fail": "The person accused was never asked."
+    }
+  ],
+  "bestOrder": [
+    "listen",
+    "rota_evidence",
+    "locker_photos",
+    "restore_rota",
+    "hr_case",
+    "speak_up_message",
+    "interview_colm",
+    "check_in"
+  ],
+  "debrief": {
+    "whatHappened": "The officer who reported the patrol fraud was being punished for it. You listened, gathered the rota history and the photographs, put her rota and pay back at once, kept her in the role she chose, had HR investigate independently, reminded every team that retaliation is misconduct, and checked that it had stopped.",
+    "bestPractice": [
+      "Treat retaliation as a new, serious complaint.",
+      "Listen first; agree protection with the person.",
+      "Gather evidence before interviews.",
+      "Reverse any detriment at once.",
+      "Never move the reporter without their free choice.",
+      "Independent investigation through HR.",
+      "Remind teams, without names; check in afterwards."
+    ],
+    "why": "Every speak-up line is only as good as what happened to the last person who used it. Retaliation that goes unanswered teaches a whole team to stay quiet.",
+    "commonMistakes": [
+      "Moving the reporter.",
+      "Big team meetings.",
+      "Investigating your own team.",
+      "Calling it friction."
+    ]
+  },
+  "procedureCards": [
+    "speak_up_protection"
+  ],
+  "reportAt": "lp_office",
+  "passMark": 60,
+  "xp": 440,
+  "weeks": 2,
+  "lesson": "Listen, protect as they choose, reverse the detriment, investigate independently, check in."
+}

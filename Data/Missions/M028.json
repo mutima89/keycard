@@ -1,0 +1,478 @@
+{
+  "schema": 1,
+  "id": "M028",
+  "title": "Food Illness Claim with the Health Department",
+  "kind": "mission",
+  "topic": "food_illness",
+  "minLevel": 8,
+  "opening": {
+    "channel": "phone",
+    "from": "fnb_director",
+    "at": "kitchen",
+    "text": "Rafael. I've got a conference organiser saying thirty-eight of her delegates were ill after Tuesday's lunch, and the health department is coming at eleven. Chef wants to bin everything from Tuesday. I said wait for you."
+  },
+  "briefing": [
+    "09:40, Thursday. Thirty-eight delegates from a 220-cover conference lunch in the Harbour Ballroom on Tuesday report vomiting and diarrhoea from Tuesday night. Four went to hospital; none are still there. The health department's officer arrives at 11:00.",
+    "Veldane foodborne illness method: look after the people first (who is ill, what they need); keep everything the health department may want: retained samples, leftovers, menus, supplier records, temperature and cleaning logs, the staff rota; keep any food handler who is ill, or has been, off work; work openly with the health department; tell the insurer the same day; don't admit or deny liability and don't speculate about the cause; one set of facts for guests, staff and the organiser. Your authority is 1,000,000."
+  ],
+  "context": [
+    {
+      "ifFlag": "m022_oversold",
+      "text": "The Tuesday lunch was the same week the ballroom was sold over its fire limit. Expect the health officer to have heard."
+    }
+  ],
+  "learningObjectives": [
+    "People first, then keep everything",
+    "Working openly with the health department",
+    "Sizing an incident's cost to the hotel"
+  ],
+  "start": "09:40",
+  "actions": [
+    {
+      "id": "brief_rafael",
+      "label": "Get the facts from Rafael",
+      "kind": "interview",
+      "at": "kitchen",
+      "person": "fnb_director",
+      "minutes": 3,
+      "required": true,
+      "findingTitle": "Tuesday's lunch",
+      "finding": "Menu: chicken Caesar, a cold rice salad, salmon, a chocolate mousse. 220 covers, prepared Monday and Tuesday. Retained samples of every dish are in the blast chiller, labelled, as the food safety plan requires. Leftovers of the rice salad are in the walk-in. Two commis chefs called in sick on Wednesday.",
+      "lines": [
+        {
+          "speaker": "fnb_director",
+          "text": "Chef wants to throw out Tuesday so the inspector doesn't see a mess. I told him that's exactly what she'll want to see."
+        }
+      ]
+    },
+    {
+      "id": "keep_everything",
+      "label": "Hold the samples, leftovers and records",
+      "kind": "secure",
+      "at": "kitchen",
+      "spot": "kitchen_line",
+      "minutes": 4,
+      "requires": [
+        "brief_rafael"
+      ],
+      "required": true,
+      "evidence": "LP-2801",
+      "findingTitle": "Held",
+      "finding": "Retained samples, the rice salad leftovers and the opened supplier packs tagged 'hold: health department' and logged as LP-2801. Copies of the menus, recipes, delivery notes, the cooling and fridge temperature logs, the cleaning schedule and the staff rota for Monday and Tuesday. The rice cooling log for Monday has a gap of four hours."
+    },
+    {
+      "id": "bin_it",
+      "label": "Let Chef throw out everything from Tuesday",
+      "kind": "other",
+      "at": "kitchen",
+      "minutes": 1,
+      "requires": [
+        "brief_rafael"
+      ],
+      "findingTitle": "Binned",
+      "finding": "The samples and leftovers go in the bin before the officer arrives. She asks for them by name. There is nothing to test, and a strong smell of bleach.",
+      "effects": {
+        "SafetyCompliance": -6,
+        "InsurerConfidence": -4
+      },
+      "setsFlags": [
+        "m028_evidence_destroyed"
+      ],
+      "schedules": [
+        {
+          "id": "obstruction_notice",
+          "description": "The health department records that food evidence was destroyed before inspection. Without samples the hotel can't show its food wasn't the cause; the claims settle at full value.",
+          "delayWeeks": 3,
+          "probability": 0.8,
+          "effects": {
+            "IncidentCosts": 45000,
+            "Reputation": -4
+          },
+          "flagIfOccurs": "food_evidence_destroyed"
+        }
+      ]
+    },
+    {
+      "id": "ill_staff",
+      "label": "Keep the ill food handlers off and check the rest",
+      "kind": "call",
+      "at": "kitchen",
+      "person": "fnb_director",
+      "minutes": 3,
+      "requires": [
+        "brief_rafael"
+      ],
+      "required": true,
+      "findingTitle": "Exclusion",
+      "finding": "The two commis chefs who were ill stay off until they have been symptom-free for 48 hours, on full pay, so nobody hides symptoms to keep their wages. Every food handler on Monday and Tuesday is asked the same health questions, in private; one more had symptoms and is sent home."
+    },
+    {
+      "id": "guest_care",
+      "label": "Set up care for the ill delegates with the organiser",
+      "kind": "call",
+      "at": "front_desk",
+      "spot": "desk_phone",
+      "person": "front_office_manager",
+      "minutes": 3,
+      "requires": [
+        "brief_rafael"
+      ],
+      "required": true,
+      "findingTitle": "Care line",
+      "finding": "Gideon's team calls each of the 38 delegates still in house: how are you, do you need a doctor, room service of plain food and fluids, a late checkout. The organiser gets one named contact and one statement of facts. Nobody is told what caused it, because nobody knows."
+    },
+    {
+      "id": "blame_supplier",
+      "label": "Tell the organiser it must have been the salmon supplier",
+      "kind": "other",
+      "at": "front_desk",
+      "minutes": 1,
+      "requires": [
+        "brief_rafael"
+      ],
+      "findingTitle": "Speculation",
+      "finding": "The organiser repeats it to 220 delegates and the trade press. The supplier's lawyers write the same day. When the results come back, the salmon was clean.",
+      "effects": {
+        "Reputation": -4,
+        "OwnerTrust": -2
+      },
+      "schedules": [
+        {
+          "id": "supplier_dispute",
+          "description": "The salmon supplier sues for the damage to its name after the hotel blamed it publicly without evidence.",
+          "delayWeeks": 5,
+          "probability": 0.6,
+          "effects": {
+            "IncidentCosts": 12000,
+            "Reputation": -3
+          },
+          "flagIfOccurs": "supplier_blamed"
+        }
+      ]
+    },
+    {
+      "id": "health_officer",
+      "label": "Work through it with the health officer",
+      "kind": "interview",
+      "at": "kitchen",
+      "person": "health_officer",
+      "minutes": 6,
+      "requires": [
+        "keep_everything",
+        "ill_staff"
+      ],
+      "required": true,
+      "findingTitle": "Investigation",
+      "finding": "Harriet Oyelaran takes the samples and leftovers for testing, the logs and the rota, interviews the kitchen team and asks for the delegate list. She finds the Monday rice cooled in deep trays overnight with no temperature recorded for four hours. She issues a notice on cooling practice, not a closure.",
+      "lines": [
+        {
+          "speaker": "health_officer",
+          "text": "Samples, logs, a rota, and the ill staff already excluded. That's a kitchen that wants to know what happened. Now, this rice."
+        }
+      ]
+    },
+    {
+      "id": "notify_insurer",
+      "label": "Notify Tarrowby Mutual the same day",
+      "kind": "call",
+      "at": "exec_offices",
+      "person": "adjuster",
+      "minutes": 2,
+      "requires": [
+        "guest_care"
+      ],
+      "required": true,
+      "findingTitle": "Notified",
+      "finding": "Odile opens a liability file on the day: facts only, the health department's involvement, the evidence held. She asks that no offers of compensation be made by the hotel without her, and agrees the organiser's refund for the lunch as goodwill without admission."
+    },
+    {
+      "id": "results",
+      "label": "Record the results and the corrective actions",
+      "kind": "logEvidence",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 4,
+      "requires": [
+        "health_officer",
+        "notify_insurer"
+      ],
+      "required": true,
+      "findingTitle": "Bacillus cereus",
+      "finding": "The rice salad sample grows Bacillus cereus, consistent with slow cooling. Every other dish is clear. Corrective actions: shallow trays and blast chilling for cooked rice, cooling logged every 30 minutes, retraining, and a supervisor check of the log before any cold dish leaves the kitchen. The file goes to the health department and the insurer."
+    }
+  ],
+  "questions": [
+    {
+      "id": "q_cost",
+      "kind": "numeric",
+      "prompt": "The hotel's cost of the incident: 4,000 uninsured (lost food, extra cleaning), 60 hours of staff time at 40, nothing to repair, 9,500 in guest recovery (refunds and goodwill), and an insured liability loss of 85,000 with a 25,000 deductible. What does it cost the hotel?",
+      "dimension": "Cost",
+      "competency": "FinancialAcumen",
+      "weight": 10,
+      "formula": {
+        "name": "IncidentCost",
+        "inputs": {
+          "uninsured": 4000,
+          "hours": 60,
+          "rate": 40,
+          "repairs": 0,
+          "recovery": 9500,
+          "insured": 85000,
+          "deductible": 25000
+        }
+      },
+      "tolerance": 0.02,
+      "unit": "",
+      "explanation": "Incident cost = uninsured + hours x rate + repairs + guest recovery + min(insured loss, deductible) = 4,000 + 2,400 + 0 + 9,500 + 25,000 = 40,900. The insurer pays the other 60,000.",
+      "mistakes": [
+        {
+          "value": 100900,
+          "feedback": "That adds the whole insured loss. The hotel pays only up to the deductible; the insurer pays the rest."
+        },
+        {
+          "value": 15900,
+          "feedback": "The deductible is the hotel's money too: it belongs in the cost."
+        }
+      ]
+    },
+    {
+      "id": "d_evidence",
+      "prompt": "Chef wants to throw out Tuesday's food before the inspection. What do you say?",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 9,
+      "options": [
+        {
+          "id": "hold",
+          "label": "Hold everything, labelled, for the health department: samples, leftovers, packs and logs.",
+          "score": 100,
+          "feedback": "It is the only evidence of what was and wasn't the cause. Without it, the hotel can't show anything."
+        },
+        {
+          "id": "bin",
+          "label": "Bin it: it's a risk if anyone eats it.",
+          "score": 10,
+          "critical": true,
+          "feedback": "Labelled and held apart, it is a risk to nobody. Destroyed, it is obstruction, and the claims can't be defended."
+        },
+        {
+          "id": "some",
+          "label": "Keep the samples, bin the leftovers.",
+          "score": 40,
+          "feedback": "The leftovers are often what the lab tests first. Keep everything."
+        }
+      ]
+    },
+    {
+      "id": "d_staff",
+      "kind": "multi",
+      "prompt": "Which steps are right for the kitchen team?",
+      "dimension": "Care",
+      "competency": "PeopleLeadership",
+      "weight": 8,
+      "options": [
+        {
+          "id": "exclude",
+          "label": "Ill food handlers stay off until 48 hours symptom-free",
+          "correct": true
+        },
+        {
+          "id": "pay",
+          "label": "Pay them while they are excluded",
+          "correct": true
+        },
+        {
+          "id": "ask",
+          "label": "Ask every food handler the same health questions in private",
+          "correct": true
+        },
+        {
+          "id": "blame",
+          "label": "Suspend the commis chefs for coming in ill",
+          "feedback": "That teaches everyone to hide symptoms next time. Exclude on pay; investigate the cooling."
+        }
+      ]
+    },
+    {
+      "id": "d_words",
+      "prompt": "The organiser asks what caused it. What do you tell her?",
+      "dimension": "Communication",
+      "competency": "GuestServiceDeescalation",
+      "weight": 12,
+      "options": [
+        {
+          "id": "facts",
+          "label": "What you know, what you're doing, who to contact, and that the health department is investigating the cause.",
+          "score": 100,
+          "feedback": "Honest, caring, and no speculation or admission."
+        },
+        {
+          "id": "supplier",
+          "label": "It was probably the salmon supplier.",
+          "score": 15,
+          "feedback": "A guess, said to the one person certain to repeat it."
+        },
+        {
+          "id": "notus",
+          "label": "It can't have been our food: our kitchen is spotless.",
+          "score": 15,
+          "feedback": "A denial before the results is as bad as an admission, and it may well be wrong."
+        }
+      ]
+    },
+    {
+      "id": "r_what",
+      "prompt": "Incident summary (one line)",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 7,
+      "section": "what",
+      "options": [
+        {
+          "id": "facts",
+          "label": "38 of 220 delegates ill after Tuesday's lunch; samples and records held (LP-2801); ill staff excluded; health department investigated: B. cereus in rice salad, cooling log gap; cooling notice; insurer notified the same day; corrective actions in place.",
+          "score": 100,
+          "feedback": "The people, the evidence, the cause found by the people qualified to find it, and the fixes."
+        },
+        {
+          "id": "short",
+          "label": "Food poisoning at a conference; rice to blame.",
+          "score": 30,
+          "feedback": "No numbers, no evidence trail, no fixes."
+        },
+        {
+          "id": "deny",
+          "label": "Delegates reported illness; no link to hotel food established.",
+          "score": 15,
+          "feedback": "The link was established by the lab. The report has to say so."
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "c_people",
+      "label": "People first",
+      "kind": "before",
+      "action": "guest_care",
+      "other": "health_officer",
+      "dimension": "Care",
+      "competency": "GuestServiceDeescalation",
+      "weight": 6,
+      "pass": "The ill delegates were looked after before the inspection began.",
+      "fail": "The inspection came before the people."
+    },
+    {
+      "id": "c_keep",
+      "label": "Keep everything",
+      "kind": "done",
+      "action": "keep_everything",
+      "dimension": "Evidence",
+      "competency": "EvidenceReporting",
+      "weight": 8,
+      "pass": "Samples, leftovers and records were held and logged.",
+      "fail": "The evidence wasn't secured."
+    },
+    {
+      "id": "c_no_bin",
+      "label": "Nothing destroyed",
+      "kind": "notDone",
+      "action": "bin_it",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 10,
+      "pass": "Nothing was thrown away.",
+      "fail": "Food evidence was destroyed before the inspection."
+    },
+    {
+      "id": "c_exclude",
+      "label": "Ill handlers off",
+      "kind": "done",
+      "action": "ill_staff",
+      "dimension": "Procedure",
+      "competency": "PeopleLeadership",
+      "weight": 6,
+      "pass": "Ill food handlers were kept off work, on pay.",
+      "fail": "Ill food handlers kept cooking."
+    },
+    {
+      "id": "c_no_blame",
+      "label": "No speculation",
+      "kind": "notDone",
+      "action": "blame_supplier",
+      "dimension": "Communication",
+      "competency": "GuestServiceDeescalation",
+      "weight": 6,
+      "pass": "Nobody was blamed before the results.",
+      "fail": "You blamed a supplier without evidence."
+    },
+    {
+      "id": "c_officer",
+      "label": "Work with the inspector",
+      "kind": "done",
+      "action": "health_officer",
+      "dimension": "Procedure",
+      "competency": "ComplianceAudit",
+      "weight": 6,
+      "pass": "The health department had everything it asked for.",
+      "fail": "The health department's investigation was left to find its own way."
+    },
+    {
+      "id": "c_insurer",
+      "label": "Insurer the same day",
+      "kind": "done",
+      "action": "notify_insurer",
+      "dimension": "Communication",
+      "competency": "ComplianceAudit",
+      "weight": 6,
+      "pass": "The insurer heard on the day.",
+      "fail": "The insurer wasn't told."
+    },
+    {
+      "id": "c_actions",
+      "label": "Fix the cause",
+      "kind": "done",
+      "action": "results",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 6,
+      "pass": "The cooling practice was changed and checked.",
+      "fail": "The cause was found and nothing changed."
+    }
+  ],
+  "bestOrder": [
+    "brief_rafael",
+    "keep_everything",
+    "ill_staff",
+    "guest_care",
+    "health_officer",
+    "notify_insurer",
+    "results"
+  ],
+  "debrief": {
+    "whatHappened": "Thirty-eight delegates fell ill after a conference lunch. You held every sample and record, kept ill food handlers off on pay, looked after the delegates, worked openly with the health department, told the insurer the same day and said nothing you didn't know. The lab found Bacillus cereus in rice cooled too slowly; the kitchen changed how it cools.",
+    "bestPractice": [
+      "People first: who is ill and what do they need.",
+      "Hold everything: samples, leftovers, packs, logs, rota.",
+      "Exclude ill food handlers until 48 hours symptom-free, on pay.",
+      "Work openly with the health department.",
+      "Tell the insurer the same day; no admissions, no denials, no guesses.",
+      "Fix the cause and check the fix."
+    ],
+    "why": "In an outbreak, the evidence of what wasn't the cause matters as much as what was. A kitchen that keeps everything and works openly is treated as a partner; one that cleans up first is treated as a suspect.",
+    "commonMistakes": [
+      "Binning the food.",
+      "Blaming a supplier.",
+      "Punishing ill staff.",
+      "Offers of compensation without the insurer."
+    ]
+  },
+  "procedureCards": [
+    "food_illness"
+  ],
+  "reportAt": "lp_office",
+  "passMark": 60,
+  "xp": 420,
+  "weeks": 2,
+  "lesson": "People first, keep everything, exclude ill handlers on pay, work with the health department, no guesses."
+}

@@ -1,0 +1,512 @@
+{
+  "schema": 1,
+  "id": "M007",
+  "title": "Footage Before It Overwrites",
+  "kind": "mission",
+  "topic": "cctv",
+  "minLevel": 2,
+  "opening": {
+    "channel": "email",
+    "from": "adjuster",
+    "at": "lp_office",
+    "text": "Good evening. Tarrowby Mutual has received a claim from one of your guests for a handbag she says was taken in your Lobby Bar on the evening of the 23rd, between about 22:00 and 22:30. Please preserve any relevant CCTV and let me know what you hold. Odile Marchetti, Claims Adjuster."
+  },
+  "briefing": [
+    "00:30. An insurer's adjuster asks the hotel to preserve CCTV of a handbag theft in the Lobby Bar 29 days ago. The video recorder keeps 30 days: the 23rd starts to overwrite at about 02:00 tonight.",
+    "Veldane policy: preserve first, release later. Footage leaves LP only under the footage release policy, with the Director of LP's approval (and counsel's where needed). Every export is hashed, logged and kept in the evidence locker."
+  ],
+  "learningObjectives": [
+    "Retention windows: preserve before the footage overwrites",
+    "A defensible export: scope, native format, hash, log, custody",
+    "Footage release: preserve for anyone, release only by policy"
+  ],
+  "start": "00:30",
+  "actions": [
+    {
+      "id": "read_request",
+      "label": "Read the adjuster's email at your desk",
+      "kind": "check",
+      "at": "lp_office",
+      "spot": "lp_desk",
+      "minutes": 4,
+      "required": true,
+      "findingTitle": "The request",
+      "finding": [
+        "Claim TM-55102: a brown leather handbag, value claimed 2,400, taken from the back of a chair in the Lobby Bar on the 23rd, \"between about 22:00 and 22:30\". The adjuster asks the hotel to preserve footage and say what it holds.",
+        "She asks for nothing to be sent yet. The video recorder's retention is 30 days, so the 23rd is due to overwrite from about 02:00."
+      ]
+    },
+    {
+      "id": "check_retention",
+      "label": "Ask Ines what the recorder keeps",
+      "kind": "interview",
+      "at": "cctv_room",
+      "person": "partner",
+      "minutes": 3,
+      "findingTitle": "Retention on the recorder",
+      "finding": "Ines confirms the recorder keeps 30 days and overwrites the oldest hour as it goes: the 23rd at 22:00 will be gone at about 02:00. Your login has export rights; the shared \"nvradmin\" account was meant to be disabled last month.",
+      "lines": [
+        {
+          "speaker": "partner",
+          "text": "Thirty days, rolling. The twenty-third goes around two. Use your own login, mind. The shared one should have been switched off."
+        }
+      ]
+    },
+    {
+      "id": "shared_login",
+      "label": "Log in with the shared nvradmin account to save time",
+      "kind": "other",
+      "at": "cctv_room",
+      "spot": "cctv_console",
+      "minutes": 1,
+      "findingTitle": "Shared login",
+      "finding": "The shared account still works. Everything you do tonight is logged as \"nvradmin\", not as you.",
+      "effects": {
+        "SecurityPosture": -5
+      }
+    },
+    {
+      "id": "review_footage",
+      "label": "Review the Lobby Bar camera for the 23rd",
+      "kind": "cctvReview",
+      "at": "cctv_room",
+      "spot": "cctv_console",
+      "minutes": 8,
+      "requires": [
+        "read_request"
+      ],
+      "required": true,
+      "expiresAt": "02:00",
+      "expiredFinding": "The recorder has already overwritten the evening of the 23rd. There is nothing left to review.",
+      "findingTitle": "L-07 Lobby Bar, the 23rd",
+      "finding": [
+        "22:02 a woman sits at table 6 and hangs a brown handbag on the back of her chair. 22:17 a man sits at table 7, back to back with her. 22:19 he lifts the bag from her chair onto his lap, then under his coat.",
+        "22:20 he leaves through the lobby (L-04) and 22:21 out of the street doors (L-01). His face is clear on L-02 as he passes the front desk. She notices at 22:36."
+      ],
+      "columns": [
+        "Camera",
+        "Time",
+        "What it shows"
+      ],
+      "rows": [
+        [
+          "L-07 Lobby Bar",
+          "22:02",
+          "Guest hangs the bag on her chair (table 6)"
+        ],
+        [
+          "L-07 Lobby Bar",
+          "22:19",
+          "Man at table 7 takes the bag"
+        ],
+        [
+          "L-02 Front desk",
+          "22:20",
+          "Clear view of his face"
+        ],
+        [
+          "L-01 Entrance",
+          "22:21",
+          "He leaves by the street doors"
+        ],
+        [
+          "L-07 Lobby Bar",
+          "22:36",
+          "Guest searches for the bag"
+        ]
+      ]
+    },
+    {
+      "id": "export_footage",
+      "label": "Export the clips in native format with a hash",
+      "kind": "exportFootage",
+      "at": "cctv_room",
+      "spot": "cctv_console",
+      "minutes": 10,
+      "requires": [
+        "review_footage"
+      ],
+      "required": true,
+      "expiresAt": "02:00",
+      "expiredFinding": "Too late: the recorder overwrote the 23rd before the export finished.",
+      "findingTitle": "Export KC-0723",
+      "finding": "L-07 21:45-22:45, L-04, L-02 and L-01 22:10-22:30, exported in the recorder's native format with its player, to write-once USB KC-0723. SHA-256 recorded on the export screen. Your name and login on the export.",
+      "evidence": "KC-0723",
+      "custody": "Clips L-07, L-04, L-02, L-01 of the 23rd exported by you under your own login at 00:5x to write-once USB KC-0723, SHA-256 recorded."
+    },
+    {
+      "id": "log_export",
+      "label": "Fill in the export log",
+      "kind": "logEvidence",
+      "at": "cctv_room",
+      "minutes": 3,
+      "requires": [
+        "export_footage"
+      ],
+      "findingTitle": "Export log",
+      "finding": "Entry 0723: date, your name, reason (insurer preservation request TM-55102), cameras, times, format, hash, media number, where it is kept. Ines signs as witness.",
+      "columns": [
+        "Field",
+        "Entry"
+      ],
+      "rows": [
+        [
+          "Reason",
+          "Preservation request TM-55102"
+        ],
+        [
+          "Cameras",
+          "L-07, L-04, L-02, L-01"
+        ],
+        [
+          "Media",
+          "USB KC-0723, write-once"
+        ],
+        [
+          "Hash",
+          "SHA-256 recorded"
+        ],
+        [
+          "Witness",
+          "I. Dalca"
+        ]
+      ]
+    },
+    {
+      "id": "check_incident_log",
+      "label": "Check the desk log for the 23rd",
+      "kind": "check",
+      "at": "front_desk",
+      "person": "night_auditor",
+      "minutes": 3,
+      "findingTitle": "Desk log, the 23rd",
+      "finding": "22:40: the guest reported her bag missing to the desk agent on duty. The entry says \"guest advised to contact police\". It was never passed to LP, so no report was written and no footage was saved at the time.",
+      "columns": [
+        "Time",
+        "Entry",
+        "Passed to LP?"
+      ],
+      "rows": [
+        [
+          "22:40",
+          "Guest reports handbag missing, Lobby Bar; advised to contact police",
+          "No"
+        ]
+      ]
+    },
+    {
+      "id": "lock_evidence",
+      "label": "Lock the USB in the evidence locker",
+      "kind": "logEvidence",
+      "at": "lp_office",
+      "spot": "evidence_locker",
+      "minutes": 3,
+      "requires": [
+        "log_export"
+      ],
+      "findingTitle": "Evidence locker",
+      "finding": "USB KC-0723 sealed in a signed evidence bag and logged into locker 2.",
+      "evidence": "KC-0723",
+      "custody": "USB KC-0723 sealed and placed in LP evidence locker 2 by you."
+    },
+    {
+      "id": "message_mentor",
+      "label": "Leave the Director of LP a message",
+      "kind": "call",
+      "at": "lp_office",
+      "spot": "lp_desk",
+      "person": "mentor",
+      "minutes": 2,
+      "requires": [
+        "export_footage"
+      ],
+      "findingTitle": "Message to Desmond",
+      "finding": "Voicemail: the insurer's request, footage preserved as KC-0723, nothing released, and the desk log gap from the 23rd. He replies by text at 06:10: \"Good. Release decision is mine with counsel. Well done.\"",
+      "relations": {
+        "mentor": 4
+      }
+    }
+  ],
+  "questions": [
+    {
+      "id": "d_scope",
+      "prompt": "How much footage do you export?",
+      "dimension": "Evidence",
+      "competency": "EvidenceReporting",
+      "weight": 9,
+      "options": [
+        {
+          "id": "wide",
+          "label": "The bar camera from well before she sat down to after she noticed, plus every camera on his route out, in native format.",
+          "score": 100,
+          "feedback": "Wide enough to show the whole event and its context, and the native format keeps the time stamps and integrity checks."
+        },
+        {
+          "id": "moment",
+          "label": "Just the twenty seconds of the theft, as an MP4 for easy viewing.",
+          "score": 35,
+          "feedback": "Easy to watch, hard to defend: no context, and a converted copy loses the original's integrity data. Export native and make viewing copies later."
+        },
+        {
+          "id": "all",
+          "label": "The whole day from every camera in the hotel, to be safe.",
+          "score": 50,
+          "feedback": "Safe for the evidence, but it takes hours you do not have, and it sweeps up other guests' movements for no reason."
+        }
+      ]
+    },
+    {
+      "id": "d_release",
+      "prompt": "The adjuster emails again: \"Could you just send me the clip?\" What do you reply?",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 10,
+      "options": [
+        {
+          "id": "policy",
+          "label": "\"The footage is preserved. Release is decided under our footage release policy by the Director of LP; I've passed your request to him.\"",
+          "score": 100,
+          "escalates": true,
+          "feedback": "Preserve for anyone, release only by policy. Footage shows other guests and staff; who sees it is a decision with legal weight."
+        },
+        {
+          "id": "send",
+          "label": "Send her the MP4 by email; she's the insurer.",
+          "score": 10,
+          "critical": true,
+          "feedback": "You released footage of identifiable guests and staff to a third party on your own authority, by email. That is a privacy breach whoever asks."
+        },
+        {
+          "id": "refuse",
+          "label": "\"We don't share footage with insurers.\"",
+          "score": 40,
+          "feedback": "That is not yours to decide either way, and it is not the policy: the Director of LP may release it, often after counsel."
+        }
+      ]
+    },
+    {
+      "id": "d_gap",
+      "prompt": "The desk never passed the theft to LP on the night. What do you do about it?",
+      "dimension": "Communication",
+      "competency": "IncidentResponse",
+      "weight": 7,
+      "options": [
+        {
+          "id": "fix",
+          "label": "Raise it with the front office manager as a process gap: any reported theft goes to LP the same night so footage is saved then.",
+          "score": 100,
+          "feedback": "The real failure was 29 days ago. Fixing the hand-off means the next one is saved on the night."
+        },
+        {
+          "id": "blame",
+          "label": "Find out who was on the desk and report them.",
+          "score": 30,
+          "feedback": "The agent followed the habit of the desk. Fix the process before looking for someone to blame."
+        },
+        {
+          "id": "nothing",
+          "label": "Nothing. The footage is saved now.",
+          "score": 15,
+          "feedback": "Luck saved this one by a few hours. Next time it will be gone."
+        }
+      ]
+    },
+    {
+      "id": "r_what",
+      "prompt": "Incident report, what happened (one line)",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 7,
+      "section": "what",
+      "options": [
+        {
+          "id": "facts",
+          "label": "On an insurer's preservation request (TM-55102), CCTV of a reported handbag theft in the Lobby Bar on the 23rd was reviewed and exported before overwrite as KC-0723; nothing released.",
+          "score": 100,
+          "feedback": "What, why, the evidence number and the release status, in one line."
+        },
+        {
+          "id": "solved",
+          "label": "Handbag thief caught on camera.",
+          "score": 25,
+          "feedback": "Nobody has been identified or caught; you have footage of a man taking a bag. Say what the footage shows."
+        },
+        {
+          "id": "sent",
+          "label": "Footage sent to insurer.",
+          "score": 0,
+          "feedback": "Not true, and if it were it would be a breach."
+        }
+      ]
+    },
+    {
+      "id": "r_facts",
+      "kind": "multi",
+      "prompt": "Incident report, which of these belong in the findings?",
+      "dimension": "Report",
+      "competency": "Investigation",
+      "weight": 7,
+      "section": "facts",
+      "options": [
+        {
+          "id": "f_take",
+          "label": "L-07: at 22:19 the man at table 7 lifts the bag from the chair at table 6.",
+          "correct": true
+        },
+        {
+          "id": "f_route",
+          "label": "He leaves through the lobby at 22:20 and the street doors at 22:21; face clear on L-02.",
+          "correct": true
+        },
+        {
+          "id": "f_export",
+          "label": "Exported native with SHA-256 under your own login, logged as 0723, witness I. Dalca.",
+          "correct": true
+        },
+        {
+          "id": "f_gap",
+          "label": "The theft was reported to the desk at 22:40 on the 23rd but not passed to LP.",
+          "correct": true
+        },
+        {
+          "id": "o_thief",
+          "label": "The thief is a professional who targets hotel bars.",
+          "feedback": "Possibly. The footage shows one event; that conclusion is for the police."
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "c_in_time",
+      "label": "Preserve before it overwrites",
+      "kind": "byMinute",
+      "action": "export_footage",
+      "by": "01:30",
+      "dimension": "Evidence",
+      "competency": "EvidenceReporting",
+      "weight": 10,
+      "pass": "Exported with time to spare before the recorder overwrote the 23rd.",
+      "fail": "The export only just beat the overwrite, or did not."
+    },
+    {
+      "id": "c_own_login",
+      "label": "Your own login",
+      "kind": "notDone",
+      "action": "shared_login",
+      "dimension": "Compliance",
+      "competency": "KeyAccessControl",
+      "weight": 9,
+      "critical": true,
+      "pass": "The export carries your name. An export nobody can attribute is worthless in a dispute.",
+      "fail": "The export was made under a shared account: the custody record starts with \"somebody\"."
+    },
+    {
+      "id": "c_retention",
+      "label": "Know the retention",
+      "kind": "before",
+      "action": "check_retention",
+      "other": "export_footage",
+      "dimension": "Procedure",
+      "competency": "KeyAccessControl",
+      "weight": 6,
+      "pass": "You checked the recorder's retention before you started, so you knew how long you had.",
+      "fail": "You worked without knowing when the footage would go."
+    },
+    {
+      "id": "c_log",
+      "label": "Log the export",
+      "kind": "done",
+      "action": "log_export",
+      "dimension": "Evidence",
+      "competency": "EvidenceReporting",
+      "weight": 8,
+      "pass": "Logged with reason, cameras, times, hash and a witness.",
+      "fail": "No export log: nobody can show later what was copied, by whom and why."
+    },
+    {
+      "id": "c_locker",
+      "label": "Lock it away",
+      "kind": "done",
+      "action": "lock_evidence",
+      "dimension": "Evidence",
+      "competency": "EvidenceReporting",
+      "weight": 7,
+      "pass": "The USB is sealed in the locker.",
+      "fail": "The USB was left in the CCTV room."
+    },
+    {
+      "id": "c_desk_log",
+      "label": "Check the original report",
+      "kind": "done",
+      "action": "check_incident_log",
+      "dimension": "Procedure",
+      "competency": "Investigation",
+      "weight": 6,
+      "pass": "You found the desk log entry and the gap behind it.",
+      "fail": "You never checked what was reported on the night."
+    },
+    {
+      "id": "c_mentor",
+      "label": "Tell the Director of LP",
+      "kind": "done",
+      "action": "message_mentor",
+      "dimension": "Communication",
+      "competency": "IncidentResponse",
+      "weight": 7,
+      "pass": "The person who decides on release knows the footage is preserved and why.",
+      "fail": "The release decision-maker heard nothing until the adjuster chased."
+    },
+    {
+      "id": "c_reviewed",
+      "label": "Review before export",
+      "kind": "before",
+      "action": "review_footage",
+      "other": "log_export",
+      "dimension": "Procedure",
+      "competency": "Investigation",
+      "weight": 7,
+      "pass": "You knew what the footage showed, so the export covered it.",
+      "fail": "Exported blind."
+    }
+  ],
+  "bestOrder": [
+    "read_request",
+    "check_retention",
+    "review_footage",
+    "export_footage",
+    "log_export",
+    "check_incident_log",
+    "lock_evidence",
+    "message_mentor"
+  ],
+  "debrief": {
+    "whatHappened": "A theft from a guest's chair was on camera all along, and nobody saved it because the desk never told LP. You preserved it with hours to spare, under your own name, with a hash and a log, and released nothing. Whatever happens with the claim, the hotel can show exactly what it holds and why.",
+    "bestPractice": [
+      "Read the request and note exactly what is asked for and what is not.",
+      "Check the retention: how long until the footage overwrites. That sets your deadline.",
+      "Review first, then export wide enough to show the event and its context, on every camera on the route.",
+      "Export in native format with the player, and record the hash. Make viewing copies later.",
+      "Always use your own login. Shared accounts break attribution and custody.",
+      "Log the export (reason, cameras, times, media, hash, witness) and lock the media in the evidence locker.",
+      "Preserve for anyone who asks; release only under the footage release policy, by the person who owns that decision.",
+      "Fix the hand-off that let the evidence nearly disappear."
+    ],
+    "why": "Video evidence has a shelf life. Most hotel recorders keep weeks, not months, and claims, complaints and police requests often arrive after it has gone. A rushed or unattributed export can be challenged; a released clip can be a privacy breach in its own right.",
+    "commonMistakes": [
+      "Waiting for a written police request while the footage overwrites.",
+      "Exporting a phone-friendly MP4 of a few seconds.",
+      "Using the shared admin login.",
+      "Emailing the clip to whoever asked.",
+      "No export log, no hash."
+    ]
+  },
+  "procedureCards": [
+    "cctv_preservation"
+  ],
+  "reportAt": "lp_office",
+  "passMark": 60,
+  "xp": 170,
+  "weeks": 1,
+  "lesson": "Preserve first, release later, and sign your own name to the export."
+}

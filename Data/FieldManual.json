@@ -1,0 +1,864 @@
+{
+  "schema": 1,
+  "cards": [
+    {
+      "id": "room_theft_response",
+      "title": "Room theft report",
+      "topic": "theft",
+      "steps": [
+        "Go to the guest. Apologise for the situation, not for fault. Take a full statement with open questions and a timeline.",
+        "Offer to help the guest report it to the police. Never discourage a report.",
+        "Look and photograph: door, frame, lock, safe, balcony. Touch as little as possible.",
+        "Interrogate the lock: download and print the audit trail.",
+        "Check the keycard encoding log for duplicate keys and the lost property log for the item.",
+        "Interview every member of staff whose key appears, the same shift, with open questions, after you know what the lock says.",
+        "Review CCTV for the times the evidence points to; export the clips with a hash and a custody record.",
+        "Log every item of evidence into the LP locker. Release property only after ownership is proven, with a signature.",
+        "Report the facts; brief the duty manager; liability and compensation go to claims and the GM, never decided on the floor."
+      ],
+      "why": "A theft claim is a claim, not a fact. The objective evidence (lock, cameras, logs) protects the guest who is right and the employee who is innocent.",
+      "pitfalls": [
+        "Searching or accusing staff on a hunch",
+        "Promising compensation",
+        "Watching footage without exporting it"
+      ]
+    },
+    {
+      "id": "incident_report_writing",
+      "title": "Writing the incident report",
+      "topic": "report",
+      "steps": [
+        "Who: everyone involved, with role and how you identified them.",
+        "What: what happened, in one factual line, then the detail.",
+        "When and where: times from systems (locks, cameras, logs), not memory, and exact places.",
+        "How: what the evidence shows, with references (photo, export, log numbers).",
+        "Actions: what you did, in order, and who you told.",
+        "Facts, not opinions: write what you saw and heard. Quote people; do not characterise them.",
+        "Note where a statement and the evidence differ, without judging the person."
+      ],
+      "why": "Your report may be read by the GM, an insurer, the police or a court, months later. Only facts survive that reading.",
+      "pitfalls": [
+        "Opinions about guests or staff",
+        "Vague lines with no times or references",
+        "Leaving out an inconvenient fact"
+      ]
+    },
+    {
+      "id": "identity_before_entry",
+      "title": "Identity check before room entry",
+      "topic": "access",
+      "steps": [
+        "Never open a guest room, or give out a room number, until identity is verified against the registration.",
+        "Ask for photo ID and match the name to the registered guest or a registered sharer.",
+        "No ID: verify through the registration details only the guest would know, or call the registered guest.",
+        "If the person is not registered, do not confirm or deny who is staying in the room.",
+        "If the registered guest asks not to be disturbed, respect it, and stay with the visitor until they leave or the situation is resolved.",
+        "Record the request, the checks and the outcome in the daily activity report."
+      ],
+      "why": "Letting the wrong person into a room is one of the most serious failures a hotel can make. It can put a guest in real danger.",
+      "pitfalls": [
+        "Opening the door because the person seems confident",
+        "Confirming a guest is staying",
+        "Arguing with an upset visitor instead of de-escalating"
+      ]
+    },
+    {
+      "id": "noise_complaint",
+      "title": "Noise complaint and de-escalation",
+      "topic": "guest",
+      "steps": [
+        "Get the complaint details: who, which room, how long, what kind of noise.",
+        "Go in pairs. Tell the night manager where you are going.",
+        "Listen at the door first. Note what you hear and the time.",
+        "Knock, identify yourself, stand to the side of the door, and ask the guest to step into the doorway. Do not enter.",
+        "Calm voice, open hands, explain the problem and what you need. Give a clear, polite request and a time.",
+        "Watch for safety issues: overcrowding, smoke detectors covered, intoxication, anyone at risk.",
+        "Follow the warning policy. Eviction is the night manager's decision, under policy and local law.",
+        "Follow up with the complainant and record every visit and time."
+      ],
+      "why": "Most noise complaints end with one polite knock. The ones that escalate do so because staff argued, entered, or threatened what they could not deliver.",
+      "pitfalls": [
+        "Going alone",
+        "Entering the room",
+        "Threatening eviction you have no authority to carry out"
+      ]
+    },
+    {
+      "id": "intoxicated_guest_welfare",
+      "title": "Intoxicated guest: welfare first",
+      "topic": "guest",
+      "steps": [
+        "Ask the server what was served, over how long, and whether anything else was taken (medication, drugs).",
+        "Check welfare: responds to voice, breathing, colour, injuries, ability to walk. Never leave the person alone.",
+        "Call an ambulance at once for any red flag: hard to wake, vomiting while drowsy, slow or irregular breathing, a head injury, alcohol mixed with medication with worsening signs.",
+        "Back any refusal of service calmly; offer water; never shame the guest or the server.",
+        "Verify identity against the registration and the ID on file before any key or door.",
+        "Escort with two staff, stay at the threshold, leave them settled with water and a light on.",
+        "Go back to check (about 30 minutes), log each check with the time, and brief the night manager."
+      ],
+      "why": "Most alcohol deaths in hotels happen after the person has been put to bed and left alone. Supervision and a recheck cost minutes.",
+      "pitfalls": [
+        "Treating it as a security problem",
+        "Making a key because it is obviously them",
+        "Escorting alone or entering the room",
+        "No recheck"
+      ]
+    },
+    {
+      "id": "cardiac_arrest_response",
+      "title": "Collapse: call, push, shock",
+      "topic": "medical",
+      "steps": [
+        "Check response (voice, firm tap) and breathing for no more than ten seconds. Gasping is not normal breathing.",
+        "Send someone to call the emergency number on speaker and someone for the nearest AED.",
+        "Start chest compressions: centre of the chest, about two a second, five to six centimetres deep, full recoil. Do not stop except for the AED.",
+        "Switch the AED on and follow its prompts. Nobody touches the patient while it analyses or shocks.",
+        "Open the route: unlock doors, staff at the kerb to guide the crew, a lift held, furniture moved, onlookers kept back.",
+        "Hand over clearly: time of collapse, what was done, shocks given, medical history and medication.",
+        "Afterwards: restock and self-test the AED, log its use, look after the staff who helped, share health details on a need-to-know basis."
+      ],
+      "why": "Every minute without CPR and defibrillation costs about a tenth of the chance of survival. The first five minutes belong to the people already there.",
+      "pitfalls": [
+        "Mistaking gasping for breathing",
+        "Waiting for the ambulance before starting compressions",
+        "Moving the patient out of sight",
+        "Locked doors at night",
+        "An AED put back without pads"
+      ]
+    },
+    {
+      "id": "unattended_item",
+      "title": "Unattended item: assess before you touch",
+      "topic": "suspicious_item",
+      "steps": [
+        "Ask who found it, when, and whether anyone has touched it.",
+        "Assess from a distance against three questions: is it hidden, is it obviously suspicious (wires, liquids, smell, sound), is it typical for the place and time?",
+        "Do not touch, move or open it, and keep radios and mobile phones a safe distance away until it is assessed.",
+        "Use CCTV and the front office to find who left it and why.",
+        "Hidden, suspicious or unexplained: clear the area, keep people back, call the police, follow the bomb threat and evacuation plan.",
+        "Typical and explained: move it with a witness, tag it, enter it in the lost property register and lock it away.",
+        "Contact the owner and let them describe the contents."
+      ],
+      "why": "Most unattended items are forgotten luggage, which is exactly why staff handle them casually. The assessment protects everyone if it is real, and the hotel from needless evacuations and complaints if it is not.",
+      "pitfalls": [
+        "Carrying it to the desk",
+        "Opening it to find a name",
+        "Radios used beside it",
+        "Evacuating on time alone, without an assessment"
+      ]
+    },
+    {
+      "id": "cctv_preservation",
+      "title": "Preserving CCTV evidence",
+      "topic": "cctv",
+      "steps": [
+        "Note exactly what is asked for: cameras, date, time window, and who is asking.",
+        "Check the recorder's retention and work out when the footage overwrites. That is your deadline.",
+        "Review first, then export wide: before and after the event, and every camera on the route in and out.",
+        "Export in the recorder's native format with its player, record the hash, and use write-once media where you have it.",
+        "Use your own login. Never a shared account.",
+        "Log the export (reason, cameras, times, format, media number, hash, witness) and lock the media in the evidence locker.",
+        "Preserve for anyone who asks; release only under the footage release policy, decided by the Director of LP and counsel where needed."
+      ],
+      "why": "Footage overwrites in weeks and requests arrive late. An export that cannot be attributed or verified can be challenged; footage released casually can be a privacy breach.",
+      "pitfalls": [
+        "Waiting for paperwork while the footage overwrites",
+        "A few seconds converted to MP4",
+        "The shared admin login",
+        "Emailing clips to whoever asks"
+      ]
+    },
+    {
+      "id": "lost_master_key",
+      "title": "Lost or stolen master key",
+      "topic": "keys",
+      "steps": [
+        "Void an electronic master the moment it is reported. Investigate after; if it turns up, a new card costs nothing.",
+        "Pull the lock audit for that card: every door it touched since it was last seen in safe hands.",
+        "Check the rooms it opened or tried, and agree with the duty manager how and when affected guests are told.",
+        "Review CCTV on the floor and the routes off it: lifts and stairs.",
+        "Check the key log: who signed it out, when, and whether anything else on the same ring is missing.",
+        "Fix mechanical keys in proportion to what they open: re-core the locks that key fits, not the whole system.",
+        "Report theft or attempted entry to the police and preserve the audit and the footage.",
+        "Coach the employee: keys stay on the person, and reporting fast is thanked, never punished."
+      ],
+      "why": "A master card is a key to every guest on its floors, and the minutes between loss and void are the dangerous ones. Staff only report quickly when reporting is safe for them.",
+      "pitfalls": [
+        "Searching for an hour before voiding",
+        "Calling it lost without asking the locks",
+        "Re-keying everything, or nothing",
+        "Waking guests at midnight to tell them",
+        "Blaming the attendant so the next loss goes unreported"
+      ]
+    },
+    {
+      "id": "door_alarm_response",
+      "title": "Door alarms and propped doors",
+      "topic": "perimeter",
+      "steps": [
+        "Respond in person to every door alarm. Acknowledging it on the panel is not a response.",
+        "Close and secure the door. Note what was holding it and who was nearby.",
+        "Sweep the area behind the door before anything else: assume someone came in until you know they did not.",
+        "Check what the door protects: stock, cages, offices, stairs.",
+        "Review the cameras for the whole time the door was open, and how anyone who came in left.",
+        "Read the alarm history. A repeating alarm is a process failure; find out why the door is being propped.",
+        "Fix the cause, and give staff a safe way to work until it is fixed.",
+        "Log every alarm with its cause, and review the log weekly."
+      ],
+      "why": "Exterior doors are the perimeter. Most are propped for convenience, and an alarm that is cleared without a response teaches the whole team that the door does not matter.",
+      "pitfalls": [
+        "Clearing the alarm from the screen",
+        "Reviewing video before sweeping",
+        "Blaming the person and leaving the cause",
+        "Turning the alarm down instead of fixing the door"
+      ]
+    },
+    {
+      "id": "luggage_room_control",
+      "title": "Luggage room control",
+      "topic": "luggage",
+      "steps": [
+        "Tag every bag with a two-part ticket: one half on the bag, one to the guest. Log the tag, name, description and time.",
+        "Keep the luggage room locked; sign its key out and back.",
+        "Release only against the guest's half of the ticket, and collect it.",
+        "No ticket: photo ID matching the name on the tag and a description of the bag. Log the proof seen.",
+        "A missing bag: search the room, read the tag book, talk to whoever released it, then review the cameras.",
+        "Report a theft quickly with any vehicle or route details, and preserve the footage.",
+        "Look after the guest's immediate needs within your authority; route the claim to the GM and the insurer."
+      ],
+      "why": "Property the hotel takes into its care is the hotel's responsibility, and names and tag numbers are easy to read in a busy lobby.",
+      "pitfalls": [
+        "Releasing on a name and a number",
+        "An unlocked luggage room",
+        "Hiding behind a liability notice",
+        "Promising compensation you do not decide"
+      ]
+    },
+    {
+      "id": "key_system_audit",
+      "title": "Auditing the key system",
+      "topic": "keys",
+      "steps": [
+        "Check every encoder against the asset register: model, serial, location.",
+        "Open the lock system's list of trusted encoders. A device the system trusts is a key factory, wherever it is.",
+        "Audit lock system accounts against the staff list: shared logins, leavers, and who holds admin rights.",
+        "Compare encodings with the front desk's encoding log; list every card no one can account for.",
+        "Export, hash and log the system evidence before changing any setting.",
+        "Close the gap the same night: remove rogue devices, disable shared and leavers' accounts, re-key affected occupied rooms.",
+        "Report to the system's owner and the Director of LP; the vendor and the police take it from there."
+      ],
+      "why": "Locks do what the system tells them. Shared logins make every change anonymous, and one extra trusted encoder undoes every other key control.",
+      "pitfalls": [
+        "Counting the devices on the desk and stopping",
+        "Changing settings before exporting the evidence",
+        "Leaving a rogue device live to catch someone",
+        "Naming a suspect in an audit report"
+      ]
+    },
+    {
+      "id": "fire_alarm_response",
+      "title": "Fire alarm: the first ten minutes",
+      "topic": "fire",
+      "steps": [
+        "Read the panel: which device, which zone, what time.",
+        "Call the fire authority at once. Do not wait to find out whether it is real.",
+        "Send a trained person to the device by the stairs. Never open a warm door; feel it with the back of the hand.",
+        "Evacuate the alarm zone under the phased plan; tell other floors what is happening and what to do.",
+        "Get the rooming list and the list of guests who need help; use refuges and tell the crew where people are.",
+        "Meet the crew at the fire command centre with the plans, the fire master keys and the facts.",
+        "Only the fire authority silences and resets the panel.",
+        "Account for every guest, then log the event with the panel print-out and the incident number."
+      ],
+      "why": "Fire spreads in minutes and hotel guests are sleeping strangers in an unfamiliar building. The plan's order means nobody spends those minutes deciding.",
+      "pitfalls": [
+        "Investigating before calling",
+        "Opening a warm door",
+        "Resetting the panel to stop the noise",
+        "Evacuating everyone, or no one",
+        "Forgetting guests who need help"
+      ]
+    },
+    {
+      "id": "sprinkler_impairment",
+      "title": "Sprinkler impairment and fire watch",
+      "topic": "fire",
+      "steps": [
+        "Treat every impairment as a permit LP owns: what, where, how long, who.",
+        "Before the valve is closed, notify the fire authority and the insurer, and tell the front office.",
+        "Tag the closed valve and the panel with the permit number. Acknowledge the supervisory signal; never isolate the alarm.",
+        "Suspend hot work in the impaired area and stage extra extinguishers.",
+        "Set a dedicated fire watch: the whole area, at least hourly, logged, with nothing else to do.",
+        "If the job runs long, tell everyone the new time and keep the watch going with relief.",
+        "Restore: valve open and locked, main drain test witnessed, tags removed.",
+        "Tell everyone you told at the start; file the permit, the watch log and the test result."
+      ],
+      "why": "Fire losses cluster around protection that was out of service. A few quiet hours without sprinklers is exactly when nobody expects a fire.",
+      "pitfalls": [
+        "Closing the valve first and telling people later",
+        "A fire watch with three other jobs",
+        "Forgetting the insurer",
+        "Leaving the valve shut or untested"
+      ]
+    },
+    {
+      "id": "guest_injury_claim",
+      "title": "Guest injury and the claim that follows",
+      "topic": "claims",
+      "steps": [
+        "Person first: go to the guest, ask what hurts, give first aid and offer an ambulance. Record the offer and the answer.",
+        "Make the area safe with cones straight away, but photograph it before anyone cleans or moves anything.",
+        "Photograph wide, medium and close, with a scale in the frame; note lighting, mats, signage and footwear without judging.",
+        "Take signed statements from witnesses and staff in their own words, before they talk among themselves.",
+        "Preserve the CCTV for the whole approach, the fall and the response, and log the export.",
+        "Pull the cleaning and inspection logs for that area and that hour.",
+        "Show care without admitting fault: no promises to pay, no blame, no guesses about cause.",
+        "Give the insurer first notice the same day with the facts, the photos and the statements.",
+        "Fix the cause, and record what you changed and when."
+      ],
+      "why": "Most injury claims are won or lost on what was recorded in the first hour. Care for the guest and good evidence are the same job, and a careless promise at the scene can cost more than the injury.",
+      "pitfalls": [
+        "Mopping before the photos",
+        "Promising the hotel will pay",
+        "Statements taken days later",
+        "Forgetting the inspection log"
+      ]
+    },
+    {
+      "id": "hot_work_permit",
+      "title": "Hot work permit",
+      "topic": "fire",
+      "steps": [
+        "No permit, no flame: welding, cutting, brazing and grinding need a signed permit before work starts.",
+        "Walk the area with the contractor: combustibles moved 11 m away or covered with fire blankets, openings and drains covered.",
+        "Check the contractor's insurance, competence and a charged extinguisher at the work point.",
+        "Isolate only the detectors in that zone, through the permit, with the fire panel log and the front office told. Never isolate more than the work needs.",
+        "Post a trained fire watch during the work and for at least 30 to 60 minutes after it ends, with a final check later.",
+        "Restore the detectors when the watch ends, test them and sign the permit closed.",
+        "File the permit and the watch log."
+      ],
+      "why": "Hot work fires often start in hidden places and smoulder long after the contractor has packed up, which is why the watch continues after the flame stops.",
+      "pitfalls": [
+        "Isolating a whole floor of detectors",
+        "Ending the fire watch when the torch goes off",
+        "No extinguisher at the work",
+        "Leaving detectors isolated overnight"
+      ]
+    },
+    {
+      "id": "workplace_investigation",
+      "title": "Workplace investigation with HR",
+      "topic": "workplace",
+      "steps": [
+        "HR owns the complaint and the decision; LP gathers the facts when asked, with HR present.",
+        "Agree written terms of reference: each allegation, who is involved, who decides.",
+        "Put interim measures in place that protect the complainant without penalising them.",
+        "Keep it confidential: names and statements stay inside the process.",
+        "Interview the complainant, then the witnesses, and preserve records (CCTV, messages, rosters) while they exist.",
+        "Give the respondent every allegation and the evidence, a companion as the policy allows, and a full chance to answer.",
+        "Write findings for each allegation on the evidence: substantiated, not substantiated or inconclusive. No sanctions.",
+        "Hand over to the decision-maker, then check for retaliation."
+      ],
+      "why": "A fair process protects the complainant, the respondent and the hotel. People decide whether to report the next problem by watching how this one was handled.",
+      "pitfalls": [
+        "Moving the complainant",
+        "Revealing who said what",
+        "Interviewing the respondent before the evidence",
+        "Treating hearsay as a finding"
+      ]
+    },
+    {
+      "id": "beverage_shrink",
+      "title": "Beverage shrink investigation",
+      "topic": "shrink",
+      "steps": [
+        "Measure: shrink % = (book - counted) / book x 100, outlet by outlet, month by month.",
+        "Compare with the other outlets and the trend to see where the problem is and since when.",
+        "Walk the process from requisition to empty bottle: who has keys, what is signed, what is counted.",
+        "Test the records: does each event's use match its package and headcount?",
+        "Use CCTV and access records to test specific events, and export what matters.",
+        "If an employee may be involved, plan with HR: evidence first, a companion, a full chance to answer.",
+        "No searches of people, lockers, bags or cars outside the posted policy and local law.",
+        "Fix the controls: key log, empty-for-full, par levels, two-person reconciliation, spot counts."
+      ],
+      "why": "Shrink is usually a process that leaves no trace. Close the gap and the opportunity closes for everyone.",
+      "pitfalls": [
+        "Dividing by counted value",
+        "Blaming one person for the whole gap",
+        "Searching belongings to be sure",
+        "Fixing nothing because someone was caught"
+      ]
+    },
+    {
+      "id": "lp_audit_capa",
+      "title": "LP audit and corrective actions",
+      "topic": "audit",
+      "steps": [
+        "Know the scoring: weighted items, a pass mark, and critical items that fail the audit outright.",
+        "Prepare by checking the critical items yourself: exits, master keys, CCTV retention, fire watch records, report timeliness.",
+        "Walk the building with the auditor; show the programme as it really runs.",
+        "Make anything unsafe safe at once, and record that you did.",
+        "Never alter or backfill a record for an audit.",
+        "For each finding write a corrective action: root cause, action, owner, due date, how and how long it is verified.",
+        "Brief the GM yourself, then track the plan to the re-audit."
+      ],
+      "why": "Audits find gaps before incidents do. A good plan fixes the cause, so the finding doesn't come back.",
+      "pitfalls": [
+        "Arguing a high score outweighs a critical failure",
+        "Blaming people instead of the cause",
+        "Backfilling logs",
+        "Actions with no owner or check"
+      ]
+    },
+    {
+      "id": "staffing_model",
+      "title": "Staffing and the contract or in-house decision",
+      "topic": "budget",
+      "steps": [
+        "Post hours a week = hours per day x days per week x posts.",
+        "FTEs = post hours a week x 52 / productive hours per FTE (after leave, training and sickness).",
+        "Cost every option for a full year: pay and employer costs, recruitment, training, kit, supervision, or the contract rate x hours.",
+        "Compare performance: KPIs, turnover, training, who controls standards.",
+        "Check when incidents happen before cutting any post.",
+        "Plan the transition: notice, recruitment, overlap, and HR and counsel on any transfer rights.",
+        "Recommend with the numbers to the people who decide; tell the team yourself."
+      ],
+      "why": "Security staffing is the biggest LP cost and the easiest to cut. A model built on hours and incident data shows what each option buys.",
+      "pitfalls": [
+        "Comparing hourly rates",
+        "Paid hours instead of productive hours",
+        "Cutting nights because they look quiet",
+        "No transition plan"
+      ]
+    },
+    {
+      "id": "missing_child_code",
+      "title": "Code Beacon: missing child",
+      "topic": "missing_child",
+      "steps": [
+        "Get the description and the time last seen; keep the parent at the last-seen point with a member of staff.",
+        "Call Code Beacon on the radio with the description: every member of staff stops and looks.",
+        "Staff to every exit (street doors, staff entrance, dock, garage): watch and politely check anyone leaving with a child. Never lock an exit.",
+        "Call the police once the child has been missing ten minutes from when last seen, or at once if anything suggests abduction.",
+        "Search every area, including stairs, toilets, function rooms and back of house, while CCTV is reviewed.",
+        "If the child is with someone other than the parent, delay them politely and call the police.",
+        "Reunite, confirm the parent, check welfare, stand the code down, tell the police.",
+        "Record the times and fix what the search found."
+      ],
+      "why": "Most missing children are found quickly inside the building, and the first ten minutes decide the outcome. A code everyone knows turns the whole staff into searchers.",
+      "pitfalls": [
+        "Searching before calling the code",
+        "Counting ten minutes from the report",
+        "Locking exits",
+        "Skipping places with no camera"
+      ]
+    },
+    {
+      "id": "death_on_property",
+      "title": "A death on the property",
+      "topic": "guest_death",
+      "steps": [
+        "If death is not obvious: start CPR, call an ambulance, send for the AED.",
+        "If death is obvious: touch and move nothing. Call the emergency services as local procedure requires.",
+        "Close and guard the door; start an entry log (who, when, why); block the room on the lock system.",
+        "Run a lock audit and preserve the CCTV for the police.",
+        "Hand over to the police; they inform the next of kin. The hotel confirms nothing to anyone else.",
+        "Look after the staff who found the person: relieve, support, follow up.",
+        "The GM leads any statement; freeze the account; release the room only when the police and coroner say so."
+      ],
+      "why": "Dignity and evidence point the same way: leave the room alone and control who knows what, so the family hears it the right way.",
+      "pitfalls": [
+        "Tidying the room",
+        "Telling a caller",
+        "Forgetting the finder",
+        "Charging the account"
+      ]
+    },
+    {
+      "id": "fire_inspection",
+      "title": "Fire authority inspection",
+      "topic": "fire_inspection",
+      "steps": [
+        "Keep the fire safety records current: alarm, sprinklers, extinguishers, emergency lighting, kitchen suppression, impairments, hot work, drills, training.",
+        "Check them yourself before any inspection, and know the gaps.",
+        "Walk the building with the inspector: exits, stairs, kitchen, function rooms.",
+        "Fix unsafe conditions on the spot: stored items in stairs, blocked exits.",
+        "Occupancy limits are set by the exits; never exceed them, whatever has been sold.",
+        "Accept the findings, agree dates, and send an action plan with owners.",
+        "Track the plan to the follow-up visit."
+      ],
+      "why": "Fire safety lives between departments. LP is the one that has to see all of it, and the inspector is an ally when findings are closed on time.",
+      "pitfalls": [
+        "Arguing findings",
+        "Letting sales set occupancy",
+        "Counting a briefing as a drill",
+        "Planning a fix that could be done today"
+      ]
+    },
+    {
+      "id": "power_outage",
+      "title": "Power outage",
+      "topic": "power_outage",
+      "steps": [
+        "Read the fire alarm panel: is there a fire, what has lost power.",
+        "Take command at the fire command centre and open a log.",
+        "Talk to anyone trapped in a lift at once; the lift contractor or the fire authority releases them.",
+        "Treat any fire system without power as an impairment: fire watch, fire authority, insurer.",
+        "Shelter in place unless there is a fire or the building is unsafe.",
+        "Send staff to every guest on the special-assistance list.",
+        "Tell every guest what is happening and when the next update will be.",
+        "Plan for the emergency lighting running out.",
+        "Restore life safety first, then lifts, then the rest; review what failed."
+      ],
+      "why": "An outage hurts people through what it switches off: lifts, fire pumps, stair lighting, medical equipment. Knowing what has failed and who is vulnerable is the whole job.",
+      "pitfalls": [
+        "Forcing lift doors",
+        "Evacuating for darkness alone",
+        "Forgetting the fire pump",
+        "Silence while guests wait"
+      ]
+    },
+    {
+      "id": "cluster_standards",
+      "title": "One standard across sites",
+      "topic": "cluster_standards",
+      "steps": [
+        "Compare sites on rates per 1,000 occupied room nights, not counts.",
+        "Check your own site against the standard first.",
+        "Agree a short list of non-negotiable outcomes with every site.",
+        "Let each site meet them with methods its staffing can run.",
+        "Fund the gaps you require them to close.",
+        "Review together, monthly, on the same measures."
+      ],
+      "why": "Guests deserve the same protection at every Veldane hotel. Outcomes travel between sites; procedures written for one team often don't.",
+      "pitfalls": [
+        "Comparing raw counts",
+        "Copying the flagship manual",
+        "Public league tables",
+        "Exempting the flagship"
+      ]
+    },
+    {
+      "id": "access_revocation",
+      "title": "Removing a leaver's access",
+      "topic": "access_revocation",
+      "steps": [
+        "On the last day, every system owner removes the leaver's access and signs it off.",
+        "No shared logins: everyone has a named account.",
+        "Vendor remote access by call-back only, with named contacts kept current.",
+        "If a former employee's access is found in use: preserve the logs first.",
+        "Then disable (never delete) every account at once, at every site.",
+        "Find every system with its own logins and check them all.",
+        "Give the evidence to the police; nobody from the hotel contacts the person.",
+        "Review every account on every system quarterly."
+      ],
+      "why": "Locks, cameras, parking and the property system all keep their own users. A leaver process that stops at the network leaves the doors open.",
+      "pitfalls": [
+        "Stopping at the network login",
+        "Deleting accounts and their history",
+        "Warning the suspect",
+        "Shared convenience logins"
+      ]
+    },
+    {
+      "id": "payment_fraud",
+      "title": "Card-not-present fraud",
+      "topic": "payment_fraud",
+      "steps": [
+        "Find what the disputed bookings have in common: domains, phone numbers, timing, card origin.",
+        "Flag matching bookings still to arrive.",
+        "At check-in, ask everyone the same way for the booking card or the cardholder's signed authorisation.",
+        "Without it, the guest pays by their own means or cancels at no cost. Never say 'fraud'.",
+        "Observe and record anyone who seems to be running it; tell the police. Don't detain.",
+        "Give the evidence to the police and the card acquirer.",
+        "Dispute the chargebacks your records can win; review chargebacks monthly with credit."
+      ],
+      "why": "The loss arrives weeks after the stay. A fair, consistent payment check at the desk is the one point where it can be stopped.",
+      "pitfalls": [
+        "Accusing guests",
+        "Profiling by nationality",
+        "Detaining a suspect",
+        "Disputing what can't be won"
+      ]
+    },
+    {
+      "id": "misconduct_investigation",
+      "title": "Investigating your own team",
+      "topic": "lp_misconduct",
+      "steps": [
+        "Pull the records and check them against the cameras before speaking to anyone.",
+        "Bring HR in from the start.",
+        "Take anyone involved, supervisors included, out of the investigation.",
+        "Interview each person separately with HR present, show the evidence, and let them answer.",
+        "Protect whoever reported it: build the case on the records and never name them.",
+        "Keep findings to the conduct; record welfare context; outcomes are decided in HR's process.",
+        "Cover the gap and fix the control the same day."
+      ],
+      "why": "LP is trusted with the records everyone else relies on. When its own records are false, how you investigate decides whether anyone believes them again.",
+      "pitfalls": [
+        "Letting the supervisor handle it",
+        "Exposing the reporter",
+        "Locker searches outside policy",
+        "Sanctions decided in the interview"
+      ]
+    },
+    {
+      "id": "bomb_threat",
+      "title": "Bomb threat",
+      "topic": "bomb_threat",
+      "steps": [
+        "On the call: keep the caller talking, write the exact words, the time, the voice and the background; don't hang up.",
+        "Call the police at once with the checklist.",
+        "Take command with the GM; decide what to clear on police advice, targeted to the threat.",
+        "Search routes and assembly points before sending anyone there.",
+        "Search with staff who know each area, looking for what is out of place.",
+        "No radio or phone use within 15 metres of a suspicious item.",
+        "Never touch, move or open it; cordon around and below; hand over to the police.",
+        "Reopen only on the police all-clear; review the log."
+      ],
+      "why": "A threat is almost always a hoax, and you never know which. The procedure makes the response safe either way.",
+      "pitfalls": [
+        "Pulling the fire alarm",
+        "Touching the item",
+        "Radios near it",
+        "Unsearched assembly points"
+      ]
+    },
+    {
+      "id": "insurance_renewal",
+      "title": "Insurance renewal",
+      "topic": "insurance_renewal",
+      "steps": [
+        "Build the loss history for every site: frequency, severity, trends.",
+        "Check the reserve on every open claim: incurred = paid + reserve.",
+        "Disclose every known claim and circumstance.",
+        "Show the risk improvements with dated records.",
+        "Compare programmes on total cost of risk: premium plus retained losses.",
+        "Promise only what is funded; conditions become part of the policy.",
+        "Track the risk engineer's recommendations to closure and report them."
+      ],
+      "why": "The renewal price is the insurer's view of how well the risk is run. Honest, complete evidence lowers it and keeps the cover sound.",
+      "pitfalls": [
+        "Non-disclosure",
+        "Stale reserves",
+        "Premium-only comparisons",
+        "Unfunded promises"
+      ]
+    },
+    {
+      "id": "food_illness",
+      "title": "Suspected food illness",
+      "topic": "food_illness",
+      "steps": [
+        "Find out who is ill and look after them first.",
+        "Hold every retained sample, leftover and opened pack, labelled for the health department.",
+        "Copy the menus, recipes, delivery notes, temperature and cleaning logs and the rota.",
+        "Keep ill food handlers off work until 48 hours symptom-free, on pay.",
+        "Work openly with the health department.",
+        "Tell the insurer the same day; no admission, no denial, no speculation.",
+        "Fix the cause the investigation finds and check the fix."
+      ],
+      "why": "Only the held evidence can show what did and didn't cause it. Cleaning up first destroys the hotel's own defence.",
+      "pitfalls": [
+        "Throwing food away",
+        "Blaming a supplier",
+        "Punishing ill staff",
+        "Guessing in public"
+      ]
+    },
+    {
+      "id": "trafficking_awareness",
+      "title": "Trafficking awareness",
+      "topic": "trafficking_awareness",
+      "steps": [
+        "Train every employee and contractor in the signs for their role.",
+        "Signs are behaviours: control by another person, someone else holding ID, rooms refusing service with many visitors, agency staff without their own documents or paying fees.",
+        "One route: tell LP or the duty manager; LP contacts the police or the hotline.",
+        "Anyone in immediate danger: call the police at once.",
+        "Observe and note; never confront, question, follow or try to rescue anyone.",
+        "Never profile by nationality, ethnicity or appearance.",
+        "Measure training completion and reporting, not cases found."
+      ],
+      "why": "Staff are often the only people who notice. A safe, simple route turns what they notice into information the police can use.",
+      "pitfalls": [
+        "Staff intervening",
+        "Profiling",
+        "Leaving out contractors",
+        "Counting cases"
+      ]
+    },
+    {
+      "id": "claim_fraud",
+      "title": "A claim the evidence doesn't support",
+      "topic": "claim_fraud",
+      "steps": [
+        "Preserve footage and records for the claimed date at once, before retention runs out.",
+        "Check the incident log, first aid and complaints for the date.",
+        "Compare each fact in the claim with the hotel's evidence, side by side.",
+        "Give the whole file to the insurer; they decide whether it is genuine.",
+        "Meet the claimant courteously; say nothing about liability or the evidence.",
+        "Never accuse anyone of fraud yourself.",
+        "Hold the evidence until the claim closes."
+      ],
+      "why": "A disciplined evidence file is fair to honest claimants and fatal to dishonest ones, without the hotel making an accusation it can be sued for.",
+      "pitfalls": [
+        "Accusing",
+        "Showing the evidence",
+        "Footage overwritten",
+        "Paying to avoid a fight"
+      ]
+    },
+    {
+      "id": "guest_floor_fire",
+      "title": "Fire on a guest floor",
+      "topic": "major_fire",
+      "steps": [
+        "Two detectors, a flow switch or a sighting is a confirmed fire: call the fire authority at once.",
+        "Evacuate the fire floor and the floor below; alert every other floor to be ready.",
+        "Lifts return to ground and are for firefighters only.",
+        "Nobody opens the room on fire or enters smoke.",
+        "Put a member of staff with anyone in a refuge; tell the fire authority exactly where.",
+        "Hand over command with the panel, plans, keys and who is unaccounted for.",
+        "Account for every guest against the in-house list.",
+        "Nobody goes back until the fire authority says so; preserve the scene; tell the insurer."
+      ],
+      "why": "Sprinklers, fire doors and a phased plan contain most hotel fires. The plan only works if it starts at once and nobody makes the smoke worse.",
+      "pitfalls": [
+        "Investigating first",
+        "Everyone at once",
+        "Opening the door",
+        "Forgetting the refuge"
+      ]
+    },
+    {
+      "id": "security_business_case",
+      "title": "A security business case",
+      "topic": "lock_business_case",
+      "steps": [
+        "State the risk from the data: incidents, losses, audits.",
+        "Expected annual loss = events per year x average cost. An average, never a worst case.",
+        "Set out the options with whole-life costs.",
+        "Say what each option won't fix.",
+        "Phase it so the highest risk falls first.",
+        "Get the departments that will run it to own their parts.",
+        "Make one recommendation, and say how the benefit will be measured."
+      ],
+      "why": "Decision-makers check the numbers. A case that is honest about risk, cost and limits gets approved; one inflated figure sinks it.",
+      "pitfalls": [
+        "Worst case as the average",
+        "Hardware-only costs",
+        "No limits stated",
+        "No benefit measures"
+      ]
+    },
+    {
+      "id": "cctv_privacy",
+      "title": "CCTV and privacy",
+      "topic": "cctv_privacy",
+      "steps": [
+        "Give every camera a stated purpose; no more intrusive than the purpose needs.",
+        "Never in guest rooms (or looking into them), toilets, changing, locker or rest areas. No audio.",
+        "Signs where cameras operate, and a privacy notice.",
+        "Named, trained users only; every view and export logged.",
+        "30-day retention unless an incident hold is placed.",
+        "Release footage only on a written, approved request, with custody.",
+        "A privacy impact assessment and counsel's review before any new use, analytics included.",
+        "Consult staff before back-of-house changes; review yearly."
+      ],
+      "why": "CCTV is surveillance of people. Clear rules keep it lawful, keep evidence usable, and keep staff and guests on side.",
+      "pitfalls": [
+        "Cameras where people change",
+        "Face recognition without basis",
+        "Shared logins",
+        "Releasing on an email"
+      ]
+    },
+    {
+      "id": "incident_communications",
+      "title": "When an incident goes public",
+      "topic": "viral_incident",
+      "steps": [
+        "See all the footage and read every report before any judgement.",
+        "Within the hour: a holding statement with care and action, no blame, no outcome.",
+        "Reach the person involved directly and privately.",
+        "Stand staff involved down on pay pending a fair investigation.",
+        "Preserve everything; tell the police if a crime may have been committed.",
+        "Never threaten or pressure the person who filmed it.",
+        "Communications lead the public words; LP leads the facts.",
+        "Finish the investigation and publish what changes."
+      ],
+      "why": "The first hours decide whether the public gives the hotel time to find the facts.",
+      "pitfalls": [
+        "Defending before knowing",
+        "Silence",
+        "Takedown threats",
+        "Announcing outcomes"
+      ]
+    },
+    {
+      "id": "speak_up_protection",
+      "title": "Protecting people who speak up",
+      "topic": "retaliation",
+      "steps": [
+        "Treat a report of retaliation as a new, serious complaint.",
+        "Listen first, and agree with the person what protection they want.",
+        "Gather the evidence: rotas, messages, damage, before any interview.",
+        "Reverse any detriment at once (shifts, pay, duties).",
+        "Never move or change the reporter's job without their free choice.",
+        "Investigate independently through HR.",
+        "Remind every team that retaliation is misconduct, without names.",
+        "Check in with the person afterwards."
+      ],
+      "why": "People report problems only when they have seen that reporting is safe.",
+      "pitfalls": [
+        "Moving the reporter",
+        "Exposing them in a meeting",
+        "Investigating your own team",
+        "Calling it friction"
+      ]
+    },
+    {
+      "id": "severe_weather",
+      "title": "Hurricane and severe weather",
+      "topic": "hurricane",
+      "steps": [
+        "Set decision points against the official forecast (72, 48, 24 hours) and say what is decided at each.",
+        "Follow any official evacuation order at once.",
+        "Stop arrivals and help guests leave early without penalty; rehouse at sister hotels.",
+        "Pay staff through the closure and release them in time to protect their families.",
+        "Shelter only trained volunteers, in designated rooms, with supplies for 72 hours and a satellite phone.",
+        "Secure the property before the wind: shutters, loose items, fuel, generator, water, backups.",
+        "Nobody goes outside during the storm, the eye included.",
+        "Account for every guest and staff member before and after; tell the insurer before landfall; return only on the all-clear."
+      ],
+      "why": "Severe weather gives warning. A plan with fixed decision points turns that warning into time for people to get safe.",
+      "pitfalls": [
+        "Waiting for certainty",
+        "Staying open for an event",
+        "Keeping staff",
+        "Going out in the eye"
+      ]
+    },
+    {
+      "id": "post_incident_review",
+      "title": "Major incident and post-incident review",
+      "topic": "multi_property_breach",
+      "steps": [
+        "People first: the injured guest, the family (one named contact), then the staff.",
+        "Order evidence preserved at every affected property at once: lock trails, encoder logs, CCTV, key records, rosters.",
+        "Join everything to one timeline; note clock offsets between systems.",
+        "Share facts, not guesses, with the police; say what you don't know.",
+        "Tell the family the truth early and keep telling it; counsel shapes the wording, not the honesty.",
+        "Notify the insurer and the owners the same day; one approved voice to the media.",
+        "No blame on a person before the review; look for the system causes.",
+        "Close the hole group-wide, then give the board the whole review, bad news included, with a measured rate and no 'never again'."
+      ],
+      "why": "A major incident is judged twice: by how people were treated that night, and by whether the organisation learned.",
+      "pitfalls": [
+        "Blaming the nearest person",
+        "Silence while counsel works",
+        "Only good news to the board",
+        "Promising 'never again'"
+      ]
+    }
+  ]
+}

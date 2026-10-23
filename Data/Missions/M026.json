@@ -1,0 +1,514 @@
+{
+  "schema": 1,
+  "id": "M026",
+  "title": "Supervisor Protecting a Friend",
+  "kind": "mission",
+  "topic": "lp_misconduct",
+  "minLevel": 7,
+  "opening": {
+    "channel": "email",
+    "from": "partner",
+    "at": "lp_office",
+    "text": "Ines here. I wasn't going to say anything, but I can't keep signing a log I know is wrong. Rory's evening patrols aren't being done, and Colm knows. Please don't make this about me."
+  },
+  "briefing": [
+    "10:00, Thursday. Ines Dalca reports that Rory Pennant, an evening LP officer, has not been doing his patrols, and that his supervisor and friend Colm Brady signs the daily activity report as complete.",
+    "Veldane misconduct method: check the records before you speak to anyone; involve HR from the start; the people involved never investigate themselves or each other, so take the supervisor out of it; interview each person separately, with HR, and let them answer; protect the person who reported it; deal with the conduct, not the friendship; fix the control that let it happen, and cover the gap tonight. Your authority is 400,000."
+  ],
+  "learningObjectives": [
+    "Records before interviews",
+    "Nobody investigates their own team",
+    "Protecting the person who reported it"
+  ],
+  "start": "10:00",
+  "actions": [
+    {
+      "id": "patrol_data",
+      "label": "Pull a month of patrol scans and the daily reports",
+      "kind": "check",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 5,
+      "required": true,
+      "findingTitle": "Impossible rounds",
+      "finding": "Rory's 96 scheduled rounds this month all show as complete. In 38 of them the checkpoints were scanned in an impossible order: floor 14 to the loading dock in 40 seconds, then the garage 20 seconds later. Every one is on Colm's shift, and Colm signed each daily report 'all tours complete'."
+    },
+    {
+      "id": "cctv_rounds",
+      "label": "Check the cameras against three of the rounds",
+      "kind": "cctvReview",
+      "at": "cctv_room",
+      "spot": "cctv_console",
+      "minutes": 5,
+      "requires": [
+        "patrol_data"
+      ],
+      "required": true,
+      "evidence": "KC-2601",
+      "findingTitle": "Nobody on 14",
+      "finding": "At the times the floor 14 checkpoints were scanned, the floor 14 corridor camera shows nobody. The LP office door camera shows Rory at his desk. The garage camera shows his car with him in it for 70 minutes on two of the nights. Clips exported and logged as KC-2601."
+    },
+    {
+      "id": "hr_plan",
+      "label": "Plan the investigation with Priyanka Venn",
+      "kind": "interview",
+      "at": "exec_offices",
+      "spot": "hr_office",
+      "person": "hr_director",
+      "minutes": 4,
+      "requires": [
+        "patrol_data"
+      ],
+      "required": true,
+      "findingTitle": "Two matters, one investigator",
+      "finding": "Two matters: Rory's falsified patrols, and Colm's sign-off of reports he knew or should have known were false. You investigate, with HR present at every interview; Colm takes no part in the investigation and is told only that there is one. Ines's name stays out of it: the records stand on their own.",
+      "lines": [
+        {
+          "speaker": "hr_director",
+          "text": "The records come first, then each of them separately, with me in the room. And whoever raised it is protected, whatever Colm thinks of it."
+        }
+      ]
+    },
+    {
+      "id": "colm_handles",
+      "label": "Ask Colm to have a quiet word with Rory",
+      "kind": "other",
+      "at": "lp_office",
+      "minutes": 1,
+      "requires": [
+        "patrol_data"
+      ],
+      "findingTitle": "A quiet word",
+      "finding": "Colm has his quiet word. That night the scans look perfect, the daily report is signed, and Rory's car is in the garage for an hour again. Colm asks the team who has been talking.",
+      "relations": {
+        "partner": -15
+      },
+      "schedules": [
+        {
+          "id": "cover_up",
+          "description": "A guest assault on an evening floor is found to have happened during a 'completed' patrol round. The investigation finds LP knew the patrols were being falsified and let the supervisor deal with it.",
+          "delayWeeks": 4,
+          "probability": 0.7,
+          "effects": {
+            "SecurityPosture": -5,
+            "InsurerConfidence": -4,
+            "OwnerTrust": -4
+          },
+          "flagIfOccurs": "patrol_cover_up"
+        }
+      ]
+    },
+    {
+      "id": "search_locker",
+      "label": "Open Rory's locker before you speak to him",
+      "kind": "search",
+      "at": "back_of_house",
+      "minutes": 2,
+      "requires": [
+        "patrol_data"
+      ],
+      "findingTitle": "Locker opened",
+      "finding": "You open the locker with the master key, alone. Inside: a sheet of copied checkpoint tags. Rory's representative asks who was present when it was opened, and why the search wasn't under the locker policy.",
+      "effects": {
+        "StaffMorale": -3
+      },
+      "schedules": [
+        {
+          "id": "locker_grievance",
+          "description": "Rory's grievance over the locker search succeeds: the sheet of tags can't be relied on, and the disciplinary case is weaker.",
+          "delayWeeks": 3,
+          "probability": 0.6,
+          "effects": {
+            "StaffMorale": -3,
+            "IncidentCosts": 4000
+          },
+          "flagIfOccurs": "locker_search_grievance"
+        }
+      ]
+    },
+    {
+      "id": "interview_rory",
+      "label": "Interview Rory Pennant with HR",
+      "kind": "interview",
+      "at": "lp_office",
+      "person": "officer_pennant",
+      "minutes": 5,
+      "requires": [
+        "hr_plan",
+        "cctv_rounds"
+      ],
+      "required": true,
+      "findingTitle": "He admits it",
+      "finding": "Shown the scan times and the clips, Rory admits copying the checkpoint tags and scanning them from the office on bad nights. His mother has been ill; he has been sleeping in his car between shifts. He says Colm told him 'just keep the numbers right, I'll sort the rest'.",
+      "lines": [
+        {
+          "speaker": "officer_pennant",
+          "text": "I know how it looks. I was going to do them properly once things settled down. Colm said he had my back."
+        }
+      ]
+    },
+    {
+      "id": "interview_colm",
+      "label": "Interview Colm Brady with HR",
+      "kind": "interview",
+      "at": "lp_office",
+      "person": "rival",
+      "minutes": 5,
+      "requires": [
+        "interview_rory"
+      ],
+      "required": true,
+      "findingTitle": "He signed what he knew",
+      "finding": "Colm says he trusts his team and doesn't check scan times. Shown his own messages to Rory, he accepts he knew the rounds weren't being done and signed the reports anyway, 'to give a mate a break'. He asks who reported it. You don't say.",
+      "lines": [
+        {
+          "speaker": "rival",
+          "text": "Fifteen years, and you're doing me over a patrol log. He's going through it. You'd have done the same."
+        }
+      ]
+    },
+    {
+      "id": "tell_team",
+      "label": "Tell the evening team at briefing what Rory has done",
+      "kind": "other",
+      "at": "lp_office",
+      "minutes": 1,
+      "requires": [
+        "interview_rory"
+      ],
+      "findingTitle": "Told at briefing",
+      "finding": "The evening team hears it from you before HR has decided anything. Within the hour everyone has guessed who reported it.",
+      "relations": {
+        "partner": -20,
+        "officer_pennant": -15
+      },
+      "effects": {
+        "StaffMorale": -4
+      },
+      "schedules": [
+        {
+          "id": "reporter_isolated",
+          "description": "Ines is frozen out on evenings and asks to move to days. Two officers say they would never report anything now.",
+          "delayWeeks": 2,
+          "probability": 0.75,
+          "effects": {
+            "StaffMorale": -4,
+            "SecurityPosture": -3
+          },
+          "flagIfOccurs": "reporter_isolated"
+        }
+      ]
+    },
+    {
+      "id": "cover_tonight",
+      "label": "Cover the evening patrols and change the tour",
+      "kind": "call",
+      "at": "lp_office",
+      "spot": "lp_radio",
+      "person": "guard_lead",
+      "minutes": 3,
+      "requires": [
+        "hr_plan"
+      ],
+      "required": true,
+      "findingTitle": "Covered, and changed",
+      "finding": "Callum Fenwick puts a Tessmore officer on evenings while both men are stood down during the investigation. The checkpoints are re-tagged and the tour sequence randomised each night; the duty manager checks three scan times against the cameras every week."
+    },
+    {
+      "id": "outcome_record",
+      "label": "Write up the findings for HR",
+      "kind": "logEvidence",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 4,
+      "requires": [
+        "interview_colm",
+        "cover_tonight"
+      ],
+      "required": true,
+      "findingTitle": "Findings",
+      "finding": "Two findings, kept apart: Rory falsified 38 patrol records; Colm signed reports he knew were false. The welfare context for Rory is recorded and the employee assistance programme offered. Outcomes are for HR's disciplinary process. The control changes and the weekly camera check are recorded with owners."
+    }
+  ],
+  "questions": [
+    {
+      "id": "q_compliance",
+      "kind": "numeric",
+      "prompt": "Of Rory's 96 scheduled rounds this month, 58 were genuinely done on time. What is his real patrol compliance?",
+      "dimension": "Evidence",
+      "competency": "Investigation",
+      "weight": 9,
+      "formula": {
+        "name": "PatrolCompliancePercent",
+        "inputs": {
+          "onTime": 58,
+          "scheduled": 96
+        }
+      },
+      "tolerance": 0.02,
+      "unit": "%",
+      "explanation": "Patrol compliance = rounds done on time / rounds scheduled x 100 = 58 / 96 x 100 = 60.4%. The daily reports said 100%. A compliance figure is only as good as the check that the scans were real.",
+      "mistakes": [
+        {
+          "value": 39.6,
+          "feedback": "That is the share that was falsified (38 of 96). The question asks for the share genuinely done."
+        },
+        {
+          "value": 100,
+          "feedback": "That is what the daily reports said. The scans in an impossible order weren't patrols."
+        }
+      ]
+    },
+    {
+      "id": "d_who",
+      "prompt": "Who investigates?",
+      "dimension": "Procedure",
+      "competency": "PeopleLeadership",
+      "weight": 9,
+      "options": [
+        {
+          "id": "you",
+          "label": "You, with HR at every interview; Colm takes no part.",
+          "score": 100,
+          "feedback": "The supervisor is part of what is being investigated. Nobody investigates their own conduct or their friend's."
+        },
+        {
+          "id": "colm",
+          "label": "Colm: he is Rory's supervisor.",
+          "score": 10,
+          "critical": true,
+          "feedback": "He signed the false reports. Letting him handle it is how a cover-up becomes policy."
+        },
+        {
+          "id": "nobody",
+          "label": "Nobody: change the tour system and move on.",
+          "score": 30,
+          "feedback": "The control needs fixing, and so does the conduct. Fixing one without the other tells the team that falsified records are fine."
+        }
+      ]
+    },
+    {
+      "id": "d_reporter",
+      "kind": "multi",
+      "prompt": "How do you protect Ines?",
+      "dimension": "Care",
+      "competency": "PeopleLeadership",
+      "weight": 8,
+      "options": [
+        {
+          "id": "records",
+          "label": "Build the case on the records, not on her report",
+          "correct": true
+        },
+        {
+          "id": "name",
+          "label": "Never name her to Colm, Rory or the team",
+          "correct": true
+        },
+        {
+          "id": "watch",
+          "label": "Watch for anything that looks like retaliation, and act on it",
+          "correct": true
+        },
+        {
+          "id": "move",
+          "label": "Move her to days so she's out of the way",
+          "feedback": "Moving the person who reported is the retaliation. She stays where she chooses."
+        }
+      ]
+    },
+    {
+      "id": "d_friend",
+      "prompt": "Colm says, \"You'd have done the same for a mate.\" How do you treat the friendship?",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 11,
+      "options": [
+        {
+          "id": "conduct",
+          "label": "It explains why it happened; it doesn't change what was done. The finding is about the false reports.",
+          "score": 100,
+          "feedback": "Understand the why, record the welfare context for Rory, and keep the finding to the conduct."
+        },
+        {
+          "id": "excuse",
+          "label": "It's a mitigating circumstance: record a warning for both and move on.",
+          "score": 35,
+          "feedback": "Outcomes are for HR's process, after the findings. Deciding them in the interview isn't fair to either man."
+        },
+        {
+          "id": "worse",
+          "label": "It makes it worse: they were colluding, so both should be dismissed today.",
+          "score": 25,
+          "feedback": "Maybe, and maybe not. The findings go to HR's disciplinary process; you don't decide outcomes in an interview."
+        }
+      ]
+    },
+    {
+      "id": "r_what",
+      "prompt": "Investigation findings, summary (one line)",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 7,
+      "section": "what",
+      "options": [
+        {
+          "id": "facts",
+          "label": "38 of 96 patrol rounds falsified by one officer (real compliance 60.4%), confirmed by scan times and KC-2601; supervisor signed reports he knew were false; interviews with HR; patrols covered and tour randomised; findings to HR.",
+          "score": 100,
+          "feedback": "Each finding on its own evidence, what changed, and who decides the outcome."
+        },
+        {
+          "id": "colm",
+          "label": "Colm Brady covered for his friend and should be dismissed.",
+          "score": 25,
+          "feedback": "A conclusion and a sanction, not a finding. And it leaves out Rory's records."
+        },
+        {
+          "id": "names",
+          "label": "Ines Dalca reported that patrols were not being done.",
+          "score": 5,
+          "feedback": "Her name has no place in the findings. The records carry the case."
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "c_records_first",
+      "label": "Records first",
+      "kind": "before",
+      "action": "patrol_data",
+      "other": "interview_rory",
+      "dimension": "Evidence",
+      "competency": "Investigation",
+      "weight": 6,
+      "pass": "You had the scan data before anyone was interviewed.",
+      "fail": "You interviewed before you knew what the records showed."
+    },
+    {
+      "id": "c_cctv",
+      "label": "Check it on camera",
+      "kind": "done",
+      "action": "cctv_rounds",
+      "dimension": "Evidence",
+      "competency": "EvidenceReporting",
+      "weight": 6,
+      "pass": "The cameras confirmed what the scans suggested.",
+      "fail": "The scan data was never checked against the cameras."
+    },
+    {
+      "id": "c_hr",
+      "label": "HR from the start",
+      "kind": "before",
+      "action": "hr_plan",
+      "other": "interview_rory",
+      "dimension": "Procedure",
+      "competency": "PeopleLeadership",
+      "weight": 6,
+      "pass": "HR was in it from the start.",
+      "fail": "HR found out after the interviews."
+    },
+    {
+      "id": "c_no_colm",
+      "label": "The supervisor stays out",
+      "kind": "notDone",
+      "action": "colm_handles",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 8,
+      "pass": "Colm took no part in investigating his own team.",
+      "fail": "The supervisor who signed the reports handled it."
+    },
+    {
+      "id": "c_no_locker",
+      "label": "Locker by the policy",
+      "kind": "notDone",
+      "action": "search_locker",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 5,
+      "pass": "Nobody's locker was opened outside the policy.",
+      "fail": "You searched a locker alone and outside the policy."
+    },
+    {
+      "id": "c_no_tell",
+      "label": "Protect the reporter",
+      "kind": "notDone",
+      "action": "tell_team",
+      "dimension": "Care",
+      "competency": "PeopleLeadership",
+      "weight": 8,
+      "pass": "The team didn't hear it from you, and nobody worked out who reported it.",
+      "fail": "The team heard it at briefing, and so did the reporter's name."
+    },
+    {
+      "id": "c_both",
+      "label": "Hear both sides",
+      "kind": "done",
+      "action": "interview_colm",
+      "dimension": "Communication",
+      "competency": "PeopleLeadership",
+      "weight": 6,
+      "pass": "Each man answered the evidence, separately, with HR.",
+      "fail": "The supervisor was never asked to answer for his sign-offs."
+    },
+    {
+      "id": "c_cover",
+      "label": "Cover tonight",
+      "kind": "done",
+      "action": "cover_tonight",
+      "dimension": "Procedure",
+      "competency": "IncidentResponse",
+      "weight": 5,
+      "pass": "Evenings were covered and the tour can't be faked the same way again.",
+      "fail": "Evenings were left uncovered."
+    },
+    {
+      "id": "c_record",
+      "label": "Findings to HR",
+      "kind": "done",
+      "action": "outcome_record",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 6,
+      "pass": "Two findings, each on its evidence, went to HR.",
+      "fail": "The findings were never written up."
+    }
+  ],
+  "bestOrder": [
+    "patrol_data",
+    "cctv_rounds",
+    "hr_plan",
+    "cover_tonight",
+    "interview_rory",
+    "interview_colm",
+    "outcome_record"
+  ],
+  "debrief": {
+    "whatHappened": "An officer had been faking a third of his patrols and his supervisor, an old friend, signed them off. You built the case on the scan data and the cameras, brought HR in first, kept the supervisor out of it, interviewed each man separately, protected the person who reported it, covered evenings and changed the tour so it can't be faked the same way.",
+    "bestPractice": [
+      "Records and cameras before interviews.",
+      "HR from the start; each person interviewed separately with HR present.",
+      "Nobody investigates their own team or their friends.",
+      "Protect the reporter: the case stands on the records.",
+      "Keep findings to the conduct; record the welfare context; outcomes are for HR.",
+      "Fix the control and cover the gap the same day."
+    ],
+    "why": "Falsified patrols are invisible until the night something happens on a floor that was 'checked'. A supervisor who covers it turns one officer's lapse into a team's culture, and a reporter who suffers for it means nobody reports the next one.",
+    "commonMistakes": [
+      "Letting the supervisor deal with it.",
+      "Naming or moving the reporter.",
+      "Searching lockers outside policy.",
+      "Deciding sanctions in the interview."
+    ]
+  },
+  "procedureCards": [
+    "misconduct_investigation"
+  ],
+  "reportAt": "lp_office",
+  "passMark": 60,
+  "xp": 400,
+  "weeks": 2,
+  "lesson": "Records first, HR from the start, nobody investigates their own, protect the reporter, fix the control."
+}

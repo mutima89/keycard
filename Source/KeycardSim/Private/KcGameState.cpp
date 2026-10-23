@@ -27,6 +27,14 @@ GameState NewGame(const std::string& ProfileName, EBackground Background, EDiffi
 	S.Difficulty = Difficulty;
 	S.Seed = Seed;
 	S.Career.ApplyBackground(Background);
+	S.Property = PropertyState(PropertyProfiles().front());
+	S.Property.EventSeed = Seed ^ 0xC0FFEE5EEDULL;
+	S.World.Stress = StressStart;
 	return S;
+}
+
+std::vector<ResolvedConsequence> AdvanceGameWeeks(GameState& State, int Weeks)
+{
+	return State.Property.AdvanceWeeks(Weeks);
 }
 } // namespace kc

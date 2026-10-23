@@ -1,4 +1,4 @@
-"""Downloads the office cast from Microsoft Rocketbox (MIT licence, github.com/microsoft/Microsoft-Rocketbox)
+"""Downloads the hotel cast from Microsoft Rocketbox (MIT licence, github.com/microsoft/Microsoft-Rocketbox)
 into <repo>/../KeycardAssets/rocketbox: avatar FBX files (the "_facial" exports, which carry 15 visemes and
 ARKit/FACS face shapes for lip-sync and expressions), textures reduced to 1024 px PNG, and the body animations
 KcPerson uses (idles, talking and listening gestures, reactions, sitting, walking).
@@ -11,8 +11,13 @@ _tree = json.load(urllib.request.urlopen("https://api.github.com/repos/microsoft
 TREE = [t["path"] for t in _tree["tree"]]
 RAW = "https://media.githubusercontent.com/media/microsoft/Microsoft-Rocketbox/master/"
 RAW2 = "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/master/"
-AV = ["Professions/Business_Female_0%d" % i for i in range(1, 5)] + ["Professions/Business_Male_0%d" % i for i in range(1, 8)] + \
-     ["Adults/Female_Adult_0%d" % i for i in range(1, 6)] + ["Adults/Male_Adult_0%d" % i for i in range(1, 5)]
+# The cast is Data/People.json: every avatar named there is fetched.
+_people = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "Data", "People.json"), encoding="utf-8"))["people"]
+_PROFESSIONS = ("Business_", "Construction_", "Fire_", "Police_", "Security_", "Medical_", "Chef_")
+# Background staff and guests (KcCast.cpp "Extras"): avatars no named person uses.
+_EXTRAS = ["Male_Adult_01", "Female_Adult_01", "Male_Adult_02", "Female_Adult_03", "Male_Adult_03", "Female_Adult_05", "Male_Adult_04",
+           "Business_Male_01", "Business_Female_01"]
+AV = sorted({("Professions/" if a.startswith(_PROFESSIONS) else "Adults/") + a for a in [c["avatar"] for c in _people if c.get("avatar")] + _EXTRAS})
 AN = [p + n for p in ("m_", "f_") for n in (
     "idle_neutral_01", "idle_neutral_02", "idle_breathe_01", "idle_look_around_01", "documents_idle", "gestic_listen_neutral_01", "cell_phone_listen_01",
     # talking, listening and reactions (KcPerson)

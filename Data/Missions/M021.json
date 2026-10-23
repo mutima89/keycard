@@ -1,0 +1,525 @@
+{
+  "schema": 1,
+  "id": "M021",
+  "title": "Do Not Disturb",
+  "kind": "mission",
+  "topic": "guest_death",
+  "minLevel": 6,
+  "opening": {
+    "channel": "phone",
+    "from": "exec_housekeeper",
+    "at": "lp_office",
+    "text": "It's Lucia. Marisol and her supervisor did the welfare check on 1406, the Do Not Disturb that's been up since Sunday night. The gentleman in the bed isn't breathing. I think he's been gone a while. Please come."
+  },
+  "briefing": [
+    "10:42, Tuesday. A guest in 1406, Mr Aldous Treharne, travelling alone on business, has had Do Not Disturb on his door for 36 hours. Under the welfare check policy a room attendant and her supervisor knocked, then entered, and found him in bed, apparently dead.",
+    "Veldane procedure for a death on property: if death is not obvious, start CPR and call an ambulance. If it is obvious, do not move or touch anything: call the emergency services as local procedure requires, secure the room, keep an entry log, and hand over to the police. The police inform the next of kin; the hotel confirms nothing to anyone else. Care for the staff who found him. The GM leads any statement. Your authority is 150,000."
+  ],
+  "learningObjectives": [
+    "Preserving dignity and the scene",
+    "Next of kin through the right people",
+    "Looking after the staff who found him"
+  ],
+  "start": "10:42",
+  "actions": [
+    {
+      "id": "attend_room",
+      "label": "Look from the doorway of 1406",
+      "kind": "check",
+      "at": "guest_room",
+      "spot": "room_1406_threshold",
+      "minutes": 3,
+      "required": true,
+      "findingTitle": "1406, 10:4x",
+      "finding": "From the doorway with the supervisor: a man in the bed on his back, the covers to his chest, skin cold and discoloured, stiff; the bedside lamp still on. Death is obvious; CPR would not help. Nothing appears disturbed. Marisol is in the corridor, shaking."
+    },
+    {
+      "id": "call_ambulance",
+      "label": "Call the emergency services",
+      "kind": "call",
+      "at": "guest_room",
+      "person": "paramedic_sethna",
+      "minutes": 2,
+      "requires": [
+        "attend_room"
+      ],
+      "required": true,
+      "findingTitle": "Emergency services",
+      "finding": "Ambulance and police called. At 11:0x the paramedics confirm death and leave the room as they found it; the police take charge of the scene."
+    },
+    {
+      "id": "secure_scene",
+      "label": "Close the door, post an officer and start an entry log",
+      "kind": "secure",
+      "at": "f14_corridor",
+      "spot": "door_1406",
+      "minutes": 2,
+      "requires": [
+        "attend_room"
+      ],
+      "required": true,
+      "findingTitle": "Scene secured",
+      "finding": "Door closed and the room blocked on the lock system. Ines on the door with an entry log: who, when, why. Logged so far: Marisol and her supervisor (10:38, welfare check), you (10:4x, doorway only). Housekeeping's trolley stays where it is."
+    },
+    {
+      "id": "tidy_room",
+      "label": "Have housekeeping make him decent and tidy the room",
+      "kind": "other",
+      "at": "f14_corridor",
+      "minutes": 2,
+      "requires": [
+        "attend_room"
+      ],
+      "findingTitle": "Scene disturbed",
+      "finding": "The bedding is straightened, the glass and pill bottle on the nightstand are cleared to the trolley. Kindly meant, and the police can no longer tell what the room looked like when he died.",
+      "effects": {
+        "Reputation": -3,
+        "OwnerTrust": -3
+      },
+      "schedules": [
+        {
+          "id": "scene_disturbed",
+          "description": "The coroner's officer records that the room in which Mr Treharne died was tidied before the police arrived, and the medication on the nightstand was moved. The family's lawyer asks the hotel why.",
+          "delayWeeks": 3,
+          "probability": 0.8,
+          "effects": {
+            "Reputation": -4,
+            "IncidentCosts": 3000
+          },
+          "flagIfOccurs": "death_scene_disturbed"
+        }
+      ]
+    },
+    {
+      "id": "care_marisol",
+      "label": "Look after Marisol",
+      "kind": "interview",
+      "at": "f14_corridor",
+      "person": "attendant_duarte",
+      "minutes": 4,
+      "requires": [
+        "secure_scene"
+      ],
+      "findingTitle": "Marisol",
+      "finding": "You take her away from the door to the staff room on 14 with her supervisor. Lucia relieves her of the rest of her shift. She tells you what she saw, briefly; the police will take her statement later. You give her the employee assistance number and say you'll check on her tomorrow.",
+      "lines": [
+        {
+          "speaker": "attendant_duarte",
+          "text": "I knocked three times. I said 'housekeeping' like we're told. I've never seen anyone... like that."
+        }
+      ]
+    },
+    {
+      "id": "lock_audit",
+      "label": "Interrogate the 1406 lock",
+      "kind": "lockAudit",
+      "at": "f14_corridor",
+      "spot": "door_1406",
+      "minutes": 4,
+      "requires": [
+        "secure_scene"
+      ],
+      "findingTitle": "1406 lock audit",
+      "finding": "Since check-in, only the guest's keys and, this morning, the attendant's. The guest key opened the door at 22:14 on Sunday; Do Not Disturb was set at 22:15; no entry since until 10:38 today.",
+      "columns": [
+        "Time",
+        "Key",
+        "Event"
+      ],
+      "rows": [
+        [
+          "Sun 22:14",
+          "Guest key 2/2",
+          "Open"
+        ],
+        [
+          "Sun 22:15",
+          "-",
+          "Do Not Disturb on"
+        ],
+        [
+          "Tue 10:38",
+          "HK floor key 14-02",
+          "Open (welfare check)"
+        ]
+      ]
+    },
+    {
+      "id": "cctv_corridor",
+      "label": "Review the corridor camera for Sunday night",
+      "kind": "cctvReview",
+      "at": "cctv_room",
+      "spot": "cctv_console",
+      "minutes": 6,
+      "requires": [
+        "secure_scene"
+      ],
+      "findingTitle": "14-02, Sunday",
+      "finding": "22:13: Mr Treharne walks from the lifts alone, slowly, a hand on the wall once, and lets himself into 1406. Nobody approaches the door again until the attendant this morning. Exported for the police with its hash.",
+      "evidence": "KC-2101",
+      "custody": "Clip 14-02 Sunday 21:50-23:30 and Tuesday 10:30-10:50 exported by you under your own login to write-once USB KC-2101, SHA-256 recorded."
+    },
+    {
+      "id": "meet_police",
+      "label": "Hand over to DS Calloway",
+      "kind": "interview",
+      "at": "f14_corridor",
+      "person": "police_liaison",
+      "minutes": 5,
+      "requires": [
+        "call_ambulance"
+      ],
+      "required": true,
+      "findingTitle": "Police handover",
+      "finding": "DS Calloway takes the entry log, the lock audit and the clip. The police will inform his next of kin and ask the hotel to say nothing to anyone until they have. The room stays sealed until the coroner's officer releases it; his belongings stay where they are."
+    },
+    {
+      "id": "colleague_call",
+      "label": "Take the call from his colleague",
+      "kind": "interview",
+      "at": "front_desk",
+      "spot": "desk_phone",
+      "person": "desk_agent",
+      "minutes": 3,
+      "requires": [
+        "meet_police"
+      ],
+      "findingTitle": "A colleague calls",
+      "finding": "His firm's office has been calling: he missed a client meeting on Monday and isn't answering. Tariq says only that the hotel can't discuss guests, takes the caller's name and number, and you pass them to DS Calloway."
+    },
+    {
+      "id": "tell_caller",
+      "label": "Tell his colleague what has happened",
+      "kind": "other",
+      "at": "front_desk",
+      "spot": "desk_phone",
+      "minutes": 1,
+      "requires": [
+        "meet_police"
+      ],
+      "findingTitle": "Told by the wrong person",
+      "finding": "His colleague hears it from the hotel before his family do. Within the hour his brother has a phone call from the office.",
+      "effects": {
+        "Reputation": -4
+      },
+      "setsFlags": [
+        "m021_told_caller"
+      ],
+      "schedules": [
+        {
+          "id": "family_learned_from_office",
+          "description": "Mr Treharne's brother writes to the GM: the family learned of his death from his office, who learned it from the hotel, before the police reached them.",
+          "delayWeeks": 2,
+          "probability": 0.9,
+          "effects": {
+            "Reputation": -4,
+            "OwnerTrust": -3
+          },
+          "flagIfOccurs": "nok_breach"
+        }
+      ]
+    },
+    {
+      "id": "brief_gm",
+      "label": "Brief the GM",
+      "kind": "interview",
+      "at": "gm_office",
+      "person": "gm",
+      "minutes": 4,
+      "requires": [
+        "meet_police"
+      ],
+      "findingTitle": "GM briefed",
+      "finding": "Marguerite Ellery agrees the holding line (\"we can confirm the police attended; we cannot comment further\") and that only she answers media questions. Front office takes 1406 out of inventory and freezes the account: no charges to his card."
+    },
+    {
+      "id": "release_room",
+      "label": "Plan the room's release with the police",
+      "kind": "logEvidence",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 4,
+      "requires": [
+        "meet_police"
+      ],
+      "findingTitle": "Release plan",
+      "finding": "When the coroner's officer releases the room: his belongings inventoried by LP with a police witness, sealed and held for the family; specialist cleaning; the room out of service for a week; the attendant's welfare check recorded as done to policy."
+    }
+  ],
+  "questions": [
+    {
+      "id": "d_cpr",
+      "prompt": "When do you start CPR on someone found unresponsive?",
+      "dimension": "Care",
+      "competency": "IncidentResponse",
+      "weight": 8,
+      "options": [
+        {
+          "id": "unless",
+          "label": "Always, with an ambulance called, unless death is obvious, as it was here.",
+          "score": 100,
+          "feedback": "If there is any doubt, act. Obvious death (cold, stiff, discoloured) is the one exception."
+        },
+        {
+          "id": "never",
+          "label": "Never touch a body.",
+          "score": 20,
+          "feedback": "Until you know someone is dead, they are a patient."
+        },
+        {
+          "id": "wait",
+          "label": "Wait for the duty manager to decide.",
+          "score": 10,
+          "feedback": "Every minute without CPR costs a living patient their chance."
+        }
+      ]
+    },
+    {
+      "id": "d_entry",
+      "prompt": "Who goes into 1406 before the police release it?",
+      "dimension": "Evidence",
+      "competency": "Investigation",
+      "weight": 8,
+      "options": [
+        {
+          "id": "emergency",
+          "label": "Nobody but the emergency services and the police, every entry logged.",
+          "score": 100,
+          "feedback": "The room tells the police and the coroner what happened. Your job is to keep it exactly as it was, and prove that you did."
+        },
+        {
+          "id": "tidy",
+          "label": "Housekeeping, to make him decent.",
+          "score": 10,
+          "critical": true,
+          "feedback": "Kind, and it destroys what the room could have told the people who must explain his death."
+        },
+        {
+          "id": "search",
+          "label": "LP, to find his next-of-kin details.",
+          "score": 25,
+          "feedback": "That is the police's job, and they will do it without disturbing the scene."
+        }
+      ]
+    },
+    {
+      "id": "d_nok",
+      "prompt": "Who tells his family?",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 8,
+      "options": [
+        {
+          "id": "police",
+          "label": "The police. The hotel confirms nothing to anyone until they have.",
+          "score": 100,
+          "feedback": "A family should hear it in person, from someone trained, with facts that are certain. Never from a phone call to an office."
+        },
+        {
+          "id": "gm",
+          "label": "The GM, once the hotel finds a number.",
+          "score": 30,
+          "feedback": "Well meant, but the police may already be on their way, and the hotel may have the wrong person or the wrong facts."
+        },
+        {
+          "id": "desk",
+          "label": "Whoever calls first, so they aren't left worrying.",
+          "score": 10,
+          "feedback": "That is how families learn of a death from a colleague."
+        }
+      ]
+    },
+    {
+      "id": "d_care",
+      "kind": "multi",
+      "prompt": "What does Marisol need today?",
+      "dimension": "Care",
+      "competency": "PeopleLeadership",
+      "weight": 8,
+      "options": [
+        {
+          "id": "relieve",
+          "label": "Relieved of the rest of her shift",
+          "correct": true
+        },
+        {
+          "id": "quiet",
+          "label": "A quiet room and someone with her",
+          "correct": true
+        },
+        {
+          "id": "eap",
+          "label": "The employee assistance number",
+          "correct": true
+        },
+        {
+          "id": "follow",
+          "label": "A check-in tomorrow and next week",
+          "correct": true
+        },
+        {
+          "id": "finish",
+          "label": "To finish her floor first, so the rooms are ready",
+          "feedback": "She has just found a dead guest. The rooms can wait or be covered."
+        }
+      ]
+    },
+    {
+      "id": "r_what",
+      "prompt": "Incident report, summary (one line)",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 8,
+      "section": "what",
+      "options": [
+        {
+          "id": "facts",
+          "label": "Guest in 1406 found deceased 10:38 on a DND welfare check; death obvious, emergency services called, scene secured with entry log; lock audit and 14-02 show no entry since Sun 22:14; handed to DS Calloway; police informing next of kin.",
+          "score": 100,
+          "feedback": "Facts and times, what you preserved, and who has it now. No cause of death: that isn't yours to give."
+        },
+        {
+          "id": "cause",
+          "label": "Guest died of a heart attack in his sleep.",
+          "score": 15,
+          "feedback": "Nobody in the hotel knows the cause of death. Only the coroner will."
+        },
+        {
+          "id": "vague",
+          "label": "Sad incident in 1406, police attended.",
+          "score": 20,
+          "feedback": "Too little for the people who will rely on it."
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "c_call",
+      "label": "Call at once",
+      "kind": "byMinute",
+      "action": "call_ambulance",
+      "by": "10:55",
+      "dimension": "Procedure",
+      "competency": "IncidentResponse",
+      "weight": 8,
+      "pass": "The emergency services were called minutes after you saw him.",
+      "fail": "The call to the emergency services was late."
+    },
+    {
+      "id": "c_scene",
+      "label": "Secure the scene",
+      "kind": "done",
+      "action": "secure_scene",
+      "dimension": "Evidence",
+      "competency": "Investigation",
+      "weight": 8,
+      "pass": "The door was closed, guarded and logged.",
+      "fail": "Anyone could walk into 1406."
+    },
+    {
+      "id": "c_no_tidy",
+      "label": "Nothing touched",
+      "kind": "notDone",
+      "action": "tidy_room",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 10,
+      "pass": "The room stayed exactly as it was found.",
+      "fail": "The room was tidied before the police arrived."
+    },
+    {
+      "id": "c_no_tell",
+      "label": "Next of kin first",
+      "kind": "notDone",
+      "action": "tell_caller",
+      "dimension": "Compliance",
+      "competency": "ComplianceAudit",
+      "weight": 9,
+      "pass": "Nobody outside the police heard it from the hotel.",
+      "fail": "His colleague heard it from the hotel before his family heard it from the police."
+    },
+    {
+      "id": "c_care",
+      "label": "Look after the finder",
+      "kind": "done",
+      "action": "care_marisol",
+      "dimension": "Care",
+      "competency": "PeopleLeadership",
+      "weight": 7,
+      "pass": "Marisol was relieved, supported and will be checked on.",
+      "fail": "Nobody looked after the attendant who found him."
+    },
+    {
+      "id": "c_audit",
+      "label": "Lock audit",
+      "kind": "done",
+      "action": "lock_audit",
+      "dimension": "Evidence",
+      "competency": "Investigation",
+      "weight": 6,
+      "pass": "The lock shows nobody entered after him.",
+      "fail": "You never checked who had entered the room."
+    },
+    {
+      "id": "c_police",
+      "label": "Hand over",
+      "kind": "done",
+      "action": "meet_police",
+      "dimension": "Communication",
+      "competency": "CrisisLeadership",
+      "weight": 6,
+      "pass": "The police have the log, the audit and the clip.",
+      "fail": "The police had to start from nothing."
+    },
+    {
+      "id": "c_gm",
+      "label": "Tell the GM",
+      "kind": "done",
+      "action": "brief_gm",
+      "dimension": "Communication",
+      "competency": "PeopleLeadership",
+      "weight": 6,
+      "pass": "The GM has the facts and the holding line, and the account is frozen.",
+      "fail": "The GM heard it from the front office."
+    }
+  ],
+  "bestOrder": [
+    "attend_room",
+    "call_ambulance",
+    "secure_scene",
+    "care_marisol",
+    "lock_audit",
+    "meet_police",
+    "colleague_call",
+    "cctv_corridor",
+    "brief_gm",
+    "release_room"
+  ],
+  "debrief": {
+    "whatHappened": "A guest died alone in his room and was found on a Do Not Disturb welfare check. You called the emergency services, kept the room exactly as it was, logged every entry, looked after the attendant, and let the police reach his family before anyone else could.",
+    "bestPractice": [
+      "If death is not obvious, start CPR and call an ambulance.",
+      "If it is obvious, touch nothing: call the emergency services, close and guard the door, keep an entry log.",
+      "Lock audit and CCTV for the police; hand everything over.",
+      "Next of kin are told by the police; the hotel confirms nothing to anyone else.",
+      "Look after the staff who found him.",
+      "The GM leads any statement; freeze the account; release the room only when the police say."
+    ],
+    "why": "A death in a hotel is a family's worst day and an investigation at once. Dignity and evidence point the same way: leave the room alone and control who knows what.",
+    "commonMistakes": [
+      "Tidying the room.",
+      "Telling a caller.",
+      "Forgetting the person who found him.",
+      "Charging the guest's card for the extra night."
+    ]
+  },
+  "procedureCards": [
+    "death_on_property"
+  ],
+  "reportAt": "lp_office",
+  "passMark": 60,
+  "xp": 340,
+  "weeks": 2,
+  "lesson": "Touch nothing, log every entry, let the police tell the family, look after your people."
+}

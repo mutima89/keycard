@@ -23,4 +23,50 @@ Checked 2026-10-22 (cloud session, standard web search; a search can miss small 
 
 Owner's call: the two replacements follow the standing rule. If you prefer other names, say so and they will be checked the same way.
 
-People's names are added in Phase 1 with the cast and checked the same way (no real public figures; no real hotel executives).
+## Cast (Phase 1, checked 2026-10-22)
+Each full name was web-searched for a public figure, hotel executive or security professional of that name. Common first-and-surname pairs will always match private individuals; the test is no notable person and nobody in hospitality or security.
+
+| Name | Role | Result |
+|---|---|---|
+| Marguerite Ashdown | General Manager (first draft) | **Replaced**: Ashdown Park Hotel is a real hotel |
+| Marguerite Ellery | General Manager | Clear |
+| Desmond Okafor, Felix Amadi, Colm Brady, Ines Dalca, Priyanka Venn, Tomasz Rydell, Lucia Ferrante, Gideon Marsh, Rafael Quintero, Imogen Pryce, Callum Fenwick, Odile Marchetti, Ruth Calloway, Bernard Okoye | Staff, contractors, insurer, police, fire | No notable match in hospitality or security |
+| Anders Whitlock, Marisol Duarte, Nadia Kerr, Tariq Bello, Leon Haskett, Simone Achterberg, Jordan Pike, Helen Morrow | Guests, line staff, visitors | No notable match |
+
+## Cast (Phase 2, checked 2026-10-22)
+| Name | Role | Result |
+|---|---|---|
+| Stefan Varga | Intoxicated guest (first draft) | **Replaced**: a professional footballer of that name; a guest shown drunk should not share a public figure's name |
+| Clara Nyberg | Guest whose husband collapses (first draft) | **Replaced**: a historical figure in the Swedish women's biographical lexicon |
+| Teodor Halasz | Guest, room 1409 | Clear |
+| Elin Nyholt | Guest, room 1416 | Clear |
+| Ravi Sethna | Paramedic, Port Avener Fire & Rescue | Clear (nearest: Ravi Sethi, a computer scientist) |
+| Owen Tremlett | Bell captain | Clear (Tremlett cricketers share only the surname) |
+| Hattie Coombe | Receiving clerk | Clear |
+| Mara Lindgren | Departing guest | Clear |
+| Idris Kellaway | Station Officer, Port Avener Fire & Rescue | Clear |
+| Gwendolyn Ashcombe | Guest, slipped in the lobby | Clear |
+| Declan Fenner | Contractor, kitchen equipment | Clear (rejected first choice Anton Castellane: too close to Antoine de Castellane) |
+| Keziah Morland | Banquet server | Clear |
+| Duncan Pellmore | Banquet captain | Clear (rejected first choice Graham Pellow: too close to Graham Fellows) |
+| Sunniva Haig | Banquet server | Clear |
+| Celia Wrenfield | Banquet Manager | Clear |
+| Kit Albury | Banquet bartender | Clear |
+| Henrike Solberg | Regional LP Auditor, Veldane Hotels & Resorts | Clear |
+| Hamish Lorrimer | Director of Finance | Clear |
+| Rosalie Dunmore | Wedding guest, Harbour Ballroom | Clear |
+| Aldous Treharne | Guest found dead in 1406 (M021, not in the cast) | Clear (rejected first choice Penhallow: a Georgette Heyer novel title) |
+| Theo Dunmore | Missing child (M020, not in the cast) | Clear |
+| Code Beacon | Veldane's missing-child code | Clear (searched: the real codes are Code Adam and Code Madeleine; no Code Beacon in use) |
+| Rhosyn Calder | LP Manager, Veldane Airport Port Avener | Clear |
+| Anneliese Thorburn | Credit Manager | Clear |
+| Rory Pennant | LP Officer, evenings | Clear |
+| Dorian Vessey | Former Front Office Systems Administrator (M024, not in the cast) | Clear (Denmark Vessey, a musician, shares only the surname) |
+| Harriet Oyelaran | Environmental Health Officer, Port Avener Health Department | Clear |
+| Garrick Tamsett | Guest claiming an injury | Clear (rejected first choice Garrick Holmwood: Arthur Holmwood is a character in Dracula) |
+| Isolde Marchbank | General Manager, Veldane Cliffside Resort | Clear |
+| Constance Aldermoor | Chair of the Board, Veldane Hotels & Resorts | Clear (no match for the full name; rejected Ferrars, a Jane Austen surname) |
+| Maren Varnham | Daughter of the assaulted guest (X001) | Clear (Varnham is a real English surname; no public figure with this full name) |
+| Paul Varnham | Guest assaulted in room 907 (X001, named only) | Clear |
+
+Equipment names in missions (encoders E-01 to E-03, camera ids, evidence numbers) are generic codes, not brands.

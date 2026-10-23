@@ -224,6 +224,391 @@ static void ReadCareer(KvReader& R, CareerState& C)
 	C.Skills = R.List("career.skills");
 }
 
+static void WriteEffects(KvWriter& W, const std::string& K, const std::vector<MetricEffect>& E)
+{
+	W.Int(K + ".n", static_cast<long long>(E.size()));
+	for (size_t i = 0; i < E.size(); ++i)
+	{
+		W.Int(K + "." + std::to_string(i) + ".m", static_cast<int>(E[i].Metric));
+		W.Dbl(K + "." + std::to_string(i) + ".d", E[i].Delta);
+	}
+}
+
+static std::vector<MetricEffect> ReadEffects(KvReader& R, const std::string& K)
+{
+	std::vector<MetricEffect> Out;
+	const int N = R.Count(K);
+	for (int i = 0; i < N; ++i)
+	{
+		MetricEffect E;
+		E.Metric = R.Enum<EPropertyMetric>(K + "." + std::to_string(i) + ".m", EPropertyMetric::GuestSatisfaction, PropertyMetricCount - 1);
+		E.Delta = R.Dbl(K + "." + std::to_string(i) + ".d", 0.0);
+		if (!std::isfinite(E.Delta)) R.bOk = false;
+		Out.push_back(E);
+	}
+	return Out;
+}
+
+static void WriteProperty(KvWriter& W, const PropertyState& P)
+{
+	W.Put("property.id", P.ProfileId);
+	W.Put("property.name", P.Name);
+	W.Int("property.week", P.Week);
+	W.U64("property.seed", P.EventSeed);
+	W.U64("property.draws", P.EventDraws);
+	for (int i = 0; i < PropertyMetricCount; ++i) W.Dbl("property.metric." + std::to_string(i), P.Metrics[i]);
+	W.List("property.flags", P.Flags);
+	W.Int("property.decisions.n", static_cast<long long>(P.Decisions.size()));
+	for (size_t i = 0; i < P.Decisions.size(); ++i)
+	{
+		const DecisionRecord& D = P.Decisions[i];
+		const std::string K = "property.decisions." + std::to_string(i);
+		W.Put(K + ".id", D.Id);
+		W.Put(K + ".mission", D.MissionId);
+		W.Put(K + ".summary", D.Summary);
+		W.Int(K + ".week", D.Week);
+		W.Int(K + ".quality", D.QualityScore);
+		W.Put(K + ".outcome", D.Outcome);
+		WriteEffects(W, K + ".effects", D.Effects);
+	}
+	W.Int("property.pending.n", static_cast<long long>(P.Pending.size()));
+	for (size_t i = 0; i < P.Pending.size(); ++i)
+	{
+		const PendingConsequence& C = P.Pending[i];
+		const std::string K = "property.pending." + std::to_string(i);
+		W.Put(K + ".id", C.Id);
+		W.Put(K + ".source", C.SourceDecisionId);
+		W.Put(K + ".cause", C.Cause);
+		W.Put(K + ".text", C.Description);
+		W.Int(K + ".week", C.TriggerWeek);
+		W.Dbl(K + ".p", C.Probability);
+		WriteEffects(W, K + ".effects", C.EffectsIfOccurs);
+		W.Put(K + ".mitigatedBy", C.MitigatingFlag);
+		W.Dbl(K + ".mp", C.MitigatedProbabilityFactor);
+		W.Dbl(K + ".ms", C.MitigatedSeverityFactor);
+		W.Put(K + ".flag", C.FlagIfOccurs);
+	}
+	W.Int("property.history.n", static_cast<long long>(P.History.size()));
+	for (size_t i = 0; i < P.History.size(); ++i)
+	{
+		const ResolvedConsequence& C = P.History[i];
+		const std::string K = "property.history." + std::to_string(i);
+		W.Put(K + ".id", C.Id);
+		W.Put(K + ".source", C.SourceDecisionId);
+		W.Put(K + ".cause", C.Cause);
+		W.Put(K + ".text", C.Description);
+		W.Int(K + ".week", C.Week);
+		W.Bool(K + ".occurred", C.bOccurred);
+		W.Bool(K + ".mitigated", C.bMitigated);
+		W.Dbl(K + ".p", C.EffectiveProbability);
+		W.Put(K + ".flag", C.FlagIfOccurs);
+	}
+}
+
+static void ReadProperty(KvReader& R, PropertyState& P)
+{
+	const PropertyProfile* Profile = FindProperty(R.Str("property.id", "harbourfront"));
+	if (!Profile)
+	{
+		R.bOk = false;
+		return;
+	}
+	P = PropertyState(*Profile);
+	P.Name = R.Str("property.name", Profile->Name);
+	P.Week = static_cast<int>(R.Int("property.week", 0));
+	if (P.Week < 0) R.bOk = false;
+	P.EventSeed = R.U64("property.seed", 1);
+	P.EventDraws = R.U64("property.draws", 0);
+	for (int i = 0; i < PropertyMetricCount; ++i)
+	{
+		P.Metrics[i] = R.Dbl("property.metric." + std::to_string(i), Profile->Metrics[i]);
+		if (!std::isfinite(P.Metrics[i])) R.bOk = false;
+	}
+	P.Flags = R.List("property.flags");
+	const int ND = R.Count("property.decisions");
+	for (int i = 0; i < ND; ++i)
+	{
+		const std::string K = "property.decisions." + std::to_string(i);
+		DecisionRecord D;
+		D.Id = R.Str(K + ".id");
+		D.MissionId = R.Str(K + ".mission");
+		D.Summary = R.Str(K + ".summary");
+		D.Week = static_cast<int>(R.Int(K + ".week", 0));
+		D.QualityScore = static_cast<int>(R.Int(K + ".quality", 0));
+		D.Outcome = R.Str(K + ".outcome");
+		D.Effects = ReadEffects(R, K + ".effects");
+		P.Decisions.push_back(D);
+	}
+	const int NP = R.Count("property.pending");
+	for (int i = 0; i < NP; ++i)
+	{
+		const std::string K = "property.pending." + std::to_string(i);
+		PendingConsequence C;
+		C.Id = R.Str(K + ".id");
+		C.SourceDecisionId = R.Str(K + ".source");
+		C.Cause = R.Str(K + ".cause");
+		C.Description = R.Str(K + ".text");
+		C.TriggerWeek = static_cast<int>(R.Int(K + ".week", 0));
+		C.Probability = R.Dbl(K + ".p", 0.0);
+		if (!(C.Probability >= 0.0 && C.Probability <= 1.0)) R.bOk = false;
+		C.EffectsIfOccurs = ReadEffects(R, K + ".effects");
+		C.MitigatingFlag = R.Str(K + ".mitigatedBy");
+		C.MitigatedProbabilityFactor = R.Dbl(K + ".mp", 1.0);
+		C.MitigatedSeverityFactor = R.Dbl(K + ".ms", 1.0);
+		C.FlagIfOccurs = R.Str(K + ".flag");
+		P.Pending.push_back(C);
+	}
+	const int NH = R.Count("property.history");
+	for (int i = 0; i < NH; ++i)
+	{
+		const std::string K = "property.history." + std::to_string(i);
+		ResolvedConsequence C;
+		C.Id = R.Str(K + ".id");
+		C.SourceDecisionId = R.Str(K + ".source");
+		C.Cause = R.Str(K + ".cause");
+		C.Description = R.Str(K + ".text");
+		C.Week = static_cast<int>(R.Int(K + ".week", 0));
+		C.bOccurred = R.Bool(K + ".occurred");
+		C.bMitigated = R.Bool(K + ".mitigated");
+		C.EffectiveProbability = R.Dbl(K + ".p", 0.0);
+		C.FlagIfOccurs = R.Str(K + ".flag");
+		P.History.push_back(C);
+	}
+}
+
+static void WriteAnswers(KvWriter& W, const std::string& K, const std::vector<MissionAnswer>& A)
+{
+	W.Int(K + ".n", static_cast<long long>(A.size()));
+	for (size_t i = 0; i < A.size(); ++i)
+	{
+		W.Put(K + "." + std::to_string(i) + ".q", A[i].QuestionId);
+		W.List(K + "." + std::to_string(i) + ".o", A[i].OptionIds);
+	}
+}
+
+static std::vector<MissionAnswer> ReadAnswers(KvReader& R, const std::string& K)
+{
+	std::vector<MissionAnswer> Out;
+	const int N = R.Count(K);
+	for (int i = 0; i < N; ++i)
+	{
+		MissionAnswer A;
+		A.QuestionId = R.Str(K + "." + std::to_string(i) + ".q");
+		A.OptionIds = R.List(K + "." + std::to_string(i) + ".o");
+		Out.push_back(A);
+	}
+	return Out;
+}
+
+static void WriteCampaign(KvWriter& W, const CampaignState& C)
+{
+	W.Put("campaign.active", C.ActiveMissionId);
+	W.Bool("campaign.whatIf", C.bWhatIf);
+	W.Int("campaign.clock", C.Clock);
+	W.Put("campaign.location", C.Location);
+	W.Int("campaign.steps.n", static_cast<long long>(C.Steps.size()));
+	for (size_t i = 0; i < C.Steps.size(); ++i)
+	{
+		const std::string K = "campaign.steps." + std::to_string(i);
+		W.Put(K + ".a", C.Steps[i].ActionId);
+		W.Int(K + ".m", C.Steps[i].Minute);
+		W.Bool(K + ".x", C.Steps[i].bExpired);
+	}
+	WriteAnswers(W, "campaign.field", C.FieldAnswers);
+	W.Int("campaign.custody.n", static_cast<long long>(C.Custody.size()));
+	for (size_t i = 0; i < C.Custody.size(); ++i)
+	{
+		const std::string K = "campaign.custody." + std::to_string(i);
+		W.Put(K + ".e", C.Custody[i].EvidenceId);
+		W.Int(K + ".m", C.Custody[i].Minute);
+		W.Put(K + ".t", C.Custody[i].Text);
+	}
+	W.List("campaign.seen", C.SeenActions);
+	W.Int("campaign.records.n", static_cast<long long>(C.Records.size()));
+	for (size_t i = 0; i < C.Records.size(); ++i)
+	{
+		const MissionRecord& R = C.Records[i];
+		const std::string K = "campaign.records." + std::to_string(i);
+		W.Put(K + ".mission", R.MissionId);
+		W.Int(K + ".week", R.Week);
+		W.Int(K + ".level", R.Level);
+		W.Int(K + ".score", R.Score);
+		W.Bool(K + ".passed", R.bPassed);
+		W.Bool(K + ".whatIf", R.bWhatIf);
+		std::vector<std::string> Dims;
+		for (int D : R.DimensionScores) Dims.push_back(std::to_string(D));
+		W.List(K + ".dims", Dims);
+		W.List(K + ".steps", R.Steps);
+		WriteAnswers(W, K + ".answers", R.Answers);
+	}
+}
+
+static void ReadCampaign(KvReader& R, CampaignState& C)
+{
+	C.ActiveMissionId = R.Str("campaign.active");
+	C.bWhatIf = R.Bool("campaign.whatIf");
+	C.Clock = static_cast<int>(R.Int("campaign.clock", 0));
+	if (C.Clock < 0 || C.Clock > 100000) R.bOk = false;
+	C.Location = R.Str("campaign.location");
+	const int NS = R.Count("campaign.steps");
+	for (int i = 0; i < NS; ++i)
+	{
+		const std::string K = "campaign.steps." + std::to_string(i);
+		C.Steps.push_back({R.Str(K + ".a"), static_cast<int>(R.Int(K + ".m", 0)), R.Bool(K + ".x")});
+	}
+	C.FieldAnswers = ReadAnswers(R, "campaign.field");
+	const int NC = R.Count("campaign.custody");
+	for (int i = 0; i < NC; ++i)
+	{
+		const std::string K = "campaign.custody." + std::to_string(i);
+		C.Custody.push_back({R.Str(K + ".e"), static_cast<int>(R.Int(K + ".m", 0)), R.Str(K + ".t")});
+	}
+	C.SeenActions = R.List("campaign.seen");
+	const int NR = R.Count("campaign.records");
+	for (int i = 0; i < NR; ++i)
+	{
+		const std::string K = "campaign.records." + std::to_string(i);
+		MissionRecord Rec;
+		Rec.MissionId = R.Str(K + ".mission");
+		Rec.Week = static_cast<int>(R.Int(K + ".week", 0));
+		Rec.Level = static_cast<int>(R.Int(K + ".level", 1));
+		Rec.Score = static_cast<int>(R.Int(K + ".score", 0));
+		if (Rec.Score < 0 || Rec.Score > 100) R.bOk = false;
+		Rec.bPassed = R.Bool(K + ".passed");
+		Rec.bWhatIf = R.Bool(K + ".whatIf");
+		for (const std::string& D : R.List(K + ".dims"))
+		{
+			char* End = nullptr;
+			const long V = std::strtol(D.c_str(), &End, 10);
+			if (End == D.c_str() || *End != '\0' || V < -1 || V > 100) R.bOk = false;
+			Rec.DimensionScores.push_back(static_cast<int>(V));
+		}
+		Rec.Steps = R.List(K + ".steps");
+		Rec.Answers = ReadAnswers(R, K + ".answers");
+		C.Records.push_back(Rec);
+	}
+}
+
+static void WriteWorld(KvWriter& W, const WorldState& S)
+{
+	W.Int("world.relations.n", static_cast<long long>(S.Relations.size()));
+	for (size_t i = 0; i < S.Relations.size(); ++i)
+	{
+		W.Put("world.relations." + std::to_string(i) + ".id", S.Relations[i].CharacterId);
+		W.Int("world.relations." + std::to_string(i) + ".v", S.Relations[i].Value);
+	}
+	W.Int("world.stress", S.Stress);
+	W.Int("world.burnouts", S.Burnouts);
+	W.List("world.clues", S.Clues);
+	W.Int("world.inbox.n", static_cast<long long>(S.Inbox.size()));
+	for (size_t i = 0; i < S.Inbox.size(); ++i)
+	{
+		const InboxMessage& M = S.Inbox[i];
+		const std::string K = "world.inbox." + std::to_string(i);
+		W.Put(K + ".id", M.Id);
+		W.Put(K + ".event", M.EventId);
+		W.Int(K + ".cat", static_cast<int>(M.Category));
+		W.Put(K + ".from", M.From);
+		W.Put(K + ".subject", M.Subject);
+		W.Put(K + ".body", M.Body);
+		W.Int(K + ".week", M.Week);
+		W.Int(K + ".deadline", M.DeadlineWeek);
+		W.Bool(K + ".read", M.bRead);
+		W.Put(K + ".choice", M.ChoiceId);
+		W.Put(K + ".outcome", M.Outcome);
+		W.Bool(K + ".auto", M.bAutoResolved);
+	}
+	W.List("world.fired", S.FiredEvents);
+	W.Int("world.news.n", static_cast<long long>(S.News.size()));
+	for (size_t i = 0; i < S.News.size(); ++i)
+	{
+		const std::string K = "world.news." + std::to_string(i);
+		W.Int(K + ".week", S.News[i].Week);
+		W.Put(K + ".text", S.News[i].Text);
+		W.Int(K + ".tone", S.News[i].Tone);
+	}
+	W.Int("world.crises.n", static_cast<long long>(S.CrisisOpened.size()));
+	for (size_t i = 0; i < S.CrisisOpened.size(); ++i)
+	{
+		W.Put("world.crises." + std::to_string(i) + ".id", S.CrisisOpened[i].first);
+		W.Int("world.crises." + std::to_string(i) + ".week", S.CrisisOpened[i].second);
+	}
+	W.Int("world.nextMessage", S.NextMessage);
+	W.List("world.conversations", S.ConversationsHad);
+}
+
+static void ReadWorld(KvReader& R, WorldState& S)
+{
+	const int NR = R.Count("world.relations");
+	for (int i = 0; i < NR; ++i)
+	{
+		Relation Rel{R.Str("world.relations." + std::to_string(i) + ".id"), static_cast<int>(R.Int("world.relations." + std::to_string(i) + ".v", 0))};
+		if (Rel.Value < RelationMin || Rel.Value > RelationMax) R.bOk = false;
+		S.Relations.push_back(Rel);
+	}
+	S.Stress = static_cast<int>(R.Int("world.stress", StressStart));
+	if (S.Stress < 0 || S.Stress > StressMax) R.bOk = false;
+	S.Burnouts = static_cast<int>(R.Int("world.burnouts", 0));
+	S.Clues = R.List("world.clues");
+	const int NI = R.Count("world.inbox");
+	for (int i = 0; i < NI; ++i)
+	{
+		const std::string K = "world.inbox." + std::to_string(i);
+		InboxMessage M;
+		M.Id = R.Str(K + ".id");
+		M.EventId = R.Str(K + ".event");
+		M.Category = R.Enum<EMessageCategory>(K + ".cat", EMessageCategory::Team, static_cast<int>(EMessageCategory::Count) - 1);
+		M.From = R.Str(K + ".from");
+		M.Subject = R.Str(K + ".subject");
+		M.Body = R.Str(K + ".body");
+		M.Week = static_cast<int>(R.Int(K + ".week", 0));
+		M.DeadlineWeek = static_cast<int>(R.Int(K + ".deadline", -1));
+		M.bRead = R.Bool(K + ".read");
+		M.ChoiceId = R.Str(K + ".choice");
+		M.Outcome = R.Str(K + ".outcome");
+		M.bAutoResolved = R.Bool(K + ".auto");
+		S.Inbox.push_back(M);
+	}
+	S.FiredEvents = R.List("world.fired");
+	const int NN = R.Count("world.news");
+	for (int i = 0; i < NN; ++i)
+	{
+		const std::string K = "world.news." + std::to_string(i);
+		S.News.push_back({static_cast<int>(R.Int(K + ".week", 0)), R.Str(K + ".text"), static_cast<int>(R.Int(K + ".tone", 0))});
+	}
+	const int NC = R.Count("world.crises");
+	for (int i = 0; i < NC; ++i)
+	{
+		S.CrisisOpened.push_back({R.Str("world.crises." + std::to_string(i) + ".id"), static_cast<int>(R.Int("world.crises." + std::to_string(i) + ".week", 0))});
+	}
+	S.NextMessage = static_cast<int>(R.Int("world.nextMessage", 1));
+	if (S.NextMessage < 1) R.bOk = false;
+	S.ConversationsHad = R.List("world.conversations");
+}
+
+static void WriteChallenge(KvWriter& W, const ChallengeState& C)
+{
+	W.Int("challenge.mode", static_cast<int>(C.Mode));
+	W.List("challenge.sequence", C.Sequence);
+	W.Int("challenge.index", C.Index);
+	W.Int("challenge.lives", C.Lives);
+	W.Int("challenge.points", C.Points);
+	W.Bool("challenge.over", C.bOver);
+	W.Put("challenge.date", C.Date);
+}
+
+static void ReadChallenge(KvReader& R, ChallengeState& C)
+{
+	C.Mode = R.Enum<EGameMode>("challenge.mode", EGameMode::Career, static_cast<int>(EGameMode::Classroom));
+	C.Sequence = R.List("challenge.sequence");
+	C.Index = static_cast<int>(R.Int("challenge.index", 0));
+	C.Lives = static_cast<int>(R.Int("challenge.lives", 3));
+	C.Points = static_cast<int>(R.Int("challenge.points", 0));
+	C.bOver = R.Bool("challenge.over");
+	C.Date = R.Str("challenge.date");
+	if (C.Index < 0 || C.Index > static_cast<int>(C.Sequence.size())) R.bOk = false;
+}
+
 std::string SerializeGame(const GameState& S)
 {
 	KvWriter W;
@@ -250,14 +635,37 @@ std::string SerializeGame(const GameState& S)
 	W.List("manual", S.FieldManual);
 	W.List("learning", S.LearningHistory);
 	W.List("achievements", S.Achievements);
+	WriteProperty(W, S.Property);
+	WriteCampaign(W, S.Campaign);
+	WriteWorld(W, S.World);
+	WriteChallenge(W, S.Challenge);
+	W.Bool("ceremony.pending", S.bCeremonyPending);
+	W.Int("ceremony.level", S.CeremonyLevel);
 	char Sum[32];
 	std::snprintf(Sum, sizeof(Sum), "%016" PRIx64, Fnv1a64(W.Body));
 	return W.Body + "checksum\t" + Sum + "\n";
 }
 
 // Migrations: one function per version step, run in order on the raw key/value map before the
-// fields are read (Docs/SaveFormat.md). Version 1 is the first format, so there are none yet.
-static void Migrate(KvReader& /*R*/, int /*FromVersion*/, LoadResult& /*Info*/) {}
+// fields are read (Docs/SaveFormat.md).
+// v1 -> v2: adds the hotel, the campaign, the world and challenges. A v1 career keeps everything it
+// had; the hotel starts from the Harbourfront profile with its event stream derived from the seed.
+static void MigrateV1ToV2(KvReader& R)
+{
+	const uint64_t Seed = R.U64("profile.seed", 1);
+	R.Map["property.id"] = "harbourfront";
+	R.Map["property.seed"] = std::to_string(Seed ^ 0xC0FFEE5EEDULL);
+	R.Map["world.stress"] = std::to_string(StressStart);
+}
+
+static void Migrate(KvReader& R, int FromVersion, LoadResult& Info)
+{
+	if (FromVersion < 2)
+	{
+		MigrateV1ToV2(R);
+		Info.bMigrated = true;
+	}
+}
 
 bool DeserializeGame(const std::string& Text, GameState& Out, LoadResult& Info)
 {
@@ -336,6 +744,12 @@ bool DeserializeGame(const std::string& Text, GameState& Out, LoadResult& Info)
 	S.FieldManual = R.List("manual");
 	S.LearningHistory = R.List("learning");
 	S.Achievements = R.List("achievements");
+	ReadProperty(R, S.Property);
+	ReadCampaign(R, S.Campaign);
+	ReadWorld(R, S.World);
+	ReadChallenge(R, S.Challenge);
+	S.bCeremonyPending = R.Bool("ceremony.pending");
+	S.CeremonyLevel = static_cast<int>(R.Int("ceremony.level", 0));
 	if (!R.bOk)
 	{
 		Info.Message = "Invalid field values";

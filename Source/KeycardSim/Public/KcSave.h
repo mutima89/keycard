@@ -10,7 +10,7 @@
 
 namespace kc
 {
-constexpr int CurrentSaveVersion = 1;
+constexpr int CurrentSaveVersion = 2;
 
 enum class ELoadStatus
 {

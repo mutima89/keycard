@@ -1,0 +1,591 @@
+{
+  "schema": 1,
+  "id": "X001",
+  "title": "One Night, Three Hotels",
+  "kind": "capstone",
+  "topic": "multi_property_breach",
+  "property": "convention",
+  "minLevel": 10,
+  "opening": {
+    "channel": "phone",
+    "from": "police_liaison",
+    "at": "lp_office",
+    "text": "It's Ruth Calloway. I'm at your Convention Centre Hotel. A guest on the ninth floor was attacked in his room at about two this morning by a man who let himself in. Your people say the door opened to a valid card. And I've just heard your airport hotel had a door open the same way an hour earlier. You'll want to be here."
+  },
+  "briefing": [
+    "04:10, Tuesday. You are Vice President, Global Safety & Security. At 01:58 a man entered room 907 at the Veldane Convention Centre Hotel with a working card and assaulted the guest, Paul Varnham, who is in hospital with a broken cheekbone. Police are on site. The airport hotel and the Harbourfront report unexplained entries the same night.",
+    "Veldane major incident standard: people first (the injured guest, his family, staff); preserve and collect evidence across every property to one timeline; work with the police and share facts, not guesses; tell the family the truth early and keep telling it (candour, without admitting legal liability before the facts are known: counsel advises on wording, not on whether to be honest); tell the insurer and the owners promptly; one voice to the media, approved by the incident lead; no blame on an individual before the review; and a post-incident review that finds the system causes, presents bad news as plainly as good, and changes the programme across the group. Your authority is 5,000,000."
+  ],
+  "context": [
+    {
+      "ifFlag": "m024_called_suspect",
+      "text": "Two years ago a former administrator was warned off before the police could act. The blank card stock he took has never been found."
+    },
+    {
+      "ifFlag": "m027_nondisclosure",
+      "text": "Tarrowby still remembers the renewal where a claim was left off the form."
+    }
+  ],
+  "learningObjectives": [
+    "Run one incident across several properties to one timeline",
+    "Candour with the family and the insurer, without blame on an individual",
+    "Take the system causes and a global change to the board, bad news included"
+  ],
+  "start": "04:10",
+  "actions": [
+    {
+      "id": "family_first",
+      "label": "Make sure Mr Varnham and his family have what they need",
+      "kind": "call",
+      "at": "lp_office",
+      "spot": "lp_desk",
+      "person": "family_varnham",
+      "minutes": 4,
+      "required": true,
+      "findingTitle": "People first",
+      "finding": "His daughter, Maren, is driving to the hospital. A senior manager from the Convention Centre meets her there with his belongings, a room for the family as long as they need it, and a single named contact: you. No questions about what happened, and no forms.",
+      "lines": [
+        {
+          "speaker": "family_varnham",
+          "text": "Someone walked into my father's room. Your room. I want to know how, and I want to hear it from you, not a lawyer."
+        }
+      ]
+    },
+    {
+      "id": "preserve",
+      "label": "Order every property to preserve lock logs, CCTV and key records",
+      "kind": "check",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 3,
+      "required": true,
+      "findingTitle": "Preserved",
+      "finding": "Hold notice to all twelve properties at 04:22: lock audit trails, encoder logs, CCTV (no overwrite), front desk key issue records, staff rosters. The airport and the Harbourfront confirm by 04:40, the Convention Centre by 04:45."
+    },
+    {
+      "id": "lock_audit",
+      "label": "Audit room 907's lock and the encoder that made the card",
+      "kind": "lockAudit",
+      "at": "front_desk",
+      "spot": "key_encoder",
+      "minutes": 5,
+      "requires": [
+        "preserve"
+      ],
+      "required": true,
+      "findingTitle": "A card nobody issued",
+      "finding": "The lock opened at 01:58 to a card encoded as a 'guest' card for 907, but no front desk record matches it. The encoder ID in the card's data belongs to a unit decommissioned at the Harbourfront three years ago. Its card stock serial range matches the blank stock taken by the former administrator.",
+      "clue": "blank_stock"
+    },
+    {
+      "id": "cctv_all",
+      "label": "Pull CCTV from all three hotels to one timeline",
+      "kind": "cctvReview",
+      "at": "cctv_room",
+      "spot": "cctv_console",
+      "minutes": 6,
+      "requires": [
+        "preserve"
+      ],
+      "required": true,
+      "findingTitle": "One man, one night",
+      "finding": "The same man in a grey cap: Harbourfront floor 14 at 23:40 (door 1418 opens, nothing taken, he leaves at once), airport hotel floor 3 at 00:52 (guest awake, he leaves), Convention Centre lift lobby at 01:54, ninth floor at 01:57, fire stair at 02:03. He paid no visit to any front desk."
+    },
+    {
+      "id": "export",
+      "label": "Export the clips with their hashes for the police",
+      "kind": "exportFootage",
+      "at": "cctv_room",
+      "spot": "cctv_console",
+      "minutes": 3,
+      "requires": [
+        "cctv_all"
+      ],
+      "findingTitle": "Exported",
+      "finding": "Eleven clips from three systems exported to sealed media with SHA-256 hashes, clock offsets noted against the lock logs (the airport system runs 47 seconds fast), continuity recorded."
+    },
+    {
+      "id": "police",
+      "label": "Brief DS Calloway with the timeline and the evidence",
+      "kind": "interview",
+      "at": "lp_office",
+      "person": "police_liaison",
+      "minutes": 5,
+      "requires": [
+        "lock_audit",
+        "cctv_all"
+      ],
+      "required": true,
+      "findingTitle": "Facts, not guesses",
+      "finding": "You give Ruth the timeline, the clips and the card stock trace, and say what you don't yet know. By the evening she has a name from the stock trail: a man who bought blank cards from the former administrator. He is arrested on Thursday with an encoder and forty cards.",
+      "lines": [
+        {
+          "speaker": "police_liaison",
+          "text": "A timeline across three hotels by six in the morning. That's what gets a warrant signed."
+        }
+      ]
+    },
+    {
+      "id": "blame_agent",
+      "label": "Suspend the Convention Centre night agent for issuing the card",
+      "kind": "other",
+      "at": "lp_office",
+      "minutes": 1,
+      "requires": [
+        "preserve"
+      ],
+      "findingTitle": "The wrong person",
+      "finding": "The night agent is suspended before lunch and the news is round every hotel by evening. The lock audit then shows no desk issued the card. She is reinstated, but two other agents resign and the union files a grievance.",
+      "effects": {
+        "StaffMorale": -8,
+        "Reputation": -2
+      },
+      "schedules": [
+        {
+          "id": "agent_grievance",
+          "description": "The night agent suspended for a card no desk issued brings a grievance; the review notes the rush to blame.",
+          "delayWeeks": 3,
+          "probability": 0.8,
+          "effects": {
+            "IncidentCosts": 18000,
+            "StaffMorale": -4
+          },
+          "flagIfOccurs": "x001_blamed_agent"
+        }
+      ]
+    },
+    {
+      "id": "withhold",
+      "label": "Tell the family nothing until counsel has finished",
+      "kind": "other",
+      "at": "exec_offices",
+      "minutes": 1,
+      "requires": [
+        "family_first"
+      ],
+      "findingTitle": "Silence",
+      "finding": "For nine days the family hears nothing. Maren learns from a reporter that two other hotels had entries the same night. She gives her first interview that afternoon.",
+      "effects": {
+        "Reputation": -7,
+        "GuestSatisfaction": -4,
+        "OwnerTrust": -3
+      },
+      "setsFlags": [
+        "x001_withheld"
+      ]
+    },
+    {
+      "id": "candour",
+      "label": "Meet Maren Varnham and tell her what you know and don't",
+      "kind": "interview",
+      "at": "boardroom",
+      "person": "family_varnham",
+      "minutes": 6,
+      "requires": [
+        "lock_audit",
+        "cctv_all"
+      ],
+      "required": true,
+      "findingTitle": "The truth, early",
+      "finding": "You tell her plainly: the man had a working card made from stock stolen from Veldane years ago; he tried two other hotels the same night; he has been identified; you are sorry; and you will tell her what the review finds before anyone else outside the company. Counsel agreed the wording. You don't guess, and you don't promise what you can't keep.",
+      "lines": [
+        {
+          "speaker": "family_varnham",
+          "text": "That's the first time anyone has told me something I didn't already know. Thank you."
+        }
+      ]
+    },
+    {
+      "id": "insurer",
+      "label": "Notify Tarrowby and the owners the same day",
+      "kind": "call",
+      "at": "exec_offices",
+      "person": "adjuster",
+      "minutes": 3,
+      "requires": [
+        "lock_audit"
+      ],
+      "required": true,
+      "findingTitle": "Notified",
+      "finding": "Odile logs the notification with the facts, the evidence held and the open questions. The owners' representatives hear the same facts by 17:00, from you, before the evening news."
+    },
+    {
+      "id": "media",
+      "label": "Approve one holding statement with the GM",
+      "kind": "interview",
+      "at": "gm_office",
+      "person": "gm",
+      "minutes": 3,
+      "requires": [
+        "police"
+      ],
+      "findingTitle": "One voice",
+      "finding": "Agreed with Marguerite and the police: 'A guest was assaulted in his room at our Convention Centre Hotel early on Tuesday. Our thoughts are with him and his family. We are working with the police, who have made progress, and we are reviewing security at all our hotels.' No details that could harm the investigation; no speculation; no 'isolated incident'."
+    },
+    {
+      "id": "rekey",
+      "label": "Re-key the affected stock range across the group",
+      "kind": "call",
+      "at": "lp_office",
+      "spot": "lp_desk",
+      "person": "chief_engineer",
+      "minutes": 4,
+      "requires": [
+        "lock_audit"
+      ],
+      "required": true,
+      "findingTitle": "Closed",
+      "finding": "Tomasz pushes a lock update to all twelve properties that rejects cards from the decommissioned encoder IDs and the stolen serial range. Done by Wednesday night, verified by test cards at each hotel."
+    },
+    {
+      "id": "review",
+      "label": "Write the post-incident review: system causes, not a person",
+      "kind": "logEvidence",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 6,
+      "requires": [
+        "police",
+        "rekey"
+      ],
+      "required": true,
+      "findingTitle": "System causes",
+      "finding": "Causes: decommissioned encoders never removed from the lock system; the blank stock loss two years ago never reported to the lock vendor or closed; no group alert for 'card from unknown encoder'; guest floor lifts not card-controlled at the Convention Centre. Across the group, 118 unexplained entries over 2,140,000 occupied room nights last year, most never investigated."
+    },
+    {
+      "id": "good_news",
+      "label": "Present the board only the arrest and the fast response",
+      "kind": "other",
+      "at": "boardroom",
+      "minutes": 1,
+      "requires": [
+        "review"
+      ],
+      "findingTitle": "Half the story",
+      "finding": "The board applauds the arrest. Six months later an owner's audit finds the 118 unexplained entries and the old stock loss in your own review. The chair asks why the board heard none of it.",
+      "effects": {
+        "OwnerTrust": -8,
+        "InsurerConfidence": -3
+      },
+      "setsFlags": [
+        "x001_spun_board"
+      ]
+    },
+    {
+      "id": "board",
+      "label": "Present the review and the global programme change to the board",
+      "kind": "interview",
+      "at": "boardroom",
+      "person": "board_chair",
+      "minutes": 7,
+      "requires": [
+        "review"
+      ],
+      "required": true,
+      "findingTitle": "The whole story",
+      "finding": "You give the board the whole review: the injured guest, the system causes, the old stock loss nobody closed, the 0.055 unexplained entries per 1,000 room nights, and what it will take. Approved: a group lock standard (encoder retirement, unknown-encoder alerts, quarterly audit-trail sampling), card-controlled guest lifts at the four city hotels, and a report on unexplained entries at every quarterly board.",
+      "lines": [
+        {
+          "speaker": "board_chair",
+          "text": "You've told us things that make us look bad. That's exactly why we'll fund it. Come back in a year with the number."
+        }
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "q_rate",
+      "kind": "numeric",
+      "prompt": "118 unexplained entries across the group over 2,140,000 occupied room nights. What is the rate per 1,000 room nights?",
+      "dimension": "Cost",
+      "competency": "FinancialAcumen",
+      "weight": 10,
+      "formula": {
+        "name": "LossRatePer1000RoomNights",
+        "inputs": {
+          "value": 118,
+          "roomNights": 2140000
+        }
+      },
+      "tolerance": 0.02,
+      "unit": "per 1,000 room nights",
+      "explanation": "Rate = 118 / 2,140,000 x 1,000 = about 0.055 per 1,000 room nights. A rate lets the board compare hotels of different sizes and track the programme year on year.",
+      "mistakes": [
+        {
+          "value": 55,
+          "feedback": "That is per million room nights. The group standard is per 1,000."
+        },
+        {
+          "value": 118,
+          "feedback": "That is the count, not a rate. Divide by room nights and multiply by 1,000."
+        }
+      ]
+    },
+    {
+      "id": "d_family",
+      "prompt": "Counsel worries that talking to the family risks liability. What do you do?",
+      "dimension": "Care",
+      "competency": "GuestServiceDeescalation",
+      "weight": 9,
+      "options": [
+        {
+          "id": "candour",
+          "label": "Tell them the facts early and keep telling them; agree the wording with counsel, without admitting liability before the facts are known.",
+          "score": 100,
+          "feedback": "Candour and legal care fit together: counsel shapes the words, not whether the family hears the truth."
+        },
+        {
+          "id": "wait",
+          "label": "Say nothing until the legal review is finished.",
+          "score": 10,
+          "critical": true,
+          "feedback": "Families who hear nothing hear it from the news instead, and trust is gone for good."
+        },
+        {
+          "id": "admit",
+          "label": "Tell them the hotel is fully liable and will pay whatever they ask.",
+          "score": 30,
+          "feedback": "Kind, but it's not yours to decide liability on day one. Share facts, apologise, and let the process settle the rest."
+        }
+      ]
+    },
+    {
+      "id": "d_blame",
+      "prompt": "The Convention Centre GM wants the night agent suspended today. What do you say?",
+      "dimension": "Procedure",
+      "competency": "PeopleLeadership",
+      "weight": 8,
+      "options": [
+        {
+          "id": "evidence",
+          "label": "Not before the lock audit and the review: the evidence decides, and it points at the system.",
+          "score": 100,
+          "feedback": "The card came from no desk. A quick suspension would have punished the wrong person and taught everyone to hide mistakes."
+        },
+        {
+          "id": "suspend",
+          "label": "Suspend her: someone has to be accountable.",
+          "score": 15,
+          "critical": true,
+          "feedback": "Accountability follows the facts. Blaming the nearest person before the review is how organisations miss the real cause."
+        },
+        {
+          "id": "move",
+          "label": "Quietly move her to days.",
+          "score": 35,
+          "feedback": "A quiet move still says 'your fault' without the evidence."
+        }
+      ]
+    },
+    {
+      "id": "d_board",
+      "prompt": "How do you close the board presentation?",
+      "dimension": "Communication",
+      "competency": "CrisisLeadership",
+      "weight": 9,
+      "options": [
+        {
+          "id": "measure",
+          "label": "With the programme, its cost, the rate we'll report every quarter, and what it can't guarantee.",
+          "score": 100,
+          "feedback": "A board can hold you to a measured rate. It can't hold you to a promise."
+        },
+        {
+          "id": "never",
+          "label": "'This will never happen again.'",
+          "score": 15,
+          "feedback": "Nobody can promise that, and the board knows it. Promise the controls and the measure."
+        },
+        {
+          "id": "arrest",
+          "label": "With the arrest: the threat has been dealt with.",
+          "score": 30,
+          "feedback": "One man is in custody. The system that let him in is still the board's problem."
+        }
+      ]
+    },
+    {
+      "id": "r_what",
+      "prompt": "Post-incident review, summary (one line)",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 10,
+      "section": "what",
+      "options": [
+        {
+          "id": "facts",
+          "label": "A man used cards made from blank stock stolen in a past insider loss to enter rooms at three hotels in one night, assaulting a guest at the Convention Centre; causes were decommissioned encoders left trusted, the stock loss never closed and no unknown-encoder alert; group rate 0.055 unexplained entries per 1,000 room nights; global lock standard and lift control approved.",
+          "score": 100,
+          "feedback": "What happened, the system causes, the measure and the change."
+        },
+        {
+          "id": "agent",
+          "label": "Night agent error allowed an intruder to obtain a key.",
+          "score": 10,
+          "feedback": "No desk issued the card. The review blames a person the evidence clears."
+        },
+        {
+          "id": "arrest",
+          "label": "Intruder arrested after rapid response by Veldane security.",
+          "score": 30,
+          "feedback": "Good news, but the review is about why he got in."
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "c_family",
+      "label": "People first",
+      "kind": "before",
+      "action": "family_first",
+      "other": "cctv_all",
+      "dimension": "Care",
+      "competency": "GuestServiceDeescalation",
+      "weight": 5,
+      "pass": "The guest and family were looked after before the investigation.",
+      "fail": "The investigation came before the injured guest."
+    },
+    {
+      "id": "c_preserve",
+      "label": "Evidence held everywhere",
+      "kind": "byMinute",
+      "action": "preserve",
+      "by": "04:40",
+      "dimension": "Evidence",
+      "competency": "EvidenceReporting",
+      "weight": 5,
+      "pass": "Every property was told to preserve evidence within half an hour.",
+      "fail": "Evidence was left to overwrite."
+    },
+    {
+      "id": "c_audit",
+      "label": "Lock audit",
+      "kind": "done",
+      "action": "lock_audit",
+      "dimension": "Evidence",
+      "competency": "KeyAccessControl",
+      "weight": 5,
+      "pass": "The lock audit traced the card.",
+      "fail": "Nobody traced the card."
+    },
+    {
+      "id": "c_timeline",
+      "label": "One timeline",
+      "kind": "done",
+      "action": "cctv_all",
+      "dimension": "Evidence",
+      "competency": "Investigation",
+      "weight": 5,
+      "pass": "CCTV from all three hotels was joined to one timeline.",
+      "fail": "Each hotel looked at its own footage."
+    },
+    {
+      "id": "c_candour",
+      "label": "Candour",
+      "kind": "done",
+      "action": "candour",
+      "dimension": "Care",
+      "competency": "GuestServiceDeescalation",
+      "weight": 7,
+      "pass": "The family heard the facts early, from you.",
+      "fail": "The family never heard the facts from Veldane."
+    },
+    {
+      "id": "c_no_withhold",
+      "label": "No silence",
+      "kind": "notDone",
+      "action": "withhold",
+      "dimension": "Compliance",
+      "competency": "CrisisLeadership",
+      "weight": 7,
+      "pass": "Nothing was withheld from the family.",
+      "fail": "The family was kept in the dark."
+    },
+    {
+      "id": "c_no_blame",
+      "label": "No blame before the facts",
+      "kind": "notDone",
+      "action": "blame_agent",
+      "dimension": "Compliance",
+      "competency": "PeopleLeadership",
+      "weight": 7,
+      "pass": "Nobody was blamed before the review.",
+      "fail": "A staff member was suspended for something the evidence cleared her of."
+    },
+    {
+      "id": "c_rekey",
+      "label": "Hole closed",
+      "kind": "done",
+      "action": "rekey",
+      "dimension": "Procedure",
+      "competency": "KeyAccessControl",
+      "weight": 4,
+      "pass": "The stolen stock and old encoders were locked out group-wide.",
+      "fail": "The stolen cards still worked."
+    },
+    {
+      "id": "c_board",
+      "label": "The whole story",
+      "kind": "done",
+      "action": "board",
+      "dimension": "Communication",
+      "competency": "CrisisLeadership",
+      "weight": 5,
+      "pass": "The board heard the whole review and approved the change.",
+      "fail": "The board never heard the review."
+    },
+    {
+      "id": "c_no_spin",
+      "label": "Bad news too",
+      "kind": "notDone",
+      "action": "good_news",
+      "dimension": "Communication",
+      "competency": "CrisisLeadership",
+      "weight": 4,
+      "pass": "Bad news was presented as plainly as good.",
+      "fail": "Only the good news reached the board."
+    }
+  ],
+  "bestOrder": [
+    "family_first",
+    "preserve",
+    "lock_audit",
+    "cctv_all",
+    "export",
+    "police",
+    "insurer",
+    "candour",
+    "media",
+    "rekey",
+    "review",
+    "board"
+  ],
+  "debrief": {
+    "whatHappened": "A man with cards made from blank stock stolen in an old insider loss entered rooms at three Veldane hotels in one night and assaulted a guest. You put the guest and his family first, held the evidence across the group, built one timeline for the police, told the family and the insurer the truth early, closed the hole group-wide, blamed no one before the facts, and took the whole review, bad news included, to the board.",
+    "bestPractice": [
+      "People first: the injured guest, the family, then the staff.",
+      "Preserve evidence everywhere at once; one timeline across properties.",
+      "Share facts, not guesses, with the police.",
+      "Candour with the family early; counsel shapes the wording, not the honesty.",
+      "No blame on a person before the review; look for system causes.",
+      "One voice to the media.",
+      "Give the board bad news as plainly as good, a measured rate, and no promises of 'never again'."
+    ],
+    "why": "Major incidents are judged twice: by how people were treated on the night, and by whether the organisation learned. Candour and system thinking do both.",
+    "commonMistakes": [
+      "Blaming the night agent.",
+      "Silence while counsel works.",
+      "Only good news to the board.",
+      "Promising 'never again'."
+    ]
+  },
+  "procedureCards": [
+    "post_incident_review"
+  ],
+  "reportAt": "boardroom",
+  "passMark": 65,
+  "xp": 1000,
+  "weeks": 4,
+  "lesson": "People first, one timeline, candour, no blame before the facts, the whole story to the board."
+}

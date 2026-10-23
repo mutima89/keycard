@@ -1,0 +1,502 @@
+{
+  "schema": 1,
+  "id": "C004",
+  "title": "Hurricane at the Cliffside Resort",
+  "kind": "crisis",
+  "topic": "hurricane",
+  "property": "cliffside",
+  "minLevel": 9,
+  "opening": {
+    "channel": "phone",
+    "from": "resort_gm",
+    "at": "boardroom",
+    "text": "Isolde at Cliffside. The forecasters have the storm coming ashore on our stretch of coast in about seventy-two hours, category three, maybe four. I have 280 guests, a wedding on Saturday and 190 staff. I'd like to ride it out. Tell me if I'm wrong."
+  },
+  "briefing": [
+    "09:00, Wednesday. A hurricane is forecast to make landfall near the Veldane Cliffside Resort in about 72 hours. You lead the regional crisis team from the Harbourfront boardroom; Isolde Marchbank runs the resort.",
+    "Veldane severe weather plan: decide at fixed points against the official forecast (72, 48 and 24 hours), not on hope; follow every official evacuation order at once; stop new arrivals and help guests leave early, without penalty; release staff in time to protect their own families, and shelter only the essential team who volunteer, in the resort's designated shelter rooms with supplies for at least 72 hours; secure the property (shutters, loose items, fuel, generator, water) before the wind, never during; no one goes outside in the storm; account for every guest and staff member before and after; tell the insurer before landfall; after the storm, nobody returns until the authorities say it is safe, then assess, care and recover. Your authority is 3,000,000."
+  ],
+  "context": [
+    {
+      "ifFlag": "dark_evacuation",
+      "text": "Isolde was a manager at the Harbourfront on the night of the dark evacuation, and has hated unnecessary evacuations ever since."
+    }
+  ],
+  "learningObjectives": [
+    "Decide at fixed points against the official forecast",
+    "Guests out early, staff home in time, an essential team sheltered",
+    "Nobody out in the storm; nobody back until it is safe"
+  ],
+  "start": "09:00",
+  "actions": [
+    {
+      "id": "forecast",
+      "label": "Set the decision points against the official forecast",
+      "kind": "check",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 4,
+      "required": true,
+      "findingTitle": "72, 48, 24",
+      "finding": "The national weather service's track puts the resort inside the cone with hurricane-force winds and a storm surge of two to three metres on the beach level. Decision points logged: now (72 h), Thursday 09:00 (48 h), Friday 09:00 (24 h), with what will be decided at each. The beach villas sit inside the surge zone on the county's map."
+    },
+    {
+      "id": "isolde",
+      "label": "Agree the plan with Isolde on the video link",
+      "kind": "interview",
+      "at": "boardroom",
+      "person": "resort_gm",
+      "minutes": 5,
+      "requires": [
+        "forecast"
+      ],
+      "required": true,
+      "findingTitle": "The plan",
+      "finding": "Agreed at 72 hours: no new arrivals from today; guests offered free cancellation, help with flights and rooms at the Harbourfront and the airport hotel; the beach villas closed now; staff told the timeline so they can plan for their families. The wedding couple are offered a free move to the Harbour Ballroom.",
+      "lines": [
+        {
+          "speaker": "resort_gm",
+          "text": "I hate it. But if the county orders the coast out, I'd rather my guests already be gone than on the road with everyone else."
+        }
+      ]
+    },
+    {
+      "id": "ride_it_out",
+      "label": "Back Isolde's plan to stay open for the wedding",
+      "kind": "other",
+      "at": "boardroom",
+      "minutes": 1,
+      "requires": [
+        "forecast"
+      ],
+      "findingTitle": "Staying open",
+      "finding": "At 48 hours the county orders the coast evacuated. 210 guests and the wedding party are still on site and join the jammed coast road at the same time as everyone else; a coach breaks down in rising wind. Forty staff can't get home to their families.",
+      "effects": {
+        "SafetyCompliance": -6,
+        "GuestSatisfaction": -4,
+        "StaffMorale": -5
+      },
+      "setsFlags": [
+        "c004_stayed_open"
+      ],
+      "schedules": [
+        {
+          "id": "storm_claims",
+          "description": "Guests caught on the coast road and staff kept from their families bring complaints and claims; the regulator asks why the resort ignored its own plan.",
+          "delayWeeks": 4,
+          "probability": 0.75,
+          "effects": {
+            "IncidentCosts": 40000,
+            "Reputation": -5,
+            "OwnerTrust": -4
+          },
+          "flagIfOccurs": "storm_late_evacuation"
+        }
+      ]
+    },
+    {
+      "id": "rebook",
+      "label": "Move guests and the wedding to the Port Avener hotels",
+      "kind": "call",
+      "at": "front_desk",
+      "spot": "desk_phone",
+      "person": "front_office_manager",
+      "minutes": 4,
+      "requires": [
+        "isolde"
+      ],
+      "required": true,
+      "findingTitle": "Rehoused",
+      "finding": "Gideon's team takes the resort's in-house list and arrivals: 160 guests move to the Harbourfront and the airport at resort rates, the rest fly home early with help. The wedding moves to the Harbour Ballroom on Saturday. By 48 hours, 31 guests remain at the resort, all leaving on Thursday."
+    },
+    {
+      "id": "staff_release",
+      "label": "Release staff in time and agree the volunteer ride-out team",
+      "kind": "interview",
+      "at": "exec_offices",
+      "spot": "hr_office",
+      "person": "hr_director",
+      "minutes": 4,
+      "requires": [
+        "isolde"
+      ],
+      "required": true,
+      "findingTitle": "Families first",
+      "finding": "All staff paid through the closure. Everyone released by 30 hours before landfall to get to their families or follow the county's evacuation; nobody is asked to stay. Twelve volunteers with no dependants and the right skills (engineering, security, a nurse) form the ride-out team, with a named lead, in the resort's designated shelter rooms on the inland side."
+    },
+    {
+      "id": "secure",
+      "label": "Secure the property before the wind",
+      "kind": "call",
+      "at": "lp_office",
+      "spot": "lp_desk",
+      "person": "chief_engineer",
+      "minutes": 4,
+      "requires": [
+        "isolde"
+      ],
+      "required": true,
+      "findingTitle": "Secured, Friday",
+      "finding": "Tomasz talks the resort's engineers through his checklist: shutters on every glazed opening, pool furniture and loose items stored, generator tested under load and fuel topped for five days, water and food for the ride-out team for 72 hours, satellite phone tested, records and servers backed up off site, the beach villas' power isolated. All done by 24 hours, before the wind."
+    },
+    {
+      "id": "insurer",
+      "label": "Tell Tarrowby before landfall",
+      "kind": "call",
+      "at": "exec_offices",
+      "person": "adjuster",
+      "minutes": 2,
+      "requires": [
+        "secure"
+      ],
+      "required": true,
+      "findingTitle": "Notified",
+      "finding": "Odile logs the notification with the steps taken and photographs of the secured property before the storm, which will matter when the claim comes. She asks for the business interruption records to be kept from day one."
+    },
+    {
+      "id": "check_pool",
+      "label": "Have the ride-out team check the pool pump during the eye",
+      "kind": "other",
+      "at": "boardroom",
+      "minutes": 1,
+      "requires": [
+        "secure"
+      ],
+      "findingTitle": "Out in the eye",
+      "finding": "Two engineers go out in the calm of the eye. The back wall of the storm arrives eleven minutes later than they expected and one is hit by a flying panel. They shelter in a stairwell until morning.",
+      "effects": {
+        "SafetyCompliance": -7,
+        "StaffMorale": -3
+      },
+      "schedules": [
+        {
+          "id": "storm_injury",
+          "description": "The engineer injured going out during the eye needs surgery. The investigation finds the order came from the crisis room against the plan.",
+          "delayWeeks": 3,
+          "probability": 0.8,
+          "effects": {
+            "IncidentCosts": 25000,
+            "InsurerConfidence": -4,
+            "OwnerTrust": -3
+          },
+          "flagIfOccurs": "eye_injury"
+        }
+      ]
+    },
+    {
+      "id": "account",
+      "label": "Account for everyone before and after landfall",
+      "kind": "interview",
+      "at": "cctv_room",
+      "person": "partner",
+      "minutes": 3,
+      "requires": [
+        "rebook",
+        "staff_release"
+      ],
+      "required": true,
+      "findingTitle": "All accounted for",
+      "finding": "Ines runs the accounting from the crisis log: every guest checked out and where they went; every staff member released and reachable, or in the shelter. The ride-out team checks in on the satellite phone every two hours through the storm. After landfall: twelve of twelve safe; 187 of 190 staff reached by Sunday evening, the last three on Monday through the county's shelters.",
+      "lines": [
+        {
+          "speaker": "partner",
+          "text": "Twelve of twelve on the sat phone at 06:00. Now I want the other hundred and seventy-eight."
+        }
+      ]
+    },
+    {
+      "id": "recovery",
+      "label": "Plan the return and the recovery with Isolde",
+      "kind": "interview",
+      "at": "boardroom",
+      "person": "resort_gm",
+      "minutes": 5,
+      "requires": [
+        "account",
+        "insurer"
+      ],
+      "required": true,
+      "findingTitle": "Return when safe",
+      "finding": "Nobody returns until the county lifts its order and the road is cleared. Then a structural check before anyone enters a building, power and water checked by engineers, a damage record with photographs for the insurer, staff welfare (pay, housing for those who lost homes, counselling), and a reopening date the resort can keep.",
+      "lines": [
+        {
+          "speaker": "resort_gm",
+          "text": "The roof on the spa is gone and the beach villas are full of sand. Everyone is alive. I'll take that."
+        }
+      ]
+    },
+    {
+      "id": "after_action",
+      "label": "Write the crisis log and after-action review",
+      "kind": "logEvidence",
+      "at": "lp_office",
+      "spot": "report_terminal",
+      "minutes": 5,
+      "requires": [
+        "recovery"
+      ],
+      "findingTitle": "After action",
+      "finding": "The decision points held: guests out before the evacuation order, staff home in time, the property secured before the wind, nobody outside in the storm, everyone accounted for. Actions: the decision timeline written into every coastal property's plan, the shelter rooms' supplies checked every spring, and a regional mutual-aid list of rooms at sister hotels."
+    }
+  ],
+  "questions": [
+    {
+      "id": "d_when",
+      "prompt": "When do you decide whether guests leave?",
+      "dimension": "Procedure",
+      "competency": "CrisisLeadership",
+      "weight": 10,
+      "options": [
+        {
+          "id": "points",
+          "label": "At fixed points (72, 48, 24 hours) against the official forecast, and at once on any official order.",
+          "score": 100,
+          "feedback": "Fixed decision points stop a team from waiting for better news. An official order overrides every plan."
+        },
+        {
+          "id": "wait",
+          "label": "When it's certain where the storm will land.",
+          "score": 15,
+          "critical": true,
+          "feedback": "By the time it's certain, the roads are full and the airports closed. Decide early on the forecast."
+        },
+        {
+          "id": "guests",
+          "label": "Let each guest decide.",
+          "score": 35,
+          "feedback": "Guests should have the choice to leave early. Whether the resort stays open isn't theirs to decide."
+        }
+      ]
+    },
+    {
+      "id": "d_staff",
+      "kind": "multi",
+      "prompt": "What is right for the staff?",
+      "dimension": "Care",
+      "competency": "PeopleLeadership",
+      "weight": 9,
+      "options": [
+        {
+          "id": "pay",
+          "label": "Pay everyone through the closure",
+          "correct": true
+        },
+        {
+          "id": "release",
+          "label": "Release everyone in time to protect their families",
+          "correct": true
+        },
+        {
+          "id": "volunteers",
+          "label": "Shelter only volunteers with the right skills, with supplies for 72 hours",
+          "correct": true
+        },
+        {
+          "id": "account",
+          "label": "Account for every staff member after the storm",
+          "correct": true
+        },
+        {
+          "id": "order",
+          "label": "Require key staff to stay",
+          "feedback": "Nobody is ordered to ride out a hurricane. The team who stays are volunteers."
+        }
+      ]
+    },
+    {
+      "id": "d_storm",
+      "prompt": "During the eye, the ride-out team asks to check the generator room across the courtyard. What do you say?",
+      "dimension": "Compliance",
+      "competency": "IncidentResponse",
+      "weight": 9,
+      "options": [
+        {
+          "id": "no",
+          "label": "No. Nobody goes outside until the storm has passed and the authorities say it's safe.",
+          "score": 100,
+          "feedback": "The eye is the most dangerous time to go out: the wind returns from the other side without warning."
+        },
+        {
+          "id": "quick",
+          "label": "Quickly, in pairs, with radios.",
+          "score": 15,
+          "feedback": "Pairs and radios don't stop flying debris. Nobody goes out."
+        },
+        {
+          "id": "them",
+          "label": "Their call: they're on site.",
+          "score": 25,
+          "feedback": "The plan, not a tired team in the dark, decides. And the plan says nobody goes out."
+        }
+      ]
+    },
+    {
+      "id": "r_what",
+      "prompt": "Crisis log, summary (one line)",
+      "dimension": "Report",
+      "competency": "EvidenceReporting",
+      "weight": 10,
+      "section": "what",
+      "options": [
+        {
+          "id": "facts",
+          "label": "Landfall forecast 72 h ahead; arrivals stopped, guests rehoused or sent home by 48 h; staff paid and released by 30 h; 12 volunteers sheltered; property secured by 24 h; insurer told; nobody outside in the storm; all guests and staff accounted for; return on the county's all-clear.",
+          "score": 100,
+          "feedback": "The decisions against the timeline, the people and the outcome."
+        },
+        {
+          "id": "damage",
+          "label": "Hurricane damaged the spa roof and beach villas.",
+          "score": 25,
+          "feedback": "The damage is for the claim. The log is about the people and the decisions."
+        },
+        {
+          "id": "lucky",
+          "label": "Resort survived the storm with no injuries.",
+          "score": 30,
+          "feedback": "It wasn't luck: say what was decided and when."
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "c_points",
+      "label": "Decision points",
+      "kind": "before",
+      "action": "forecast",
+      "other": "isolde",
+      "dimension": "Procedure",
+      "competency": "CrisisLeadership",
+      "weight": 6,
+      "pass": "The plan was set against the forecast before it was agreed.",
+      "fail": "Decisions were made without a timeline."
+    },
+    {
+      "id": "c_no_stay",
+      "label": "Not riding it out",
+      "kind": "notDone",
+      "action": "ride_it_out",
+      "dimension": "Compliance",
+      "competency": "CrisisLeadership",
+      "weight": 10,
+      "pass": "The resort closed in time.",
+      "fail": "The resort stayed open into an evacuation order."
+    },
+    {
+      "id": "c_guests",
+      "label": "Guests out early",
+      "kind": "done",
+      "action": "rebook",
+      "dimension": "Care",
+      "competency": "GuestServiceDeescalation",
+      "weight": 6,
+      "pass": "Guests left early with somewhere to go.",
+      "fail": "Guests were left to find their own way out."
+    },
+    {
+      "id": "c_staff",
+      "label": "Staff home in time",
+      "kind": "done",
+      "action": "staff_release",
+      "dimension": "Care",
+      "competency": "PeopleLeadership",
+      "weight": 7,
+      "pass": "Staff were paid, released in time and only volunteers stayed.",
+      "fail": "Staff were kept from their families."
+    },
+    {
+      "id": "c_secure",
+      "label": "Secure before the wind",
+      "kind": "done",
+      "action": "secure",
+      "dimension": "Procedure",
+      "competency": "FireLifeSafety",
+      "weight": 6,
+      "pass": "The property was secured before the storm.",
+      "fail": "The property was left unsecured."
+    },
+    {
+      "id": "c_no_out",
+      "label": "Nobody outside",
+      "kind": "notDone",
+      "action": "check_pool",
+      "dimension": "Compliance",
+      "competency": "IncidentResponse",
+      "weight": 9,
+      "pass": "Nobody went outside during the storm.",
+      "fail": "Staff were sent out during the eye."
+    },
+    {
+      "id": "c_account",
+      "label": "Everyone accounted for",
+      "kind": "done",
+      "action": "account",
+      "dimension": "Communication",
+      "competency": "CrisisLeadership",
+      "weight": 7,
+      "pass": "Every guest and staff member was accounted for.",
+      "fail": "Nobody knew where everyone was."
+    },
+    {
+      "id": "c_insurer",
+      "label": "Insurer before landfall",
+      "kind": "done",
+      "action": "insurer",
+      "dimension": "Evidence",
+      "competency": "EvidenceReporting",
+      "weight": 5,
+      "pass": "The insurer had the pre-storm record.",
+      "fail": "The insurer heard after the storm, with no before photos."
+    },
+    {
+      "id": "c_recovery",
+      "label": "Return when safe",
+      "kind": "done",
+      "action": "recovery",
+      "dimension": "Procedure",
+      "competency": "CrisisLeadership",
+      "weight": 6,
+      "pass": "Nobody went back before the all-clear; recovery was planned.",
+      "fail": "The return was improvised."
+    }
+  ],
+  "bestOrder": [
+    "forecast",
+    "isolde",
+    "rebook",
+    "staff_release",
+    "secure",
+    "insurer",
+    "account",
+    "recovery",
+    "after_action"
+  ],
+  "debrief": {
+    "whatHappened": "A hurricane came ashore at the cliffside resort. You set decision points against the official forecast, closed the resort before the evacuation order, moved guests and a wedding to the sister hotels, paid and released staff in time with only volunteers sheltering, secured the property before the wind, kept everyone indoors through the eye, and accounted for every person before and after.",
+    "bestPractice": [
+      "Decide at fixed points against the official forecast; obey official orders at once.",
+      "Stop arrivals; help guests leave early without penalty.",
+      "Pay and release staff in time; shelter only trained volunteers with 72 hours of supplies.",
+      "Secure the property before the wind.",
+      "Nobody outside in the storm, the eye included.",
+      "Account for everyone before and after.",
+      "Tell the insurer before landfall; return only on the all-clear."
+    ],
+    "why": "Storms give warning. The losses come from waiting for certainty, from people on the roads too late, and from going outside too soon.",
+    "commonMistakes": [
+      "Waiting for certainty.",
+      "Staying open for an event.",
+      "Keeping staff from their families.",
+      "Going out in the eye."
+    ]
+  },
+  "procedureCards": [
+    "severe_weather"
+  ],
+  "reportAt": "lp_office",
+  "passMark": 60,
+  "xp": 600,
+  "weeks": 3,
+  "lesson": "Fixed decision points, guests out early, staff home in time, secure before the wind, nobody outside, everyone accounted for."
+}

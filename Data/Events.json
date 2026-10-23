@@ -1,0 +1,1126 @@
+{
+  "schema": 1,
+  "events": [
+    {
+      "id": "welcome_mentor",
+      "category": "team",
+      "from": "mentor",
+      "subject": "Welcome to nights",
+      "body": [
+        "Your first week. Three things: write everything down, never search anyone, and call me if you are not sure.",
+        "The Field Manual in your notebook grows with every case. Read it."
+      ],
+      "when": {
+        "passed": [
+          "M001"
+        ]
+      }
+    },
+    {
+      "id": "exec_hk_thanks",
+      "category": "team",
+      "from": "exec_housekeeper",
+      "subject": "Marisol",
+      "body": "Marisol told me how you handled 1412. Thank you for treating her fairly. I have already reminded the whole team about doors on trolleys.",
+      "when": {
+        "flags": [
+          "m001_door_coached"
+        ]
+      }
+    },
+    {
+      "id": "rival_paperwork",
+      "category": "politics",
+      "from": "rival",
+      "subject": "Your reports",
+      "body": "Your 1412 report runs to two pages for a laptop that was never stolen. Night officers patrol; they do not write novels. Cut it down.",
+      "when": {
+        "passed": [
+          "M001"
+        ]
+      },
+      "deadlineWeeks": 2,
+      "defaultChoice": "ignore",
+      "choices": [
+        {
+          "id": "explain",
+          "label": "Reply that every finding is referenced, and copy Desmond Okafor",
+          "outcome": "Desmond backs you in one line: \"Keep writing them like that.\" Colm does not reply.",
+          "relations": {
+            "mentor": 5,
+            "rival": -5
+          }
+        },
+        {
+          "id": "shorten",
+          "label": "Promise to keep future reports shorter",
+          "outcome": "Colm is pleased. Your next report leaves out the custody references, and Desmond sends it back.",
+          "relations": {
+            "rival": 5,
+            "mentor": -5
+          }
+        },
+        {
+          "id": "ignore",
+          "label": "Ignore it",
+          "outcome": "Colm takes the silence as agreement and complains about you at the supervisors' meeting.",
+          "relations": {
+            "rival": -5
+          }
+        }
+      ]
+    },
+    {
+      "id": "paramedic_feedback",
+      "category": "team",
+      "from": "paramedic_sethna",
+      "subject": "Last night at the Lobby Bar",
+      "body": [
+        "The gentleman from your bar is awake and talking. The AED was on him and shocking before we were through the door, and your staff had the lift held. That is what saves people.",
+        "Whoever trained your bar team on the AED: keep doing it."
+      ],
+      "when": {
+        "passed": [
+          "M005"
+        ]
+      }
+    },
+    {
+      "id": "adjuster_export",
+      "category": "request",
+      "from": "adjuster",
+      "subject": "Claim TM-55102",
+      "body": "Thank you for the preserved footage. Our counsel would like a copy before the 30th. I understand you have a release policy; what do you need from us?",
+      "when": {
+        "passed": [
+          "M007"
+        ]
+      },
+      "deadlineWeeks": 2,
+      "defaultChoice": "ignore",
+      "choices": [
+        {
+          "id": "policy",
+          "label": "Send the footage release form and route it to Desmond Okafor for approval",
+          "outcome": "The request comes back signed. Desmond approves the release with counsel, and the adjuster notes how cleanly it was handled.",
+          "relations": {
+            "adjuster": 5,
+            "mentor": 3
+          },
+          "effects": {
+            "InsurerConfidence": 2
+          }
+        },
+        {
+          "id": "send",
+          "label": "Email the clip to the adjuster yourself",
+          "outcome": "Counsel hears that footage left LP without approval. Desmond asks you to his office.",
+          "relations": {
+            "mentor": -8
+          },
+          "effects": {
+            "InsurerConfidence": 1,
+            "SafetyCompliance": -2
+          }
+        },
+        {
+          "id": "ignore",
+          "label": "Leave it",
+          "outcome": "The adjuster chases twice, then writes to the General Manager.",
+          "relations": {
+            "adjuster": -5,
+            "gm": -2
+          },
+          "effects": {
+            "InsurerConfidence": -2
+          }
+        }
+      ]
+    },
+    {
+      "id": "supervisor_welcome",
+      "category": "team",
+      "from": "mentor",
+      "subject": "Supervisor",
+      "body": [
+        "You run the night shift now. Ines and the Tessmore guards report to you, and you will be audited on keys and doors, not only on cases.",
+        "Two habits: read the alarm log every week, and never let anyone fear telling you they lost a key."
+      ],
+      "when": {
+        "minLevel": 3
+      }
+    },
+    {
+      "id": "marisol_coil",
+      "category": "personal",
+      "from": "attendant_duarte",
+      "subject": "Thank you",
+      "body": "Lucia got us the soft wrist coils. Everyone on my floor wears them now. Thank you for telling them it was not my fault.",
+      "when": {
+        "passed": [
+          "M008"
+        ]
+      }
+    },
+    {
+      "id": "fnb_dock_bell",
+      "category": "politics",
+      "from": "fnb_director",
+      "subject": "Bread deliveries",
+      "body": "Chef tells me deliveries now need an LP officer at the dock. It is slowing the morning. Can we go back to the old way until the intercom is in?",
+      "when": {
+        "passed": [
+          "M009"
+        ]
+      },
+      "deadlineWeeks": 1,
+      "defaultChoice": "ignore",
+      "choices": [
+        {
+          "id": "hold",
+          "label": "Explain the theft and keep the door shut; offer a fixed delivery window with an officer standing by",
+          "outcome": "Rafael grumbles, then agrees once he sees the clip. The bakery moves to 05:00.",
+          "relations": {
+            "fnb_director": 2
+          },
+          "effects": {
+            "SecurityPosture": 2
+          }
+        },
+        {
+          "id": "relent",
+          "label": "Agree to let the clerk prop it for ten minutes",
+          "outcome": "The door is propped again within a week. The alarm log fills up.",
+          "relations": {
+            "fnb_director": 4,
+            "mentor": -4
+          },
+          "effects": {
+            "SecurityPosture": -3,
+            "LossExposure": 2
+          }
+        },
+        {
+          "id": "ignore",
+          "label": "Leave it",
+          "outcome": "Rafael takes it to the General Manager as LP being unhelpful.",
+          "relations": {
+            "fnb_director": -4,
+            "gm": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "lindgren_letter",
+      "category": "incident",
+      "from": "guest_lindgren",
+      "subject": "My case",
+      "body": "The police found my case at the ferry terminal, without the laptop but with my mother's watch. Thank you for getting them there so fast, and for being honest with me that morning.",
+      "when": {
+        "passed": [
+          "M010"
+        ]
+      },
+      "probability": 0.6,
+      "headline": "Harbourfront thief stopped at the ferry terminal",
+      "headlineTone": 1
+    },
+    {
+      "id": "encoder_vendor",
+      "category": "story",
+      "from": "mentor",
+      "subject": "E-77",
+      "body": [
+        "The vendor confirms E-77 is a genuine portable encoder from a batch sold to another hotel group two years ago and reported stolen. DS Calloway is interested.",
+        "Thirty-one keys in nineteen nights, and a man in a grey cap who knew where the trolleys stand. Somebody is shopping in our building. Keep your notebook close."
+      ],
+      "when": {
+        "passed": [
+          "M011"
+        ],
+        "minClues": 3
+      }
+    },
+    {
+      "id": "fire_officer_visit",
+      "category": "team",
+      "from": "fire_officer",
+      "subject": "Floor 14, the other night",
+      "body": [
+        "The call came in fast and you met us at the panel with plans and keys. Holding the warm door shut was the right call: the room was well alight behind it.",
+        "We'd like to walk the building with you for a pre-incident plan. Thursdays suit the watch."
+      ],
+      "when": {
+        "passed": [
+          "M012"
+        ]
+      }
+    },
+    {
+      "id": "insurer_impairments",
+      "category": "request",
+      "from": "adjuster",
+      "subject": "Impairment notices",
+      "body": "Our property engineers were pleased with the floor 14 impairment notice and the drain test result. Could you send us the hotel's impairment procedure, so we can agree it applies to every floor?",
+      "when": {
+        "passed": [
+          "M013"
+        ]
+      },
+      "deadlineWeeks": 2,
+      "defaultChoice": "ignore",
+      "choices": [
+        {
+          "id": "send",
+          "label": "Send the procedure and the last fire watch log, through Desmond Okafor",
+          "outcome": "Tarrowby's engineers accept the procedure as written and note it on the hotel's risk file.",
+          "relations": {
+            "adjuster": 4,
+            "mentor": 2
+          },
+          "effects": {
+            "InsurerConfidence": 2
+          }
+        },
+        {
+          "id": "ignore",
+          "label": "Leave it",
+          "outcome": "The request is repeated at the renewal meeting, in front of the GM.",
+          "relations": {
+            "adjuster": -4
+          },
+          "effects": {
+            "InsurerConfidence": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "ashcombe_claim",
+      "category": "incident",
+      "from": "adjuster",
+      "subject": "Claim TM-61840 (Ashcombe)",
+      "body": [
+        "Mrs Ashcombe's solicitor has written. Your photographs with the scale, the cleaning log and the L-01 clip of the rain coming in on the guests' coats answer most of their questions.",
+        "We expect to settle the medical costs quickly and without dispute. Thank you for not promising anything at the scene."
+      ],
+      "when": {
+        "passed": [
+          "M014"
+        ],
+        "notFlags": [
+          "m014_promised"
+        ]
+      }
+    },
+    {
+      "id": "chef_permits",
+      "category": "politics",
+      "from": "fnb_director",
+      "subject": "Hot work permits",
+      "body": "Chef says the permit process cost him a night's work on the canopy and he wants contractors to sign their own permits in future. They're professionals. Can we agree that?",
+      "when": {
+        "passed": [
+          "M015"
+        ]
+      },
+      "deadlineWeeks": 1,
+      "defaultChoice": "ignore",
+      "choices": [
+        {
+          "id": "hold",
+          "label": "Keep LP-issued permits, and offer to pre-approve planned jobs the day before",
+          "outcome": "Rafael accepts once he hears about the duct wrap. Planned jobs now get their permit at 17:00 the day before.",
+          "relations": {
+            "fnb_director": 2
+          },
+          "effects": {
+            "SafetyCompliance": 2
+          }
+        },
+        {
+          "id": "relent",
+          "label": "Let contractors sign their own permits",
+          "outcome": "Within a month a contractor grinds in the dish area with the detectors still live and no fire watch. Two engines attend.",
+          "relations": {
+            "fnb_director": 4,
+            "mentor": -5
+          },
+          "effects": {
+            "SafetyCompliance": -4,
+            "IncidentCosts": 1500
+          }
+        },
+        {
+          "id": "ignore",
+          "label": "Leave it",
+          "outcome": "Rafael takes it to the GM as LP being difficult.",
+          "relations": {
+            "fnb_director": -3,
+            "gm": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "hr_followup",
+      "category": "team",
+      "from": "hr_director",
+      "subject": "Two weeks on",
+      "body": [
+        "The outcome has been decided and both parties told. I checked in with Keziah and Sunniva as you suggested; both are still on section B and say the briefings have changed.",
+        "Thank you for keeping the findings to the evidence. It made my decision easier to defend."
+      ],
+      "when": {
+        "passed": [
+          "M016"
+        ],
+        "notFlags": [
+          "m016_moved"
+        ]
+      }
+    },
+    {
+      "id": "shrink_writeoff",
+      "category": "request",
+      "from": "finance_director",
+      "subject": "The 2,208",
+      "body": "Do I write off the banquet store gap in September's accounts, or is there anything we can recover?",
+      "when": {
+        "passed": [
+          "M017"
+        ]
+      },
+      "deadlineWeeks": 2,
+      "defaultChoice": "ignore",
+      "choices": [
+        {
+          "id": "claim",
+          "label": "Notify Tarrowby under the employee dishonesty cover for the proven night, with the evidence pack; write off the rest",
+          "outcome": "Tarrowby accepts the proven loss less the excess. The rest is written off with the new controls noted.",
+          "relations": {
+            "finance_director": 3,
+            "adjuster": 2
+          },
+          "effects": {
+            "IncidentCosts": -600,
+            "InsurerConfidence": 1
+          }
+        },
+        {
+          "id": "all",
+          "label": "Claim the whole 2,208 as theft",
+          "outcome": "Tarrowby asks for evidence for the other two events and there is none. The claim is cut back and the adjuster notes it.",
+          "relations": {
+            "adjuster": -3
+          },
+          "effects": {
+            "InsurerConfidence": -2
+          }
+        },
+        {
+          "id": "ignore",
+          "label": "Leave it to finance",
+          "outcome": "Hamish writes it all off.",
+          "relations": {
+            "finance_director": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "reaudit_pass",
+      "category": "team",
+      "from": "auditor_solberg",
+      "subject": "Re-audit",
+      "body": "Re-audit complete: 96.2%, no critical items failed. The laundry staging bay works and the B1 route was clear on both of my unannounced visits. A good corrective action plan, properly closed out.",
+      "when": {
+        "passed": [
+          "M018"
+        ],
+        "notFlags": [
+          "m018_backfilled"
+        ]
+      }
+    },
+    {
+      "id": "calloway_airport",
+      "category": "story",
+      "from": "police_liaison",
+      "subject": "E-77, again",
+      "clue": "airport_clones",
+      "body": [
+        "The encoder batch E-77 came from was sold through a lock-hardware reseller that has since closed. One of its other customers is your own company's airport hotel, the Veldane Airport Port Avener, which has had eleven rooms entered with valid keys this year.",
+        "Same shared-login trick, same timing. Whoever this is knows Veldane systems from the inside. Can you find out who had that login before it was taped under a keyboard?"
+      ],
+      "when": {
+        "passed": [
+          "M015"
+        ],
+        "minLevel": 5,
+        "minClues": 3
+      }
+    },
+    {
+      "id": "tessmore_officers",
+      "category": "politics",
+      "from": "guard_lead",
+      "subject": "My night lads",
+      "body": "I hear you're taking nights in-house. Two of my officers are the best you've had. Will you see them right?",
+      "when": {
+        "passed": [
+          "M019"
+        ]
+      },
+      "deadlineWeeks": 1,
+      "defaultChoice": "ignore",
+      "choices": [
+        {
+          "id": "apply",
+          "label": "Tell him they are welcome to apply and will be assessed like everyone else",
+          "outcome": "Both apply. One is hired on merit; Callum thanks you for being straight with him.",
+          "relations": {
+            "guard_lead": 2,
+            "hr_director": 2
+          }
+        },
+        {
+          "id": "promise",
+          "label": "Promise both of them jobs",
+          "outcome": "HR has to explain to twelve other applicants why two posts were never open. Priyanka is not pleased.",
+          "relations": {
+            "guard_lead": 4,
+            "hr_director": -6
+          },
+          "effects": {
+            "StaffMorale": -2
+          }
+        },
+        {
+          "id": "ignore",
+          "label": "Leave it",
+          "outcome": "The officers hear nothing and assume the worst. One leaves Tessmore early, and nights are short-handed for a week.",
+          "relations": {
+            "guard_lead": -3
+          },
+          "effects": {
+            "SecurityPosture": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "dunmore_letter",
+      "category": "team",
+      "from": "mother_dunmore",
+      "subject": "Theo",
+      "body": [
+        "I don't think I said thank you properly. I was too frightened to say anything. Theo has drawn a picture of 'the lady on the radio and the man who found me'.",
+        "Please tell everyone who looked for him."
+      ],
+      "when": {
+        "passed": [
+          "M020"
+        ]
+      },
+      "deadlineWeeks": 1,
+      "defaultChoice": "keep",
+      "choices": [
+        {
+          "id": "share",
+          "label": "Pin it up in the staff canteen with the Code Beacon times",
+          "outcome": "Staff stop to read it for a week. Three departments ask for a Code Beacon refresher.",
+          "relations": {
+            "banquet_manager": 3,
+            "partner": 2
+          },
+          "effects": {
+            "StaffMorale": 2
+          }
+        },
+        {
+          "id": "keep",
+          "label": "File it with the case",
+          "outcome": "It sits in the file. The staff who searched never see it.",
+          "effects": {}
+        }
+      ]
+    },
+    {
+      "id": "treharne_family",
+      "category": "team",
+      "from": "police_liaison",
+      "subject": "Mr Treharne's family",
+      "body": "Mr Treharne's daughter asked me to pass this on: she was told by the right people, in the right way, and the room was left as he left it. She'd like to thank the room attendant who found him.",
+      "when": {
+        "passed": [
+          "M021"
+        ],
+        "notFlags": [
+          "m021_told_caller"
+        ]
+      }
+    },
+    {
+      "id": "marshal_followup",
+      "category": "request",
+      "from": "fire_marshal",
+      "subject": "Follow-up visit",
+      "body": "Your action plan was received. I'll be back in eight weeks to see the hood serviced, the drill records and the emergency lighting tests. If the ballroom is over its limit when I come, I will close it.",
+      "when": {
+        "passed": [
+          "M022"
+        ]
+      },
+      "deadlineWeeks": 2,
+      "defaultChoice": "later",
+      "choices": [
+        {
+          "id": "book",
+          "label": "Book the follow-up and send him the drill dates now",
+          "outcome": "He confirms the date. The drill on Stair A runs a week before he arrives.",
+          "relations": {
+            "fire_marshal": 4
+          },
+          "effects": {
+            "SafetyCompliance": 2
+          }
+        },
+        {
+          "id": "later",
+          "label": "Reply after the gala season",
+          "outcome": "He books it himself, for the week of the biggest gala.",
+          "relations": {
+            "fire_marshal": -3
+          },
+          "effects": {
+            "SafetyCompliance": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "generator_test",
+      "category": "request",
+      "from": "chief_engineer",
+      "subject": "Transfer switch",
+      "body": [
+        "The transfer switch had never been tested with a real changeover. I want to do a full load test on a Sunday night: lifts, fire pump, the lot. It means overtime and the generator contractor on site, about 4,800.",
+        "Or I can bench-test the switch for free and hope."
+      ],
+      "when": {
+        "passed": [
+          "C001"
+        ]
+      },
+      "deadlineWeeks": 2,
+      "defaultChoice": "bench",
+      "choices": [
+        {
+          "id": "load",
+          "label": "Approve the load test and put it on the annual calendar",
+          "outcome": "The test finds a second fault in the switch's control relay. It's replaced before the next outage.",
+          "relations": {
+            "chief_engineer": 5
+          },
+          "effects": {
+            "SafetyCompliance": 3,
+            "IncidentCosts": 4800
+          }
+        },
+        {
+          "id": "bench",
+          "label": "Bench test only",
+          "outcome": "The bench test passes. Tomasz notes in writing that it proves nothing about a real changeover.",
+          "relations": {
+            "chief_engineer": -3
+          },
+          "effects": {
+            "SafetyCompliance": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "airport_calendar",
+      "category": "team",
+      "from": "airport_lp",
+      "subject": "First monthly review",
+      "body": "Our first month on the cluster standard: night keys with ID 100% here, and yours? The six cameras are back. Can we review on the 3rd, and can my officers shadow your CCTV team for a night?",
+      "when": {
+        "passed": [
+          "M023"
+        ],
+        "notFlags": [
+          "airport_underreporting"
+        ]
+      },
+      "deadlineWeeks": 1,
+      "defaultChoice": "later",
+      "choices": [
+        {
+          "id": "yes",
+          "label": "Yes to both, and send our own night-key figure",
+          "outcome": "Ours is 97%. Rhosyn is gracious about it. Her officers spend a night with Ines and go home with three new habits.",
+          "relations": {
+            "airport_lp": 5,
+            "partner": 2
+          },
+          "effects": {
+            "SecurityPosture": 2
+          }
+        },
+        {
+          "id": "later",
+          "label": "Reschedule the review",
+          "outcome": "The first review slips to the second month. Rhosyn stops sending her figures early.",
+          "relations": {
+            "airport_lp": -3
+          }
+        }
+      ]
+    },
+    {
+      "id": "vessey_arrest",
+      "category": "story",
+      "from": "police_liaison",
+      "subject": "Vessey",
+      "body": [
+        "We executed the warrant at Dorian Vessey's flat this morning. A second portable encoder, a card printer and four hundred blank cards printed in the Veldane design. He's been charged with the room entries at both hotels.",
+        "He wasn't working alone: someone has been buying the cards from him. That's mine now. Thank you for not ringing him."
+      ],
+      "clue": "blank_stock",
+      "when": {
+        "passed": [
+          "M024"
+        ],
+        "notFlags": [
+          "m024_called_suspect"
+        ],
+        "minLevel": 7
+      }
+    },
+    {
+      "id": "vessey_cleared",
+      "category": "story",
+      "from": "police_liaison",
+      "subject": "Vessey's flat",
+      "body": "We searched Vessey's flat. Nothing: no encoder, no cards, freshly painted. He told us a hotel manager had rung to warn him. We'll build it from the logs, but it's harder now.",
+      "when": {
+        "passed": [
+          "M024"
+        ],
+        "flags": [
+          "m024_called_suspect"
+        ]
+      }
+    },
+    {
+      "id": "tarrowby_engineer",
+      "category": "request",
+      "from": "adjuster",
+      "subject": "Risk engineer's visit",
+      "body": "Tarrowby's risk engineer wants to see the kitchen suppression upgrade in progress before the six-month condition date. Can you host him next month?",
+      "when": {
+        "passed": [
+          "M027"
+        ],
+        "notFlags": [
+          "m027_nondisclosure"
+        ]
+      },
+      "deadlineWeeks": 2,
+      "defaultChoice": "later",
+      "choices": [
+        {
+          "id": "host",
+          "label": "Host him with Tomasz and the contractor's schedule",
+          "outcome": "He signs off the progress and notes the hotel as a 'well-managed risk' in his report.",
+          "relations": {
+            "adjuster": 4,
+            "chief_engineer": 2
+          },
+          "effects": {
+            "InsurerConfidence": 3
+          }
+        },
+        {
+          "id": "later",
+          "label": "Ask to wait until it's finished",
+          "outcome": "He comes anyway, unannounced, and finds it two weeks behind.",
+          "relations": {
+            "adjuster": -2
+          },
+          "effects": {
+            "InsurerConfidence": -1
+          }
+        }
+      ]
+    },
+    {
+      "id": "oyelaran_thanks",
+      "category": "team",
+      "from": "health_officer",
+      "subject": "Rice cooling",
+      "body": "For your records: the follow-up visit found the new cooling procedure in use and logged. I've used your kitchen's response as an example at our trade briefing, without naming you.",
+      "when": {
+        "passed": [
+          "M028"
+        ],
+        "notFlags": [
+          "m028_evidence_destroyed"
+        ]
+      }
+    },
+    {
+      "id": "first_report",
+      "category": "team",
+      "from": "exec_housekeeper",
+      "subject": "We used it",
+      "body": "One of my team used the reporting route on Saturday. LP took it, the police came quietly, and the guest who needed help got it. She asked me to tell you she wasn't scared to report.",
+      "when": {
+        "passed": [
+          "M029"
+        ],
+        "minLevel": 8
+      },
+      "deadlineWeeks": 1,
+      "defaultChoice": "thank",
+      "choices": [
+        {
+          "id": "thank",
+          "label": "Thank the room attendant through Lucia, privately",
+          "outcome": "Lucia passes it on. Two more departments ask for the training early.",
+          "relations": {
+            "exec_housekeeper": 4
+          },
+          "effects": {
+            "StaffMorale": 2
+          }
+        },
+        {
+          "id": "announce",
+          "label": "Announce it as a success at the next all-staff meeting",
+          "outcome": "Lucia asks you not to: it could identify the guest and her colleague. You drop it, but the moment has passed.",
+          "relations": {
+            "exec_housekeeper": -3
+          }
+        }
+      ]
+    },
+    {
+      "id": "tamsett_withdrawn",
+      "category": "team",
+      "from": "adjuster",
+      "subject": "Tamsett claim",
+      "body": "Mr Tamsett's solicitor has withdrawn the claim after our investigators put the evidence to them. Your evidence table did the work. Reserve released.",
+      "when": {
+        "passed": [
+          "M030"
+        ],
+        "notFlags": [
+          "claimant_defamation"
+        ]
+      }
+    },
+    {
+      "id": "kellaway_report",
+      "category": "team",
+      "from": "fire_officer",
+      "subject": "1409",
+      "body": "Our investigation into the 1409 fire is closed: accidental, a charger on bedding. The sprinkler did its job and so did your people. I've asked our community team to borrow your guest safety card wording.",
+      "when": {
+        "passed": [
+          "C003"
+        ],
+        "notFlags": [
+          "door_opened_smoke"
+        ]
+      }
+    },
+    {
+      "id": "cliffside_reopens",
+      "category": "team",
+      "from": "resort_gm",
+      "subject": "We reopen on the 1st",
+      "body": "Spa roof on, villas cleaned, every member of staff back who wanted to come back. The wedding couple are coming for their first anniversary. Thank you for making me close.",
+      "when": {
+        "passed": [
+          "C004"
+        ],
+        "notFlags": [
+          "c004_stayed_open"
+        ]
+      }
+    }
+  ],
+  "fallout": [
+    {
+      "topic": "default",
+      "description": "A weak call in \"{mission}\" comes back: {choice}. A guest complaint follows and the file does not hold up.",
+      "effects": {
+        "GuestSatisfaction": -2,
+        "Reputation": -1,
+        "IncidentCosts": 600
+      }
+    },
+    {
+      "topic": "theft",
+      "description": "A theft claim on another floor goes badly. The investigation repeats a habit from \"{mission}\" ({choice}) and the guest's lawyer asks for the file.",
+      "effects": {
+        "GuestSatisfaction": -2,
+        "InsurerConfidence": -2,
+        "IncidentCosts": 1500
+      }
+    },
+    {
+      "topic": "access",
+      "description": "Someone talks their way into a room that is not theirs, the way the gap in \"{mission}\" allowed ({choice}).",
+      "effects": {
+        "GuestSatisfaction": -3,
+        "Reputation": -3,
+        "SecurityPosture": -3,
+        "IncidentCosts": 2500
+      }
+    },
+    {
+      "topic": "guest",
+      "description": "A guest dispute escalates on the floor. Staff repeat the approach from \"{mission}\" ({choice}) and a complaint reaches the brand.",
+      "effects": {
+        "GuestSatisfaction": -3,
+        "Reputation": -2,
+        "IncidentCosts": 800
+      }
+    },
+    {
+      "topic": "medical",
+      "description": "A guest collapses in the spa. Staff repeat the approach from \"{mission}\" ({choice}) and the response is minutes slower than it should be.",
+      "effects": {
+        "SafetyCompliance": -3,
+        "Reputation": -2,
+        "IncidentCosts": 1200
+      }
+    },
+    {
+      "topic": "suspicious_item",
+      "description": "Another unattended bag turns up at the ballroom. The team handles it the way \"{mission}\" went ({choice}) and the evening is disrupted for nothing, or not taken seriously enough.",
+      "effects": {
+        "SafetyCompliance": -2,
+        "GuestSatisfaction": -2,
+        "IncidentCosts": 900
+      }
+    },
+    {
+      "topic": "cctv",
+      "description": "Footage a claimant needed is gone or cannot be verified, the way \"{mission}\" went ({choice}). The insurer pays out and asks questions.",
+      "effects": {
+        "InsurerConfidence": -3,
+        "IncidentCosts": 2000
+      }
+    },
+    {
+      "topic": "keys",
+      "description": "A key control gap from \"{mission}\" ({choice}) is still open when someone tries the same door again.",
+      "effects": {
+        "SecurityPosture": -3,
+        "LossExposure": 3,
+        "IncidentCosts": 1800
+      }
+    },
+    {
+      "topic": "perimeter",
+      "description": "A back door is found propped again, the habit left from \"{mission}\" ({choice}). Stock goes missing from receiving.",
+      "effects": {
+        "SecurityPosture": -3,
+        "LossExposure": 2,
+        "IncidentCosts": 1100
+      }
+    },
+    {
+      "topic": "luggage",
+      "description": "The bell stand releases another bag on a name and a number, the gap from \"{mission}\" ({choice}). The guest's lawyer writes to the GM.",
+      "effects": {
+        "GuestSatisfaction": -3,
+        "InsurerConfidence": -2,
+        "IncidentCosts": 1600
+      }
+    },
+    {
+      "topic": "fire",
+      "description": "The fire authority reviews the night of \"{mission}\" ({choice}) and writes to the GM asking for the hotel's fire procedures and training records.",
+      "effects": {
+        "SafetyCompliance": -4,
+        "InsurerConfidence": -3,
+        "Reputation": -2
+      }
+    },
+    {
+      "topic": "claims",
+      "description": "The claimant's solicitor quotes the scene from \"{mission}\" ({choice}). The insurer reserves its position and the excess goes up.",
+      "effects": {
+        "InsurerConfidence": -4,
+        "IncidentCosts": 4800,
+        "Reputation": -1
+      }
+    },
+    {
+      "topic": "workplace",
+      "description": "The handling of \"{mission}\" ({choice}) reaches an employment tribunal claim. The hotel's process is criticised in the hearing.",
+      "effects": {
+        "StaffMorale": -4,
+        "Reputation": -2,
+        "IncidentCosts": 6500
+      }
+    },
+    {
+      "topic": "shrink",
+      "description": "After \"{mission}\" ({choice}), the banquet store keeps losing stock. Finance flags LP in the month-end pack.",
+      "effects": {
+        "LossExposure": 3,
+        "OwnerTrust": -2,
+        "IncidentCosts": 1800
+      }
+    },
+    {
+      "topic": "audit",
+      "description": "The re-audit finds the same gap as \"{mission}\" ({choice}). The regional office puts the hotel on its watch list.",
+      "effects": {
+        "OwnerTrust": -4,
+        "SafetyCompliance": -2
+      }
+    },
+    {
+      "topic": "budget",
+      "description": "The staffing decision in \"{mission}\" ({choice}) shows: nights are thin when an incident needs two people.",
+      "effects": {
+        "SecurityPosture": -3,
+        "StaffMorale": -2,
+        "IncidentCosts": 2400
+      }
+    },
+    {
+      "topic": "missing_child",
+      "description": "How \"{mission}\" was handled ({choice}) comes back: a parent's complaint about the search reaches the owners.",
+      "effects": {
+        "Reputation": -2,
+        "OwnerTrust": -2
+      }
+    },
+    {
+      "topic": "guest_death",
+      "description": "The handling of \"{mission}\" ({choice}) reaches the family through the coroner's officer.",
+      "effects": {
+        "Reputation": -3,
+        "OwnerTrust": -2
+      }
+    },
+    {
+      "topic": "fire_inspection",
+      "description": "The fire authority's follow-up on \"{mission}\" ({choice}) finds the plan only half done.",
+      "effects": {
+        "SafetyCompliance": -3,
+        "InsurerConfidence": -2
+      }
+    },
+    {
+      "topic": "power_outage",
+      "description": "The outage review of \"{mission}\" ({choice}) reaches the insurer.",
+      "effects": {
+        "InsurerConfidence": -3,
+        "SafetyCompliance": -2
+      }
+    },
+    {
+      "topic": "cluster_standards",
+      "description": "The cluster standard from \"{mission}\" ({choice}) isn't holding at the airport.",
+      "effects": {
+        "SecurityPosture": -2,
+        "LossExposure": 2
+      }
+    },
+    {
+      "topic": "access_revocation",
+      "description": "An access review after \"{mission}\" ({choice}) finds more leavers still on the systems.",
+      "effects": {
+        "SecurityPosture": -3,
+        "LossExposure": 3
+      }
+    },
+    {
+      "topic": "insurance_renewal",
+      "description": "Tarrowby's mid-term review of \"{mission}\" ({choice}) finds the renewal file thinner than it looked.",
+      "effects": {
+        "InsurerConfidence": -3
+      }
+    },
+    {
+      "topic": "food_illness",
+      "description": "The health department's follow-up on \"{mission}\" ({choice}) finds the cooling logs slipping.",
+      "effects": {
+        "SafetyCompliance": -2,
+        "Reputation": -2
+      }
+    },
+    {
+      "topic": "trafficking_awareness",
+      "description": "An audit of \"{mission}\" ({choice}) finds a department that never completed the training.",
+      "effects": {
+        "SecurityPosture": -2
+      }
+    },
+    {
+      "topic": "claim_fraud",
+      "description": "The claim from \"{mission}\" ({choice}) is reopened with new evidence from the claimant's side.",
+      "effects": {
+        "IncidentCosts": 4000,
+        "InsurerConfidence": -2
+      }
+    },
+    {
+      "topic": "major_fire",
+      "description": "The fire authority's report on \"{mission}\" ({choice}) is published.",
+      "effects": {
+        "SafetyCompliance": -3,
+        "Reputation": -2
+      }
+    },
+    {
+      "topic": "lock_business_case",
+      "description": "The owners' quarterly review of \"{mission}\" ({choice}) questions the benefits.",
+      "effects": {
+        "OwnerTrust": -3
+      }
+    },
+    {
+      "topic": "cctv_privacy",
+      "description": "A data subject request after \"{mission}\" ({choice}) shows gaps in the access log.",
+      "effects": {
+        "Reputation": -2,
+        "SecurityPosture": -2
+      }
+    },
+    {
+      "topic": "viral_incident",
+      "description": "A follow-up story on \"{mission}\" ({choice}) asks what changed.",
+      "effects": {
+        "Reputation": -3
+      }
+    },
+    {
+      "topic": "retaliation",
+      "description": "The staff survey after \"{mission}\" ({choice}) shows people still afraid to speak up.",
+      "effects": {
+        "StaffMorale": -3
+      }
+    },
+    {
+      "topic": "hurricane",
+      "description": "Staff and guests from \"{mission}\" ({choice}) talk to the local press about the storm.",
+      "effects": {
+        "Reputation": -2,
+        "StaffMorale": -2
+      }
+    }
+  ]
+}

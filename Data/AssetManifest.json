@@ -1,0 +1,839 @@
+{
+ "version": 1,
+ "assets": [
+  {
+   "id": "herringbone_parquet",
+   "slot": "parquet",
+   "kind": "texture",
+   "role": "Parquet: LP office, manager's office",
+   "source": "Poly Haven",
+   "page": "https://polyhaven.com/a/herringbone_parquet",
+   "licence": "CC0 1.0",
+   "authors": [
+    "Jenelle van Heerden",
+    "Sergej Majboroda"
+   ],
+   "name": "Herringbone Parquet",
+   "files": [
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/herringbone_parquet/herringbone_parquet_diff_1k.jpg",
+     "path": "polyhaven/herringbone_parquet/herringbone_parquet_diff_1k.jpg",
+     "sha256": "d6c66492a6c4cfd4e8ed18c9cdd4e0303f3de4e04613d2adca8bc2b8f2dd2350",
+     "size": 829046
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/herringbone_parquet/herringbone_parquet_nor_dx_1k.jpg",
+     "path": "polyhaven/herringbone_parquet/herringbone_parquet_nor_dx_1k.jpg",
+     "sha256": "1e7bf70577fccee840b5d64af09a7a00111badd1c5f2f034207f12af23dcf2da",
+     "size": 371362
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/herringbone_parquet/herringbone_parquet_arm_1k.jpg",
+     "path": "polyhaven/herringbone_parquet/herringbone_parquet_arm_1k.jpg",
+     "sha256": "64ded181ebe84df02998929e95b5a9a4b613f268a5355f7ef56cd91da879b207",
+     "size": 554910
+    }
+   ]
+  },
+  {
+   "id": "marble_01",
+   "slot": "marble",
+   "kind": "texture",
+   "role": "Lobby floor; dark-tinted for the front desk and bar tops",
+   "source": "Poly Haven",
+   "page": "https://polyhaven.com/a/marble_01",
+   "licence": "CC0 1.0",
+   "authors": [
+    "Rob Tuytel"
+   ],
+   "name": "Marble 01",
+   "files": [
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/marble_01/marble_01_diff_1k.jpg",
+     "path": "polyhaven/marble_01/marble_01_diff_1k.jpg",
+     "sha256": "b10dabea976d68baa976a0d4e8dac58789df8d26a1b50697f320106f1b00a229",
+     "size": 305029
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/marble_01/marble_01_nor_dx_1k.jpg",
+     "path": "polyhaven/marble_01/marble_01_nor_dx_1k.jpg",
+     "sha256": "b0da76d834a3ad99f64d1ffb4146565b47ce909130f3082265c611987c680748",
+     "size": 97675
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/marble_01/marble_01_arm_1k.jpg",
+     "path": "polyhaven/marble_01/marble_01_arm_1k.jpg",
+     "sha256": "84b1516c27b4393230e77e0aa525186b4a8a415169661a4385f02dcb10c14104",
+     "size": 54740
+    }
+   ]
+  },
+  {
+   "id": "square_tiles_02",
+   "slot": "tiles",
+   "kind": "texture",
+   "role": "Guest bathrooms, staff toilets",
+   "source": "Poly Haven",
+   "page": "https://polyhaven.com/a/square_tiles_02",
+   "licence": "CC0 1.0",
+   "authors": [
+    "Charlotte Baglioni"
+   ],
+   "name": "Square Tiles 02",
+   "files": [
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/square_tiles_02/square_tiles_02_diff_1k.jpg",
+     "path": "polyhaven/square_tiles_02/square_tiles_02_diff_1k.jpg",
+     "sha256": "cf66296836447e4ebb37478e405cb9387a4a34072f96e29f269c0c6a01ee0109",
+     "size": 802181
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/square_tiles_02/square_tiles_02_nor_dx_1k.jpg",
+     "path": "polyhaven/square_tiles_02/square_tiles_02_nor_dx_1k.jpg",
+     "sha256": "02b8b44ad57eea7f6781efef3dea081f43f3e278d92358a3489ac261a1b2b9d8",
+     "size": 846808
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/square_tiles_02/square_tiles_02_arm_1k.jpg",
+     "path": "polyhaven/square_tiles_02/square_tiles_02_arm_1k.jpg",
+     "sha256": "e28f78d28b238f04adf07ab5e6812dd051e8c92b1a2970bc2189cbdf7d93c9c2",
+     "size": 520419
+    }
+   ]
+  },
+  {
+   "id": "concrete_floor_02",
+   "slot": "concrete_floor",
+   "kind": "texture",
+   "role": "B1 back of house, loading dock",
+   "source": "Poly Haven",
+   "page": "https://polyhaven.com/a/concrete_floor_02",
+   "licence": "CC0 1.0",
+   "authors": [
+    "Rob Tuytel"
+   ],
+   "name": "Concrete Floor 02",
+   "files": [
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_floor_02/concrete_floor_02_diff_1k.jpg",
+     "path": "polyhaven/concrete_floor_02/concrete_floor_02_diff_1k.jpg",
+     "sha256": "6db84a6d87dc50508b9d134d6fbd2b7e876b8081a5f43a118a249ca18de73af5",
+     "size": 776097
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_floor_02/concrete_floor_02_arm_1k.jpg",
+     "path": "polyhaven/concrete_floor_02/concrete_floor_02_arm_1k.jpg",
+     "sha256": "01d80e4cb4eb4605902d1c1362da1c309fdba5907039acddd9226d893bbd8946",
+     "size": 146483
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_floor_02/concrete_floor_02_nor_dx_1k.jpg",
+     "path": "polyhaven/concrete_floor_02/concrete_floor_02_nor_dx_1k.jpg",
+     "sha256": "9769ce522c6423ee84971a06db783bbae540465f3d0322e7194815ebe5d83fe1",
+     "size": 194390
+    }
+   ]
+  },
+  {
+   "id": "concrete_wall_008",
+   "slot": "concrete_wall",
+   "kind": "texture",
+   "role": "Stair shafts, B1 walls, facade",
+   "source": "Poly Haven",
+   "page": "https://polyhaven.com/a/concrete_wall_008",
+   "licence": "CC0 1.0",
+   "authors": [
+    "Charlotte Baglioni",
+    "Dario Barresi"
+   ],
+   "name": "Concrete Wall 008",
+   "files": [
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_008/concrete_wall_008_diff_1k.jpg",
+     "path": "polyhaven/concrete_wall_008/concrete_wall_008_diff_1k.jpg",
+     "sha256": "a203166d280d3cfc6a91bbc9ffdae406eb9555b4a4f658cd92619063eb17c147",
+     "size": 623051
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_008/concrete_wall_008_nor_dx_1k.jpg",
+     "path": "polyhaven/concrete_wall_008/concrete_wall_008_nor_dx_1k.jpg",
+     "sha256": "b8bd12cc3b79f9ff2d434c91b49c74a8eba633719249bd600fbae6a3cb8ecb5c",
+     "size": 515128
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_008/concrete_wall_008_arm_1k.jpg",
+     "path": "polyhaven/concrete_wall_008/concrete_wall_008_arm_1k.jpg",
+     "sha256": "12b8b88bd0a9b303150f45cf0080371d78b7f04744d4ab14030b8958ec7dc2e3",
+     "size": 667023
+    }
+   ]
+  },
+  {
+   "id": "asphalt_02",
+   "slot": "asphalt",
+   "kind": "texture",
+   "role": "Street and garage ramp",
+   "source": "Poly Haven",
+   "page": "https://polyhaven.com/a/asphalt_02",
+   "licence": "CC0 1.0",
+   "authors": [
+    "Rob Tuytel"
+   ],
+   "name": "Asphalt 02",
+   "files": [
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_diff_1k.jpg",
+     "path": "polyhaven/asphalt_02/asphalt_02_diff_1k.jpg",
+     "sha256": "1aa5ce99f58a625c71d48cfc3e68b65ca85ccb00f39e045c0a928608a0ea25ed",
+     "size": 731707
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_nor_dx_1k.jpg",
+     "path": "polyhaven/asphalt_02/asphalt_02_nor_dx_1k.jpg",
+     "sha256": "789ceaee56f6e85b7e5837e8b0fd472ff3637ec7c72b1002b7b56eaf667d9b8c",
+     "size": 1259681
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_arm_1k.jpg",
+     "path": "polyhaven/asphalt_02/asphalt_02_arm_1k.jpg",
+     "sha256": "56bd8e591a3db579846fcb5185f60b0651e0bd4ea85c3529c339e6746243c9cf",
+     "size": 296770
+    }
+   ]
+  },
+  {
+   "id": "grey_cartago_02",
+   "slot": "paving",
+   "kind": "texture",
+   "role": "Quay Promenade paving",
+   "source": "Poly Haven",
+   "page": "https://polyhaven.com/a/grey_cartago_02",
+   "licence": "CC0 1.0",
+   "authors": [
+    "Jenelle van Heerden",
+    "Lucas S\u00e1nchez Ros"
+   ],
+   "name": "Grey Cartago 02",
+   "files": [
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/grey_cartago_02/grey_cartago_02_diff_1k.jpg",
+     "path": "polyhaven/grey_cartago_02/grey_cartago_02_diff_1k.jpg",
+     "sha256": "abd903b9d568671e93bb5f95695188f260508ac5375bd1efa8b1f0801d693059",
+     "size": 773994
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/grey_cartago_02/grey_cartago_02_nor_dx_1k.jpg",
+     "path": "polyhaven/grey_cartago_02/grey_cartago_02_nor_dx_1k.jpg",
+     "sha256": "86501e619c97e8dcc4617586c5028b32e995c35723105f109e5eea3acad55489",
+     "size": 530841
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/grey_cartago_02/grey_cartago_02_arm_1k.jpg",
+     "path": "polyhaven/grey_cartago_02/grey_cartago_02_arm_1k.jpg",
+     "sha256": "4eb929af350650b07482cd4736068a5fbe51a835d014bd7348fc5a39be42bd0c",
+     "size": 359439
+    }
+   ]
+  },
+  {
+   "id": "poly_wool_herringbone",
+   "slot": "wool",
+   "kind": "texture",
+   "role": "Carpets, upholstery, acoustic panels",
+   "source": "Poly Haven",
+   "page": "https://polyhaven.com/a/poly_wool_herringbone",
+   "licence": "CC0 1.0",
+   "authors": [
+    "Rico Cilliers",
+    "colormass"
+   ],
+   "name": "Poly Wool Herringbone",
+   "files": [
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/poly_wool_herringbone/poly_wool_herringbone_arm_1k.jpg",
+     "path": "polyhaven/poly_wool_herringbone/poly_wool_herringbone_arm_1k.jpg",
+     "sha256": "f565985fe68d42b6638080c52628f13312b178001d758ef89fe76adb773fb227",
+     "size": 1223522
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/poly_wool_herringbone/poly_wool_herringbone_diff_1k.jpg",
+     "path": "polyhaven/poly_wool_herringbone/poly_wool_herringbone_diff_1k.jpg",
+     "sha256": "fd889a46f617efd331e522e36b8ad2548e16e1cb018c001872f17537d7666af5",
+     "size": 942966
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/poly_wool_herringbone/poly_wool_herringbone_nor_dx_1k.jpg",
+     "path": "polyhaven/poly_wool_herringbone/poly_wool_herringbone_nor_dx_1k.jpg",
+     "sha256": "f5994b943cade87d42023154bbe12738086d32c33f4a78541b82e9698a9bcb5b",
+     "size": 1007727
+    }
+   ]
+  },
+  {
+   "id": "fabric_pattern_07",
+   "slot": "linen",
+   "kind": "texture",
+   "role": "Bed linen and towels",
+   "source": "Poly Haven",
+   "page": "https://polyhaven.com/a/fabric_pattern_07",
+   "licence": "CC0 1.0",
+   "authors": [
+    "Rob Tuytel"
+   ],
+   "name": "Fabric Pattern 07",
+   "files": [
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/fabric_pattern_07/fabric_pattern_07_nor_dx_1k.jpg",
+     "path": "polyhaven/fabric_pattern_07/fabric_pattern_07_nor_dx_1k.jpg",
+     "sha256": "4cae0b9e981ec818dbf7d6866358db4cefe391498d73a6a8b7c053c952965da1",
+     "size": 846161
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/fabric_pattern_07/fabric_pattern_07_arm_1k.jpg",
+     "path": "polyhaven/fabric_pattern_07/fabric_pattern_07_arm_1k.jpg",
+     "sha256": "57520f1383a41ea9d69a3f9c1d2a2b0cdc6ba85c579935c44a1281845ec11030",
+     "size": 227059
+    }
+   ]
+  },
+  {
+   "id": "fabric_leather_02",
+   "slot": "leather",
+   "kind": "texture",
+   "role": "Bar stools, lobby chairs",
+   "source": "Poly Haven",
+   "page": "https://polyhaven.com/a/fabric_leather_02",
+   "licence": "CC0 1.0",
+   "authors": [
+    "Rob Tuytel"
+   ],
+   "name": "Fabric Leather 02",
+   "files": [
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/fabric_leather_02/fabric_leather_02_diff_1k.jpg",
+     "path": "polyhaven/fabric_leather_02/fabric_leather_02_diff_1k.jpg",
+     "sha256": "97ba9480c7619efc9b8c08202c3e3773d1dd532dacce4dfe97f86e95339cf132",
+     "size": 663390
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/fabric_leather_02/fabric_leather_02_nor_dx_1k.jpg",
+     "path": "polyhaven/fabric_leather_02/fabric_leather_02_nor_dx_1k.jpg",
+     "sha256": "897943fe8a4b9855b24a32a935227349d23c83a8f74b81dd8043b42f5e338e61",
+     "size": 167756
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/fabric_leather_02/fabric_leather_02_arm_1k.jpg",
+     "path": "polyhaven/fabric_leather_02/fabric_leather_02_arm_1k.jpg",
+     "sha256": "f382e758ffe898725a8df81b8a244461889bca24592a909c7ad7196368e0c67e",
+     "size": 353873
+    }
+   ]
+  },
+  {
+   "id": "plastered_wall_04",
+   "slot": "plaster",
+   "kind": "texture",
+   "role": "Interior walls",
+   "source": "Poly Haven",
+   "page": "https://polyhaven.com/a/plastered_wall_04",
+   "licence": "CC0 1.0",
+   "authors": [
+    "Rob Tuytel"
+   ],
+   "name": "Plastered Wall 04",
+   "files": [
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/plastered_wall_04/plastered_wall_04_arm_1k.jpg",
+     "path": "polyhaven/plastered_wall_04/plastered_wall_04_arm_1k.jpg",
+     "sha256": "9ffc6cc7b58f95972361ac887df92fdf3e6d86b96ecadcac17cbc2676cb8617d",
+     "size": 212525
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/plastered_wall_04/plastered_wall_04_diff_1k.jpg",
+     "path": "polyhaven/plastered_wall_04/plastered_wall_04_diff_1k.jpg",
+     "sha256": "52d789111bbe93d311c22e49d28b56256593c8f84c75742642403da857a36503",
+     "size": 299230
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/plastered_wall_04/plastered_wall_04_nor_dx_1k.jpg",
+     "path": "polyhaven/plastered_wall_04/plastered_wall_04_nor_dx_1k.jpg",
+     "sha256": "4f9d9fee72dd41b3174f3e39e86b60dd34549e68f8cf81306a943161350b9c0f",
+     "size": 430871
+    }
+   ]
+  },
+  {
+   "id": "oak_veneer_01",
+   "slot": "oak",
+   "kind": "texture",
+   "role": "Light oak: desks, guest-room doors",
+   "source": "Poly Haven",
+   "page": "https://polyhaven.com/a/oak_veneer_01",
+   "licence": "CC0 1.0",
+   "authors": [
+    "Jenelle van Heerden"
+   ],
+   "name": "Oak Veneer 01",
+   "files": [
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/oak_veneer_01/oak_veneer_01_diff_1k.jpg",
+     "path": "polyhaven/oak_veneer_01/oak_veneer_01_diff_1k.jpg",
+     "sha256": "c14681f72f59f17bff568cae7a837641443b607b899f0c279cd64a5638f877a7",
+     "size": 641756
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/oak_veneer_01/oak_veneer_01_arm_1k.jpg",
+     "path": "polyhaven/oak_veneer_01/oak_veneer_01_arm_1k.jpg",
+     "sha256": "8bf4f36a9ba1d5377a2fa5273a2a0763775afe511b50293d71b159d15576cf1e",
+     "size": 982665
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/oak_veneer_01/oak_veneer_01_nor_dx_1k.jpg",
+     "path": "polyhaven/oak_veneer_01/oak_veneer_01_nor_dx_1k.jpg",
+     "sha256": "4339cbc6165fd6312a8439e8ba3ce946f82b1bc813936f04a0e95a08c8c35ceb",
+     "size": 484388
+    }
+   ]
+  },
+  {
+   "id": "black_walnut_veneer_01",
+   "slot": "walnut",
+   "kind": "texture",
+   "role": "Walnut: front desk, manager's desk",
+   "source": "Poly Haven",
+   "page": "https://polyhaven.com/a/black_walnut_veneer_01",
+   "licence": "CC0 1.0",
+   "authors": [
+    "Jenelle van Heerden"
+   ],
+   "name": "Black Walnut Veneer 01",
+   "files": [
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/black_walnut_veneer_01/black_walnut_veneer_01_arm_1k.jpg",
+     "path": "polyhaven/black_walnut_veneer_01/black_walnut_veneer_01_arm_1k.jpg",
+     "sha256": "db2b791d3d45f2ed3bf755c83e03a9b01c08effa951bbc7f090bfa218b996a55",
+     "size": 809966
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/black_walnut_veneer_01/black_walnut_veneer_01_diff_1k.jpg",
+     "path": "polyhaven/black_walnut_veneer_01/black_walnut_veneer_01_diff_1k.jpg",
+     "sha256": "2598699fd562bb83e2fad1b2d4e02b5d93b29a90f9bec8157b9d6008af2c5cfb",
+     "size": 592588
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/black_walnut_veneer_01/black_walnut_veneer_01_nor_dx_1k.jpg",
+     "path": "polyhaven/black_walnut_veneer_01/black_walnut_veneer_01_nor_dx_1k.jpg",
+     "sha256": "e2f9533dcf332cfb46b661e3cd68444e29a4ad91e4fd2e3ebd157cf20621bb99",
+     "size": 413409
+    }
+   ]
+  },
+  {
+   "id": "Chandelier_03",
+   "slot": "Chandelier_03",
+   "kind": "model",
+   "role": "Lobby chandelier",
+   "source": "Poly Haven",
+   "page": "https://polyhaven.com/a/Chandelier_03",
+   "licence": "CC0 1.0",
+   "authors": [
+    "Kirill Sannikov"
+   ],
+   "name": "Chandelier 03",
+   "files": [
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/fbx/1k/Chandelier_03/Chandelier_03_1k.fbx",
+     "path": "polyhaven/Chandelier_03/Chandelier_03_1k.fbx",
+     "sha256": "99438a2e11c682d7efb7d64ce2e922bf032b5802b21ac6f606c92a92707e1131",
+     "size": 1251756
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/Chandelier_03/Chandelier_03_diff_1k.jpg",
+     "path": "polyhaven/Chandelier_03/Chandelier_03_diff_1k.jpg",
+     "sha256": "fbedb3f4c3273fccf3a697d0a002e2d60677cb76a33e5a19797bc7ca69b6bb1e",
+     "size": 125237
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/Chandelier_03/Chandelier_03_nor_dx_1k.jpg",
+     "path": "polyhaven/Chandelier_03/Chandelier_03_nor_dx_1k.jpg",
+     "sha256": "6052a89258c67b8690a68697b77e17e2234c8d931252364c43abbf56b95bd435",
+     "size": 187576
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/Chandelier_03/Chandelier_03_arm_1k.jpg",
+     "path": "polyhaven/Chandelier_03/Chandelier_03_arm_1k.jpg",
+     "sha256": "9db2d632be31dbf86b17d4722f495f6e44231a94c0540c015d07539056476f9e",
+     "size": 207964
+    }
+   ]
+  },
+  {
+   "id": "bar_chair_round_01",
+   "slot": "bar_chair_round_01",
+   "kind": "model",
+   "role": "Lobby bar stools",
+   "source": "Poly Haven",
+   "page": "https://polyhaven.com/a/bar_chair_round_01",
+   "licence": "CC0 1.0",
+   "authors": [
+    "Dairon Sanchez"
+   ],
+   "name": "Bar Chair Round 01",
+   "files": [
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/fbx/1k/bar_chair_round_01/bar_chair_round_01_1k.fbx",
+     "path": "polyhaven/bar_chair_round_01/bar_chair_round_01_1k.fbx",
+     "sha256": "56a56fe25044df5414a38671ddb441d697e6e8e415ca6c9137b78bb064d3c95f",
+     "size": 665308
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/bar_chair_round_01/bar_chair_round_01_diff_1k.jpg",
+     "path": "polyhaven/bar_chair_round_01/bar_chair_round_01_diff_1k.jpg",
+     "sha256": "1b3912fe1102b4082d7421aeb2e2717d3ebe914d261700f8710c0fdb7d7463bb",
+     "size": 599006
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/bar_chair_round_01/bar_chair_round_01_nor_dx_1k.jpg",
+     "path": "polyhaven/bar_chair_round_01/bar_chair_round_01_nor_dx_1k.jpg",
+     "sha256": "faeeb87b30d12aae1f15173293db78c128a2fc7a093016d8675be09316cda762",
+     "size": 429525
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/bar_chair_round_01/bar_chair_round_01_arm_1k.jpg",
+     "path": "polyhaven/bar_chair_round_01/bar_chair_round_01_arm_1k.jpg",
+     "sha256": "9f34b279bdd1527ec19fc3a3bb0ce374f0c0ba2dc05dfbd58f561bc317bd36c7",
+     "size": 751149
+    }
+   ]
+  },
+  {
+   "id": "modern_coffee_table_01",
+   "slot": "modern_coffee_table_01",
+   "kind": "model",
+   "role": "Lobby lounge table",
+   "source": "Poly Haven",
+   "page": "https://polyhaven.com/a/modern_coffee_table_01",
+   "licence": "CC0 1.0",
+   "authors": [
+    "Amin"
+   ],
+   "name": "Modern Coffee Table 01",
+   "files": [
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/fbx/1k/modern_coffee_table_01/modern_coffee_table_01_1k.fbx",
+     "path": "polyhaven/modern_coffee_table_01/modern_coffee_table_01_1k.fbx",
+     "sha256": "fe168110e3d907dc379568ea258b78962280c6a8db133b096f2c4216861fc757",
+     "size": 158780
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modern_coffee_table_01/modern_coffee_table_01_diff_1k.jpg",
+     "path": "polyhaven/modern_coffee_table_01/modern_coffee_table_01_diff_1k.jpg",
+     "sha256": "069b89dd3ef03ddcbb7b2e6a124b1903aa7848394509121aa19f87bd0ef0218c",
+     "size": 410569
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modern_coffee_table_01/modern_coffee_table_01_nor_dx_1k.jpg",
+     "path": "polyhaven/modern_coffee_table_01/modern_coffee_table_01_nor_dx_1k.jpg",
+     "sha256": "34cb4ddfc7f595de4459f625a71634030e9f4bb136efa2d8cdc5d895c26c8a51",
+     "size": 355937
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modern_coffee_table_01/modern_coffee_table_01_arm_1k.jpg",
+     "path": "polyhaven/modern_coffee_table_01/modern_coffee_table_01_arm_1k.jpg",
+     "sha256": "852ea262e71f05dad2b94d240771786b7b6501f71ae7ee68ce80ca43ed68c165",
+     "size": 550566
+    }
+   ]
+  },
+  {
+   "id": "sofa_02",
+   "slot": "sofa_02",
+   "kind": "model",
+   "role": "Lobby lounge and guest-room sofas",
+   "source": "Poly Haven",
+   "page": "https://polyhaven.com/a/sofa_02",
+   "licence": "CC0 1.0",
+   "authors": [
+    "Kirill Sannikov"
+   ],
+   "name": "Sofa 02",
+   "files": [
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/fbx/1k/sofa_02/sofa_02_1k.fbx",
+     "path": "polyhaven/sofa_02/sofa_02_1k.fbx",
+     "sha256": "faacf458c05e54b52681e29266fd6561a7bb37d077b7139842e7ee0596a0831a",
+     "size": 141004
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/sofa_02/sofa_02_diff_1k.jpg",
+     "path": "polyhaven/sofa_02/sofa_02_diff_1k.jpg",
+     "sha256": "4ff65c782578b52eee89cb96cc4e258ce1b6848e1a7655019af1f7207c749840",
+     "size": 86514
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/sofa_02/sofa_02_nor_dx_1k.jpg",
+     "path": "polyhaven/sofa_02/sofa_02_nor_dx_1k.jpg",
+     "sha256": "5b5dcd2ca7aa71480d8a72d50d20cb14323ee66f2d92908fbd6af3f1199c4854",
+     "size": 140534
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/sofa_02/sofa_02_arm_1k.jpg",
+     "path": "polyhaven/sofa_02/sofa_02_arm_1k.jpg",
+     "sha256": "f2813f32cd9ec42a9080590d0953ac9e272d9baa0b22fdb5910bf325157393c6",
+     "size": 121752
+    }
+   ]
+  },
+  {
+   "id": "modern_arm_chair_01",
+   "slot": "modern_arm_chair_01",
+   "kind": "model",
+   "role": "Task and lounge chairs",
+   "source": "Poly Haven",
+   "page": "https://polyhaven.com/a/modern_arm_chair_01",
+   "licence": "CC0 1.0",
+   "authors": [
+    "Vibrant Nordic"
+   ],
+   "name": "Modern Arm Chair 01",
+   "files": [
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/fbx/1k/modern_arm_chair_01/modern_arm_chair_01_1k.fbx",
+     "path": "polyhaven/modern_arm_chair_01/modern_arm_chair_01_1k.fbx",
+     "sha256": "24b4296ab335601635740f83832df1b6c303a4632cd8bdbc5145a5906339db48",
+     "size": 300028
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modern_arm_chair_01/modern_arm_chair_01_legs_diff_1k.jpg",
+     "path": "polyhaven/modern_arm_chair_01/modern_arm_chair_01_legs_diff_1k.jpg",
+     "sha256": "6291421a8db6cd9bbbc8c141aa087465d698427249f813d24c6e5ccdbf0bf536",
+     "size": 460937
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modern_arm_chair_01/modern_arm_chair_01_legs_nor_dx_1k.jpg",
+     "path": "polyhaven/modern_arm_chair_01/modern_arm_chair_01_legs_nor_dx_1k.jpg",
+     "sha256": "1e7414f891fce7f899c55cb68026a6bc1c474100c448d6d672496c42c3af9667",
+     "size": 561105
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modern_arm_chair_01/modern_arm_chair_01_pillow_arm_1k.jpg",
+     "path": "polyhaven/modern_arm_chair_01/modern_arm_chair_01_pillow_arm_1k.jpg",
+     "sha256": "fec333290ddfd70e78428251874d30d5410d6d0a956dd84922b0d3f3596e4b7a",
+     "size": 321223
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modern_arm_chair_01/modern_arm_chair_01_pillow_nor_dx_1k.jpg",
+     "path": "polyhaven/modern_arm_chair_01/modern_arm_chair_01_pillow_nor_dx_1k.jpg",
+     "sha256": "ab5f9e5e47232a23e33839fb29b99c3405da308e977736c26c7d5bb9250987da",
+     "size": 299858
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modern_arm_chair_01/modern_arm_chair_01_legs_arm_1k.jpg",
+     "path": "polyhaven/modern_arm_chair_01/modern_arm_chair_01_legs_arm_1k.jpg",
+     "sha256": "c76b65200a52cf649a865baf7f879dc34277b923edaac7ec8164eaf7c51c935d",
+     "size": 577931
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modern_arm_chair_01/modern_arm_chair_01_pillow_diff_1k.jpg",
+     "path": "polyhaven/modern_arm_chair_01/modern_arm_chair_01_pillow_diff_1k.jpg",
+     "sha256": "f1935436b460ad5c03ac7ff9d1e1b4aaedcdc9a503d79c257beb8cdac2e9e1f7",
+     "size": 228851
+    }
+   ]
+  },
+  {
+   "id": "dining_chair_02",
+   "slot": "dining_chair_02",
+   "kind": "model",
+   "role": "Guest-room desk chairs, LP office",
+   "source": "Poly Haven",
+   "page": "https://polyhaven.com/a/dining_chair_02",
+   "licence": "CC0 1.0",
+   "authors": [
+    "James Ray Cock"
+   ],
+   "name": "Dining Chair 02",
+   "files": [
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/fbx/1k/dining_chair_02/dining_chair_02_1k.fbx",
+     "path": "polyhaven/dining_chair_02/dining_chair_02_1k.fbx",
+     "sha256": "6888abce1e21969cd1c1ffd2555d50b47b125f0c9d2e951f24c3cd265866a1c9",
+     "size": 1032780
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/dining_chair_02/dining_chair_02_diff_1k.jpg",
+     "path": "polyhaven/dining_chair_02/dining_chair_02_diff_1k.jpg",
+     "sha256": "343990f764790da1149485a422dee2bc6797945a6af06a37d02d7a7de041acf5",
+     "size": 91518
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/dining_chair_02/dining_chair_02_nor_dx_1k.jpg",
+     "path": "polyhaven/dining_chair_02/dining_chair_02_nor_dx_1k.jpg",
+     "sha256": "863a3d7c5ed104b1ccc7710298560453abf62ece2a8ede0e9c28b0984a7b0374",
+     "size": 119139
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/dining_chair_02/dining_chair_02_arm_1k.jpg",
+     "path": "polyhaven/dining_chair_02/dining_chair_02_arm_1k.jpg",
+     "sha256": "0a81c0c886baa1e65d94fb6fb90ab4751bee319888ecf1c428ae62042d8a5b15",
+     "size": 162630
+    }
+   ]
+  },
+  {
+   "id": "potted_plant_02",
+   "slot": "potted_plant_02",
+   "kind": "model",
+   "role": "Large plants",
+   "source": "Poly Haven",
+   "page": "https://polyhaven.com/a/potted_plant_02",
+   "licence": "CC0 1.0",
+   "authors": [
+    "Rico Cilliers"
+   ],
+   "name": "Potted Plant 02",
+   "files": [
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/fbx/1k/potted_plant_02/potted_plant_02_1k.fbx",
+     "path": "polyhaven/potted_plant_02/potted_plant_02_1k.fbx",
+     "sha256": "744d8f167c6d9422fe539213561af963e5df5711fb433401bd106dc149d02182",
+     "size": 2209468
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_pot_nor_dx_1k.jpg",
+     "path": "polyhaven/potted_plant_02/potted_plant_02_pot_nor_dx_1k.jpg",
+     "sha256": "d3e852b66fe97fcf1906bb9f4e45893cd305bb5da7040003b7c7c8138c507cde",
+     "size": 108549
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_pot_arm_1k.jpg",
+     "path": "polyhaven/potted_plant_02/potted_plant_02_pot_arm_1k.jpg",
+     "sha256": "76ae3eb205e84c8570905e6a3d8eeb27c5cf6842ee0340fecb24f4e2e530cb09",
+     "size": 104104
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_leaves_diff_1k.jpg",
+     "path": "polyhaven/potted_plant_02/potted_plant_02_leaves_diff_1k.jpg",
+     "sha256": "3643dce6e6c0a9f40129bd837ec1a11802e8f43ea43cb29e58219d82e0ac632b",
+     "size": 167700
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_leaves_alpha_1k.jpg",
+     "path": "polyhaven/potted_plant_02/potted_plant_02_leaves_alpha_1k.jpg",
+     "sha256": "829c74c9440c004fb621ccec0817ca68a137ebae236414b917f06319d77c9817",
+     "size": 58451
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_leaves_nor_dx_1k.jpg",
+     "path": "polyhaven/potted_plant_02/potted_plant_02_leaves_nor_dx_1k.jpg",
+     "sha256": "2188c644fb5d8e4b0af499cb0f39b9600ce48a0e06452d0c7ff35b656069755b",
+     "size": 123048
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_pot_diff_1k.jpg",
+     "path": "polyhaven/potted_plant_02/potted_plant_02_pot_diff_1k.jpg",
+     "sha256": "684949bf24821d7e951d46915366b5a388d2e4ccaaa9d5284e718c83604705e9",
+     "size": 155244
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_leaves_arm_1k.jpg",
+     "path": "polyhaven/potted_plant_02/potted_plant_02_leaves_arm_1k.jpg",
+     "sha256": "ad3cc3505d3aef840da406770c597bc66a04bfafd401ebf96b96414a782320cc",
+     "size": 83365
+    }
+   ]
+  },
+  {
+   "id": "potted_plant_04",
+   "slot": "potted_plant_04",
+   "kind": "model",
+   "role": "Desk plants",
+   "source": "Poly Haven",
+   "page": "https://polyhaven.com/a/potted_plant_04",
+   "licence": "CC0 1.0",
+   "authors": [
+    "James Ray Cock"
+   ],
+   "name": "Potted Plant 04",
+   "files": [
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/fbx/1k/potted_plant_04/potted_plant_04_1k.fbx",
+     "path": "polyhaven/potted_plant_04/potted_plant_04_1k.fbx",
+     "sha256": "45653fe0d155b647e30a0dff5d0139648e0db12e25e4260be5c47deecc514076",
+     "size": 282780
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_04/potted_plant_04_diff_1k.jpg",
+     "path": "polyhaven/potted_plant_04/potted_plant_04_diff_1k.jpg",
+     "sha256": "8693a971557fbafb12a24a2e23c1a04ab6b04ecdc4d26808c5ad3516a4971f24",
+     "size": 577545
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_04/potted_plant_04_nor_dx_1k.jpg",
+     "path": "polyhaven/potted_plant_04/potted_plant_04_nor_dx_1k.jpg",
+     "sha256": "5d4a407a8542933cd83c581811ef00536d24a38c8e1b8e2f967d2bbd8f73ffef",
+     "size": 820998
+    },
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_04/potted_plant_04_arm_1k.jpg",
+     "path": "polyhaven/potted_plant_04/potted_plant_04_arm_1k.jpg",
+     "sha256": "7f3288345570ef700c851ea382ed267490ffc8c901ccc31f2ec5507e4d098e48",
+     "size": 478413
+    }
+   ]
+  },
+  {
+   "id": "shanghai_bund",
+   "slot": "night_sky",
+   "kind": "hdri",
+   "role": "Night harbour city through the windows",
+   "source": "Poly Haven",
+   "page": "https://polyhaven.com/a/shanghai_bund",
+   "licence": "CC0 1.0",
+   "authors": [
+    "Greg Zaal"
+   ],
+   "name": "Shanghai Bund",
+   "files": [
+    {
+     "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/shanghai_bund_2k.hdr",
+     "path": "polyhaven/shanghai_bund/shanghai_bund_2k.hdr",
+     "sha256": "ed4be21489e86a915bc872072e7e6d83c163a2d2fbb1c260979f7b9224a3322b",
+     "size": 6467753
+    }
+   ]
+  },
+  {
+   "id": "inter",
+   "kind": "font",
+   "role": "UI typeface",
+   "source": "rsms/inter (Rasmus Andersson)",
+   "page": "https://rsms.me/inter/",
+   "licence": "SIL Open Font License 1.1",
+   "authors": [
+    "Rasmus Andersson"
+   ],
+   "name": "Inter 4.1",
+   "extract": [
+    "Inter-Regular.ttf",
+    "Inter-Medium.ttf",
+    "Inter-SemiBold.ttf",
+    "Inter-Bold.ttf"
+   ],
+   "files": [
+    {
+     "url": "https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip",
+     "path": "fonts/Inter-4.1.zip",
+     "sha256": "9883fdd4a49d4fb66bd8177ba6625ef9a64aa45899767dde3d36aa425756b11e",
+     "size": 33707794
+    },
+    {
+     "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/inter/OFL.txt",
+     "path": "fonts/OFL.txt",
+     "sha256": "5b9321a4298cfeb6b34354164a1c3afc3db114569984c502b9b35d988fd58c57",
+     "size": 4377
+    }
+   ]
+  }
+ ]
+}

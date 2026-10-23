@@ -29,12 +29,12 @@ namespace KcWalkTest
 namespace
 {
 // The grid covers the footprint (X 0..4800, Y -1000..1000) with a margin.
-constexpr float Cell = 20.0f;
+constexpr float Cell = 10.0f;
 constexpr float GridX0 = -40.0f;
 constexpr float GridY0 = -1040.0f;
-constexpr int32 NX = 244;
-constexpr int32 NY = 104;
-constexpr int32 MapScale = 3;
+constexpr int32 NX = 488;
+constexpr int32 NY = 208;
+constexpr int32 MapScale = 2;
 constexpr float EyeAboveCentre = 70.0f; // AKcCharacter's camera
 // Stair A (KcHotel.cpp): the floor landing X 2120..2250, flights north (Y -305..-168) and south
 // (Y -460..-315) of the spine, the mid landing X 2558..2680.
@@ -286,7 +286,7 @@ bool CanUse(const FState& S, UWorld* World, ACharacter* Me, const FGrid& G, AKcI
 	int32 Tries = 0;
 	for (const TPair<float, int32>& C : Cells)
 	{
-		if (++Tries > 400) break;
+		if (++Tries > 2500) break;
 		const FVector2D P = FGrid::Centre(C.Value % NX, C.Value / NX);
 		const FVector Eye(P.X, P.Y, AKcHotel::FloorZ(G.Floor) + G.Height[C.Value] + S.HalfHeight + 2.5f + EyeAboveCentre);
 		const FVector Dir = (Aim - Eye).GetSafeNormal();
@@ -334,6 +334,13 @@ void SaveMap(const FState& S, const FGrid& G, const TArray<TPair<FVector, bool>>
 void CheckReach(FState& S, UWorld* World, AKcHUD* Hud, ACharacter* Me)
 {
 	AKcHotel* Hotel = Hud->Hotel();
+	// Rooms behind the case doors are mapped as the casework leaves them: open.
+	TMap<FString, bool> DoorWas;
+	for (const FString& Id : Hotel->CaseDoorIds())
+	{
+		DoorWas.Add(Id, Hotel->IsDoorOpen(Id));
+		Hotel->SetDoorOpen(Id, true);
+	}
 	const float Range = Me->FindComponentByClass<UKcInteractionComponent>() ? Me->FindComponentByClass<UKcInteractionComponent>()->Range : 300.0f;
 	for (int32 F = AKcHotel::LowestFloor; F <= AKcHotel::TopFloor; ++F)
 	{
@@ -373,6 +380,8 @@ void CheckReach(FState& S, UWorld* World, AKcHUD* Hud, ACharacter* Me)
 		}
 		SaveMap(S, G, Uses, Arrivals);
 	}
+	for (const TPair<FString, bool>& D : DoorWas) Hotel->SetDoorOpen(D.Key, D.Value);
+	S.Note(TEXT("case doors open while mapping: ") + FString::Join(Hotel->CaseDoorIds(), TEXT(", ")));
 }
 
 // ---------------------------------------------------------------- walking
@@ -514,7 +523,9 @@ void BuildRoute(FState& S, AKcHotel* Hotel)
 		S.Steps.Add(Walk(FVector2D(2620.0f, -387.0f), Z(F, 200.0f)));
 		S.Steps.Add(Walk(FVector2D(2190.0f, -387.0f), Z(F + 1, 0.0f)));
 		S.Steps.Add(Walk(StairLanding, Z(F + 1, 0.0f), TEXT("Stair A landing ") + AKcHotel::FloorLabel(F + 1)));
-		S.Steps.Add(Shot(180.0f, TEXT("Stair A ") + AKcHotel::FloorLabel(F + 1)));
+		// The floor sign on the landing's west wall, from where the player turns off the flight.
+		S.Steps.Add(Walk(FVector2D(2240.0f, -250.0f), Z(F + 1, 0.0f)));
+		S.Steps.Add(Shot(207.0f, TEXT("Stair A ") + AKcHotel::FloorLabel(F + 1)));
 		S.Steps.Add(Walk(StairDoorIn, Z(F + 1, 0.0f)));
 	}
 	S.Steps.Add(Walk(StairDoorOut, Z(AKcHotel::TopFloor, 0.0f), TEXT("out of Stair A at 14")));

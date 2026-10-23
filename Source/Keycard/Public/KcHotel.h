@@ -69,6 +69,12 @@ public:
 	// A power cut (C001): every light falls to the emergency lighting's level until power is restored.
 	void SetBlackout(bool bOn);
 
+	// The doors the casework opens and closes (1412, 1406, the floor closet, the luggage room, the dock).
+	// The walk test opens them all to map the rooms behind them; scenes set them again when the case changes.
+	TArray<FString> CaseDoorIds() const { TArray<FString> Ids; Doors.GetKeys(Ids); return Ids; }
+	bool IsDoorOpen(const FString& Id) const { const FDynDoor* D = Doors.Find(Id); return D && D->bOpen; }
+	void SetDoorOpen(const FString& Id, bool bOpen);
+
 	struct FZone
 	{
 		FString Location;
@@ -108,13 +114,14 @@ private:
 	// reader. Center is the opening's centre on the wall line at floor level; Yaw points to the side the
 	// plate faces (the corridor). bOpen swings the leaf into the room. A non-empty SignTitle makes the
 	// closed leaf an AKcSign that says why it stays shut. The hinge is on the left seen from the plate side;
-	// bMirror puts it on the right.
+	// bMirror puts it on the right. A pair is two leaves hinged at the outer jambs; bPlateAtHinge keeps the
+	// plate beside the pair instead of over the other leaf.
 	void DoorLeaf(int32 Floor, const FVector& Center, float Yaw, float Width, const FString& Plate, bool bGuestRoom, bool bOpen,
-		const FString& SignTitle = FString(), const FString& SignMessage = FString(), const FString& SignLocation = FString(), bool bMirror = false);
+		const FString& SignTitle = FString(), const FString& SignMessage = FString(), const FString& SignLocation = FString(), bool bMirror = false,
+		bool bPlateAtHinge = false);
 	// A door the casework opens and closes (1412 while the guest waits, 1406 once Mr Pike opens up, the
 	// floor closet while the attendant is in it): leaf, lever and reader on a hinge pivot.
 	void DynamicDoor(const FString& Id, int32 Floor, const FVector& Center, float Yaw, float Width, const FString& Plate, bool bMirror = false);
-	void SetDoorOpen(const FString& Id, bool bOpen);
 	struct FDynDoor
 	{
 		TWeakObjectPtr<USceneComponent> Pivot;

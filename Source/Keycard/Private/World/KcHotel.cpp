@@ -734,7 +734,7 @@ AKcSign* AKcHotel::SpawnSign(const FString& Location, const FString& Title, cons
 }
 
 void AKcHotel::DoorLeaf(int32 Floor, const FVector& Center, float Yaw, float Width, const FString& Plate, bool bGuestRoom, bool bOpen,
-	const FString& SignTitle, const FString& SignMessage, const FString& SignLocation, bool bMirror)
+	const FString& SignTitle, const FString& SignMessage, const FString& SignLocation, bool bMirror, bool bPlateAtHinge)
 {
 	const FVector Out = FRotator(0.0f, Yaw, 0.0f).Vector();                                 // the plate side
 	const FVector Right = FRotator(0.0f, Yaw + (bMirror ? -90.0f : 90.0f), 0.0f).Vector();  // hinge to latch
@@ -781,8 +781,8 @@ void AKcHotel::DoorLeaf(int32 Floor, const FVector& Center, float Yaw, float Wid
 	}
 	if (!Plate.IsEmpty())
 	{
-		// Number plate on the wall beside the latch side, at eye height.
-		const FVector P = Base + Right * (Width * 0.5f + 24.0f) + Out * (Wall * 0.5f + 0.7f) + FVector(0, 0, 152.0f);
+		// Number plate on the wall beside the latch side (the hinge side for a pair), at eye height.
+		const FVector P = Base + Right * (bPlateAtHinge ? -1.0f : 1.0f) * (Width * 0.5f + 24.0f) + Out * (Wall * 0.5f + 0.7f) + FVector(0, 0, 152.0f);
 		const bool bLong = Plate.Len() > 5;
 		AddBox(P, FVector(1.2f, bLong ? 36.0f : 17.0f, bLong ? 9.0f : 11.0f), Mat(bGuestRoom ? TEXT("MI_Brass") : TEXT("MI_Paper")), Yaw, false);
 		AddLabel(Plate, P + Out * 0.8f, Yaw, bLong ? 3.2f : 6.5f, Ink, Floor);
@@ -1180,7 +1180,19 @@ void AKcHotel::BuildFacade(int32 Floor, float Height)
 void AKcHotel::BuildOutside()
 {
 	// The quay to the north, the street to the west, the plaza and the entrance canopy.
-	AddBox(FVector(2400.0f, -500.0f, -3.0f), FVector(9600.0f, 6000.0f, 6.0f), Mat(TEXT("MI_Paving")));
+	// Paving around the footprint only: one slab across it closed the stair between B1 and G at street level.
+	{
+		const float PX0 = -2400.0f, PX1 = 7200.0f, PY0 = -3500.0f, PY1 = 2500.0f;
+		const float FX0 = -20.0f, FX1 = MaxX + 20.0f, FY0 = -HalfY - 20.0f, FY1 = HalfY + 20.0f;
+		auto Paving = [this](float X0, float X1, float Y0, float Y1)
+		{
+			AddBox(FVector((X0 + X1) * 0.5f, (Y0 + Y1) * 0.5f, -3.0f), FVector(X1 - X0, Y1 - Y0, 6.0f), Mat(TEXT("MI_Paving")));
+		};
+		Paving(PX0, PX1, PY0, FY0);
+		Paving(PX0, PX1, FY1, PY1);
+		Paving(PX0, FX0, FY0, FY1);
+		Paving(FX1, PX1, FY0, FY1);
+	}
 	AddBox(FVector(-1700.0f, 0.0f, -8.0f), FVector(1600.0f, 9000.0f, 6.0f), Mat(TEXT("MI_Asphalt")));
 	AddBox(FVector(-905.0f, 0.0f, -3.0f), FVector(14.0f, 9000.0f, 12.0f), Mat(TEXT("MI_Concrete")));
 	AddBox(FVector(2400.0f, 2560.0f, -60.0f), FVector(9600.0f, 120.0f, 120.0f), Mat(TEXT("MI_Concrete")));
@@ -1226,8 +1238,8 @@ void AKcHotel::BuildBasement()
 	for (float Side : {-1.0f, 1.0f})
 	{
 		// Double doors held open on their closers: housekeeping and receiving work through the night.
-		DoorLeaf(F, FVector(1000.0f + Side * 40.0f, -CorrY, 0.0f), 90.0f, 80.0f, Side < 0.0f ? TEXT("HOUSEKEEPING") : FString(), false, true, FString(), FString(), FString(), Side > 0.0f);
-		DoorLeaf(F, FVector(3500.0f + Side * 40.0f, -CorrY, 0.0f), 90.0f, 80.0f, Side < 0.0f ? TEXT("RECEIVING") : FString(), false, true, FString(), FString(), FString(), Side > 0.0f);
+		DoorLeaf(F, FVector(1000.0f + Side * 40.0f, -CorrY, 0.0f), 90.0f, 80.0f, Side < 0.0f ? TEXT("HOUSEKEEPING") : FString(), false, true, FString(), FString(), FString(), Side < 0.0f, true);
+		DoorLeaf(F, FVector(3500.0f + Side * 40.0f, -CorrY, 0.0f), 90.0f, 80.0f, Side < 0.0f ? TEXT("RECEIVING") : FString(), false, true, FString(), FString(), FString(), Side < 0.0f, true);
 	}
 	// Stair B at the west end: an alarmed exit, not tonight's route.
 	DoorLeaf(F, FVector(17.0f, 0.0f, 0.0f), 0.0f, 100.0f, TEXT("STAIR B"), false, false, TEXT("Stair B"),
@@ -1443,7 +1455,7 @@ void AKcHotel::BuildCctvRoom()
 	AddBox(FVector(X0 + 1.5f, 760.0f, Zf(F, 160.0f)), FVector(3.0f, 120.0f, 80.0f), Mat(TEXT("MI_FloorPlan")), 0.0f, false);
 	AddLabel(TEXT("CAMERA MAP"), FVector(X0 + 3.3f, 760.0f, Zf(F, 206.0f)), 0.0f, 3.0f, Ink, F);
 	// Dim, cool light so the screens read.
-	for (float X : {4000.0f, 4500.0f}) CeilingLight(F, FVector(X, 450.0f, Zf(F, CeilB1)), 420.0f, Cool, 600.0f);
+	for (float X : {4000.0f, 4500.0f}) CeilingLight(F, FVector(X, 450.0f, Zf(F, CeilB1)), 650.0f, Cool, 600.0f); // 420 left the desk and labels unreadable
 	AddLight(F, FVector(4250.0f, 900.0f, Zf(F, 180.0f)), 220.0f, 420.0f, FLinearColor(0.6f, 0.75f, 1.0f));
 	SmokeDetector(F, FVector2D(4250.0f, 420.0f), CeilB1);
 }
@@ -1889,8 +1901,9 @@ void AKcHotel::BuildGround()
 		TEXT("Staff canteen: dark until 05:30, when the breakfast crew arrives."), FString());
 	for (float Side : {-1.0f, 1.0f})
 	{
-		DoorLeaf(F, FVector(3300.0f + Side * 40.0f, -CorrY, 0.0f), 90.0f, 80.0f, Side < 0.0f ? TEXT("MAIN KITCHEN") : FString(), false, false, TEXT("Main kitchen"),
-			TEXT("Main kitchen: closed overnight; the breakfast team is in at 04:30. No entry without whites (food safety)."), TEXT("kitchen"), Side > 0.0f);
+		// Held open on their closers like the B1 pairs: casework (the cook line, the pass, the permit board) is inside.
+		DoorLeaf(F, FVector(3300.0f + Side * 40.0f, -CorrY, 0.0f), 90.0f, 80.0f, Side < 0.0f ? TEXT("MAIN KITCHEN") : FString(), false, true, FString(), FString(), FString(),
+			Side < 0.0f, true);
 	}
 	DoorLeaf(F, FVector(MaxX - 17.0f, 0.0f, 0.0f), 180.0f, 100.0f, TEXT("STAFF ENTRANCE"), false, false, TEXT("Staff entrance"),
 		TEXT("Staff entrance: everyone badges in and out. Bag checks on the way out follow the posted policy: with a witness, by consent, and never a search of the person."), FString());
@@ -2179,6 +2192,12 @@ void AKcHotel::BuildKitchen()
 		AddBox(FVector(X, -480.0f, Zf(F, CeilBack - 3.0f)), FVector(124.0f, 14.0f, 6.0f), Mat(TEXT("MI_LedStrip")), 0.0f, false);
 		AddLight(F, FVector(X, -480.0f, Zf(F, CeilBack - 16.0f)), 900.0f, 750.0f, Neutral, X == 3600.0f);
 	}
+	// A second row over the prep tables and the west end: with one row the south half and the doors' end read black.
+	for (float X : {2950.0f, 3600.0f, 4250.0f})
+	{
+		AddBox(FVector(X, -760.0f, Zf(F, CeilBack - 3.0f)), FVector(124.0f, 14.0f, 6.0f), Mat(TEXT("MI_LedStrip")), 0.0f, false);
+		AddLight(F, FVector(X, -760.0f, Zf(F, CeilBack - 16.0f)), 700.0f, 650.0f, Neutral);
+	}
 	CeilingLight(F, FVector(3900.0f, CanY + 30.0f, Zf(F, 210.0f)), DownLumens, Neutral, 300.0f);
 }
 
@@ -2202,9 +2221,9 @@ void AKcHotel::BuildBallroomFloor()
 	for (float Side : {-1.0f, 1.0f})
 	{
 		DoorLeaf(F, FVector(1000.0f + Side * 50.0f, CorrY, 0.0f), -90.0f, 100.0f, Side < 0.0f ? TEXT("QUAY SUITE") : FString(), false, false, TEXT("Quay Suite"),
-			TEXT("Quay Suite: no event tonight. Set for a breakfast meeting at 07:30."), TEXT("ballroom"), Side > 0.0f);
+			TEXT("Quay Suite: no event tonight. Set for a breakfast meeting at 07:30."), TEXT("ballroom"), Side > 0.0f, true);
 		DoorLeaf(F, FVector(1000.0f + Side * 50.0f, -CorrY, 0.0f), 90.0f, 100.0f, Side < 0.0f ? TEXT("HARBOUR ROOMS") : FString(), false, false, TEXT("Harbour Rooms"),
-			TEXT("Harbour Rooms 1-3: meeting rooms, locked overnight. Housekeeping resets them at 06:00."), TEXT("ballroom"), Side > 0.0f);
+			TEXT("Harbour Rooms 1-3: meeting rooms, locked overnight. Housekeeping resets them at 06:00."), TEXT("ballroom"), Side < 0.0f, true);
 	}
 	Sofa(FVector(450.0f, 95.0f, Zf(F, 0.0f)), -90.0f);
 	Sofa(FVector(1600.0f, -95.0f, Zf(F, 0.0f)), 90.0f);
@@ -2232,7 +2251,7 @@ void AKcHotel::BuildBallroomFloor()
 	AddBox(FVector(X0 + 0.5f, 0.0f, Zf(F, (DoorH + CeilBallroom) * 0.5f)), FVector(Wall, 220.0f, CeilBallroom - DoorH), Plaster);
 	for (float Side : {-1.0f, 1.0f})
 	{
-		DoorLeaf(F, FVector(X0, Side * 55.0f, 0.0f), 180.0f, 110.0f, Side < 0.0f ? TEXT("HARBOUR BALLROOM") : FString(), false, true, FString(), FString(), FString(), Side > 0.0f);
+		DoorLeaf(F, FVector(X0, Side * 55.0f, 0.0f), 180.0f, 110.0f, Side < 0.0f ? TEXT("HARBOUR BALLROOM") : FString(), false, true, FString(), FString(), FString(), Side < 0.0f, true);
 	}
 	AddBox(FVector(X1 - 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilBallroom * 0.5f)), FVector(1.0f, Y1 - Y0, CeilBallroom), Plaster, 0.0f, false);
 	FloorFinish(F, FBox2D(FVector2D(4150.0f, -350.0f), FVector2D(4550.0f, 350.0f)), Mat(TEXT("MI_FloorParquet")), 1.0f);
@@ -2364,8 +2383,8 @@ void AKcHotel::BuildExecutiveFloor()
 	WallX(F, -CorrY, CoreX1, MaxX - 15.0f, {FVector2D(3700.0f, 100.0f)}, Paper, Ceil);
 	for (float Side : {-1.0f, 1.0f})
 	{
-		DoorLeaf(F, FVector(1700.0f + Side * 45.0f, CorrY, 0.0f), -90.0f, 90.0f, Side < 0.0f ? TEXT("EXECUTIVE OFFICES") : FString(), false, true, FString(), FString(), FString(), Side > 0.0f);
-		DoorLeaf(F, FVector(1450.0f + Side * 45.0f, -CorrY, 0.0f), 90.0f, 90.0f, Side < 0.0f ? TEXT("BOARDROOM") : FString(), false, true, FString(), FString(), FString(), Side > 0.0f);
+		DoorLeaf(F, FVector(1700.0f + Side * 45.0f, CorrY, 0.0f), -90.0f, 90.0f, Side < 0.0f ? TEXT("EXECUTIVE OFFICES") : FString(), false, true, FString(), FString(), FString(), Side > 0.0f, true);
+		DoorLeaf(F, FVector(1450.0f + Side * 45.0f, -CorrY, 0.0f), 90.0f, 90.0f, Side < 0.0f ? TEXT("BOARDROOM") : FString(), false, true, FString(), FString(), FString(), Side < 0.0f, true);
 	}
 	DoorLeaf(F, FVector(400.0f, -CorrY, 0.0f), 90.0f, 100.0f, TEXT("GENERAL MANAGER"), false, true);
 	DoorLeaf(F, FVector(3700.0f, CorrY, 0.0f), -90.0f, 100.0f, TEXT("SALES AND EVENTS"), false, false, TEXT("Sales and events"),

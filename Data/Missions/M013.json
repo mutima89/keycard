@@ -79,7 +79,7 @@
         "notify_fire"
       ],
       "required": true,
-      "findingTitle": "Valve closed and tagged, 22:0x",
+      "findingTitle": "Valve closed and tagged, {time}",
       "finding": "Tomasz closes the floor 14 valve with you watching; the panel shows the supervisory signal. A red impairment tag goes on the valve with the permit number, the time and both your names."
     },
     {
@@ -179,12 +179,12 @@
       "kind": "check",
       "at": "lp_office",
       "spot": "lp_desk",
-      "minutes": 2,
+      "minutes": 144,
       "requires": [
         "brief_watch"
       ],
       "findingTitle": "Fire watch log",
-      "finding": "Rounds at 22:10, 23:05, 00:02 and 00:58, each signed, the closet and both stairs checked every time. At 23:05 Ines found a room service tray with a candle in a glass outside 1404, put it out and removed it.",
+      "finding": "Rounds at 22:45, 23:42 and 00:40, each signed, the closet and both stairs checked every time. At 23:42 Ines found a room service tray with a candle in a glass outside 1404, put it out and removed it.",
       "columns": [
         "Round",
         "Areas",
@@ -192,22 +192,17 @@
       ],
       "rows": [
         [
-          "22:10",
+          "22:45",
           "Corridor, closet, Stairs A and B",
           "-"
         ],
         [
-          "23:05",
+          "23:42",
           "All",
           "Lit candle on a tray outside 1404: removed"
         ],
         [
-          "00:02",
-          "All",
-          "-"
-        ],
-        [
-          "00:58",
+          "00:40",
           "All",
           "-"
         ]
@@ -219,12 +214,12 @@
       "kind": "secure",
       "at": "f14_corridor",
       "spot": "valve_14",
-      "minutes": 5,
+      "minutes": 40,
       "requires": [
         "watch_log"
       ],
       "required": true,
-      "findingTitle": "Back in service, 01:4x",
+      "findingTitle": "Back in service, {time}",
       "finding": "New head fitted, section refilled and vented. Tomasz opens the valve fully and locks it open; the main drain test shows the pressure dropping and returning to normal. The supervisory signal clears. You remove the tag from the valve and the panel."
     },
     {
@@ -344,7 +339,7 @@
       "options": [
         {
           "id": "facts",
-          "label": "Floor 14 sprinklers impaired 22:0x-01:4x to replace head 14-27; fire authority and insurer notified; valve and panel tagged; hourly fire watch logged; restored with a satisfactory main drain test.",
+          "label": "Floor 14 sprinklers impaired {time:tag_valve}-{time:restore} to replace head 14-27; fire authority and insurer notified; valve and panel tagged; hourly fire watch logged; restored with a satisfactory main drain test.",
           "score": 100,
           "feedback": "Start, end, controls and the test: what an inspector and an insurer will ask for."
         },
@@ -373,22 +368,22 @@
       "options": [
         {
           "id": "f_notice",
-          "label": "Fire authority notified 21:5x (reference), insurer notified 21:5x; both told of restoration.",
+          "label": "Fire authority notified {time:notify_fire} (reference), insurer notified {time:notify_insurer}; both told of restoration.",
           "correct": true
         },
         {
           "id": "f_tag",
-          "label": "Valve closed 22:0x and tagged with the permit number; panel supervisory acknowledged, not isolated.",
+          "label": "Valve closed {time:tag_valve} and tagged with the permit number; panel supervisory acknowledged, not isolated.",
           "correct": true
         },
         {
           "id": "f_watch",
-          "label": "Fire watch rounds 22:10, 23:05, 00:02, 00:58; candle removed outside 1404 at 23:05.",
+          "label": "Fire watch rounds 22:45, 23:42, 00:40; candle removed outside 1404 at 23:42.",
           "correct": true
         },
         {
           "id": "f_test",
-          "label": "Valve reopened and locked 01:4x; main drain test satisfactory.",
+          "label": "Valve reopened and locked {time:restore}; main drain test satisfactory.",
           "correct": true
         },
         {

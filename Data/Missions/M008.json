@@ -31,7 +31,7 @@
       "minutes": 3,
       "required": true,
       "findingTitle": "Master card voided",
-      "finding": "Card HK-M12-14-03 voided at 23:2x; every lock on floors 12 to 14 will refuse it from its next use. A new master is encoded and held at the desk for the housekeeping supervisor."
+      "finding": "Card HK-M12-14-03 voided at {time}; every lock on floors 12 to 14 will refuse it from its next use. A new master is encoded and held at the desk for the housekeeping supervisor."
     },
     {
       "id": "lock_audit",
@@ -44,7 +44,7 @@
       "findingTitle": "Lock audit, card HK-M12-14-03",
       "finding": [
         "The card opened 1411 at 22:31 (Marisol's last room). At 22:52 it opened 1415, which is vacant and ready. At 22:54 it was used at 1417 and refused: the guest's deadbolt was on.",
-        "Nothing after 22:58. Marisol says she noticed it missing at about 23:10."
+        "Nothing after 22:54. Marisol says she noticed it missing at about 23:10."
       ],
       "columns": [
         "Time",
@@ -66,11 +66,6 @@
           "22:54",
           "1417 (occupied)",
           "Refused: deadbolt"
-        ],
-        [
-          "23:2x",
-          "-",
-          "Card voided"
         ]
       ]
     },
@@ -351,7 +346,7 @@
       "options": [
         {
           "id": "facts",
-          "label": "A floor master card and closet key were taken from an unattended trolley on 14 at 22:38; the card opened vacant 1415 and was refused at 1417; voided at 23:2x; police informed.",
+          "label": "A floor master card and closet key were taken from an unattended trolley on 14 at 22:38; the card opened vacant 1415 and was refused at 1417; voided at {time:void_card}; police informed.",
           "score": 100,
           "feedback": "The key facts in order, including the attempted entry."
         },
@@ -395,7 +390,7 @@
         },
         {
           "id": "f_void",
-          "label": "Card voided at 23:2x; closet locks re-cored; police reference obtained.",
+          "label": "Card voided at {time:void_card}; closet locks re-cored; police reference obtained.",
           "correct": true
         },
         {

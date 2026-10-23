@@ -346,6 +346,9 @@ TSharedRef<SWidget> AnswerEditor(UKcCampaignSubsystem* C, const kc::QuestionDef&
 {
 	TSharedRef<SVerticalBox> Box = Column();
 	const TArray<const kc::OptionDef*> Options = C ? C->OptionsInOrder(Q) : TArray<const kc::OptionDef*>();
+	// Option labels with their case times filled in, in display order.
+	TMap<FString, FString> Labels;
+	for (const kc::OptionDef* O : Options) Labels.Add(ToFString(O->Id), C ? C->Expand(O->Label) : ToFString(O->Label));
 	switch (Q.Kind)
 	{
 	case kc::EQuestionKind::Single:
@@ -365,30 +368,27 @@ TSharedRef<SWidget> AnswerEditor(UKcCampaignSubsystem* C, const kc::QuestionDef&
 					if (S == ECheckBoxState::Checked) A.AddUnique(Id);
 					else A.Remove(Id);
 				})
-				[WrappedLine(ToFString(O->Label), 14, TextPrimary, 680.0f)], 4.0f);
+				[WrappedLine(Labels[Id], 14, TextPrimary, 680.0f)], 4.0f);
 		}
 		break;
 	}
 	case kc::EQuestionKind::Order:
 	{
 		AddRow(Box, MakeBody(LOCTEXT("PickOrder", "Pick the steps in the order you would take them."), 12, TextMuted), 4.0f);
-		AddRow(Box, SNew(STextBlock).AutoWrapText(true).Font(FontW(14, EWeight::Regular)).ColorAndOpacity(Accent).Text_Lambda([Answer, Options]()
+		AddRow(Box, SNew(STextBlock).AutoWrapText(true).Font(FontW(14, EWeight::Regular)).ColorAndOpacity(Accent).Text_Lambda([Answer, Labels]()
 		{
 			FString S;
 			int32 n = 1;
 			for (const FString& Id : Answer())
 			{
-				for (const kc::OptionDef* O : Options)
-				{
-					if (ToFString(O->Id) == Id) S += FString::Printf(TEXT("%d. %s\n"), n++, *ToFString(O->Label));
-				}
+				if (const FString* Label = Labels.Find(Id)) S += FString::Printf(TEXT("%d. %s\n"), n++, **Label);
 			}
 			return FText::FromString(S.IsEmpty() ? FString(TEXT("(nothing yet)")) : S.TrimEnd());
 		}), 6.0f);
 		for (const kc::OptionDef* O : Options)
 		{
 			const FString Id = ToFString(O->Id);
-			AddRow(Box, MakeButton(FText::FromString(ToFString(O->Label)), Click([Answer, Id]() { Answer().AddUnique(Id); }), nullptr,
+			AddRow(Box, MakeButton(FText::FromString(Labels[Id]), Click([Answer, Id]() { Answer().AddUnique(Id); }), nullptr,
 				TAttribute<bool>::CreateLambda([Answer, Id]() { return !Answer().Contains(Id); })), 4.0f);
 		}
 		AddRow(Box, MakeButton(LOCTEXT("ClearOrder", "Start the order again"), Click([Answer]() { Answer().Reset(); })), 4.0f);
@@ -821,9 +821,10 @@ FKcScreenParts Choices(const FText& Eyebrow, const FText& Title, const FText& Bo
 
 // ---------------------------------------------------------------- casework
 
-FKcScreenParts ActionResult(AKcHUD* Hud, const kc::ActionDef& A, TFunction<void()> OnDone)
+FKcScreenParts ActionResult(AKcHUD* Hud, const kc::ActionDef& Def, TFunction<void()> OnDone)
 {
 	UKcCampaignSubsystem* C = CampaignOf(Hud);
+	const kc::ActionDef A = C ? C->ForView(Def) : Def;
 	TSharedPtr<SButton> Done;
 	TSharedRef<SVerticalBox> Box = Column();
 	const FString Where = UKcCampaignSubsystem::LocationName(ToFString(A.At));
@@ -924,7 +925,7 @@ FKcScreenParts Report(AKcHUD* Hud, const FString& Where)
 	{
 		if (const kc::ActionDef* A = M->FindAction(Step.ActionId))
 		{
-			const FString Title = A->FindingTitle.empty() ? FString() : TEXT(": ") + ToFString(A->FindingTitle);
+			const FString Title = A->FindingTitle.empty() ? FString() : TEXT(": ") + ToFString(kc::FindingTitleFor(S, *A));
 			Notes.Add(FString::Printf(TEXT("%s  %s%s"), *ToFString(kc::ClockText(Step.Minute)), *ToFString(A->Label), *Title));
 		}
 	}

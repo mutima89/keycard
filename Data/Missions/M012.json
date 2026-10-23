@@ -30,7 +30,7 @@
       "spot": "fire_panel",
       "minutes": 1,
       "required": true,
-      "findingTitle": "Fire panel, 03:13",
+      "findingTitle": "Fire panel, {time}",
       "finding": "One device in alarm: optical smoke detector, room 1416, zone 14 south. No sprinkler flow, no second device yet. The panel's sounders are on in zone 14 only, as programmed: the rest of the hotel is on alert.",
       "columns": [
         "Time",
@@ -64,7 +64,7 @@
       "person": "fire_officer",
       "minutes": 2,
       "required": true,
-      "findingTitle": "Fire authority called, 03:1x",
+      "findingTitle": "Fire authority called, {time}",
       "finding": "Port Avener Fire & Rescue control takes the call: fire alarm, one smoke detector, room 1416 on floor 14, hotel occupied, investigating. Two pumps and the ladder are sent; the station officer will report to the fire command centre.",
       "lines": [
         {
@@ -161,9 +161,9 @@
         "evacuate_zone"
       ],
       "required": true,
-      "findingTitle": "Handover to the fire authority, 03:2x",
+      "findingTitle": "Handover to the fire authority, {time}",
       "finding": [
-        "You give it in order: one detector in 1416 at 03:12, door warm, smell of burning, no answer; floor 14 evacuating by both stairs; one guest at the Stair A refuge from 1408; the guest in 1416 has not been seen; plans and master keys here.",
+        "You give it in order: one detector in 1416 at 03:12, door warm, smell of burning, no answer; floor 14 evacuating by both stairs; the guest in 1408 uses a wheelchair and needs the Stair A refuge; the guest in 1416 has not been seen; plans and master keys here.",
         "The crew enter 1416 with a hose line: a hair straightener left on a towel, a smouldering bed throw, the guest asleep in the bathroom with earplugs. They wake him, put it out, ventilate the floor. At 03:41 the station officer declares the floor safe and resets the panel."
       ],
       "lines": [
@@ -175,7 +175,7 @@
     },
     {
       "id": "check_1416_guest",
-      "label": "Account for the floor at the assembly point",
+      "label": "Account for the floor with Tariq's list",
       "kind": "interview",
       "at": "lobby",
       "person": "desk_agent",
@@ -204,7 +204,7 @@
         [
           "1408",
           "1",
-          "Refuge, brought down by the crew"
+          "Brought down by the crew"
         ],
         [
           "1403",
@@ -349,7 +349,7 @@
       "options": [
         {
           "id": "facts",
-          "label": "03:12:40 smoke detector 1416; fire authority called 03:1x; floor 14 evacuated; small fire (hair straightener on a towel) put out by the crew; all guests accounted for; panel reset by the fire authority at 03:41.",
+          "label": "03:12:40 smoke detector 1416; fire authority called {time:call_fire}; floor 14 evacuated; small fire (hair straightener on a towel) put out by the crew; all guests accounted for; panel reset by the fire authority at 03:41.",
           "score": 100,
           "feedback": "Times, actions, cause, roll call and who reset the panel."
         },
@@ -383,12 +383,12 @@
         },
         {
           "id": "f_call",
-          "label": "Fire authority called 03:1x; incident number; station officer's arrival time.",
+          "label": "Fire authority called {time:call_fire}; incident number; station officer's arrival time.",
           "correct": true
         },
         {
           "id": "f_roll",
-          "label": "Roll call: 64 guests on floor 14, all accounted for; 1408 brought down from the Stair A refuge by the crew.",
+          "label": "Roll call: 64 guests on floor 14, all accounted for; 1408 brought down by the crew.",
           "correct": true
         },
         {

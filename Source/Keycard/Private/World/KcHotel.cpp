@@ -3098,15 +3098,21 @@ void AKcHotel::RefreshPeople()
 		const TPair<FString, FString> Key(Person, Location);
 		if (!Want.Contains(Key)) Want.Add(Key);
 	};
-	WantPerson(TEXT("night_auditor"), TEXT("front_desk"));
-	WantPerson(TEXT("desk_agent"), TEXT("front_desk"));
 	bool bPartnerOut = false;
+	// People met earlier in the case, with nothing left to do there: they stay only while you are with them.
+	TArray<TPair<FString, FString>> Met;
 	if (M)
 	{
 		const kc::CampaignState& CS = G->GetState().Campaign;
 		auto Answered = [&](const std::string& QId)
 		{
 			for (const kc::MissionAnswer& A : CS.FieldAnswers) if (A.QuestionId == QId) return true;
+			return false;
+		};
+		// Done face to face (not too late, when they had already gone home).
+		auto MetFor = [&](const std::string& ActionId)
+		{
+			for (const kc::FieldStep& S : CS.Steps) if (S.ActionId == ActionId) return !S.bExpired;
 			return false;
 		};
 		auto Consider = [&](const std::string& P, const std::string& At)
@@ -3117,16 +3123,22 @@ void AKcHotel::RefreshPeople()
 			{
 				if (Person == B.PersonId && Location == B.PersonLocation && M->FindAction(KcConvert::ToStd(B.OpensWith)) && !C->IsDone(B.OpensWith)) return;
 			}
+			if (!C->ActionsAt(Location, Person).IsEmpty() || !C->QuestionsAt(Location, Person).IsEmpty())
+			{
+				WantPerson(Person, Location);
+				return;
+			}
 			bool bMet = false;
 			for (const kc::ActionDef& A : M->Actions)
 			{
-				if (A.Person == P && A.At == At && UKcCampaignSubsystem::IsFaceToFace(A) && C->IsDone(KcConvert::ToFString(A.Id))) bMet = true;
+				if (A.Person == P && A.At == At && UKcCampaignSubsystem::IsFaceToFace(A) && MetFor(A.Id)) bMet = true;
 			}
 			for (const kc::QuestionDef& Q : M->Questions)
 			{
 				if (Q.Person == P && Q.At == At && Answered(Q.Id)) bMet = true;
 			}
-			if (bMet || !C->ActionsAt(Location, Person).IsEmpty() || !C->QuestionsAt(Location, Person).IsEmpty()) WantPerson(Person, Location);
+			const TPair<FString, FString> Key(Person, Location);
+			if (bMet && !Met.Contains(Key)) Met.Add(Key);
 		};
 		for (const kc::ActionDef& A : M->Actions)
 		{
@@ -3139,6 +3151,21 @@ void AKcHotel::RefreshPeople()
 			if (!Q.Person.empty() && !Q.At.empty()) Consider(Q.Person, Q.At);
 		}
 	}
+	auto WantedSomewhere = [&](const FString& Person)
+	{
+		return Want.ContainsByPredicate([&](const TPair<FString, FString>& W) { return W.Key == Person; });
+	};
+	const APawn* Pawn = GetWorld() ? UGameplayStatics::GetPlayerPawn(GetWorld(), 0) : nullptr;
+	const FString PlayerAt = Pawn ? LocationAt(Pawn->GetActorLocation()) : FString();
+	for (const TPair<FString, FString>& W : Met)
+	{
+		if (W.Value == PlayerAt && !WantedSomewhere(W.Key)) WantPerson(W.Key, W.Value);
+	}
+	// The night staff at their posts, unless the case has them somewhere else (one person, one place).
+	for (const TCHAR* Desk : {TEXT("night_auditor"), TEXT("desk_agent")})
+	{
+		if (!WantedSomewhere(Desk)) WantPerson(Desk, TEXT("front_desk"));
+	}
 	bool bCaseOn14 = false;
 	if (M)
 	{
@@ -3148,7 +3175,7 @@ void AKcHotel::RefreshPeople()
 			if (L && L->Floor == TopFloor) bCaseOn14 = true;
 		}
 	}
-	WantPerson(TEXT("partner"), bPartnerOut && bCaseOn14 ? TEXT("f14_corridor") : TEXT("cctv_room"));
+	if (!WantedSomewhere(TEXT("partner"))) WantPerson(TEXT("partner"), bPartnerOut && bCaseOn14 ? TEXT("f14_corridor") : TEXT("cctv_room"));
 
 	FString Key = M ? KcConvert::ToFString(M->Id) : FString();
 	for (const TPair<FString, FString>& W : Want) Key += TEXT("|") + W.Key + TEXT("@") + W.Value;

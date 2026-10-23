@@ -28,7 +28,7 @@ M = {
    "findingTitle": "The store",
    "finding": "A mesh cage behind the ballroom with a padlock and three keys, no key log, no camera on the door. No par levels on the shelves. Empties go into the glass bin, so an empty bottle can never be checked against a full one."},
   {"id": "cctv_dock", "label": "Review the dock cameras after the Haldane wedding", "kind": "cctvReview", "at": "cctv_room", "spot": "cctv_console", "minutes": 8, "requires": ["check_requisitions"],
-   "findingTitle": "B1-05 and B1-06, Saturday 01:4x",
+   "findingTitle": "B1-05 and B1-06, Saturday 01:40-01:55",
    "finding": "01:47: Kit Albury wheels a bar trolley with two covered cases through receiving to the dock door (B1-06), out to a silver hatchback on the apron (B1-05), loads the cases into the boot and returns with the trolley empty at 01:51. The wedding ended at 01:00. Exported with its hash.",
    "evidence": "KC-1701", "custody": "Clips B1-05 and B1-06 Saturday 01:40-01:55 exported by you under your own login to write-once USB KC-1701, SHA-256 recorded."},
   {"id": "search_kit", "label": "Open Kit's locker and look in his car", "kind": "search", "at": "loading_dock", "minutes": 3, "requires": ["cctv_dock"],

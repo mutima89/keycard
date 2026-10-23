@@ -61,7 +61,7 @@
         "read_panel"
       ],
       "required": true,
-      "findingTitle": "Command set up, 19:4x",
+      "findingTitle": "Command set up, {time}",
       "finding": "Fire command is the command post. You open the log: grid failure 19:42, generator running, transfer switch stuck, fire pump without power, lift 2 alarm. Every decision from here on goes in with its time."
     },
     {
@@ -96,7 +96,7 @@
       ],
       "required": true,
       "findingTitle": "Rescue on its way",
-      "finding": "The lift contractor's emergency line gives forty minutes. With a pregnant passenger and the power out, you also call the fire authority, who send a crew trained to release a car. They arrive at 20:06, wind the car to floor 10 and open it. All four out, checked by a first aider."
+      "finding": "The lift contractor's emergency line gives forty minutes. With a pregnant passenger and the power out, you also call the fire authority, who send a crew trained to release a car. They arrive fifteen minutes later, wind the car to floor 10 and open it. All four out, checked by a first aider."
     },
     {
       "id": "pry_doors",
@@ -157,7 +157,7 @@
       ],
       "required": true,
       "findingTitle": "Impairment handled",
-      "finding": "With the fire pump down, the sprinklers above the lower floors have only mains water pressure. You treat it as an impairment: a fire watch on every floor, an hourly patrol with radios and torches, no hot work, the kitchen on cold service. The fire authority control room and Tarrowby Mutual's out-of-hours line are told at 20:0x, with the expected restoration time."
+      "finding": "With the fire pump down, the sprinklers above the lower floors have only mains water pressure. You treat it as an impairment: a fire watch on every floor, an hourly patrol with radios and torches, no hot work, the kitchen on cold service. The fire authority control room and Tarrowby Mutual's out-of-hours line are told at {time}, with the expected restoration time."
     },
     {
       "id": "special_assist",
@@ -260,14 +260,14 @@
       "kind": "call",
       "at": "fire_command",
       "person": "chief_engineer",
-      "minutes": 4,
+      "minutes": 38,
       "requires": [
         "call_engineer",
         "fire_watch"
       ],
       "required": true,
-      "findingTitle": "Restored, 20:5x",
-      "finding": "The transfer is made by hand at 20:52: life safety first (fire pump, emergency lighting charger), then one lift for the special-assistance guests, then kitchens and the rest. The panel faults clear, the fire watch stands down once the pump is proved, the fire authority and the insurer are told. Mains returns at 22:10 and Tomasz transfers back in the same order."
+      "findingTitle": "Restored, {time}",
+      "finding": "The transfer is made by hand at {time}: life safety first (fire pump, emergency lighting charger), then one lift for the special-assistance guests, then kitchens and the rest. The panel faults clear, the fire watch stands down once the pump is proved, the fire authority and the insurer are told. When mains returns, Tomasz transfers back in the same order."
     },
     {
       "id": "after_action",
@@ -411,7 +411,7 @@
       "options": [
         {
           "id": "facts",
-          "label": "Grid failure 19:42; transfer switch failed; fire pump impaired, fire watch on, fire authority and insurer told; lift 2 released by the fire authority 20:06; special-assistance guests checked; sheltered in place; restored by hand 20:52, mains 22:10.",
+          "label": "Grid failure 19:42; transfer switch failed; fire pump impaired, fire watch on, fire authority and insurer told; lift 2 released by the fire authority; special-assistance guests checked; sheltered in place; restored by hand {time:restore}.",
           "score": 100,
           "feedback": "The times, the failures, what you did about each, and the people."
         },

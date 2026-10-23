@@ -623,8 +623,14 @@ EKcCaseResult AKcHUD::DoAction(const kc::ActionDef& Action, TFunction<void()> On
 		const FKcScreenParts Parts = KcScreens::ActionResult(this, *A, Finish);
 		ShowScreen(Parts.Widget, Parts.Focus, Finish, false);
 	};
+	// Done too late, the person had already gone: nobody speaks, the notebook says why.
+	const kc::GameState& S = Game()->GetState();
+	const bool bExpired = !S.Campaign.Steps.empty() && S.Campaign.Steps.back().bExpired;
 	TArray<const kc::DialogueLine*> Lines;
-	for (const kc::DialogueLine& L : Action.Lines) Lines.Add(&L);
+	if (!bExpired)
+	{
+		for (const kc::DialogueLine& L : Action.Lines) Lines.Add(&L);
+	}
 	const FString Channel = Action.Kind == kc::EActionKind::Call ? TEXT("Radio") : FString();
 	PlayLines(Lines, Channel, ShowResult);
 	return R;

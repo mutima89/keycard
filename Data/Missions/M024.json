@@ -41,7 +41,7 @@
       "minutes": 4,
       "required": true,
       "findingTitle": "dvessey and fo_support",
-      "finding": "At the Harbourfront: account dvessey disabled the day he left, but the shared login fo_support he set up is still active, and the lock vendor's remote-support portal still lists Vessey as an authorised contact. fo_support registered E-77 at 03:12, eleven weeks after he resigned, through the vendor's remote-support connection.",
+      "finding": "At the Harbourfront: account dvessey disabled the day he left, but the lock vendor's remote-support portal still lists Vessey as an authorised contact, and its log shows that the session that registered E-77 through fd_temp at 03:12, eleven weeks after he resigned, came in over his remote-support connection. A second shared login he set up, fo_support, is still active.",
       "clue": "former_admin"
     },
     {
@@ -71,8 +71,8 @@
         "preserve_logs"
       ],
       "required": true,
-      "findingTitle": "Access removed, 09:0x",
-      "finding": "Gideon Marsh and the lock vendor, on one call: fo_support disabled, every person given a named account, Vessey removed from the vendor portal, E-77 deregistered, the vendor's remote access switched to call-back only. The same changes at the airport through Rhosyn, all within the hour.",
+      "findingTitle": "Access removed, {time}",
+      "finding": "Gideon Marsh and the lock vendor, on one call: fo_support disabled, every person given a named account, Vessey removed from the vendor portal, the vendor's remote access switched to call-back only. The same changes at the airport through Rhosyn, all within the hour.",
       "lines": [
         {
           "speaker": "front_office_manager",
@@ -97,7 +97,7 @@
       "schedules": [
         {
           "id": "case_weakened",
-          "description": "The vendor's records only go back ninety days. Without the hotel's own log linking fo_support to E-77, the prosecution drops the charges for the Harbourfront entries.",
+          "description": "The vendor's records only go back ninety days. Without the hotel's own log linking his vendor session to E-77, the prosecution drops the charges for the Harbourfront entries.",
           "delayWeeks": 6,
           "probability": 0.6,
           "effects": {
@@ -119,7 +119,7 @@
         "remove_access"
       ],
       "required": true,
-      "findingTitle": "Four more",
+      "findingTitle": "Two still open",
       "finding": "Systems outside the network login: lock system, CCTV recorders, property management, parking, fire panel software, the HR time clock. Vessey still had working accounts on the CCTV recorder at the airport and the parking system here. Both removed; 23 other leavers' accounts found and removed with them."
     },
     {
@@ -342,7 +342,7 @@
       "options": [
         {
           "id": "facts",
-          "label": "Former administrator's vendor access and shared login fo_support active seven months after he left; used to register E-77; logs preserved as KC-2401 and given to the police; all access removed at both hotels; leaver process rebuilt.",
+          "label": "Former administrator's vendor access and a shared login still usable seven months after he left; used to register E-77; logs preserved as KC-2401 and given to the police; all access removed at both hotels; leaver process rebuilt.",
           "score": 100,
           "feedback": "What was open, what it was used for, what you preserved, who has it now and what changed."
         },
@@ -463,7 +463,7 @@
     "case_record"
   ],
   "debrief": {
-    "whatHappened": "The blank cards came from inside. A systems administrator who left seven months ago still had a shared login and vendor access, and used them to register the encoder that made the clone keys. You preserved the logs, closed the access at both hotels within the hour, found four more systems he could still reach, gave the evidence to the police without warning him, and fixed the leaver process.",
+    "whatHappened": "The blank cards came from inside. A systems administrator who left seven months ago still had a shared login and vendor access, and used them to register the encoder that made the clone keys. You preserved the logs, closed the access at both hotels within the hour, found two more systems he could still reach, gave the evidence to the police without warning him, and fixed the leaver process.",
     "bestPractice": [
       "Preserve the logs before you change anything.",
       "Disable, don't delete: disabled accounts keep their history.",

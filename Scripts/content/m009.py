@@ -15,7 +15,7 @@ M = {
    "finding": "The door is held open by a pallet jack wedged against the frame. Cold air, an empty dock, a bread van idling at the kerb with nobody in it. You move the jack and the door closes and locks. The alarm clears."},
   {"id": "talk_clerk", "label": "Talk to Hattie", "kind": "interview", "at": "loading_dock", "person": "receiving_clerk", "minutes": 4, "required": True,
    "findingTitle": "Hattie Coombe",
-   "finding": "She propped it at 02:50 for the bakery delivery: the dock bell has been broken for a fortnight and she cannot hear drivers knock from the receiving office. She left it to check the bread count in the kitchen. She has propped it \"most nights\" since the bell broke, and nobody ever came.",
+   "finding": "She propped it at 02:50 for the bakery delivery: the dock bell has been broken for a fortnight and she cannot hear drivers knock from the receiving office. She left it to check the bread order in the kitchen. She has propped it \"most nights\" since the bell broke, and nobody ever came.",
    "lines": [{"speaker": "receiving_clerk", "text": "The bell's dead. I put a ticket in two weeks ago. If I don't prop it, the bread sits outside in the rain and Chef shouts at me."}]},
   {"id": "sweep_boh", "label": "Sweep the back-of-house corridor and stairs", "kind": "secure", "at": "back_of_house", "minutes": 5, "requires": ["respond_alarm"],
    "findingTitle": "Back-of-house sweep",

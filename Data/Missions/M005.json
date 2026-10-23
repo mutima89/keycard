@@ -29,7 +29,7 @@
       "at": "lobby_bar",
       "minutes": 1,
       "required": true,
-      "findingTitle": "The man on the floor, 01:5x",
+      "findingTitle": "The man on the floor, {time}",
       "finding": [
         "A man in his sixties on his back by the bar stools. No response to your voice or to a firm tap on the shoulders.",
         "You tilt his head and look, listen and feel for ten seconds: no normal breathing, only an occasional gasp. Gasping is not breathing. This is cardiac arrest."
@@ -65,7 +65,7 @@
         "assess"
       ],
       "required": true,
-      "findingTitle": "CPR from 01:5x",
+      "findingTitle": "CPR from {time}",
       "finding": "Heel of the hand on the centre of the chest, arms straight, hard and fast: about two a second, five to six centimetres deep, full recoil. You count out loud. The call handler on speaker counts with you."
     },
     {
@@ -97,7 +97,7 @@
       "findingTitle": "AED",
       "finding": [
         "Tariq arrives with the AED. You switch it on and it talks you through it: pads on bare chest, one below the right collarbone, one on the left side below the armpit. \"Analysing. Do not touch the patient.\"",
-        "\"Shock advised.\" You shout \"Stand clear!\", check nobody is touching him, and press the button at 01:5x. \"Shock delivered. Start CPR.\" You go straight back to compressions."
+        "\"Shock advised.\" You shout \"Stand clear!\", check nobody is touching him, and press the button at {time}. \"Shock delivered. Start CPR.\" You go straight back to compressions."
       ]
     },
     {
@@ -150,9 +150,9 @@
         "brief_night_manager"
       ],
       "required": true,
-      "findingTitle": "Handover, 02:0x",
+      "findingTitle": "Handover, {time}",
       "finding": [
-        "The crew take over compressions and attach their own monitor. You give the handover in order: collapsed about 01:51, no normal breathing, CPR from 01:5x, one shock at 01:5x, CPR since. Heart condition; medication list from his wife.",
+        "The crew take over compressions and attach their own monitor. You give the handover in order: collapsed about 01:50, no normal breathing, CPR from {time:start_cpr}, one shock at {time:use_aed}, CPR since. Heart condition; medication list from his wife.",
         "After ten minutes he has a pulse. They take him to the Harbour General with his wife. The paramedic thanks the team for early CPR and the shock."
       ],
       "lines": [
@@ -225,31 +225,27 @@
         "handover"
       ],
       "findingTitle": "L-07 Lobby Bar",
-      "finding": "Camera L-07 gives exact times for the report: collapse 01:51:12, compressions 01:52:40, AED arrives 01:55:58, shock 01:57:05, crew at the bar 02:03:30.",
+      "finding": "Camera L-07 gives exact times for the report: collapse 01:50, compressions {time:start_cpr}, shock {time:use_aed}, crew at the bar {time:handover}.",
       "columns": [
         "Time",
         "What it shows"
       ],
       "rows": [
         [
-          "01:51:12",
+          "01:50",
           "Guest collapses by the bar"
         ],
         [
-          "01:52:40",
+          "{time:start_cpr}",
           "LP officer starts compressions"
         ],
         [
-          "01:55:58",
-          "AED arrives"
-        ],
-        [
-          "01:57:05",
+          "{time:use_aed}",
           "Shock delivered"
         ],
         [
-          "02:03:30",
-          "Paramedics at the bar"
+          "{time:handover}",
+          "Paramedics take over"
         ]
       ]
     }
@@ -338,12 +334,12 @@
       "options": [
         {
           "id": "f_times",
-          "label": "Times from camera L-07: collapse 01:51:12, compressions 01:52:40, shock 01:57:05, crew 02:03:30.",
+          "label": "Times from camera L-07: collapse 01:50, compressions {time:start_cpr}, shock {time:use_aed}, crew {time:handover}.",
           "correct": true
         },
         {
           "id": "f_aed",
-          "label": "AED used once; restocked, self-tested and back in service at 02:2x.",
+          "label": "AED used once; restocked, self-tested and back in service at {time:aed_service}.",
           "correct": true
         },
         {
@@ -413,7 +409,7 @@
       "dimension": "Procedure",
       "competency": "FireLifeSafety",
       "weight": 10,
-      "pass": "The AED was on and the shock delivered within about eight minutes of the collapse.",
+      "pass": "The AED was on and the shock delivered within about ten minutes of the collapse.",
       "fail": "The AED came too late to matter as much as it could."
     },
     {
@@ -448,7 +444,7 @@
       "dimension": "Procedure",
       "competency": "IncidentResponse",
       "weight": 7,
-      "pass": "Doors open, crew met at the kerb, lift held. They were at the bar seven minutes after the call.",
+      "pass": "Doors open, crew met at the kerb, lift held. They walked straight in.",
       "fail": "The paramedics arrived at locked street doors at 2 a.m."
     },
     {
@@ -509,7 +505,7 @@
     "cctv_timeline"
   ],
   "debrief": {
-    "whatHappened": "Karl Nyholt went into cardiac arrest at the Lobby Bar. He is alive because the chain of survival held: someone recognised it, called, pressed on his chest within two minutes and shocked him within six, and the paramedics walked straight in through open doors.",
+    "whatHappened": "Karl Nyholt went into cardiac arrest at the Lobby Bar. He is alive because the chain of survival held: someone recognised it, called, pressed on his chest within minutes and shocked him before an ambulance could have, and the paramedics walked straight in through open doors.",
     "bestPractice": [
       "Check response and breathing for no more than ten seconds; gasping is not breathing.",
       "Send someone to call the emergency number and someone for the AED; put the call on speaker.",

@@ -50,7 +50,7 @@
         "talk_bell_captain"
       ],
       "required": true,
-      "findingTitle": "The holdall, 04:1x",
+      "findingTitle": "The holdall, {time}",
       "finding": [
         "A black sports holdall, zip closed, on the floor beside the sofa in full view. A trade fair lanyard is looped round the handle and an airline tag hangs from it. No wires, liquid, smell or sound. It sags like soft clothing.",
         "Not hidden, nothing obviously suspicious, and typical of a hotel lobby at the hour the airport departures leave."
@@ -98,7 +98,7 @@
       "spot": "cctv_console",
       "minutes": 6,
       "required": true,
-      "findingTitle": "L-04 Lobby, 03:2x",
+      "findingTitle": "L-04 Lobby, 03:21-03:27",
       "finding": "03:21 a man with a trade fair lanyard checks out at the desk, sits on the sofa with a wheeled case and the holdall, stands at 03:27 when his taxi arrives, and leaves with the wheeled case only. Nobody goes near the holdall after that.",
       "columns": [
         "Camera",
@@ -197,7 +197,7 @@
       "findingTitle": "Lost property register",
       "finding": "LP-0412 entered: description, found 03:50 by O. Tremlett by the lobby sofa, owner identified (room 1108), contents described by the owner, not opened, collection arranged for Friday. Locked in the front office safe.",
       "evidence": "LP-0412",
-      "custody": "Holdall LP-0412 moved from the lobby by you with O. Tremlett at 04:3x and locked in the front office safe."
+      "custody": "Holdall LP-0412 moved from the lobby by you with O. Tremlett at {time} and locked in the front office safe."
     },
     {
       "id": "brief_night_manager",
@@ -322,7 +322,7 @@
         },
         {
           "id": "f_assess",
-          "label": "Assessed at 04:1x: in view, no wires, liquid, smell or sound; typical of early departures.",
+          "label": "Assessed at {time:observe_bag}: in view, no wires, liquid, smell or sound; typical of early departures.",
           "correct": true
         },
         {

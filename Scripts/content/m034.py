@@ -5,7 +5,7 @@ M = {
  "opening": {"channel": "email", "from": "partner", "at": "cctv_room",
    "text": "I said I didn't want this to be about me. Since the patrol case my rota's been changed three times, someone's scratched something on my locker, and half the evening team won't speak to me on the radio. I'm not asking for anything. I just thought you should know. Ines."},
  "briefing": [
-   "10:30, Wednesday. Months after the patrol falsification case, Ines Dalca, who raised it, reports changes to her rota, damage to her locker and being frozen out. Colm Brady returned from a final written warning six weeks ago and now sets the evening rota.",
+   "10:30, Wednesday. Months after the patrol falsification case, Ines Dalca, who raised it, reports changes to her rota, damage to her locker and being frozen out. Colm Brady has been on a final written warning for six weeks and still sets the evening rota.",
    "Veldane speak-up method: treat any report of retaliation against someone who raised a concern as a new, serious complaint; listen first and agree with the person what protection they want; gather the evidence (rotas, messages, damage) before speaking to anyone accused; involve HR and keep the investigation separate from whoever is accused; never move or change the reporter's job without their free choice; reverse any detriment at once; remind the team that retaliation is misconduct; check in with the reporter afterwards. Your authority is 3,000,000."],
  "context": [
   {"ifFlag": "reporter_isolated", "text": "When the patrol case was announced at briefing, everyone worked out who had reported it. This started then."},
@@ -47,7 +47,7 @@ M = {
   {"id": "interview_colm", "label": "Have the investigator interview Colm, with you present", "kind": "interview", "at": "lp_office", "person": "rival", "minutes": 5, "requires": ["hr_case"], "required": True,
    "findingTitle": "Operational need",
    "finding": "Colm says the changes were 'operational'. Shown that weekend cover didn't change and nobody else was moved, he says Ines 'needs to learn what being on a team means'. The investigator records it word for word.",
-   "lines": [{"speaker": "rival", "text": "She got a mate of mine a final warning. Don't tell me she's a victim."}]},
+   "lines": [{"speaker": "rival", "text": "She got me and a mate of mine final warnings. Don't tell me she's a victim."}]},
   {"id": "speak_up_message", "label": "Remind every LP team that retaliation is misconduct", "kind": "logEvidence", "at": "lp_office", "spot": "report_terminal", "minutes": 3, "requires": ["hr_case"], "required": True,
    "findingTitle": "Sent",
    "finding": "A short message to every LP and contract team in the region, without names or details of any case: how to raise a concern, that people who raise concerns are protected, and that retaliation of any kind (rotas, isolation, damage, comments) is treated as gross misconduct."},

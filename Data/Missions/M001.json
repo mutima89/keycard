@@ -486,7 +486,7 @@
     },
     {
       "id": "q_attendant_open",
-      "prompt": "Marisol Duarte looks worried. How do you start?",
+      "prompt": "Before she goes, you want the turndown in her own words, start to finish. Marisol Duarte looks worried. How do you ask?",
       "dimension": "Procedure",
       "competency": "Investigation",
       "weight": 5,
@@ -650,7 +650,7 @@
       "options": [
         {
           "id": "facts",
-          "label": "Guest reported a laptop stolen from room 1412. Enquiries found it had been left at the Lobby Bar and handed in to lost property (LP-1022). Returned to the guest at about 01:45 after ownership was verified. No theft.",
+          "label": "Guest reported a laptop stolen from room 1412. Enquiries found it had been left at the Lobby Bar and handed in to lost property (LP-1022). Returned to the guest at {time:return_laptop} after ownership was verified. No theft.",
           "score": 100,
           "feedback": "Who, what, where, how it ended: all facts, all checkable."
         },
@@ -730,7 +730,7 @@
       "options": [
         {
           "id": "evidence",
-          "label": "In 1412 until 22:03, with the guest at the Lobby Bar until 23:39, handed in at 23:52, in the front office safe until about 01:35.",
+          "label": "In 1412 until 22:03, with the guest at the Lobby Bar until 23:39, handed in at 23:52, in the front office safe until {time:collect_laptop}.",
           "score": 100,
           "feedback": "The timeline comes from the lock, the cameras and the log, not from memory."
         },

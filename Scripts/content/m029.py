@@ -17,7 +17,7 @@ M = {
   {"id": "housekeeping_signs", "label": "Ask Lucia what her room attendants see", "kind": "interview", "at": "housekeeping", "person": "exec_housekeeper", "minutes": 4, "requires": ["hr_scope"], "required": True,
    "findingTitle": "What housekeeping sees",
    "finding": "Lucia's list of things her team have noticed over the years: a room refusing service for days with many visitors; someone who seems controlled by another person, who answers for them; a young person with an older adult who doesn't seem to be family; few personal belongings. She warns: any one of these has an innocent explanation. Her team should notice, write it down and tell someone, not decide.",
-   "lines": [{"speaker": "exec_housekeeper", "text": "My girls see everything. What they need is to know who to tell, and that they won't get in trouble for being wrong."}]},
+   "lines": [{"speaker": "exec_housekeeper", "text": "My team see everything. What they need is to know who to tell, and that they won't get in trouble for being wrong."}]},
   {"id": "desk_signs", "label": "Work through the front office signs with Gideon", "kind": "interview", "at": "front_desk", "person": "front_office_manager", "minutes": 3, "requires": ["hr_scope"],
    "findingTitle": "What the desk sees",
    "finding": "At the desk: someone else holding a guest's ID and doing all the talking; several rooms paid in cash by one person for others; a guest who seems not to know where they are. Gideon agrees the desk notes and reports, and never refuses a room or questions the guest about it."},

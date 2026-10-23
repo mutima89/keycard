@@ -448,8 +448,13 @@ KC_API bool IsActionDone(const GameState& State, const std::string& ActionId);
 // Does it: walks from the last place (travel minutes), spends the action's minutes, records the
 // step, custody and effects-free notes. Effects apply at submission (never in a what-if).
 KC_API EMissionError DoAction(GameState& State, const MissionDef& M, const std::string& ActionId, const std::string& Where);
-// The finding text the player got (ExpiredFinding if it was done too late).
+// Mission text names case times with tokens, filled from the case clock: "{time}" is when this
+// action finished, "{time:action_id}" when that action finished ("--:--" while it is not done).
+KC_API std::string ExpandTimes(const GameState& State, const std::string& Text, const std::string& SelfActionId = std::string());
+// The finding text the player got (ExpiredFinding if it was done too late), times filled in.
 KC_API std::string FindingFor(const GameState& State, const ActionDef& A);
+KC_API std::string FindingTitleFor(const GameState& State, const ActionDef& A);
+KC_API std::vector<std::vector<std::string>> RowsFor(const GameState& State, const ActionDef& A);
 // In-person questions open at Where now (Requires met, not yet answered).
 KC_API std::vector<const QuestionDef*> QuestionsAt(const GameState& State, const MissionDef& M, const std::string& Where);
 KC_API EMissionError AnswerInPerson(GameState& State, const MissionDef& M, const MissionAnswer& Answer, const std::string& Where);

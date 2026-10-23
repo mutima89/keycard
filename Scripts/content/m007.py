@@ -33,7 +33,7 @@ M = {
    "expiresAt": "02:00", "expiredFinding": "Too late: the recorder overwrote the 23rd before the export finished.",
    "findingTitle": "Export KC-0723",
    "finding": "L-07 21:45-22:45, L-04, L-02 and L-01 22:10-22:30, exported in the recorder's native format with its player, to write-once USB KC-0723. SHA-256 recorded on the export screen. Your name and login on the export.",
-   "evidence": "KC-0723", "custody": "Clips L-07, L-04, L-02, L-01 of the 23rd exported by you under your own login at 00:5x to write-once USB KC-0723, SHA-256 recorded."},
+   "evidence": "KC-0723", "custody": "Clips L-07, L-04, L-02, L-01 of the 23rd exported by you under your own login at {time} to write-once USB KC-0723, SHA-256 recorded."},
   {"id": "log_export", "label": "Fill in the export log", "kind": "logEvidence", "at": "cctv_room", "minutes": 3, "requires": ["export_footage"],
    "findingTitle": "Export log", "finding": "Entry 0723: date, your name, reason (insurer preservation request TM-55102), cameras, times, format, hash, media number, where it is kept. Ines signs as witness.",
    "columns": ["Field", "Entry"], "rows": [["Reason", "Preservation request TM-55102"], ["Cameras", "L-07, L-04, L-02, L-01"], ["Media", "USB KC-0723, write-once"], ["Hash", "SHA-256 recorded"], ["Witness", "I. Dalca"]]},

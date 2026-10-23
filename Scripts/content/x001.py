@@ -20,7 +20,7 @@ M = {
    "lines": [{"speaker": "family_varnham", "text": "Someone walked into my father's room. Your room. I want to know how, and I want to hear it from you, not a lawyer."}]},
   {"id": "preserve", "label": "Order every property to preserve lock logs, CCTV and key records", "kind": "check", "at": "lp_office", "spot": "report_terminal", "minutes": 3, "required": True,
    "findingTitle": "Preserved",
-   "finding": "Hold notice to all twelve properties at 04:22: lock audit trails, encoder logs, CCTV (no overwrite), front desk key issue records, staff rosters. The airport and the Harbourfront confirm by 04:40, the Convention Centre by 04:45."},
+   "finding": "Hold notice to all twelve properties at {time}: lock audit trails, encoder logs, CCTV (no overwrite), front desk key issue records, staff rosters. The airport and the Harbourfront confirm by 04:40, the Convention Centre by 04:45."},
   {"id": "lock_audit", "label": "Audit room 907's lock and the encoder that made the card", "kind": "lockAudit", "at": "front_desk", "spot": "key_encoder", "minutes": 5, "requires": ["preserve"], "required": True,
    "findingTitle": "A card nobody issued",
    "finding": "The lock opened at 01:58 to a card encoded as a 'guest' card for 907, but no front desk record matches it. The encoder ID in the card's data belongs to a unit decommissioned at the Harbourfront three years ago. Its card stock serial range matches the blank stock taken by the former administrator.",
@@ -143,7 +143,7 @@ M = {
   "why": "Major incidents are judged twice: by how people were treated on the night, and by whether the organisation learned. Candour and system thinking do both.",
   "commonMistakes": ["Blaming the night agent.", "Silence while counsel works.", "Only good news to the board.", "Promising 'never again'."]},
  "procedureCards": ["post_incident_review"],
- "reportAt": "boardroom", "passMark": 65, "xp": 1000, "weeks": 4,
+ "reportAt": "lp_office", "passMark": 65, "xp": 1000, "weeks": 4,
  "lesson": "People first, one timeline, candour, no blame before the facts, the whole story to the board."
 }
 out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "Data", "Missions", "X001.json")

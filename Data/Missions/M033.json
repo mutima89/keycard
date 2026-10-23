@@ -9,7 +9,7 @@
     "channel": "phone",
     "from": "gm",
     "at": "boardroom",
-    "text": "Have you seen it? Forty seconds of a guard dragging a man across our lobby floor. Two million views since midnight, and the owners are asking me what we're going to say. Boardroom, now."
+    "text": "Have you seen it? Forty seconds of a guard dragging a man across our lobby floor. Two million views overnight, and the owners are asking me what we're going to say. Boardroom, now."
   },
   "briefing": [
     "08:10, Saturday. A guest's phone video shows a Tessmore contract guard pulling a man across the Harbourfront lobby by his collar at 01:30. It has two million views. The man is not named.",
@@ -75,7 +75,7 @@
         "all_footage"
       ],
       "required": true,
-      "findingTitle": "Out at 08:5x",
+      "findingTitle": "Out at {time}",
       "finding": "\"We've seen the video of an incident in our lobby early this morning and we are concerned by it. We are reviewing all our footage and speaking to everyone involved, and the officer is not on duty while we do. We are trying to contact the guest to make sure he's all right. We will share what we find.\" No blame, no defence, no outcome.",
       "lines": [
         {

@@ -19,7 +19,7 @@ M = {
    "findingTitle": "Confirmed fire, 14",
    "finding": "FIRE ZONE 14-3: detectors 14-3-07 (corridor outside 1409) and 14-3-08 (inside 1409), SPRINKLER FLOW FLOOR 14. Lifts recalled to ground automatically. Two detectors and a flow switch: a confirmed fire. No investigating first."},
   {"id": "call_fire", "label": "Call the fire authority now", "kind": "call", "at": "fire_command", "person": "fire_officer", "minutes": 1, "requires": ["read_panel"], "required": True,
-   "findingTitle": "Called, 02:16",
+   "findingTitle": "Called, {time}",
    "finding": "The fire authority control room takes it: confirmed fire, room 1409, floor 14 of 14, sprinkler operating, hotel 92% occupied, evacuation of 14 and 13 under way. Idris Kellaway's watch is four minutes out with an aerial ladder."},
   {"id": "evacuate", "label": "Evacuate 14 and 13 now; alert every other floor", "kind": "call", "at": "fire_command", "person": "partner", "minutes": 2, "requires": ["read_panel"], "required": True,
    "findingTitle": "Phased evacuation",
@@ -43,12 +43,12 @@ M = {
    "schedules": [{"id": "smoke_injury", "description": "The smoke released into the corridor when 1409 was opened injures a guest and the fire investigation names the opened door. The hotel is criticised and the insurer reviews the claim.", "delayWeeks": 3, "probability": 0.75,
      "effects": {"IncidentCosts": 25000, "InsurerConfidence": -5, "Reputation": -4}, "flagIfOccurs": "door_opened_smoke"}]},
   {"id": "handover", "label": "Hand over command to the fire authority", "kind": "interview", "at": "lobby", "person": "fire_officer", "minutes": 3, "requires": ["call_fire", "refuge"], "required": True,
-   "findingTitle": "Handed over, 02:2x",
+   "findingTitle": "Handed over, {time}",
    "finding": "At the front doors, the premises information box open: Station Officer Kellaway gets the panel printout, the fire in 1409 with the sprinkler running, the evacuation of 14 and 13, two people in the Stair A refuge on 14, the 1409 guest not yet accounted for, the master keys and the floor plans. He takes command; you stay with him as the hotel's liaison.",
    "lines": [{"speaker": "fire_officer", "text": "Refuge on 14, Stair A, two people; one unknown in 1409. That's what I needed. Lifts are mine. Keep your people on the stairs and the list."}]},
   {"id": "account", "label": "Account for every guest at the assembly point", "kind": "check", "at": "lobby", "minutes": 4, "requires": ["guest_list", "handover"], "required": True,
    "findingTitle": "All accounted for",
-   "finding": "The roll call against the in-house list at the quay assembly point: 58 of 61 from 13 and 14, plus the two in the refuge brought down by the crew. The 1409 guest walks in from the street: he had gone out at midnight leaving a phone charger and a hair dryer plugged in on the bed. Everyone accounted for at 02:51; the fire authority is told at once."},
+   "finding": "The roll call against the in-house list at the quay assembly point: 58 of 61 from 13 and 14, plus the two in the refuge brought down by the crew. The 1409 guest walks in from the street: he had gone out at midnight leaving a phone charger and a hair dryer plugged in on the bed. Everyone accounted for at {time}; the fire authority is told at once."},
   {"id": "casualty", "label": "Get the guest from 1408 to the paramedics", "kind": "call", "at": "lobby", "person": "paramedic_sethna", "minutes": 2, "requires": ["account"],
    "findingTitle": "Smoke inhalation",
    "finding": "The guest in 1408 came out through the corridor smoke and is coughing. Ravi Sethna's crew give oxygen and take her to hospital as a precaution. She is discharged by morning."},
@@ -61,10 +61,10 @@ M = {
    "finding": "Blankets and hot drinks at the assembly point, then the ballroom opened as a rest area. Thirty-four rooms on 13 and 14 out of use: guests moved to empty rooms on lower floors and the airport hotel; medicines and belongings recovered later by staff with the fire authority's agreement. One statement for every guest."},
   {"id": "preserve", "label": "Preserve the scene and tell the insurer", "kind": "call", "at": "exec_offices", "person": "adjuster", "minutes": 3, "requires": ["handover"], "required": True,
    "findingTitle": "Scene held",
-   "finding": "1409 and the corridor sealed for the fire authority's investigator; CCTV from 14-01 and 14-02 and the panel event log exported; Tarrowby's out-of-hours line notified at 03:40 and a loss adjuster appointed. Nothing in 1409 is touched until the investigator releases it."},
+   "finding": "1409 and the corridor sealed for the fire authority's investigator; CCTV from 14-01 and 14-02 and the panel event log exported; Tarrowby's out-of-hours line notified at {time} and a loss adjuster appointed. Nothing in 1409 is touched until the investigator releases it."},
   {"id": "after_action", "label": "Write the crisis log and after-action review", "kind": "logEvidence", "at": "lp_office", "spot": "report_terminal", "minutes": 5, "requires": ["account", "preserve"],
    "findingTitle": "After action",
-   "finding": "The log becomes the review: call at 02:16, phased evacuation, refuge reported, handover in six minutes, everyone accounted for in 37. The sprinkler held the fire to one room. Actions: chargers and appliances on beds in the guest safety card, refuge intercoms checked monthly, and a drill with the fire authority on the tower floors."}
+   "finding": "The log becomes the review: call at {time:call_fire}, phased evacuation, refuge reported, handover at {time:handover}, everyone accounted for at {time:account}. The sprinkler held the fire to one room. Actions: chargers and appliances on beds in the guest safety card, refuge intercoms checked monthly, and a drill with the fire authority on the tower floors."}
  ],
  "questions": [
   {"id": "d_first", "kind": "order", "prompt": "Put the first minutes in order", "dimension": "Procedure", "competency": "FireLifeSafety", "weight": 9,
@@ -89,7 +89,7 @@ M = {
     {"id": "refuge", "label": "Leave a staff member with the people in the refuge", "feedback": "That is exactly what you do: someone stays with them, with a radio, and the fire authority is told where they are."}]},
   {"id": "r_what", "prompt": "Crisis log, summary (one line)", "dimension": "Report", "competency": "EvidenceReporting", "weight": 7, "section": "what",
    "options": [
-    {"id": "facts", "label": "Fire in 1409 02:14 (charger on bed, guest out), held by the sprinkler; fire authority 02:16; 14 and 13 evacuated, rest alerted; refuge on 14 reported; command handed over 02:2x; all accounted 02:51; one guest to hospital, discharged; scene held; 34 rooms out of use.", "score": 100,
+    {"id": "facts", "label": "Fire in 1409 02:14 (charger on bed, guest out), held by the sprinkler; fire authority {time:call_fire}; 14 and 13 evacuated, rest alerted; refuge on 14 reported; command handed over {time:handover}; all accounted {time:account}; one guest to hospital, discharged; scene held; 34 rooms out of use.", "score": 100,
      "feedback": "The times, the decisions, the people and the state of the building."},
     {"id": "small", "label": "Small room fire, put out by sprinklers.", "score": 20, "feedback": "It was a fire on a full tower. The decisions that kept it small belong in the record."},
     {"id": "blame", "label": "Guest's charger started a fire; guest liable.", "score": 15, "feedback": "Cause and liability are for the fire investigation and the insurer."}]}

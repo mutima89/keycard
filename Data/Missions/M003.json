@@ -86,12 +86,12 @@
       ],
       "rows": [
         [
-          "F14-02 Corridor",
+          "14-02 Corridor",
           "23:40",
           "Guest and one other enter 1406."
         ],
         [
-          "F14-02 Corridor",
+          "14-02 Corridor",
           "00:15-01:20",
           "Seven more arrive in small groups, carrying bags from the off-licence."
         ]
@@ -107,7 +107,7 @@
       "requires": [
         "radio_partner"
       ],
-      "findingTitle": "At the door, 02:2x",
+      "findingTitle": "At the door, {time}",
       "finding": "Loud music with bass, several voices, laughter, one man shouting a toast. No sounds of a fight or distress. A faint smell of smoke near the door."
     },
     {
@@ -193,7 +193,7 @@
       "requires": [
         "knock_1406"
       ],
-      "findingTitle": "Photo, 02:3x",
+      "findingTitle": "Photo, {time}",
       "finding": "Taken from the doorway with Mr Pike's agreement: a shower cap over the ceiling smoke detector in 1406.",
       "evidence": "PH-1406-01",
       "custody": "Photo PH-1406-01 of the covered detector taken by you from the doorway of 1406."
@@ -234,7 +234,7 @@
       "requires": [
         "follow_up_complainant"
       ],
-      "findingTitle": "Recheck, 02:5x",
+      "findingTitle": "Recheck, {time}",
       "finding": "Quiet. Five guests have left by the lift; the music is off. 1406 now has its two registered guests and two friends."
     },
     {
@@ -460,7 +460,7 @@
         },
         {
           "id": "f_count",
-          "label": "Camera F14-02 shows nine people entered 1406 from 23:40; the room is registered for two.",
+          "label": "Camera 14-02 shows nine people entered 1406 from 23:40; the room is registered for two.",
           "correct": true
         },
         {
@@ -470,7 +470,7 @@
         },
         {
           "id": "f_recheck",
-          "label": "Corridor rechecked at 02:5x: quiet.",
+          "label": "Corridor rechecked at {time:recheck}: quiet.",
           "correct": true
         },
         {

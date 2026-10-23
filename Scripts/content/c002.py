@@ -19,7 +19,7 @@ M = {
    "finding": "Tariq used the checklist card from under the switchboard. Male, calm, local accent, 40 seconds. Exact words: \"There's a bomb in the ballroom, at your wedding thing. Half twelve. This is for what you did to my sister.\" Traffic and a station tannoy in the background. Number withheld. Tariq hung up when the line went quiet; the switchboard log has the time.",
    "lines": [{"speaker": "desk_agent", "text": "I kept him talking as long as I could. I wrote his words exactly. I'm sorry I put the phone down."}]},
   {"id": "call_police", "label": "Call the police with the checklist", "kind": "call", "at": "front_desk", "spot": "desk_phone", "person": "police_liaison", "minutes": 2, "requires": ["checklist"], "required": True,
-   "findingTitle": "Police on the way, 11:2x",
+   "findingTitle": "Police on the way, {time}",
    "finding": "The police control room takes the exact words, the time and the background. A specific place and time: they advise clearing the ballroom and the floor 1 foyer, searching with staff, and keeping the rest of the hotel in place unless something is found. Officers in ten minutes, a search adviser with them. DS Calloway is told."},
   {"id": "command", "label": "Take command at fire command with the GM", "kind": "interview", "at": "fire_command", "person": "gm", "minutes": 3, "requires": ["call_police"], "required": True,
    "findingTitle": "Decision: clear floor 1",
@@ -32,7 +32,7 @@ M = {
    "findingTitle": "Route clear",
    "finding": "Two officers walk Stair B, the side lobby and the quay assembly area before anyone is sent there: bins, planters, parked bikes. Nothing out of place. A second device placed where people gather is the risk this guards against."},
   {"id": "clear_ballroom", "label": "Have Celia clear the ballroom calmly by Stair B", "kind": "call", "at": "ballroom", "person": "banquet_manager", "minutes": 4, "requires": ["search_route"], "required": True,
-   "findingTitle": "Floor 1 clear, 11:4x",
+   "findingTitle": "Floor 1 clear, {time}",
    "finding": "Celia's team clears the fair in nine minutes: \"As a precaution we're asking everyone to leave the ballroom by the stairs. Please take all your belongings with you.\" Belongings taken mean fewer bags left to search. Two exhibitors in wheelchairs go down with staff by the service lift before it is held."},
   {"id": "fire_alarm", "label": "Sound the fire alarm to clear the whole building", "kind": "other", "at": "fire_command", "spot": "fire_panel", "minutes": 1, "requires": ["call_police"],
    "findingTitle": "Full evacuation",
@@ -59,12 +59,12 @@ M = {
    "evidence": "KC-2701",
    "findingTitle": "10:51",
    "finding": "1-03 foyer, 10:51:40: a man in a dark cap carries the holdall in with a group of visitors and leaves without it at 10:54. Exported, hashed and logged as KC-2701 for DS Calloway."},
-  {"id": "all_clear", "label": "Reopen floor 1 on the police all-clear", "kind": "call", "at": "fire_command", "person": "gm", "minutes": 3, "requires": ["handover"], "required": True,
-   "findingTitle": "All clear, 13:1x",
-   "finding": "The bomb disposal team finds a hoax: a clock radio taped to a box of brochures. The police give the all-clear at 13:12. Floor 1 reopens; the fair resumes at 13:45 with an apology and a free drink. Guests in the rest of the hotel get a short update."},
+  {"id": "all_clear", "label": "Reopen floor 1 on the police all-clear", "kind": "call", "at": "fire_command", "person": "gm", "minutes": 55, "requires": ["handover"], "required": True,
+   "findingTitle": "All clear, {time}",
+   "finding": "The bomb disposal team finds a hoax: a clock radio taped to a box of brochures. The police give the all-clear at {time}. Floor 1 reopens; the fair resumes at 13:45 with an apology and a free drink. Guests in the rest of the hotel get a short update."},
   {"id": "after_action", "label": "Write the crisis log and after-action review", "kind": "logEvidence", "at": "lp_office", "spot": "report_terminal", "minutes": 5, "requires": ["all_clear"],
    "findingTitle": "After action",
-   "finding": "The log becomes the review: checklist used well (keep the line open next time); police at 11:2x; targeted clearance in nine minutes; route searched first; radio rule held; nobody touched the item. Actions: checklist cards at every phone, search plans by area with named searchers, and a recorded threat line on the switchboard."}
+   "finding": "The log becomes the review: checklist used well (keep the line open next time); police at {time:call_police}; targeted clearance in nine minutes; route searched first; radio rule held; nobody touched the item. Actions: checklist cards at every phone, search plans by area with named searchers, and a recorded threat line on the switchboard."}
  ],
  "questions": [
   {"id": "d_first", "kind": "order", "prompt": "Put the first steps after the call in order", "dimension": "Procedure", "competency": "CrisisLeadership", "weight": 9,
@@ -91,9 +91,9 @@ M = {
     {"id": "carry", "label": "Carry it out to the street so it's away from people", "feedback": "Never. Moving it can set it off, and the street is where the evacuees are."}]},
   {"id": "r_what", "prompt": "Crisis log, summary (one line)", "dimension": "Report", "competency": "EvidenceReporting", "weight": 7, "section": "what",
    "options": [
-    {"id": "facts", "label": "Threat call 11:18 recorded on the checklist; police 11:2x; floor 1 cleared by Stair B after route search; holdall found under stage table, not touched, cordoned; handed to police; hoax confirmed, all-clear 13:12; footage KC-2701.", "score": 100,
+    {"id": "facts", "label": "Threat call 11:18 recorded on the checklist; police {time:call_police}; floor 1 cleared by Stair B after route search; holdall found under stage table, not touched, cordoned; handed to police; hoax confirmed, all-clear {time:all_clear}; footage KC-2701.", "score": 100,
      "feedback": "The times, the decisions, the item and who has the evidence."},
-    {"id": "hoax", "label": "Hoax bomb call, no action needed.", "score": 15, "feedback": "It was only known to be a hoax at 13:12. Everything before that is the record."},
+    {"id": "hoax", "label": "Hoax bomb call, no action needed.", "score": 15, "feedback": "It was only known to be a hoax at the all-clear. Everything before that is the record."},
     {"id": "sister", "label": "Caller angry about his sister; staff to look into it.", "score": 20, "feedback": "The motive is for the police, with the exact words. LP doesn't investigate the caller."}]}
  ],
  "checks": [

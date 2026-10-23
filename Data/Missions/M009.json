@@ -42,7 +42,7 @@
       "minutes": 4,
       "required": true,
       "findingTitle": "Hattie Coombe",
-      "finding": "She propped it at 02:50 for the bakery delivery: the dock bell has been broken for a fortnight and she cannot hear drivers knock from the receiving office. She left it to check the bread count in the kitchen. She has propped it \"most nights\" since the bell broke, and nobody ever came.",
+      "finding": "She propped it at 02:50 for the bakery delivery: the dock bell has been broken for a fortnight and she cannot hear drivers knock from the receiving office. She left it to check the bread order in the kitchen. She has propped it \"most nights\" since the bell broke, and nobody ever came.",
       "lines": [
         {
           "speaker": "receiving_clerk",

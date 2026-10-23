@@ -120,7 +120,7 @@ M = {
     {"id": "no_police", "label": "\"Let's not involve the police yet. It'll only slow things down.\"", "score": 20,
      "feedback": "Never discourage a guest from reporting a crime. It looks like a cover-up, and it is their right.",
      "reply": {"speaker": "guest_whitlock", "text": "That sounds like a hotel protecting itself."}}]},
-  {"id": "q_attendant_open", "prompt": "Marisol Duarte looks worried. How do you start?", "dimension": "Procedure", "competency": "Investigation", "weight": 5,
+  {"id": "q_attendant_open", "prompt": "Before she goes, you want the turndown in her own words, start to finish. Marisol Duarte looks worried. How do you ask?", "dimension": "Procedure", "competency": "Investigation", "weight": 5,
    "at": "f14_service", "person": "attendant_duarte", "requires": ["interview_attendant"],
    "options": [
     {"id": "walk_me", "label": "\"Nobody is accusing you. Walk me through the turndown in 1412, from when you knocked.\"", "score": 100,
@@ -162,7 +162,7 @@ M = {
      "feedback": "Over-cautious: the guest can prove ownership now, and keeping his property overnight turns a happy ending into a complaint."}]},
   {"id": "r_what", "prompt": "Incident report, what happened (one line)", "dimension": "Report", "competency": "EvidenceReporting", "weight": 4, "section": "what",
    "options": [
-    {"id": "facts", "label": "Guest reported a laptop stolen from room 1412. Enquiries found it had been left at the Lobby Bar and handed in to lost property (LP-1022). Returned to the guest at about 01:45 after ownership was verified. No theft.", "score": 100,
+    {"id": "facts", "label": "Guest reported a laptop stolen from room 1412. Enquiries found it had been left at the Lobby Bar and handed in to lost property (LP-1022). Returned to the guest at {time:return_laptop} after ownership was verified. No theft.", "score": 100,
      "feedback": "Who, what, where, how it ended: all facts, all checkable."},
     {"id": "theft", "label": "Laptop theft from room 1412. Housekeeping suspected.", "score": 0,
      "feedback": "Wrong on the facts and names a suspect the evidence clears."},
@@ -181,7 +181,7 @@ M = {
     {"id": "o_always", "label": "Housekeeping is usually behind room thefts.", "feedback": "A prejudice, not a finding. It also happens to be wrong."}]},
   {"id": "r_when", "prompt": "Incident report, where was the laptop when, on the evidence?", "dimension": "Report", "competency": "Investigation", "weight": 3, "section": "when",
    "options": [
-    {"id": "evidence", "label": "In 1412 until 22:03, with the guest at the Lobby Bar until 23:39, handed in at 23:52, in the front office safe until about 01:35.", "score": 100,
+    {"id": "evidence", "label": "In 1412 until 22:03, with the guest at the Lobby Bar until 23:39, handed in at 23:52, in the front office safe until {time:collect_laptop}.", "score": 100,
      "feedback": "The timeline comes from the lock, the cameras and the log, not from memory."},
     {"id": "statement", "label": "On the desk in 1412 until it was taken some time before 00:30, as the guest says.", "score": 20,
      "feedback": "The guest's account was honest but wrong. The report follows the evidence and notes where the statement differs."},

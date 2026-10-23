@@ -487,7 +487,6 @@ for name, slot, tile, tint, rough in [
         ("MI_FloorMarble", "marble", 240, (0.95, 0.94, 0.92), 0.6),        # lobby
         ("MI_StoneCounter", "marble", 120, (0.22, 0.22, 0.24), 0.9),       # front desk and bar tops: dark stone (0.5 sparkled)
         ("MI_FloorTile", "tiles", 60, (0.93, 0.93, 0.92), 0.8),            # guest bathrooms, staff toilets
-        ("MI_Tile", "tiles", 30, (0.85, 0.87, 0.88), 0.7),                 # bathroom walls, kitchen splashback
         ("MI_FloorConcrete", "concrete_floor", 300, (0.8, 0.8, 0.8), 1.3), # B1 back of house, loading dock
         ("MI_Concrete", "concrete_wall", 280, (0.75, 0.75, 0.74), 1.4),    # stair shafts, B1 walls
         ("MI_Facade", "concrete_wall", 400, (0.55, 0.56, 0.58), 1.2),      # exterior
@@ -498,14 +497,14 @@ for name, slot, tile, tint, rough in [
         ("MI_Rug", "wool", 35, (0.52, 0.48, 0.42), 2.0),
         ("MI_FabricDark", "wool", 30, (0.12, 0.13, 0.15), 2.0),
         ("MI_FabricAccent", "wool", 30, (0.18, 0.36, 0.48), 2.0),          # harbour-blue upholstery
-        ("MI_AcousticPanel", "wool", 60, (0.24, 0.3, 0.36), 1.0),
+        ("MI_AcousticPanel", "wool", 60, (0.4, 0.46, 0.52), 1.0),         # at 0.24-0.36 the CCTV room walls read black
         ("MI_Linen", "linen", 40, (0.95, 0.94, 0.91), 1.8),                # bed linen, towels
         ("MI_Leather", "leather", 50, (0.2, 0.12, 0.08), 0.9),             # bar stools, lobby chairs
         ("MI_WallPlaster", "plaster", 260, (0.93, 0.91, 0.88), 1.0),
         ("MI_WallPaint", "plaster", 260, (0.82, 0.83, 0.82), 1.1),         # back-of-house corridors
         ("MI_StairPaint", "plaster", 260, (0.7, 0.72, 0.7), 1.1),
         ("MI_WoodOak", "oak", 140, (0.8, 0.75, 0.7), 1.5),                   # less orange; satin: at 0.9 the glossy grain lines streaked white
-        ("MI_WoodWalnut", "walnut", 140, (1, 1, 1), 0.85),
+        ("MI_WoodWalnut", "walnut", 140, (0.6, 0.48, 0.42), 0.85),          # untinted it read orange pine
         ("MI_DoorPaint", "oak", 140, (0.42, 0.33, 0.24), 0.8),             # guest-room doors: stained oak
         ("MI_Cork", "wool", 25, (0.62, 0.46, 0.3), 1.8)]:                  # LP office notice board
     world_surface(name, slot, tile, tint, rough)
@@ -542,6 +541,8 @@ instance("MI_LedAmber", EMISSIVE, {}, {"Intensity": 25.0}, {"Color": (1.0, 0.55,
 instance("MI_CeilingSoft", EMISSIVE, {}, {"Intensity": 6.0, "Roughness": 1.0}, {"Color": (0.88, 0.89, 0.9, 1)})
 # CCTV room: kept dark for the screens; at 6 the exposure lifted the ceiling to a glowing white slab.
 instance("MI_CeilingDim", EMISSIVE, {}, {"Intensity": 0.8, "Roughness": 1.0}, {"Color": (0.88, 0.89, 0.9, 1)})
+# B1 work rooms and corridor: between the two; at 0.8 the ceilings read as a black band over the walls.
+instance("MI_CeilingMid", EMISSIVE, {}, {"Intensity": 2.5, "Roughness": 1.0}, {"Color": (0.88, 0.89, 0.9, 1)})
 instance("MI_Highlight", unreal.load_asset(MAT + "/M_KcHighlight"))
 
 # Our own textures (Scripts/GenerateTextures.py): screen UIs, signs, whiteboard, prints, carpet and wallpaper patterns.
@@ -571,7 +572,7 @@ for mi, tex, rough in [("MI_Whiteboard", "T_Whiteboard", 0.5), ("MI_ArtHarbourA"
         instance(mi, SURFACE, {"BaseColorMap": gen[tex]}, {"RoughnessScale": rough, "MetallicScale": 0.0})
 # Patterned guest-floor carpet, corridor wallpaper and the kitchen quarry tile: world-aligned so the repeat stays true to scale on every wall.
 for mi, tex, tile, rough in [("MI_CorridorCarpet", "T_CorridorCarpet", 120, 2.0), ("MI_Wallpaper", "T_Wallpaper", 90, 1.3),
-                             ("MI_KitchenTile", "T_QuarryTile", 60, 1.6)]:
+                             ("MI_KitchenTile", "T_QuarryTile", 60, 1.6), ("MI_Tile", "T_WallTile", 60, 0.5)]:  # MI_Tile: bathroom and kitchen walls
     if tex in gen:
         instance(mi, WORLD, {"BaseColorMap": gen[tex]}, {"MetallicScale": 0.0, "RoughnessScale": rough},
                  {"Tint": (1, 1, 1, 1), "TileSize": (tile, tile, tile, 0)})

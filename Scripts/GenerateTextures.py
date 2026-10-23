@@ -340,6 +340,21 @@ def quarry_tile():
     return im
 
 
+def wall_tile():
+    """Bathroom walls and the kitchen's tiled walls: 6 x 6 glazed white 10 cm tiles in pale grout, each a shade apart.
+    (Poly Haven's white tile sets 404'd and the fallback, square_tiles_02, rendered near black on walls.)"""
+    w = h = 516
+    grout = (178, 178, 172)
+    im = Image.new("RGB", (w, h), grout)
+    d = ImageDraw.Draw(im)
+    rnd = random.Random(23)
+    for ty in range(6):
+        for tx in range(6):
+            c = rnd.randint(-5, 5)
+            d.rectangle([tx * 86 + 2, ty * 86 + 2, tx * 86 + 83, ty * 86 + 83], fill=(236 + c, 238 + c, 236 + c))
+    return im.resize((512, 512))
+
+
 def dnd_tag():
     w, h = 256, 640
     im = Image.new("RGB", (w, h), (120, 30, 40))
@@ -472,7 +487,7 @@ def main():
         "T_ScreenExport": export_screen(), "T_ScreenPanel": fire_panel(), "T_Whiteboard": whiteboard(),
         "T_ArtHarbourA": harbour_art(11), "T_ArtHarbourB": harbour_art(29), "T_ArtHarbourC": harbour_art(53),
         "T_ExitSign": exit_sign(), "T_CorridorCarpet": corridor_carpet(), "T_Wallpaper": wallpaper(), "T_QuarryTile": quarry_tile(),
-        "T_DndTag": dnd_tag(), "T_FloorPlan": floor_plan(),
+        "T_DndTag": dnd_tag(), "T_FloorPlan": floor_plan(), "T_WallTile": wall_tile(),
     }
     for name, (seed, pw, ph, lo, hi, towers, lit) in SKYLINES.items():
         items[name] = skyline(seed, pw, ph, lo, hi, towers, lit, 1024 if ph > 60 else 512)

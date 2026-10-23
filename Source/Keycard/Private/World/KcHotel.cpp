@@ -1226,8 +1226,8 @@ void AKcHotel::BuildBasement()
 	const int32 F = -1;
 	UMaterialInterface* Paint = Mat(TEXT("MI_WallPaint"));
 	FloorFinish(F, FBox2D(FVector2D(0.0f, -CorrY), FVector2D(MaxX, CorrY)), Mat(TEXT("MI_FloorConcrete")));
-	Ceiling(F, FBox2D(FVector2D(0.0f, -CorrY), FVector2D(CoreX0, CorrY)), CeilB1, Mat(TEXT("MI_CeilingDim"))); // Soft glared white over the battens
-	Ceiling(F, FBox2D(FVector2D(CoreX1, -CorrY), FVector2D(MaxX, CorrY)), CeilB1, Mat(TEXT("MI_CeilingDim")));
+	Ceiling(F, FBox2D(FVector2D(0.0f, -CorrY), FVector2D(CoreX0, CorrY)), CeilB1, Mat(TEXT("MI_CeilingMid"))); // Soft glared white over the battens, Dim read black
+	Ceiling(F, FBox2D(FVector2D(CoreX1, -CorrY), FVector2D(MaxX, CorrY)), CeilB1, Mat(TEXT("MI_CeilingMid")));
 	// Corridor walls and doors.
 	WallX(F, CorrY, 15.0f, CoreX0, {FVector2D(600.0f, 100.0f), FVector2D(1400.0f, 100.0f)}, Paint, CeilB1);
 	WallX(F, CorrY, CoreX1, MaxX - 15.0f, {FVector2D(3200.0f, 100.0f), FVector2D(4250.0f, 100.0f)}, Paint, CeilB1);
@@ -1482,7 +1482,7 @@ void AKcHotel::BuildHousekeeping()
 	UMaterialInterface* Paint = Mat(TEXT("MI_WallPaint"));
 	UMaterialInterface* Steel = Mat(TEXT("MI_Steel"));
 	FloorFinish(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), Mat(TEXT("MI_FloorTile")));
-	Ceiling(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), CeilB1, Mat(TEXT("MI_CeilingDim"))); // Soft glowed white over the room
+	Ceiling(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), CeilB1, Mat(TEXT("MI_CeilingMid"))); // Soft glowed white over the room
 	AddBox(FVector(X1 - 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilB1 * 0.5f)), FVector(1.0f, Y1 - Y0, CeilB1), Paint, 0.0f, false);
 	AddBox(FVector((X0 + X1) * 0.5f, Y0 + 0.5f, Zf(F, CeilB1 * 0.5f)), FVector(X1 - X0, 1.0f, CeilB1), Paint, 0.0f, false);
 	AddBox(FVector(X0 + 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilB1 * 0.5f)), FVector(1.0f, Y1 - Y0, CeilB1), Paint, 0.0f, false);
@@ -1606,7 +1606,7 @@ void AKcHotel::BuildLoadingDock()
 	UMaterialInterface* Steel = Mat(TEXT("MI_Steel"));
 	UMaterialInterface* Yellow = Mat(TEXT("MI_SafetyYellow"));
 	FloorFinish(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), Mat(TEXT("MI_FloorConcrete")));
-	Ceiling(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), CeilB1, Mat(TEXT("MI_CeilingDim"))); // Soft glowed white over the room
+	Ceiling(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), CeilB1, Mat(TEXT("MI_CeilingMid"))); // Soft glowed white over the room
 	AddBox(FVector(X0 + 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilB1 * 0.5f)), FVector(1.0f, Y1 - Y0, CeilB1), Paint, 0.0f, false);
 	AddBox(FVector(X1 - 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilB1 * 0.5f)), FVector(1.0f, Y1 - Y0, CeilB1), Paint, 0.0f, false);
 	// Walkway lines: a yellow-edged pedestrian route from the corridor doors to the office.

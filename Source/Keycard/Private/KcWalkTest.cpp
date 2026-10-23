@@ -90,6 +90,7 @@ struct FStep
 	FVector Target = FVector::ZeroVector; // X, Y and the floor surface Z
 	int32 Floor = 0;
 	float Yaw = 0.0f;
+	float Pitch = -6.0f;
 	bool bCheckZ = true;
 	FString Label;
 };
@@ -468,11 +469,12 @@ FStep PathTo(int32 Floor, const FVector2D& P, const FString& Label)
 	return S;
 }
 
-FStep Shot(float Yaw, const FString& Label)
+FStep Shot(float Yaw, const FString& Label, float Pitch = -6.0f)
 {
 	FStep S;
 	S.Kind = FStep::EKind::Shot;
 	S.Yaw = Yaw;
+	S.Pitch = Pitch;
 	S.Label = Label;
 	return S;
 }
@@ -524,8 +526,8 @@ void BuildRoute(FState& S, AKcHotel* Hotel)
 		S.Steps.Add(Walk(FVector2D(2190.0f, -387.0f), Z(F + 1, 0.0f)));
 		S.Steps.Add(Walk(StairLanding, Z(F + 1, 0.0f), TEXT("Stair A landing ") + AKcHotel::FloorLabel(F + 1)));
 		// The floor sign on the landing's west wall, from where the player turns off the flight.
-		S.Steps.Add(Walk(FVector2D(2210.0f, -250.0f), Z(F + 1, 0.0f))); // west of 14's balustrade
-		S.Steps.Add(Shot(216.0f, TEXT("Stair A ") + AKcHotel::FloorLabel(F + 1)));
+		S.Steps.Add(Walk(FVector2D(2214.0f, -228.0f), Z(F + 1, 0.0f))); // west of 14's balustrade, 1.25 m from the sign
+		S.Steps.Add(Shot(222.0f, TEXT("Stair A ") + AKcHotel::FloorLabel(F + 1), 2.0f));
 		S.Steps.Add(Walk(StairDoorIn, Z(F + 1, 0.0f)));
 	}
 	S.Steps.Add(Walk(StairDoorOut, Z(AKcHotel::TopFloor, 0.0f), TEXT("out of Stair A at 14")));
@@ -675,7 +677,7 @@ bool Tick(const TSharedRef<FState>& SRef, float DeltaSeconds)
 		}
 		break;
 	case FStep::EKind::Shot:
-		S.PC->SetControlRotation(FRotator(-6.0f, Step.Yaw, 0.0f));
+		S.PC->SetControlRotation(FRotator(Step.Pitch, Step.Yaw, 0.0f));
 		if (S.ShotPhase == 0 && T > 0.6)
 		{
 			FScreenshotRequest::RequestScreenshot(FString::Printf(TEXT("Walk_%02d_%s"), ++S.ShotCount, *FileSafe(Step.Label)), false, false);

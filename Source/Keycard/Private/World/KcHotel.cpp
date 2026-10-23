@@ -403,6 +403,8 @@ bool AKcHotel::AddInstance(UStaticMesh* Mesh, const FTransform& T, UMaterialInte
 		if (!bCollision) Pool->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		if (bHide)
 		{
+			Pool->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
+			Pool->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 			Pool->SetHiddenInGame(true);
 			Pool->SetVisibility(false);
 			Pool->SetCastShadow(false);
@@ -2241,7 +2243,7 @@ void AKcHotel::BuildBallroomFloor()
 	CctvDome(F, FVector(1800.0f, 0.0f, Zf(F, CeilFoyer)), TEXT("1-03"));
 	FireExtinguisher(F, FVector(1300.0f, -CorrY + Wall * 0.5f, 0.0f), 90.0f);
 
-	// The Harbour Ballroom: eleven rounds of eight, a dance floor, the stage, a portable bar.
+	// The Harbour Ballroom: ten rounds of eight, a dance floor, the stage, a portable bar.
 	const float X0 = CoreX1, X1 = MaxX - 15.0f, Y0 = ServiceY + Wall * 0.5f, Y1 = HalfY - 15.0f;
 	FloorFinish(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), Mat(TEXT("MI_Carpet")));
 	Ceiling(F, FBox2D(FVector2D(X0, Y0), FVector2D(MaxX, HalfY)), CeilBallroom, Mat(TEXT("MI_CeilingWhite")));
@@ -2262,7 +2264,8 @@ void AKcHotel::BuildBallroomFloor()
 	TArray<FRound> Rounds;
 	// Aisles of 1.1 m or more between the chair backs of neighbouring rounds, and 1.8 m clear of the service
 	// doors in the south wall (the rounds of 1.0.0 stood 3.1-3.5 m apart and closed every way through).
-	for (float X : {2980.0f, 3380.0f, 3780.0f}) for (float Y : {-430.0f, -20.0f, 390.0f}) Rounds.Add({X, Y});
+	// The doors from the lift lobby (X 2700, Y -110..110) open onto the centre aisle, not a round.
+	for (float X : {2980.0f, 3380.0f, 3780.0f}) for (float Y : {-430.0f, -20.0f, 390.0f}) if (X > 3000.0f || Y != -20.0f) Rounds.Add({X, Y});
 	for (float Y : {-590.0f, 590.0f}) Rounds.Add({4350.0f, Y});
 	for (const FRound& R : Rounds)
 	{
@@ -2471,10 +2474,10 @@ void AKcHotel::BuildExecutiveFloor()
 	Desk(FVector(1450.0f, -570.0f, Zf(F, 0.0f)), 0.0f, FVector(800.0f, 160.0f, DeskH), Mat(TEXT("MI_WoodWalnut")));
 	for (int32 i = 0; i < 5; ++i)
 	{
-		for (float Side : {-1.0f, 1.0f}) TaskChair(FVector(1130.0f + i * 160.0f, -570.0f + Side * 120.0f, Zf(F, 0.0f)), Side > 0.0f ? -90.0f : 90.0f);
+		for (float Side : {-1.0f, 1.0f}) Chair(FVector(1130.0f + i * 160.0f, -570.0f + Side * 120.0f, Zf(F, 0.0f)), Side > 0.0f ? -90.0f : 90.0f);
 	}
-	TaskChair(FVector(960.0f, -570.0f, Zf(F, 0.0f)), 0.0f);
-	TaskChair(FVector(1940.0f, -570.0f, Zf(F, 0.0f)), 180.0f);
+	Chair(FVector(960.0f, -570.0f, Zf(F, 0.0f)), 0.0f);
+	Chair(FVector(1940.0f, -570.0f, Zf(F, 0.0f)), 180.0f);
 	AddBox(FVector(CoreX0 - 3.0f, -570.0f, Zf(F, 150.0f)), FVector(4.0f, 180.0f, 100.0f), Mat(TEXT("MI_ScreenPanel")), 0.0f, false);
 	SpawnCasePoint(TEXT("boardroom"), FString(), TEXT("Boardroom"), FVector(1450.0f, -570.0f, Zf(F, DeskH + 1.5f)), 0.0f, Cube, FVector(0.22f, 0.3f, 0.02f),
 		Mat(TEXT("MI_Paper")), EKcUseStyle::PickUp);
@@ -2667,16 +2670,17 @@ void AKcHotel::FurnishRoom(const FString& Number, const FBox2D& Area, bool bNort
 	CeilingLight(F, R.P(W * 0.5f + 75.0f, 130.0f, 240.0f), 500.0f, Neutral, 320.0f);
 
 	// Entry: wardrobe with the in-room safe, key-card power slot, thermostat.
-	// The wardrobe starts past the open door's swing (V 8..97): with it at V 70 the leaf left 55 cm to pass.
-	LBox(2.0f, 167.5f, 115.0f, 2.0f, 125.0f, 230.0f, TEXT("MI_WoodOak"));
-	for (float V : {105.0f, 230.0f}) LBox(30.0f, V, 115.0f, 58.0f, 2.0f, 230.0f, TEXT("MI_WoodOak"), true);
-	LBox(30.0f, 167.5f, 229.0f, 58.0f, 125.0f, 2.0f, TEXT("MI_WoodOak"));
-	LBox(30.0f, 167.5f, 76.0f, 58.0f, 121.0f, 2.0f, TEXT("MI_WoodOak"));
-	LBox(30.0f, 167.5f, 180.0f, 58.0f, 121.0f, 2.0f, TEXT("MI_WoodOak"));
-	LBox(30.0f, 167.5f, 170.0f, 1.0f, 115.0f, 1.0f, TEXT("MI_Chrome"));
-	for (int32 i = 0; i < 4; ++i) LBox(30.0f, 175.0f + i * 12.0f, 160.0f, 40.0f, 1.0f, 18.0f, TEXT("MI_WoodWalnut"));
-	LBox(59.0f, 190.0f, 115.0f, 2.0f, 80.0f, 226.0f, TEXT("MI_WoodOak"), true); // sliding door, half open
-	const FVector SafeC = R.P(30.0f, 135.0f, 92.0f);
+	// The wardrobe (50 deep, V 150..245) stands clear of the open door's swing (V 8..97): at V 70, and
+	// even at V 105, the leaf's edge and the wardrobe's corner left less than the player's 68 cm.
+	LBox(2.0f, 197.5f, 115.0f, 2.0f, 95.0f, 230.0f, TEXT("MI_WoodOak"));
+	for (float V : {150.0f, 245.0f}) LBox(26.0f, V, 115.0f, 50.0f, 2.0f, 230.0f, TEXT("MI_WoodOak"), true);
+	LBox(26.0f, 197.5f, 229.0f, 50.0f, 95.0f, 2.0f, TEXT("MI_WoodOak"));
+	LBox(26.0f, 197.5f, 76.0f, 50.0f, 91.0f, 2.0f, TEXT("MI_WoodOak"));
+	LBox(26.0f, 197.5f, 180.0f, 50.0f, 91.0f, 2.0f, TEXT("MI_WoodOak"));
+	LBox(26.0f, 197.5f, 170.0f, 1.0f, 85.0f, 1.0f, TEXT("MI_Chrome"));
+	for (int32 i = 0; i < 4; ++i) LBox(26.0f, 200.0f + i * 12.0f, 160.0f, 36.0f, 1.0f, 18.0f, TEXT("MI_WoodWalnut"));
+	LBox(51.0f, 222.0f, 115.0f, 2.0f, 46.0f, 226.0f, TEXT("MI_WoodOak"), true); // sliding door, half open
+	const FVector SafeC = R.P(26.0f, 172.0f, 92.0f);
 	if (b1412)
 	{
 		// Open and empty, as the guest left it.
@@ -2690,10 +2694,11 @@ void AKcHotel::FurnishRoom(const FString& Number, const FBox2D& Area, bool bNort
 		AddBox(SafeC, FVector(36.0f, 40.0f, 28.0f), Mat(TEXT("MI_DeviceBlack")));
 		LBox(48.5f, 110.0f, 98.0f, 0.4f, 8.0f, 3.0f, TEXT("MI_LedRed"));
 	}
-	LBox(142.0f - 0.5f, 30.0f, 120.0f, 2.0f, 9.0f, 12.0f, TEXT("MI_PlasticGrey"));
-	LBox(140.3f, 30.0f, 126.0f, 0.4f, 1.0f, 0.6f, TEXT("MI_LedGreen"));
-	LBox(140.6f, 30.0f, 120.0f, 0.5f, 5.5f, 8.0f, TEXT("MI_Paper")); // a room key in the slot
-	LBox(141.5f, 62.0f, 142.0f, 2.0f, 9.0f, 9.0f, TEXT("MI_Paper"));
+	// Power slot and thermostat on the latch-side wall (the open leaf hides the hinge side).
+	LBox(2.0f, 45.0f, 120.0f, 2.0f, 9.0f, 12.0f, TEXT("MI_PlasticGrey"));
+	LBox(3.2f, 45.0f, 126.0f, 0.4f, 1.0f, 0.6f, TEXT("MI_LedGreen"));
+	LBox(2.9f, 45.0f, 120.0f, 0.5f, 5.5f, 8.0f, TEXT("MI_Paper")); // a room key in the slot
+	LBox(2.0f, 75.0f, 142.0f, 2.0f, 9.0f, 9.0f, TEXT("MI_Paper"));
 	CeilingLight(F, R.P(75.0f, 130.0f, Ceil14), 520.0f, Warm, 400.0f);
 
 	// Bedroom: the bed against the east wall, nightstands and lamps, art over the headboard.
@@ -2779,10 +2784,10 @@ void AKcHotel::FurnishRoom(const FString& Number, const FBox2D& Area, bool bNort
 			EKcUseStyle::None, Detector1406);
 		// Nobody walks past the guest into the room: the doorway is held, the work is offered at its threshold.
 		AddCollider(R.P(75.0f, VIn + 60.0f, 110.0f), FVector(100.0f, 10.0f, 220.0f), FRotator::ZeroRotator);
-		// Just inside, on the wall by the door: the keycard power slot and light switches, for work done
-		// from the doorway that has no prop of its own.
-		SpawnCasePoint(TEXT("guest_room"), FString(), TEXT("Inside 1406, by the door"), R.P(150.0f, VIn + 1.5f, 120.0f), 0.0f, Cube,
-			FVector(0.12f, 0.012f, 0.16f), Mat(TEXT("MI_Ceramic")), EKcUseStyle::Screen, R.P(75.0f, VIn + 30.0f, 150.0f));
+		// Just inside, on the latch-side wall: the keycard power slot and light switches, for work done
+		// from the doorway that has no prop of its own (in sight from the threshold).
+		SpawnCasePoint(TEXT("guest_room"), FString(), TEXT("Inside 1406, by the door"), R.P(3.5f, 60.0f, 120.0f), 0.0f, Cube,
+			FVector(0.012f, 0.12f, 0.16f), Mat(TEXT("MI_Ceramic")), EKcUseStyle::Screen, R.P(75.0f, VIn + 30.0f, 150.0f));
 	}
 }
 

@@ -3197,9 +3197,15 @@ void AKcHotel::RefreshPeople()
 	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	for (const TPair<FString, FString>& W : Want)
 	{
-		const int32 Index = PerPlace.FindOrAdd(W.Value)++;
 		if (People.ContainsByPredicate([&](const AKcPersonActor* P) { return P->PersonId == W.Key && P->Location == W.Value; })) continue;
-		const FPersonSpot S = SpotFor(W.Value, W.Key, Index);
+		// The next free spot at the place: people kept from earlier hold theirs (no two in one body).
+		auto Taken = [&](const FPersonSpot& Spot)
+		{
+			return People.ContainsByPredicate([&](const AKcPersonActor* P) { return IsValid(P) && FVector::Dist2D(P->GetActorLocation(), Spot.At) < 60.0f; });
+		};
+		int32& Index = PerPlace.FindOrAdd(W.Value);
+		FPersonSpot S = SpotFor(W.Value, W.Key, Index++);
+		for (int32 Tries = 0; Tries < 8 && Taken(S); ++Tries) S = SpotFor(W.Value, W.Key, Index++);
 		AKcPersonActor* P = GetWorld()->SpawnActor<AKcPersonActor>(S.At, FRotator(0.0f, S.Yaw, 0.0f), Params);
 		if (!P) continue;
 		P->SetAppearance(Cylinder, FVector(0.5f, 0.5f, 1.8f), nullptr);

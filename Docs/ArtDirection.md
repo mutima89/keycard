@@ -6,7 +6,7 @@ The Veldane Grand Harbourfront at night: a calm, expensive front of house over a
 - One walkable building, built in code by `AKcHotel` (Source/Keycard/Private/World/KcHotel.cpp): B1 back of house (LP office, CCTV room, loading dock, corridors), ground floor (street doors, lobby, front desk, lounge and bar), floor 14 (guest corridor and rooms, including 1412), stairs A and B and two lifts joining them. Floors 1-13 are shown in the lift panel but are not fitted yet.
 - Front of house: marble floor, walnut and dark stone counters, brass, warm lamps (about 2700 K), one chandelier, harbour prints, patterned corridor carpet and wallpaper upstairs.
 - Back of house: sealed concrete floors, painted walls, fluorescent panels (about 4000 K), steel, safety yellow, fire red, signage.
-- Outside: wet-looking asphalt, promenade paving, harbour water and a night city sky (HDRI).
+- Outside: wet-looking asphalt, promenade paving, harbour water, a drawn night dome (city glow at the horizon) and lit-window skylines on four distant panels (`T_SkylineHarbour`, `T_SkylineCity`), so every floor from G to 14 sees the city at its own height. The night HDRI only lights the scene.
 
 ## Palette
 | Role | Colour | Where |

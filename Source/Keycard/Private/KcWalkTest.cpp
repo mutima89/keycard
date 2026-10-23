@@ -85,7 +85,7 @@ struct FGrid
 
 struct FStep
 {
-	enum class EKind : uint8 { Walk, Path, Teleport, Lift, Shot };
+	enum class EKind : uint8 { Walk, Path, Teleport, Lift, Shot, Door };
 	EKind Kind = EKind::Walk;
 	FVector Target = FVector::ZeroVector; // X, Y and the floor surface Z
 	int32 Floor = 0;
@@ -469,6 +469,16 @@ FStep PathTo(int32 Floor, const FVector2D& P, const FString& Label)
 	return S;
 }
 
+// Opens or shuts a case door (KcHotel's dynamic doors) the way a mission would; Label is the door id.
+FStep Door(const FString& Id, bool bOpen)
+{
+	FStep S;
+	S.Kind = FStep::EKind::Door;
+	S.Label = Id;
+	S.bCheckZ = bOpen;
+	return S;
+}
+
 FStep Shot(float Yaw, const FString& Label, float Pitch = -6.0f)
 {
 	FStep S;
@@ -532,14 +542,20 @@ void BuildRoute(FState& S, AKcHotel* Hotel)
 	}
 	S.Steps.Add(Walk(StairDoorOut, Z(AKcHotel::TopFloor, 0.0f), TEXT("out of Stair A at 14")));
 	for (const TCHAR* L : {TEXT("f14_corridor"), TEXT("room_1412")}) Visit(L);
-	// Into 1412 past the wardrobe: the bedroom towards the window, then the bathroom from its door.
+	// Into 1412 past the wardrobe (open, as in the missions that send you in): the bedroom towards the window,
+	// then the bathroom from its door.
+	S.Steps.Add(Door(TEXT("1412"), true));
 	S.Steps.Add(PathTo(AKcHotel::TopFloor, FVector2D(1000.0f, -620.0f), TEXT("1412 bedroom")));
 	S.Steps.Add(Shot(-90.0f, TEXT("1412 bedroom")));
 	S.Steps.Add(PathTo(AKcHotel::TopFloor, FVector2D(970.0f, -330.0f), TEXT("1412 bathroom")));
 	S.Steps.Add(Shot(0.0f, TEXT("1412 bathroom")));
 	for (const TCHAR* L : {TEXT("f14_service"), TEXT("guest_room")}) Visit(L);
+	S.Steps.Add(Door(TEXT("1406"), true)); // the guest opens it when you knock; the threshold is where you stand
 	S.Steps.Add(PathTo(AKcHotel::TopFloor, FVector2D(2775.0f, 185.0f), TEXT("1406 threshold")));
 	S.Steps.Add(Shot(90.0f, TEXT("1406 from the doorway")));
+	S.Steps.Add(PathTo(AKcHotel::TopFloor, FVector2D(2775.0f, 60.0f), TEXT("1406 back in the corridor")));
+	S.Steps.Add(Door(TEXT("1406"), false));
+	S.Steps.Add(Door(TEXT("1412"), false));
 
 	// Down again, 14 to B1.
 	S.Steps.Add(PathTo(AKcHotel::TopFloor, StairDoorOut, TEXT("stair door 14")));
@@ -661,6 +677,10 @@ bool Tick(const TSharedRef<FState>& SRef, float DeltaSeconds)
 		{
 			Hud->RideLift(Step.Floor);
 		}
+		if (Step.Kind == FStep::EKind::Door)
+		{
+			if (AKcHotel* Hotel = Hud->Hotel()) Hotel->SetDoorOpen(Step.Label, Step.bCheckZ);
+		}
 	}
 	const double T = Now - S.StepStart;
 	auto Next = [&S]()
@@ -672,6 +692,9 @@ bool Tick(const TSharedRef<FState>& SRef, float DeltaSeconds)
 	{
 	case FStep::EKind::Teleport:
 		if (T > 0.5) Next();
+		break;
+	case FStep::EKind::Door:
+		Next();
 		break;
 	case FStep::EKind::Lift:
 		if (T > 2.2)

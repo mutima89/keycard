@@ -1305,10 +1305,10 @@ void AKcHotel::BuildLpOffice()
 	for (const FVector2D& P : {FVector2D(2950.0f, 420.0f), FVector2D(3450.0f, 420.0f), FVector2D(2950.0f, 800.0f), FVector2D(3450.0f, 800.0f)})
 	{
 		AddBox(FVector(P.X, P.Y, Zf(F, CeilB1 - 0.5f)), FVector(120.0f, 60.0f, 1.0f), Mat(TEXT("MI_LightPanel")), 0.0f, false);
-		AddLight(F, FVector(P.X, P.Y, Zf(F, CeilB1 - 6.0f)), 1500.0f, 750.0f, Neutral, P.X < 3000.0f && P.Y > 700.0f, true, FVector2D(120.0f, 60.0f));
+		AddLight(F, FVector(P.X, P.Y, Zf(F, CeilB1 - 6.0f)), 1200.0f, 750.0f, Neutral, P.X < 3000.0f && P.Y > 700.0f, true, FVector2D(120.0f, 60.0f));
 	}
 	// The panels light only below them: two soft fills keep the upper walls from going black.
-	for (float X : {2950.0f, 3450.0f}) AddLight(F, FVector(X, 610.0f, Zf(F, CeilB1 - 45.0f)), 350.0f, 520.0f, Neutral);
+	for (float X : {2950.0f, 3450.0f}) AddLight(F, FVector(X, 610.0f, Zf(F, CeilB1 - 45.0f)), 220.0f, 520.0f, Neutral);
 	SmokeDetector(F, FVector2D(3200.0f, 600.0f), CeilB1);
 
 	// Your desk, against the north wall: two screens (shift board and report system), in-tray, radio.
@@ -1469,6 +1469,7 @@ void AKcHotel::BuildCctvRoom()
 	AddLight(F, FVector(4250.0f, 900.0f, Zf(F, 180.0f)), 220.0f, 420.0f, FLinearColor(0.6f, 0.75f, 1.0f));
 	// The door end and the side walls, away from the screens.
 	for (float X : {3950.0f, 4550.0f}) CeilingLight(F, FVector(X, 250.0f, Zf(F, CeilB1)), 450.0f, Cool, 500.0f);
+	for (float X : {X0 + 40.0f, X1 - 40.0f}) AddLight(F, FVector(X, 600.0f, Zf(F, CeilB1 - 25.0f)), 200.0f, 350.0f, Cool); // the side walls' upper band
 	SmokeDetector(F, FVector2D(4250.0f, 420.0f), CeilB1);
 }
 
@@ -1589,6 +1590,8 @@ void AKcHotel::BuildHousekeeping()
 		AddBox(FVector(X, -560.0f, Zf(F, CeilB1 - 3.0f)), FVector(124.0f, 14.0f, 6.0f), Mat(TEXT("MI_LedStrip")), 0.0f, false);
 		AddLight(F, FVector(X, -560.0f, Zf(F, CeilB1 - 30.0f)), 800.0f, 700.0f, Cool, X == 1000.0f); // 16 below left the upper walls black
 	}
+	// Small washes high on both long walls: the battens alone leave a black band under the ceiling.
+	for (float X : {700.0f, 1300.0f}) for (float Y : {Y0 + 40.0f, Y1 - 40.0f}) AddLight(F, FVector(X, Y, Zf(F, CeilB1 - 25.0f)), 250.0f, 380.0f, Cool);
 	for (float X : {500.0f, 1500.0f}) SmokeDetector(F, FVector2D(X, -700.0f), CeilB1);
 	FireExtinguisher(F, FVector(1800.0f, Face, 0.0f), -90.0f);
 }
@@ -1714,6 +1717,7 @@ void AKcHotel::BuildLoadingDock()
 		AddBox(FVector(X, -560.0f, Zf(F, CeilB1 - 3.0f)), FVector(124.0f, 14.0f, 6.0f), Mat(TEXT("MI_LedStrip")), 0.0f, false);
 		AddLight(F, FVector(X, -560.0f, Zf(F, CeilB1 - 30.0f)), 900.0f, 750.0f, Cool, X == 3600.0f);
 	}
+	for (float X : {3300.0f, 3900.0f, 4500.0f}) for (float Y : {Y0 + 40.0f, Y1 - 40.0f}) AddLight(F, FVector(X, Y, Zf(F, CeilB1 - 25.0f)), 250.0f, 380.0f, Cool); // upper walls
 	for (float X : {3300.0f, 4200.0f}) SmokeDetector(F, FVector2D(X, -450.0f), CeilB1);
 	CctvDome(F, FVector(4100.0f, -760.0f, Zf(F, CeilB1)), TEXT("B1-05"));
 	CctvDome(F, FVector(4300.0f, -400.0f, Zf(F, CeilB1)), TEXT("B1-06"));
@@ -2212,7 +2216,7 @@ void AKcHotel::BuildKitchen()
 	}
 	CeilingLight(F, FVector(3900.0f, CanY + 30.0f, Zf(F, 210.0f)), DownLumens, Neutral, 300.0f);
 	// The west wall by the doors: a wash, or it reads black behind the pass.
-	AddLight(F, FVector(X0 + 60.0f, (Y0 + Y1) * 0.5f, Zf(F, CeilBack - 50.0f)), 500.0f, 550.0f, Neutral);
+	for (float Y : {Y0 + 200.0f, Y1 - 150.0f}) AddLight(F, FVector(X0 + 50.0f, Y, Zf(F, CeilBack - 50.0f)), 800.0f, 500.0f, Neutral);
 }
 
 // ---------------------------------------------------------------------------- 1: ballroom floor
@@ -2683,6 +2687,7 @@ void AKcHotel::FurnishRoom(const FString& Number, const FBox2D& Area, bool bNort
 	LBox(W - 9.0f, 180.0f, 120.0f, 3.0f, 60.0f, 2.0f, TEXT("MI_Chrome"));
 	LBox(W - 12.0f, 180.0f, 100.0f, 5.0f, 50.0f, 40.0f, TEXT("MI_Linen"));
 	CeilingLight(F, R.P(W * 0.5f + 75.0f, 130.0f, 240.0f), 500.0f, Neutral, 320.0f);
+	AddLight(F, R.P(230.0f, VIn + 30.0f, 205.0f), 350.0f, 300.0f, Warm); // the mirror's light: one downlight left the tiles black
 
 	// Entry: wardrobe with the in-room safe, key-card power slot, thermostat.
 	// The wardrobe (50 deep, V 150..245) stands clear of the open door's swing (V 8..97): at V 70, and
@@ -2710,10 +2715,11 @@ void AKcHotel::FurnishRoom(const FString& Number, const FBox2D& Area, bool bNort
 		LBox(48.5f, 110.0f, 98.0f, 0.4f, 8.0f, 3.0f, TEXT("MI_LedRed"));
 	}
 	// Power slot and thermostat on the latch-side wall (the open leaf hides the hinge side).
-	LBox(2.0f, 45.0f, 120.0f, 2.0f, 9.0f, 12.0f, TEXT("MI_PlasticGrey"));
-	LBox(3.2f, 45.0f, 126.0f, 0.4f, 1.0f, 0.6f, TEXT("MI_LedGreen"));
-	LBox(2.9f, 45.0f, 120.0f, 0.5f, 5.5f, 8.0f, TEXT("MI_Paper")); // a room key in the slot
-	LBox(2.0f, 75.0f, 142.0f, 2.0f, 9.0f, 9.0f, TEXT("MI_Paper"));
+	// (The party wall is centred on U 0, so its room face is at U 8: fixtures sit on that, not in the wall.)
+	LBox(9.0f, 45.0f, 120.0f, 2.0f, 9.0f, 12.0f, TEXT("MI_PlasticGrey"));
+	LBox(10.2f, 45.0f, 126.0f, 0.4f, 1.0f, 0.6f, TEXT("MI_LedGreen"));
+	LBox(9.9f, 45.0f, 120.0f, 0.5f, 5.5f, 8.0f, TEXT("MI_Paper")); // a room key in the slot
+	LBox(9.0f, 75.0f, 142.0f, 2.0f, 9.0f, 9.0f, TEXT("MI_Paper"));
 	CeilingLight(F, R.P(75.0f, 130.0f, Ceil14), 520.0f, Warm, 400.0f);
 
 	// Bedroom: the bed against the east wall, nightstands and lamps, art over the headboard.
@@ -2737,7 +2743,7 @@ void AKcHotel::FurnishRoom(const FString& Number, const FBox2D& Area, bool bNort
 	Desk1412 = R.P(30.0f, 515.0f, DeskH);
 	LBox(28.0f, 720.0f, 40.0f, 55.0f, 150.0f, 80.0f, TEXT("MI_WoodWalnut"), true);
 	LBox(30.0f, 720.0f, 81.0f, 52.0f, 146.0f, 2.0f, TEXT("MI_StoneCounter"));
-	LBox(4.0f, 720.0f, 152.0f, 4.0f, 112.0f, 66.0f, TEXT("MI_DeviceBlack"));
+	LBox(11.0f, 720.0f, 152.0f, 4.0f, 112.0f, 66.0f, TEXT("MI_DeviceBlack"));
 	AddInstance(Cylinder, R.P(30.0f, 680.0f, 91.0f), 0.0f, FVector(0.14f, 0.14f, 0.2f), Mat(TEXT("MI_Steel")), false);
 	for (float Dv : {700.0f, 714.0f}) AddInstance(Cylinder, R.P(36.0f, Dv, 86.0f), 0.0f, FVector(0.08f, 0.08f, 0.09f), Mat(TEXT("MI_Ceramic")), false);
 	LBox(30.0f, 760.0f, 83.0f, 30.0f, 20.0f, 2.0f, TEXT("MI_Graphite"));
@@ -2767,9 +2773,9 @@ void AKcHotel::FurnishRoom(const FString& Number, const FBox2D& Area, bool bNort
 		AddBox(R.P(W - 140.0f, BedV + 10.0f, 63.0f), FVector(120.0f, 150.0f, 6.0f), Mat(TEXT("MI_Linen")), 14.0f, false);
 		LBox(W - 32.0f, BedV - 120.0f, 55.6f, 4.0f, 4.0f, 0.4f, TEXT("MI_Brass"));
 		LBox(250.0f, 290.0f, 61.0f, 70.0f, 42.0f, 26.0f, TEXT("MI_Leather"));
-		LBox(3.0f, 575.0f, 30.0f, 1.0f, 8.0f, 8.0f, TEXT("MI_Paper"));
-		LBox(12.0f, 575.0f, 3.0f, 12.0f, 7.0f, 3.0f, TEXT("MI_DeviceBlack"));
-		LBox(6.0f, 575.0f, 52.0f, 0.6f, 0.6f, 44.0f, TEXT("MI_DeviceBlack"));
+		LBox(8.6f, 575.0f, 30.0f, 1.0f, 8.0f, 8.0f, TEXT("MI_Paper"));
+		LBox(16.0f, 575.0f, 3.0f, 12.0f, 7.0f, 3.0f, TEXT("MI_DeviceBlack"));
+		LBox(10.0f, 575.0f, 52.0f, 0.6f, 0.6f, 44.0f, TEXT("MI_DeviceBlack"));
 		LBox(18.0f, 562.0f, DeskH + 0.4f, 24.0f, 0.6f, 0.6f, TEXT("MI_DeviceBlack"));
 		LBox(30.0f, 562.0f, DeskH + 0.6f, 2.0f, 1.2f, 1.2f, TEXT("MI_Chrome"));
 		SpawnCasePoint(TEXT("room_1412"), TEXT("room_1412_desk"), FString(), R.P(40.0f, 520.0f, DeskH + 0.6f), 0.0f, Cube, FVector(0.3f, 0.36f, 0.01f),
@@ -2800,9 +2806,8 @@ void AKcHotel::FurnishRoom(const FString& Number, const FBox2D& Area, bool bNort
 		// Nobody walks past the guest into the room: the doorway is held, the work is offered at its threshold.
 		AddCollider(R.P(75.0f, VIn + 60.0f, 110.0f), FVector(100.0f, 10.0f, 220.0f), FRotator::ZeroRotator);
 		// Just inside, on the latch-side wall: the light switch bank over the keycard slot, for work done
-		// from the doorway that has no prop of its own. Wide and close to the jamb, so the use sweep (9 cm)
-		// meets it before the wall even at the slant the threshold gives (at V 60 it met the wall first).
-		SpawnCasePoint(TEXT("guest_room"), FString(), TEXT("Inside 1406, by the door"), R.P(3.5f, 40.0f, 146.0f), 0.0f, Cube,
+		// from the doorway that has no prop of its own. On the wall's face (U 8; at U 3.5 it was inside the wall).
+		SpawnCasePoint(TEXT("guest_room"), FString(), TEXT("Inside 1406, by the door"), R.P(9.2f, 40.0f, 146.0f), 0.0f, Cube,
 			FVector(0.012f, 0.24f, 0.12f), Mat(TEXT("MI_Ceramic")), EKcUseStyle::Screen, R.P(75.0f, VIn + 30.0f, 150.0f));
 	}
 }
@@ -3641,7 +3646,7 @@ void AKcHotel::RefreshScenes()
 
 void AKcHotel::BuildLighting()
 {
-	// Night over the harbour: a faint cool moon, the night-city HDRI in the windows and as the sky light.
+	// Night over the harbour: a faint cool moon, a drawn night dome and skyline in the windows, the HDRI as the sky light.
 	UDirectionalLightComponent* Moon = NewObject<UDirectionalLightComponent>(this, TEXT("Moon"));
 	Moon->SetMobility(EComponentMobility::Movable);
 	Moon->SetupAttachment(RootComponent);
@@ -3656,6 +3661,24 @@ void AKcHotel::BuildLighting()
 		Sky->SetCastShadow(false);
 		Sky->bAffectDistanceFieldLighting = false;
 		Sky->bVisibleInRayTracing = false;
+	}
+	// The city round the harbour: lit-window skylines on four panels, the far shore 450 m north across the water,
+	// the streets 250 m off on the other sides. Seen from 14 they sit below the eye; from G they rise above it.
+	struct FSkyline { FVector At; float Yaw; float Width; float Height; const TCHAR* Material; };
+	for (const FSkyline& K : {FSkyline{FVector(2400.0f, 45000.0f, 0.0f), -90.0f, 120000.0f, 9000.0f, TEXT("MI_SkylineHarbour")},
+			 FSkyline{FVector(2400.0f, -25000.0f, 0.0f), 90.0f, 120000.0f, 14000.0f, TEXT("MI_SkylineCity")},
+			 FSkyline{FVector(-25000.0f, 0.0f, 0.0f), 0.0f, 120000.0f, 14000.0f, TEXT("MI_SkylineCity")},
+			 FSkyline{FVector(30000.0f, 0.0f, 0.0f), 180.0f, 120000.0f, 14000.0f, TEXT("MI_SkylineCity")}})
+	{
+		// Thin along local X, which faces the hotel, so the drawing reads unmirrored (as the screens do).
+		UMaterialInterface* M = Mat(K.Material);
+		if (!M) continue;
+		if (UStaticMeshComponent* C = AddMesh(Cube, K.At + FVector(0.0f, 0.0f, K.Height * 0.5f - 200.0f), K.Yaw, FVector(0.1f, K.Width / 100.0f, K.Height / 100.0f), M, false))
+		{
+			C->SetCastShadow(false);
+			C->bAffectDistanceFieldLighting = false;
+			C->bVisibleInRayTracing = false;
+		}
 	}
 	USkyLightComponent* SkyLight = NewObject<USkyLightComponent>(this, TEXT("SkyLight"));
 	SkyLight->SetMobility(EComponentMobility::Movable);

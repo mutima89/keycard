@@ -239,46 +239,72 @@ def build_emissive():
     return finish(m)
 
 
-def build_sky(hdri):
-    """Unlit HDRI cubemap on an inside-out sphere, sampled along the view direction; dark below the horizon."""
+def build_sky():
+    """Unlit night dome on an inside-out sphere: a city glow at the horizon fading to a dark zenith, dark ground below.
+    No photo: a photographed sky brings its own street, trees and lamp posts at its own height, and the windows
+    are on every floor from G to 14. The skyline itself is geometry (M_KcSkyline). The HDRI only lights the scene."""
     m = new_material("M_KcSky")
     m.set_editor_property("shading_model", unreal.MaterialShadingModel.MSM_UNLIT)
     m.set_editor_property("two_sided", True)
     m.set_editor_property("is_sky", False)  # a plain unlit dome; IsSky needs full-screen coverage
-    cam = expr(m, unreal.MaterialExpressionCameraVectorWS, -1100, 0)
-    neg = expr(m, unreal.MaterialExpressionMultiply, -850, 0)
+    cam = expr(m, unreal.MaterialExpressionCameraVectorWS, -1300, 0)
+    up = expr(m, unreal.MaterialExpressionComponentMask, -1100, 0, r=False, g=False, b=True, a=False)
+    link(cam, "", up, "")
+    neg = expr(m, unreal.MaterialExpressionMultiply, -900, 0)  # the camera vector points at the eye: flip it
+    link(up, "", neg, "A")
     minus = expr(m, unreal.MaterialExpressionConstant, -1100, 150, r=-1.0)
-    link(cam, "", neg, "A")
     link(minus, "", neg, "B")
-    tex = expr(m, unreal.MaterialExpressionTextureSampleParameterCube, -500, 0, parameter_name="SkyCube", texture=hdri)
-    link(neg, "", tex, "UVs")
-    inten = expr(m, unreal.MaterialExpressionScalarParameter, -500, 250, parameter_name="Intensity", default_value=1.0)
-    mul = expr(m, unreal.MaterialExpressionMultiply, -250, 50)
+    # Sky: horizon glow to zenith over the first ~25 degrees.
+    k = expr(m, unreal.MaterialExpressionConstant, -900, 150, r=2.5)
+    steep = expr(m, unreal.MaterialExpressionMultiply, -700, 0)
+    link(neg, "", steep, "A")
+    link(k, "", steep, "B")
+    t = expr(m, unreal.MaterialExpressionSaturate, -550, 0)
+    link(steep, "", t, "")
+    horizon = expr(m, unreal.MaterialExpressionVectorParameter, -550, -250, parameter_name="Horizon", default_value=unreal.LinearColor(0.05, 0.04, 0.045, 1))
+    zenith = expr(m, unreal.MaterialExpressionVectorParameter, -550, -100, parameter_name="Zenith", default_value=unreal.LinearColor(0.004, 0.006, 0.014, 1))
+    sky = expr(m, unreal.MaterialExpressionLinearInterpolate, -350, -150)
+    link(horizon, "", sky, "A")
+    link(zenith, "", sky, "B")
+    link(t, "", sky, "Alpha")
+    # Ground: below the horizon, beyond the modelled quay and streets.
+    shift = expr(m, unreal.MaterialExpressionAdd, -700, 250)
+    link(neg, "", shift, "A")
+    edge = expr(m, unreal.MaterialExpressionConstant, -900, 300, r=0.02)
+    link(edge, "", shift, "B")
+    gain = expr(m, unreal.MaterialExpressionMultiply, -550, 250)
+    link(shift, "", gain, "A")
+    k2 = expr(m, unreal.MaterialExpressionConstant, -700, 400, r=25.0)
+    link(k2, "", gain, "B")
+    alpha = expr(m, unreal.MaterialExpressionSaturate, -400, 250)
+    link(gain, "", alpha, "")
+    ground = expr(m, unreal.MaterialExpressionVectorParameter, -400, 400, parameter_name="Ground", default_value=unreal.LinearColor(0.006, 0.007, 0.009, 1))
+    mix = expr(m, unreal.MaterialExpressionLinearInterpolate, -200, 0)
+    link(ground, "", mix, "A")
+    link(sky, "", mix, "B")
+    link(alpha, "", mix, "Alpha")
+    inten = expr(m, unreal.MaterialExpressionScalarParameter, -200, 250, parameter_name="Intensity", default_value=1.0)
+    mul = expr(m, unreal.MaterialExpressionMultiply, -50, 50)
+    link(mix, "", mul, "A")
+    link(inten, "", mul, "B")
+    prop(mul, "", unreal.MaterialProperty.MP_EMISSIVE_COLOR)
+    return finish(m)
+
+
+def build_skyline():
+    """The city round the harbour: drawn silhouettes with lit windows (T_Skyline*), unlit, cut out by the alpha."""
+    m = new_material("M_KcSkyline")
+    m.set_editor_property("shading_model", unreal.MaterialShadingModel.MSM_UNLIT)
+    m.set_editor_property("blend_mode", unreal.BlendMode.BLEND_MASKED)
+    m.set_editor_property("two_sided", True)
+    tex = expr(m, unreal.MaterialExpressionTextureSampleParameter2D, -700, 0, parameter_name="SkylineTexture",
+               sampler_type=unreal.MaterialSamplerType.SAMPLERTYPE_COLOR)
+    inten = expr(m, unreal.MaterialExpressionScalarParameter, -700, 250, parameter_name="Intensity", default_value=4.0)
+    mul = expr(m, unreal.MaterialExpressionMultiply, -400, 50)
     link(tex, "RGB", mul, "A")
     link(inten, "", mul, "B")
-    # Below the horizon the photo shows its own street or rooftop from the photographer's height, which
-    # never matches the floor the player stands on: fade it into a dark night ground with a trace of its lights.
-    up = expr(m, unreal.MaterialExpressionComponentMask, -850, 300, r=False, g=False, b=True, a=False)
-    link(neg, "", up, "")
-    shift = expr(m, unreal.MaterialExpressionAdd, -650, 300)
-    link(up, "", shift, "A")
-    edge = expr(m, unreal.MaterialExpressionConstant, -850, 450, r=0.02)
-    link(edge, "", shift, "B")
-    gain = expr(m, unreal.MaterialExpressionMultiply, -450, 300)
-    link(shift, "", gain, "A")
-    k = expr(m, unreal.MaterialExpressionConstant, -650, 450, r=25.0)
-    link(k, "", gain, "B")
-    alpha = expr(m, unreal.MaterialExpressionSaturate, -300, 300)
-    link(gain, "", alpha, "")
-    ground = expr(m, unreal.MaterialExpressionMultiply, -250, 200)
-    link(mul, "", ground, "A")
-    dim = expr(m, unreal.MaterialExpressionScalarParameter, -450, 450, parameter_name="GroundLevel", default_value=0.08)
-    link(dim, "", ground, "B")
-    mix = expr(m, unreal.MaterialExpressionLinearInterpolate, -100, 100)
-    link(ground, "", mix, "A")
-    link(mul, "", mix, "B")
-    link(alpha, "", mix, "Alpha")
-    prop(mix, "", unreal.MaterialProperty.MP_EMISSIVE_COLOR)
+    prop(mul, "", unreal.MaterialProperty.MP_EMISSIVE_COLOR)
+    prop(tex, "A", unreal.MaterialProperty.MP_OPACITY_MASK)
     return finish(m)
 
 
@@ -436,10 +462,9 @@ FOLIAGE = build_foliage(defaults)
 GLASS = build_glass()
 EMISSIVE = build_emissive()
 build_highlight()
-if hdri and isinstance(hdri, unreal.TextureCube):
-    build_sky(hdri)
-else:
-    err("night HDRI is not a TextureCube; sky material skipped (the hotel falls back to a flat night colour)")
+build_sky()
+if not (hdri and isinstance(hdri, unreal.TextureCube)):
+    err("night HDRI is not a TextureCube; the sky light falls back to the dome's colour")
 
 
 def world_surface(name, slot, tile, tint, rough, metal=0.0):
@@ -550,8 +575,13 @@ for mi, tex, tile, rough in [("MI_CorridorCarpet", "T_CorridorCarpet", 120, 2.0)
     if tex in gen:
         instance(mi, WORLD, {"BaseColorMap": gen[tex]}, {"MetallicScale": 0.0, "RoughnessScale": rough},
                  {"Tint": (1, 1, 1, 1), "TileSize": (tile, tile, tile, 0)})
-if EAL.does_asset_exist(MAT + "/M_KcSky"):
-    instance("MI_Sky", unreal.load_asset(MAT + "/M_KcSky"), {}, {"Intensity": 6.0})  # night: dimmer than a day sky
+instance("MI_Sky", unreal.load_asset(MAT + "/M_KcSky"), {}, {"Intensity": 1.0})
+skyline = build_skyline()
+for mi, tex in [("MI_SkylineHarbour", "T_SkylineHarbour"), ("MI_SkylineCity", "T_SkylineCity")]:
+    if tex in gen:
+        instance(mi, skyline, {"SkylineTexture": gen[tex]}, {"Intensity": 4.0})
+    else:
+        err("%s missing: run python Scripts/GenerateTextures.py" % tex)
 
 for asset_id in ["Chandelier_03", "bar_chair_round_01", "modern_coffee_table_01", "sofa_02", "modern_arm_chair_01",
                  "dining_chair_02", "potted_plant_02", "potted_plant_04"]:

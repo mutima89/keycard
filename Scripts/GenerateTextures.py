@@ -1,7 +1,8 @@
 """Draws Keycard's own textures for the Veldane Grand Harbourfront: CCTV wall feeds, the LP office
 shift board, the front office system, the incident report and clip export screens, the fire panel,
 the LP whiteboard, harbour art prints, the exit sign, the corridor carpet, the wallpaper, the kitchen quarry tile, the
-do-not-disturb hanger and the typical guest floor evacuation plan.
+do-not-disturb hanger, the typical guest floor evacuation plan and the
+night skylines round the harbour.
 
 Everything is invented (Docs/FictionalNames.md); nothing on a screen hints at a case's rubric.
 Output: Data/Assets/generated/*.png, imported by Scripts/ImportAssets.py. Deterministic: the same
@@ -393,6 +394,54 @@ def floor_plan():
     return im
 
 
+def skyline(seed, panel_h_cm, min_m, max_m, tower_chance):
+    """The city across the water or behind the streets at night, for a 1200 m wide panel (KcHotel BuildSkyline):
+    dark blocks with scattered lit windows and red aviation lights, transparent above the roofs. Pixels are not
+    square: 4096 px across 1200 m, 1024 px up panel_h_cm, so every size is converted from metres on each axis."""
+    w, h = 4096, 1024
+    px_x = w / 1200.0           # px per metre across
+    px_y = h / (panel_h_cm / 100.0)  # px per metre up
+    rng = random.Random(seed)
+    im = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    warm, cool, dim = (255, 196, 128, 255), (196, 216, 255, 255), (120, 100, 80, 255)
+    for layer, (shade, lit) in enumerate([((9, 11, 16), 0.12), ((13, 15, 21), 0.22)]):  # back row, then front
+        x = rng.uniform(-30, 0) * px_x
+        while x < w:
+            bw = rng.uniform(18, 55) * px_x
+            tall = rng.random() < tower_chance
+            bh_m = rng.uniform(max_m * 0.6, max_m) if tall else rng.uniform(min_m, min_m + (max_m - min_m) * 0.35)
+            if layer == 0:
+                bh_m *= 1.15
+            bh_m = min(bh_m, panel_h_cm / 100.0 - 2.0)
+            top = h - bh_m * px_y
+            x0, x1 = int(x), int(x + bw)
+            d.rectangle([x0, int(top), x1, h], fill=shade + (255,))
+            # Windows: 3 m bays, 3.5 m storeys; a share lit, warm or cool, a few dim.
+            fy = 3.5 * px_y
+            bay = 3.0 * px_x
+            ww, wh = max(1, int(1.6 * px_x)), max(2, int(1.8 * px_y))
+            yy = h - fy
+            while yy - wh > top + fy * 0.5:
+                xx = x0 + bay * 0.5
+                while xx + ww < x1 - bay * 0.3:
+                    r = rng.random()
+                    if r < lit:
+                        d.rectangle([int(xx), int(yy - wh), int(xx) + ww, int(yy)], fill=warm if rng.random() < 0.65 else cool)
+                    elif r < lit + 0.05:
+                        d.rectangle([int(xx), int(yy - wh), int(xx) + ww, int(yy)], fill=dim)
+                    xx += bay
+                yy -= fy
+            if tall:
+                d.rectangle([int((x0 + x1) / 2) - 2, int(top) - 4, int((x0 + x1) / 2) + 2, int(top)], fill=(255, 40, 30, 255))
+            x += bw + rng.uniform(-6, 10) * px_x
+    # A lit street or quay edge along the foot of the panel.
+    for xx in range(0, w, 7):
+        if rng.random() < 0.5:
+            d.rectangle([xx, h - 4, xx + 2, h - 2], fill=warm)
+    return im
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     items = {
@@ -409,6 +458,7 @@ def main():
         "T_ArtHarbourA": harbour_art(11), "T_ArtHarbourB": harbour_art(29), "T_ArtHarbourC": harbour_art(53),
         "T_ExitSign": exit_sign(), "T_CorridorCarpet": corridor_carpet(), "T_Wallpaper": wallpaper(), "T_QuarryTile": quarry_tile(),
         "T_DndTag": dnd_tag(), "T_FloorPlan": floor_plan(),
+        "T_SkylineHarbour": skyline(71, 9000, 12, 80, 0.12), "T_SkylineCity": skyline(97, 14000, 18, 135, 0.2),
     }
     for name, im in items.items():
         im.save(os.path.join(OUT, name + ".png"))

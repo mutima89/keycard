@@ -158,6 +158,15 @@ FString WhereIs(AKcHUD* Hud, const AActor* Target)
 	return Hotel && Target ? Hotel->LocationAt(Target->GetActorLocation()) : FString();
 }
 
+// Where a player aims to pick Target: a person's face, a thing's own body (a case point's focus is
+// where the camera looks while it is used, which can sit behind the thing, e.g. inside the fire panel).
+FVector AimPoint(const AKcInteractable* Target)
+{
+	if (Cast<AKcPersonActor>(Target)) return Target->GetFocusPoint();
+	const USceneComponent* Root = Target->GetRootComponent();
+	return Root ? Root->Bounds.Origin : Target->GetActorLocation();
+}
+
 // Stands the player where they could use Target, as a player would: on its floor, on open floor
 // within reach, looking at it, with the interaction sweep (a 9 cm sphere from the camera, 3 m)
 // reaching it first. Spots are searched on a 20 cm grid, nearest to a comfortable 1.3 m first.
@@ -168,7 +177,7 @@ bool StandAt(AKcHUD* Hud, AKcInteractable* Target, FString* Why = nullptr)
 	APawn* Pawn = PC ? PC->GetPawn() : nullptr;
 	UWorld* World = Hud->GetWorld();
 	if (!Pawn || !Target || !World) return false;
-	const FVector Focus = Target->GetFocusPoint();
+	const FVector Focus = AimPoint(Target);
 	const int32 Floor = AKcHotel::FloorAt(Target->GetActorLocation().Z);
 	if (AKcHotel* Hotel = Hud->Hotel()) Hotel->SetActiveFloor(Floor);
 	const float Slab = AKcHotel::FloorZ(Floor);
@@ -190,12 +199,13 @@ bool StandAt(AKcHUD* Hud, AKcInteractable* Target, FString* Why = nullptr)
 	const FCollisionShape Body = FCollisionShape::MakeCapsule(34.0f, 88.0f);
 	int32 NoFloor = 0, NoRoom = 0, Blocked = 0;
 	TMap<FString, int32> Blockers;
-	for (const FVector& Stand : Spots)
+	for (FVector Stand : Spots)
 	{
-		// Open floor: the slab under it, and room for the body.
+		// Open floor: walkable ground near the slab (a stair tread or landing counts), and room for the body.
 		FHitResult Ground;
-		if (!World->LineTraceSingleByChannel(Ground, Stand, Stand - FVector(0.0f, 0.0f, 140.0f), ECC_Visibility, Params)) continue;
-		if (FMath::Abs(Ground.ImpactPoint.Z - Slab) > 12.0f) { ++NoFloor; continue; }
+		if (!World->LineTraceSingleByChannel(Ground, Stand + FVector(0.0f, 0.0f, 60.0f), Stand - FVector(0.0f, 0.0f, 200.0f), ECC_Visibility, Params)
+			|| Ground.ImpactNormal.Z < 0.7f || FMath::Abs(Ground.ImpactPoint.Z - Slab) > 130.0f) { ++NoFloor; continue; }
+		Stand.Z = Ground.ImpactPoint.Z + 92.0f;
 		if (World->OverlapBlockingTestByChannel(Stand + FVector(0.0f, 0.0f, 4.0f), FQuat::Identity, ECC_Pawn, Body, Params)) { ++NoRoom; continue; }
 		const FVector Eye = Stand + FVector(0.0f, 0.0f, 70.0f); // the character's camera
 		const FVector Aim = (Focus - Eye).GetSafeNormal();
@@ -410,7 +420,7 @@ void AddCase(TSharedRef<FScript> S, TSharedRef<FReport> R, UWorld* World, AKcHUD
 					FVector View;
 					FRotator Rot;
 					PC->GetPlayerViewPoint(View, Rot);
-					PC->SetControlRotation((Target->Get()->GetFocusPoint() - View).Rotation());
+					PC->SetControlRotation((AimPoint(Target->Get()) - View).Rotation());
 				}
 			}
 			if (Target->IsValid() && Focused(H.Get()) != Target->Get() && ++*Looks < 60) return false;

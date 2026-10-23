@@ -3719,9 +3719,9 @@ void AKcHotel::BuildLighting()
 	P.LumenMaxRoughnessToTraceReflections = 0.35f;
 	P.bOverride_LumenReflectionQuality = true;
 	P.LumenReflectionQuality = 0.75f;
-	// Soft AO only: at full strength it turned the dim upper walls of the B1 rooms black (walk round 9).
+	// No screen-space AO: it turned the dim upper walls of the B1 rooms black (walks 9-10; see DefaultEngine.ini).
 	P.bOverride_AmbientOcclusionIntensity = true;
-	P.AmbientOcclusionIntensity = 0.3f;
+	P.AmbientOcclusionIntensity = 0.0f;
 	P.bOverride_IndirectLightingIntensity = true;
 	P.IndirectLightingIntensity = 1.25f;
 	P.bOverride_BloomIntensity = true;

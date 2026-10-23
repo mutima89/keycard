@@ -1422,8 +1422,9 @@ void AKcHotel::BuildCctvRoom()
 	const float X0 = 3700.0f + Wall * 0.5f, X1 = MaxX - 15.0f, Y0 = CorrY + Wall * 0.5f, Y1 = HalfY - 15.0f;
 	FloorFinish(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), Mat(TEXT("MI_FabricDark")));
 	Ceiling(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), CeilB1, Mat(TEXT("MI_CeilingDim")));
-	AddBox(FVector(X0 + 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilB1 * 0.5f)), FVector(1.0f, Y1 - Y0, CeilB1), Mat(TEXT("MI_AcousticPanel")), 0.0f, false);
-	AddBox(FVector(X1 - 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilB1 * 0.5f)), FVector(1.0f, Y1 - Y0, CeilB1), Mat(TEXT("MI_AcousticPanel")), 0.0f, false);
+	// Painted side walls: the acoustic fabric (wool texture) rendered black in this dim room at any tint.
+	AddBox(FVector(X0 + 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilB1 * 0.5f)), FVector(1.0f, Y1 - Y0, CeilB1), Mat(TEXT("MI_WallPaint")), 0.0f, false);
+	AddBox(FVector(X1 - 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilB1 * 0.5f)), FVector(1.0f, Y1 - Y0, CeilB1), Mat(TEXT("MI_WallPaint")), 0.0f, false);
 	// Video wall: four by two monitors, each a different camera page.
 	AddBox(FVector(4250.0f, Y1 - 4.0f, Zf(F, 182.0f)), FVector(470.0f, 8.0f, 150.0f), Mat(TEXT("MI_DeviceBlack")), 0.0f, false);
 	static const TCHAR* const Pages[] = {TEXT("MI_ScreenCctv1"), TEXT("MI_ScreenCctv2"), TEXT("MI_ScreenCctv3"), TEXT("MI_ScreenCctv4")};
@@ -2672,6 +2673,7 @@ void AKcHotel::FurnishRoom(const FString& Number, const FBox2D& Area, bool bNort
 		LBox(150.0f + Wall * 0.5f + 0.5f, (Seg.X + Seg.Y) * 0.5f, Ceil14 * 0.5f, 1.0f, Seg.Y - Seg.X, Ceil14, TEXT("MI_Tile")); // bathroom face
 	}
 	LBox(192.0f, 216.0f, 106.0f, 80.0f, 4.0f, 210.0f, TEXT("MI_DoorPaint"), true); // the bathroom door, open past the jamb
+	LBox(W - 8.5f, (VIn + 250.0f) * 0.5f, Ceil14 * 0.5f, 1.0f, 250.0f - VIn, Ceil14, TEXT("MI_Tile")); // tile on the party wall too
 	LBox(230.0f, VIn + 27.0f, 42.0f, 120.0f, 50.0f, 84.0f, TEXT("MI_WoodWalnut"), true);
 	LBox(230.0f, VIn + 27.0f, 86.0f, 124.0f, 54.0f, 4.0f, TEXT("MI_StoneCounter"));
 	AddInstance(Cylinder, R.P(230.0f, VIn + 30.0f, 86.5f), 0.0f, FVector(0.38f, 0.32f, 0.02f), Mat(TEXT("MI_Ceramic")), false);
@@ -2735,7 +2737,7 @@ void AKcHotel::FurnishRoom(const FString& Number, const FBox2D& Area, bool bNort
 	LBox(W - 40.0f, BedV - 128.0f, 57.0f, 16.0f, 18.0f, 4.0f, TEXT("MI_DeviceBlack"));
 	ArtPrint(R.P(W - 8.0f, BedV, 168.0f), R.Yaw(180.0f), TEXT("MI_ArtHarbourA"), FVector2D(110.0f, 64.0f));
 	// Desk on the west wall, the TV and dresser beside it, a chair.
-	Desk(R.P(28.0f, 510.0f, 0.0f), 90.0f, FVector(160.0f, 55.0f, DeskH), Mat(TEXT("MI_WoodOak"))); // modesty panel to the wall
+	Desk(R.P(28.0f, 510.0f, 0.0f), 90.0f, FVector(160.0f, 55.0f, DeskH), Mat(TEXT("MI_WoodWalnut"))); // oak read as orange pine at this size // modesty panel to the wall
 	Chair(R.P(100.0f, 510.0f, 0.0f), R.Yaw(180.0f), TEXT("dining_chair_02"));
 	Lamp(F, R.P(22.0f, 448.0f, DeskH), false);
 	LBox(28.0f, 545.0f, DeskH + 0.8f, 22.0f, 30.0f, 1.6f, TEXT("MI_SuitNavy"));  // compendium

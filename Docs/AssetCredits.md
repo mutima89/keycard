@@ -46,7 +46,7 @@ Generated from Data/AssetManifest.json by `Scripts/FetchAssets.py --resolve`.
 | [Dining Chair 02](https://polyhaven.com/a/dining_chair_02) by James Ray Cock | Poly Haven | CC0 1.0 | Guest-room desk chairs, LP office | Logo check: see below |
 | [Potted Plant 02](https://polyhaven.com/a/potted_plant_02) by Rico Cilliers | Poly Haven | CC0 1.0 | Large plants | Logo check: see below |
 | [Potted Plant 04](https://polyhaven.com/a/potted_plant_04) by James Ray Cock | Poly Haven | CC0 1.0 | Desk plants | Logo check: see below |
-| [Shanghai Bund](https://polyhaven.com/a/shanghai_bund) by Greg Zaal | Poly Haven | CC0 1.0 | Night harbour city through the windows | Logo check: see below |
+| [Rooftop Night](https://polyhaven.com/a/rooftop_night) by Greg Zaal | Poly Haven | CC0 1.0 | Night city seen from a height, through the windows | Logo check: see below |
 | [Inter 4.1](https://rsms.me/inter/) by Rasmus Andersson | rsms/inter (Rasmus Andersson) | SIL Open Font License 1.1 | UI typeface | Logo check: see below |
 <!-- generated:assets end -->
 

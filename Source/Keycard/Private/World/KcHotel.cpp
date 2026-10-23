@@ -1422,7 +1422,9 @@ void AKcHotel::BuildCctvRoom()
 	const float X0 = 3700.0f + Wall * 0.5f, X1 = MaxX - 15.0f, Y0 = CorrY + Wall * 0.5f, Y1 = HalfY - 15.0f;
 	FloorFinish(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), Mat(TEXT("MI_FabricDark")));
 	Ceiling(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), CeilB1, Mat(TEXT("MI_CeilingDim")));
-	// Painted side walls: the acoustic fabric (wool texture) rendered black in this dim room at any tint.
+	// Painted walls: the acoustic fabric (wool texture) rendered black in this dim room at any tint, and the
+	// back wall behind the screens showed the basement's bare concrete.
+	AddBox(FVector((X0 + X1) * 0.5f, Y1 - 0.5f, Zf(F, CeilB1 * 0.5f)), FVector(X1 - X0, 1.0f, CeilB1), Mat(TEXT("MI_WallPaint")), 0.0f, false);
 	AddBox(FVector(X0 + 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilB1 * 0.5f)), FVector(1.0f, Y1 - Y0, CeilB1), Mat(TEXT("MI_WallPaint")), 0.0f, false);
 	AddBox(FVector(X1 - 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilB1 * 0.5f)), FVector(1.0f, Y1 - Y0, CeilB1), Mat(TEXT("MI_WallPaint")), 0.0f, false);
 	// Video wall: four by two monitors, each a different camera page.
@@ -3717,6 +3719,9 @@ void AKcHotel::BuildLighting()
 	P.LumenMaxRoughnessToTraceReflections = 0.35f;
 	P.bOverride_LumenReflectionQuality = true;
 	P.LumenReflectionQuality = 0.75f;
+	// Soft AO only: at full strength it turned the dim upper walls of the B1 rooms black (walk round 9).
+	P.bOverride_AmbientOcclusionIntensity = true;
+	P.AmbientOcclusionIntensity = 0.3f;
 	P.bOverride_IndirectLightingIntensity = true;
 	P.IndirectLightingIntensity = 1.25f;
 	P.bOverride_BloomIntensity = true;

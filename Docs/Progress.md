@@ -3,6 +3,11 @@
 ## Status: Keycard 1.0.0 released (tag v1.0.0 at a3c46bb)
 Last update: 2026-10-23
 
+- 2026-10-23 Mission walkthrough, part 2 (PC, packaged Development build, branch claude/project-thread-53fqw6).
+  - Round 1 (061dff2): core 46/46; KeycardEditor and Keycard Win64 "Result: Succeeded"; voices 380 lines, ImportAudio 0 errors; RunUnrealTests 6/6; BuildWindows "BUILD SUCCESSFUL". `-KcSelfTest=missions` and `=play` crashed (exit 3): "Assertion failed: Index == 1" in SkeletalRenderGPUSkin.cpp:336 (FMorphVertexBufferPool::GetReadingIndex, render thread), at M009 and M014.
+  - Round 2 (aeb17dd, people retired instead of destroyed): same crash at M014. `r.MorphTarget.ForceUpdate=1` also crashed (M019).
+  - Round 3 (5f7e157, GPU skin cache on, faces morph only once drawn): no crash. missions: exit 0, every `_do` step ok, all 39 debriefs filed, ending, certificate, level 10, 40/40 cards. 167 FAIL lines, all world checks (_focus 140ish, _stand, 1 _place); PASS M034 only. play: exit 0, 46 FAIL, same world checks M001-M011.
+  - Open: self-test aim for screens/phones behind the front-desk counter and CCTV steps ("sweep hits nothing within 3 m"); steps offered at the fire alarm panel instead of their own place (M012, M022 walk_kitchen, C001, C003); X001 board not in the boardroom; people blocking the target (M002, M003, M026); camera inside staff at the front desk (C004, M028, M033).
 - 2026-10-23 Mission walkthrough, part 1 (cloud session; the UE changes are not compiled yet, no UE in the container).
   - Read all 39 cases (M001-M034, C001-C004, X001) one by one against the engine rules and the best-order clock. Found about 60 issues; the full list is in the PR.
   - Softlock: X001 was filed in the boardroom, where there is no report terminal, so a player could never finish the capstone (the career self-test filed it through the API and passed). X001 now files at the LP office; validation refuses any `reportAt` other than `lp_office`.

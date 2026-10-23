@@ -343,7 +343,7 @@ def build_highlight():
     link(k, "", boost, "B")
     prop(boost, "", unreal.MaterialProperty.MP_EMISSIVE_COLOR)
     op = expr(m, unreal.MaterialExpressionMultiply, -300, 200)
-    half = expr(m, unreal.MaterialExpressionConstant, -500, 300, r=0.65)
+    half = expr(m, unreal.MaterialExpressionScalarParameter, -500, 300, parameter_name="Opacity", default_value=0.65)
     link(fres, "", op, "A")
     link(half, "", op, "B")
     prop(op, "", unreal.MaterialProperty.MP_OPACITY)
@@ -544,6 +544,8 @@ instance("MI_CeilingDim", EMISSIVE, {}, {"Intensity": 0.8, "Roughness": 1.0}, {"
 # B1 work rooms and corridor: between the two; at 0.8 the ceilings read as a black band over the walls.
 instance("MI_CeilingMid", EMISSIVE, {}, {"Intensity": 2.5, "Roughness": 1.0}, {"Color": (0.88, 0.89, 0.9, 1)})
 instance("MI_Highlight", unreal.load_asset(MAT + "/M_KcHighlight"))
+# People: a faint rim only. At full strength the whole body glowed blue and the open mouth and teeth lit up.
+instance("MI_HighlightPerson", unreal.load_asset(MAT + "/M_KcHighlight"), {}, {"Opacity": 0.2}, {"Color": (0.12, 0.25, 0.32, 1)})
 
 # Our own textures (Scripts/GenerateTextures.py): screen UIs, signs, whiteboard, prints, carpet and wallpaper patterns.
 GEN = os.path.join(ROOT, "Data", "Assets", "generated")

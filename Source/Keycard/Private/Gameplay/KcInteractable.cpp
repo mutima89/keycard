@@ -1,5 +1,6 @@
 #include "KcInteractable.h"
 
+#include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/GameInstance.h"
 #include "Engine/StaticMesh.h"
@@ -10,14 +11,18 @@
 
 #define LOCTEXT_NAMESPACE "Keycard"
 
-static UMaterialInterface* HighlightMaterial()
+static UMaterialInterface* HighlightMaterial(bool bPerson)
 {
-	static TWeakObjectPtr<UMaterialInterface> Cached;
-	if (!Cached.IsValid())
+	// People get a faint rim (MI_HighlightPerson): the full overlay lit the whole body and the open mouth.
+	static TWeakObjectPtr<UMaterialInterface> Cached[2];
+	TWeakObjectPtr<UMaterialInterface>& C = Cached[bPerson ? 1 : 0];
+	if (!C.IsValid())
 	{
-		Cached = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Keycard/Materials/Instances/MI_Highlight.MI_Highlight"));
+		C = LoadObject<UMaterialInterface>(nullptr, bPerson ? TEXT("/Game/Keycard/Materials/Instances/MI_HighlightPerson.MI_HighlightPerson")
+			: TEXT("/Game/Keycard/Materials/Instances/MI_Highlight.MI_Highlight"), nullptr, bPerson ? LOAD_NoWarn | LOAD_Quiet : LOAD_None);
+		if (!C.IsValid() && bPerson) return HighlightMaterial(false);
 	}
-	return Cached.Get();
+	return C.Get();
 }
 
 AKcInteractable::AKcInteractable()
@@ -41,12 +46,11 @@ void AKcInteractable::SetAppearance(UStaticMesh* InMesh, const FVector& Scale, U
 
 void AKcInteractable::SetFocused(bool bFocused)
 {
-	UMaterialInterface* Overlay = bFocused ? HighlightMaterial() : nullptr;
 	TArray<UMeshComponent*> Meshes;
 	GetComponents<UMeshComponent>(Meshes);
 	for (UMeshComponent* M : Meshes)
 	{
-		if (M->IsVisible()) M->SetOverlayMaterial(Overlay);
+		if (M->IsVisible()) M->SetOverlayMaterial(bFocused ? HighlightMaterial(M->IsA<USkeletalMeshComponent>()) : nullptr);
 	}
 }
 

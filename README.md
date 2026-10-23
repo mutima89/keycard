@@ -8,12 +8,12 @@ Every case teaches a real procedure. After you file your report, the debrief exp
 
 [**Download Keycard 1.0.0 for Windows**](https://github.com/mutima89/keycard/releases/tag/v1.0.0) · offline · single-player · Unreal Engine 5.8 · sister game to [Riskbound](https://github.com/mutima89/riskbound)
 
-![The lobby of the Veldane Grand Harbourfront at night](Docs/Screenshots/lobby.png)
+![The lobby bar of the Veldane Grand Harbourfront at night](Docs/Screenshots/lobby.png)
 
 ## The job
 | | |
 |---|---|
-| ![LP office](Docs/Screenshots/lp_office.png) | ![CCTV review](Docs/Screenshots/cctv.png) |
+| ![LP office](Docs/Screenshots/lp_office.png) | ![CCTV control room](Docs/Screenshots/cctv.png) |
 | **Sign on in the LP office.** Calls come in by radio, phone and email, and the case clock starts. | **Review the footage before it overwrites.** Step through clips, export them with their hashes, and log custody. |
 | ![Floor 14](Docs/Screenshots/floor14.png) | ![Fire command](Docs/Screenshots/fire_command.png) |
 | **Walk the building.** One multi-floor hotel, linked by lifts and stairs, from B1 back of house to the guest floors. | **Fire and life safety.** Read the panel, investigate the zone, manage impairments, and evacuate when you must. |
@@ -30,7 +30,7 @@ Every case teaches a real procedure. After you file your report, the debrief exp
 
 | | |
 |---|---|
-| ![Debrief](Docs/Screenshots/debrief.png) | ![Ballroom](Docs/Screenshots/ballroom.png) |
+| ![Filing the incident report](Docs/Screenshots/report.png) | ![Ballroom](Docs/Screenshots/ballroom.png) |
 | ![Challenges](Docs/Screenshots/challenges.png) | ![Ending](Docs/Screenshots/ending.png) |
 
 ## The Veldane policy

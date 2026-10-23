@@ -158,8 +158,10 @@ FString WhereIs(AKcHUD* Hud, const AActor* Target)
 	return Hotel && Target ? Hotel->LocationAt(Target->GetActorLocation()) : FString();
 }
 
-// Stands the player where they could use Target, as a player would: on its floor, a step away, with a
-// clear line of sight, looking at it. False when there is nowhere to stand that can see it.
+// Stands the player where they could use Target, as a player would: on its floor, a step away,
+// looking at it, with the interaction sweep (a 9 cm sphere from the camera, 3 m) reaching it first.
+// Each spot is tried for real (the teleport may nudge the pawn out of furniture) and checked from
+// where the camera actually ends up. False when no spot can see it.
 bool StandAt(AKcHUD* Hud, AKcInteractable* Target)
 {
 	APlayerController* PC = Hud->GetOwningPlayerController();
@@ -171,7 +173,6 @@ bool StandAt(AKcHUD* Hud, AKcInteractable* Target)
 	if (AKcHotel* Hotel = Hud->Hotel()) Hotel->SetActiveFloor(Floor);
 	const float Z = AKcHotel::FloorZ(Floor) + 92.0f; // the capsule's centre above the slab
 	FCollisionQueryParams Params(SCENE_QUERY_STAT(KcSelfTestStand), false, Pawn);
-	Params.AddIgnoredActor(Target);
 	for (const float Dist : {110.0f, 160.0f, 220.0f})
 	{
 		for (int32 i = 0; i < 12; ++i)
@@ -179,11 +180,13 @@ bool StandAt(AKcHUD* Hud, AKcInteractable* Target)
 			const float Yaw = Target->GetActorRotation().Yaw + i * 30.0f;
 			const FVector Dir = FRotator(0.0f, Yaw, 0.0f).Vector();
 			const FVector Stand(Focus.X + Dir.X * Dist, Focus.Y + Dir.Y * Dist, Z);
-			const FVector Eye = Stand + FVector(0.0f, 0.0f, 70.0f); // the character's camera height
-			FHitResult Hit;
-			if (World->LineTraceSingleByChannel(Hit, Eye, Focus, ECC_Visibility, Params)) continue;
 			if (!Pawn->TeleportTo(Stand, FRotator(0.0f, Yaw + 180.0f, 0.0f), false, false)) continue;
-			PC->SetControlRotation((Focus - Eye).Rotation());
+			const FVector Eye = Pawn->GetActorLocation() + FVector(0.0f, 0.0f, 70.0f); // the character's camera
+			const FVector Aim = (Focus - Eye).GetSafeNormal();
+			FHitResult Hit;
+			if (!World->SweepSingleByChannel(Hit, Eye, Eye + Aim * 300.0f, FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(9.0f), Params)) continue;
+			if (Hit.GetActor() != Target) continue;
+			PC->SetControlRotation(Aim.Rotation());
 			if (PC->PlayerCameraManager) PC->PlayerCameraManager->SetGameCameraCutThisFrame();
 			return true;
 		}
@@ -364,7 +367,7 @@ void AddCase(TSharedRef<FScript> S, TSharedRef<FReport> R, UWorld* World, AKcHUD
 		{
 			if (!H.IsValid()) return true;
 			const FString Name = MissionId + TEXT("_") + ToFString(A->Id);
-			if (Target->IsValid() && Focused(H.Get()) != Target->Get() && ++*Looks < 6) return false;
+			if (Target->IsValid() && Focused(H.Get()) != Target->Get() && ++*Looks < 60) return false;
 			if (Target->IsValid())
 			{
 				const AKcInteractable* Seen = Focused(H.Get());
@@ -411,7 +414,7 @@ void AddCase(TSharedRef<FScript> S, TSharedRef<FReport> R, UWorld* World, AKcHUD
 		if (!H.IsValid()) return true;
 		UKcCampaignSubsystem* C = H->Campaign();
 		AKcReportTerminal* Terminal = Desk->Get();
-		if (Terminal && Focused(H.Get()) != Terminal && ++*Looks < 6) return false;
+		if (Terminal && Focused(H.Get()) != Terminal && ++*Looks < 60) return false;
 		if (Terminal)
 		{
 			R->Check(MissionId + TEXT("_report_focus"), Focused(H.Get()) == Terminal, TEXT("looking at ") + NameOf(Focused(H.Get())));

@@ -162,7 +162,7 @@ FString WhereIs(AKcHUD* Hud, const AActor* Target)
 // within reach, looking at it, with the interaction sweep (a 9 cm sphere from the camera, 3 m)
 // reaching it first. Spots are searched on a 20 cm grid, nearest to a comfortable 1.3 m first.
 // False when no spot can see it.
-bool StandAt(AKcHUD* Hud, AKcInteractable* Target)
+bool StandAt(AKcHUD* Hud, AKcInteractable* Target, FString* Why = nullptr)
 {
 	APlayerController* PC = Hud->GetOwningPlayerController();
 	APawn* Pawn = PC ? PC->GetPawn() : nullptr;
@@ -188,22 +188,42 @@ bool StandAt(AKcHUD* Hud, AKcInteractable* Target)
 	});
 	FCollisionQueryParams Params(SCENE_QUERY_STAT(KcSelfTestStand), false, Pawn);
 	const FCollisionShape Body = FCollisionShape::MakeCapsule(34.0f, 88.0f);
+	int32 NoFloor = 0, NoRoom = 0, Blocked = 0;
+	TMap<FString, int32> Blockers;
 	for (const FVector& Stand : Spots)
 	{
 		// Open floor: the slab under it, and room for the body.
 		FHitResult Ground;
 		if (!World->LineTraceSingleByChannel(Ground, Stand, Stand - FVector(0.0f, 0.0f, 140.0f), ECC_Visibility, Params)) continue;
-		if (FMath::Abs(Ground.ImpactPoint.Z - Slab) > 12.0f) continue;
-		if (World->OverlapBlockingTestByChannel(Stand + FVector(0.0f, 0.0f, 4.0f), FQuat::Identity, ECC_Pawn, Body, Params)) continue;
+		if (FMath::Abs(Ground.ImpactPoint.Z - Slab) > 12.0f) { ++NoFloor; continue; }
+		if (World->OverlapBlockingTestByChannel(Stand + FVector(0.0f, 0.0f, 4.0f), FQuat::Identity, ECC_Pawn, Body, Params)) { ++NoRoom; continue; }
 		const FVector Eye = Stand + FVector(0.0f, 0.0f, 70.0f); // the character's camera
 		const FVector Aim = (Focus - Eye).GetSafeNormal();
 		FHitResult Hit;
-		if (!World->SweepSingleByChannel(Hit, Eye, Eye + Aim * 300.0f, FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(9.0f), Params)) continue;
-		if (Hit.GetActor() != Target) continue;
+		const bool bHit = World->SweepSingleByChannel(Hit, Eye, Eye + Aim * 300.0f, FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(9.0f), Params);
+		if (!bHit || Hit.GetActor() != Target)
+		{
+			++Blocked;
+			const FString By = !bHit ? FString(TEXT("nothing")) : (Hit.GetActor() ? Hit.GetActor()->GetName() : FString(TEXT("?"))) + TEXT("/") + (Hit.GetComponent() ? Hit.GetComponent()->GetName() : FString(TEXT("?")));
+			++Blockers.FindOrAdd(By);
+			continue;
+		}
 		if (!Pawn->TeleportTo(Stand, Aim.Rotation(), false, true)) continue;
 		PC->SetControlRotation(Aim.Rotation());
 		if (PC->PlayerCameraManager) PC->PlayerCameraManager->SetGameCameraCutThisFrame();
 		return true;
+	}
+	if (Why)
+	{
+		Blockers.ValueSort([](int32 L, int32 R) { return L > R; });
+		FString Top;
+		int32 n = 0;
+		for (const TPair<FString, int32>& B : Blockers)
+		{
+			if (n++ == 3) break;
+			Top += FString::Printf(TEXT("%s%s x%d"), Top.IsEmpty() ? TEXT("") : TEXT(", "), *B.Key, B.Value);
+		}
+		*Why = FString::Printf(TEXT("%d spots: %d no floor (slab %.0f), %d no room, %d blocked by %s; focus at %s"), Spots.Num(), NoFloor, Slab, NoRoom, Blocked, *Top, *Focus.ToCompactString());
 	}
 	return false;
 }
@@ -352,7 +372,8 @@ void AddCase(TSharedRef<FScript> S, TSharedRef<FReport> R, UWorld* World, AKcHUD
 				const AKcCasePoint* Door = Cast<AKcCasePoint>(Offer);
 				const bool bThroughDoor = Door && !Door->DoorPersonId.IsEmpty() && Door->DoorPersonId == ToFString(A->Person);
 				const FString Where = WhereIs(H.Get(), Offer);
-				const bool bStand = StandAt(H.Get(), Offer);
+				FString Why;
+				const bool bStand = StandAt(H.Get(), Offer, &Why);
 				// Used from where the case says: the thing itself stands there, or the player does to use it
 				// (a door lock in the corridor, the dock door from the dock).
 				const APawn* Pawn = H->GetOwningPlayerController() ? H->GetOwningPlayerController()->GetPawn() : nullptr;
@@ -360,7 +381,7 @@ void AddCase(TSharedRef<FScript> S, TSharedRef<FReport> R, UWorld* World, AKcHUD
 				R->Check(Name + TEXT("_place"), bThroughDoor || Where == ToFString(A->At) || From == ToFString(A->At),
 					FString::Printf(TEXT("stands in %s, used from %s, case says %s"), Where.IsEmpty() ? TEXT("no zone") : *Where,
 						From.IsEmpty() ? TEXT("no zone") : *From, *ToFString(A->At)));
-				R->Check(Name + TEXT("_stand"), bStand, TEXT("somewhere to stand in sight of it"));
+				R->Check(Name + TEXT("_stand"), bStand, TEXT("somewhere to stand in sight of it: ") + Why);
 				*Target = Offer;
 			}
 			// Questions open now are put to people the player can reach.
@@ -381,6 +402,17 @@ void AddCase(TSharedRef<FScript> S, TSharedRef<FReport> R, UWorld* World, AKcHUD
 		{
 			if (!H.IsValid()) return true;
 			const FString Name = MissionId + TEXT("_") + ToFString(A->Id);
+			if (Target->IsValid() && *Looks == 0)
+			{
+				// Aim from where the camera really is (capsule height and lean differ from the stand test).
+				if (APlayerController* PC = H->GetOwningPlayerController())
+				{
+					FVector View;
+					FRotator Rot;
+					PC->GetPlayerViewPoint(View, Rot);
+					PC->SetControlRotation((Target->Get()->GetFocusPoint() - View).Rotation());
+				}
+			}
 			if (Target->IsValid() && Focused(H.Get()) != Target->Get() && ++*Looks < 60) return false;
 			if (Target->IsValid())
 			{

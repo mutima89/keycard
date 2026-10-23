@@ -133,7 +133,7 @@ AKcInteractable* OfferedBy(UWorld* World, AKcHUD* Hud, const kc::ActionDef& A, F
 	UKcCampaignSubsystem* C = Hud->Campaign();
 	for (TActorIterator<AKcPersonActor> It(World); It; ++It)
 	{
-		if (C && C->ActionsAt(It->Location, It->PersonId).Contains(&A))
+		if (!It->IsRetired() && C && C->ActionsAt(It->Location, It->PersonId).Contains(&A))
 		{
 			By = FString::Printf(TEXT("person %s at %s"), *It->PersonId, *It->Location);
 			return *It;
@@ -211,7 +211,7 @@ bool PersonPresent(UWorld* World, const std::string& PersonId, const std::string
 {
 	for (TActorIterator<AKcPersonActor> It(World); It; ++It)
 	{
-		if (It->PersonId == ToFString(PersonId) && It->Location == ToFString(Location)) return true;
+		if (!It->IsRetired() && It->PersonId == ToFString(PersonId) && It->Location == ToFString(Location)) return true;
 	}
 	for (TActorIterator<AKcCasePoint> It(World); It; ++It)
 	{

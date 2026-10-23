@@ -3099,7 +3099,8 @@ void AKcHotel::RefreshPeople()
 		if (!Want.Contains(Key)) Want.Add(Key);
 	};
 	bool bPartnerOut = false;
-	// People met earlier in the case, with nothing left to do there: they stay only while you are with them.
+	// People met earlier in the case, with nothing left to do there: they stay where you met them
+	// unless the case now needs them somewhere else.
 	TArray<TPair<FString, FString>> Met;
 	if (M)
 	{
@@ -3155,11 +3156,9 @@ void AKcHotel::RefreshPeople()
 	{
 		return Want.ContainsByPredicate([&](const TPair<FString, FString>& W) { return W.Key == Person; });
 	};
-	const APawn* Pawn = GetWorld() ? UGameplayStatics::GetPlayerPawn(GetWorld(), 0) : nullptr;
-	const FString PlayerAt = Pawn ? LocationAt(Pawn->GetActorLocation()) : FString();
 	for (const TPair<FString, FString>& W : Met)
 	{
-		if (W.Value == PlayerAt && !WantedSomewhere(W.Key)) WantPerson(W.Key, W.Value);
+		if (!WantedSomewhere(W.Key)) WantPerson(W.Key, W.Value);
 	}
 	// The night staff at their posts, unless the case has them somewhere else (one person, one place).
 	for (const TCHAR* Desk : {TEXT("night_auditor"), TEXT("desk_agent")})
@@ -3189,7 +3188,7 @@ void AKcHotel::RefreshPeople()
 		const bool bKeep = IsValid(P) && Want.Contains(TPair<FString, FString>(P->PersonId, P->Location));
 		if (!bKeep)
 		{
-			if (IsValid(P)) P->Destroy();
+			if (IsValid(P)) P->Retire();
 			People.RemoveAt(i);
 		}
 	}

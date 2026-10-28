@@ -576,6 +576,25 @@ def street_frontage(seed, panel_w_m, panel_h_m, h=1024):
     return im
 
 
+# Skyline panels (KcHotel.cpp BuildLighting): far ring 1 km out on every side, near low-rise 300 m out on the
+# street sides. Sizes in metres must match the panels there.
+SKYLINES = {
+    "T_SkylineFarN": (71, 2000, 120, 15, 90, 0.10, 0.18),   # the far shore, across the harbour
+    "T_SkylineFarS": (72, 2000, 120, 20, 115, 0.18, 0.2),
+    "T_SkylineFarW": (73, 2000, 120, 20, 115, 0.16, 0.2),
+    "T_SkylineFarE": (74, 2000, 120, 20, 115, 0.2, 0.2),
+    "T_SkylineNearS": (81, 700, 40, 9, 36, 0.08, 0.4),
+    "T_SkylineNearW": (82, 400, 40, 9, 36, 0.08, 0.4),
+    "T_SkylineNearE": (83, 400, 40, 9, 36, 0.08, 0.4),
+}
+# Across the street (KcHotel.cpp BuildOutside): name -> (seed, width m, height m).
+FRONTAGES = {
+    "T_StreetW": (91, 84, 28),
+    "T_StreetS": (92, 140, 28),
+    "T_StreetE": (93, 89, 28),
+}
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     items = {

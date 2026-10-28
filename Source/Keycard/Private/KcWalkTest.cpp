@@ -555,8 +555,8 @@ void BuildRoute(FState& S, AKcHotel* Hotel)
 	Visit(TEXT("room_1412"), 130.0f);
 	S.Steps.Add(PathTo(AKcHotel::TopFloor, FVector2D(880.0f, -540.0f), TEXT("1412 bedroom")));
 	S.Steps.Add(Shot(-90.0f, TEXT("1412 bedroom")));
-	S.Steps.Add(PathTo(AKcHotel::TopFloor, FVector2D(970.0f, -330.0f), TEXT("1412 bathroom")));
-	S.Steps.Add(Shot(0.0f, TEXT("1412 bathroom")));
+	S.Steps.Add(PathTo(AKcHotel::TopFloor, FVector2D(1000.0f, -320.0f), TEXT("1412 bathroom")));
+	S.Steps.Add(Shot(105.0f, TEXT("1412 bathroom"))); // towards the vanity and mirror; facing east showed only tiles (walk 13)
 	S.Steps.Add(Door(TEXT("closet"), true));
 	Visit(TEXT("f14_service"), 130.0f);
 	S.Steps.Add(Door(TEXT("closet"), false));

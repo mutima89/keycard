@@ -487,8 +487,8 @@ for name, slot, tile, tint, rough in [
         ("MI_FloorMarble", "marble", 240, (0.95, 0.94, 0.92), 0.6),        # lobby
         ("MI_StoneCounter", "marble", 120, (0.22, 0.22, 0.24), 0.9),       # front desk and bar tops: dark stone (0.5 sparkled)
         ("MI_FloorTile", "tiles", 60, (0.93, 0.93, 0.92), 0.8),            # guest bathrooms, staff toilets
-        ("MI_FloorConcrete", "concrete_floor", 300, (0.8, 0.8, 0.8), 2.0),  # 1.3 read wet under the battens (walk 14) # B1 back of house, loading dock
-        ("MI_Concrete", "concrete_wall", 280, (0.75, 0.75, 0.74), 2.0),    # stair shafts, B1 walls
+        ("MI_FloorConcrete", "concrete_floor", 300, (0.8, 0.8, 0.8), 1.7),  # 1.3 read wet (walk 14), 2.0 read as rock (walk 16) # B1 back of house, loading dock
+        ("MI_Concrete", "concrete_wall", 280, (0.75, 0.75, 0.74), 1.7),    # stair shafts, B1 walls
         ("MI_Facade", "concrete_wall", 400, (0.55, 0.56, 0.58), 1.2),      # exterior
         ("MI_Asphalt", "asphalt", 400, (0.6, 0.6, 0.6), 1.4),              # street and garage ramp
         ("MI_Paving", "paving", 200, (0.8, 0.79, 0.76), 1.3),              # Quay Promenade
@@ -506,15 +506,15 @@ for name, slot, tile, tint, rough in [
         ("MI_WoodOak", "oak", 140, (0.8, 0.75, 0.7), 1.5),                   # less orange; satin: at 0.9 the glossy grain lines streaked white
         ("MI_WoodWalnut", "walnut", 140, (0.6, 0.48, 0.42), 0.85),          # untinted it read orange pine
         ("MI_DoorPaint", "oak", 140, (0.42, 0.33, 0.24), 0.8),             # guest-room doors: stained oak
-        ("MI_Cork", "wool", 25, (0.62, 0.46, 0.3), 1.8),                   # LP office notice board
-        ("MI_FloorVinyl", "concrete_floor", 120, (0.42, 0.45, 0.48), 1.3)]:  # housekeeping, fire command: sheet vinyl, not guest carpet
+        ("MI_Cork", "wool", 25, (0.62, 0.46, 0.3), 1.8)]:                  # LP office notice board  # housekeeping, fire command: sheet vinyl, not guest carpet
     world_surface(name, slot, tile, tint, rough)
 
 # Untextured surfaces: defaults are white base, ARM = (AO 1, rough 0.55, metal 0) scaled below.
 for name, tint, rough, metal in [
         ("MI_Graphite", (0.06, 0.065, 0.075), 0.75, 1.0), ("MI_Chrome", (0.8, 0.8, 0.82), 0.3, 1.0),
         ("MI_Steel", (0.55, 0.56, 0.58), 0.5, 1.0), ("MI_SteelDark", (0.2, 0.2, 0.21), 0.7, 1.0), ("MI_Brass", (0.75, 0.55, 0.3), 0.35, 1.0),
-        ("MI_Mirror", (0.62, 0.64, 0.66), 0.05, 1.0),  # at 0.95 it read as a blank white panel (walk 14)
+        ("MI_FloorVinyl", (0.34, 0.35, 0.36), 0.7, 0.0),  # sheet vinyl, plain: on the concrete texture it read as stone (walk 16)
+        ("MI_Mirror", (0.42, 0.44, 0.46), 0.05, 1.0),  # at 0.95 it read as a blank white panel (walk 14)
         ("MI_CeilingWhite", (0.86, 0.86, 0.85), 1.6, 0.0), ("MI_Skirting", (0.12, 0.12, 0.13), 1.2, 0.0),
         ("MI_DeviceBlack", (0.02, 0.02, 0.025), 0.6, 0.0), ("MI_PlasticGrey", (0.35, 0.36, 0.38), 0.8, 0.0),
         ("MI_Paper", (0.8, 0.8, 0.78), 1.7, 0.0), ("MI_Ceramic", (0.85, 0.85, 0.83), 0.35, 0.0),
@@ -532,7 +532,7 @@ instance("MI_Sheer", GLASS, {}, {"Opacity": 0.4, "Roughness": 0.7, "Specular": 0
 instance("MI_Water", GLASS, {}, {"Opacity": 0.7, "Roughness": 0.02}, {"Tint": (0.04, 0.12, 0.18, 1)})             # harbour
 instance("MI_LightPanel", EMISSIVE, {}, {"Intensity": 60.0}, {"Color": (1, 0.97, 0.92, 1)})
 # Lamp shades and pendant drums: at 45 the shades and the ballroom drums blew out to white (walk 12).
-instance("MI_LampWarm", EMISSIVE, {}, {"Intensity": 22.0}, {"Color": (1.0, 0.78, 0.5, 1)})
+instance("MI_LampWarm", EMISSIVE, {}, {"Intensity": 12.0}, {"Color": (1.0, 0.78, 0.5, 1)})
 instance("MI_LedStrip", EMISSIVE, {}, {"Intensity": 70.0}, {"Color": (0.95, 0.97, 1.0, 1)})
 instance("MI_SignGlow", EMISSIVE, {}, {"Intensity": 30.0}, {"Color": (0.29, 0.61, 0.77, 1)})  # hotel name and wayfinding
 instance("MI_LedGreen", EMISSIVE, {}, {"Intensity": 25.0}, {"Color": (0.1, 0.9, 0.25, 1)})

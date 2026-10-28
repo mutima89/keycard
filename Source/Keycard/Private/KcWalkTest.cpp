@@ -592,6 +592,16 @@ void BuildRoute(FState& S, AKcHotel* Hotel)
 	for (const TCHAR* L : {TEXT("exec_offices"), TEXT("gm_office"), TEXT("boardroom")}) Visit(L);
 	S.Steps.Add(PathTo(4, LiftLobby, TEXT("lift lobby 4")));
 	S.Steps.Add(Lift(14));
+	// Shots 38 to 40, after the ones the reviews compare by number: the floor 14 directory and the lift indicators (no
+	// shot showed them, walk 18), then the staff time clock on the ground floor.
+	S.Steps.Add(PathTo(AKcHotel::TopFloor, FVector2D(2470.0f, -40.0f), TEXT("lift lobby 14")));
+	S.Steps.Add(Shot(-90.0f, TEXT("lift lobby 14 directory")));
+	S.Steps.Add(Shot(80.0f, TEXT("lift lobby 14 lifts")));
+	S.Steps.Add(PathTo(AKcHotel::TopFloor, LiftLobby, TEXT("lift lobby 14, back")));
+	S.Steps.Add(Lift(0));
+	S.Steps.Add(PathTo(0, FVector2D(4600.0f, -30.0f), TEXT("time clock")));
+	S.Steps.Add(Shot(90.0f, TEXT("time clock")));
+	S.Steps.Add(PathTo(0, LiftLobby, TEXT("lift lobby G, back")));
 	S.Steps.Add(Lift(-1));
 	S.Steps.Add(PathTo(AKcHotel::LowestFloor, FVector2D(Start.GetLocation()), TEXT("back to the LP office")));
 }

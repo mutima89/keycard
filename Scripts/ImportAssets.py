@@ -344,7 +344,7 @@ def build_screen(defaults):
     prop(mul, "", unreal.MaterialProperty.MP_EMISSIVE_COLOR)
     black = expr(m, unreal.MaterialExpressionConstant3Vector, -400, -150, constant=unreal.LinearColor(0.01, 0.01, 0.012, 1))
     prop(black, "", unreal.MaterialProperty.MP_BASE_COLOR)
-    rough = expr(m, unreal.MaterialExpressionConstant, -400, 250, r=0.45)  # at 0.15 the ceiling lamps flared on the CCTV wall
+    rough = expr(m, unreal.MaterialExpressionConstant, -400, 250, r=0.75)  # anti-glare panels: at 0.15 and 0.45 the ceiling lamps left a hotspot on the CCTV wall (walk 18)
     prop(rough, "", unreal.MaterialProperty.MP_ROUGHNESS)
     return finish(m)
 
@@ -522,9 +522,9 @@ for name, slot, tile, tint, rough in [
         ("MI_FabricDark", "wool", 30, (0.12, 0.13, 0.15), 2.0),
         ("MI_FabricAccent", "wool", 30, (0.18, 0.36, 0.48), 2.0),          # harbour-blue upholstery
         ("MI_AcousticPanel", "wool", 60, (0.4, 0.46, 0.52), 1.0),         # at 0.24-0.36 the CCTV room walls read black
-        ("MI_Linen", "linen", 40, (0.82, 0.81, 0.78), 1.8),  # white cloth is about 0.8 albedo: 0.95 blew beds and linen to flat white                # bed linen, towels
-        ("MI_TableLinen", "linen", 40, (0.72, 0.69, 0.6), 1.8),            # banquet cloths: ivory, a shade under the bed linen (white drums blew out, walk 17)
-        ("MI_Champagne", "linen", 40, (0.62, 0.52, 0.38), 1.2),            # banquet overlays: champagne satin
+        ("MI_Linen", "linen", 40, (0.76, 0.75, 0.72), 1.8),  # bed linen, towels: 0.95 blew to flat white, 0.82 still showed no fold shading under the bedside lamps (walk 18)
+        ("MI_DuvetBack", "linen", 40, (0.5, 0.52, 0.55), 1.8),             # the turned-back underside of the slept-in duvet: pale grey-blue, or the ridge vanished in white (walk 18)
+        ("MI_TableLinen", "linen", 40, (0.62, 0.6, 0.53), 1.8),            # banquet cloths: ivory, one material top to hem (0.72 skirts blew out under the drums, walk 18)
         ("MI_Headboard", "wool", 30, (0.68, 0.62, 0.54), 2.0),             # guest-room headboards: oatmeal (taupe wool read near black, walk 17)
         ("MI_Leather", "leather", 50, (0.2, 0.12, 0.08), 0.9),             # bar stools, lobby chairs
         ("MI_WallPlaster", "plaster", 260, (0.93, 0.91, 0.88), 1.0),
@@ -539,7 +539,7 @@ for name, slot, tile, tint, rough in [
 # Untextured surfaces: defaults are white base, ARM = (AO 1, rough 0.55, metal 0) scaled below.
 for name, tint, rough, metal in [
         ("MI_Graphite", (0.06, 0.065, 0.075), 0.75, 1.0), ("MI_Chrome", (0.8, 0.8, 0.82), 0.3, 1.0),
-        ("MI_Steel", (0.55, 0.56, 0.58), 0.5, 1.0), ("MI_SteelDark", (0.2, 0.2, 0.21), 0.7, 1.0), ("MI_Brass", (0.75, 0.55, 0.3), 0.35, 1.0),
+        ("MI_Steel", (0.55, 0.56, 0.58), 0.5, 1.0), ("MI_SteelDark", (0.2, 0.2, 0.21), 0.7, 1.0), ("MI_Brass", (0.72, 0.5, 0.2), 0.3, 1.0),  # more saturated: the cart posts read beige (walk 18)
         ("MI_FloorVinyl", (0.34, 0.35, 0.36), 0.7, 0.0),  # sheet vinyl, plain: on the concrete texture it read as stone (walk 16)
         ("MI_Mirror", (0.3, 0.31, 0.33), 0.05, 1.0),  # at 0.95 (walk 14) and 0.42 (walk 17) it showed the lit tiles as a white field
         ("MI_Skirting", (0.12, 0.12, 0.13), 1.2, 0.0),

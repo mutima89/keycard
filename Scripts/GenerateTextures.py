@@ -1,7 +1,7 @@
 """Draws Keycard's own textures for the Veldane Grand Harbourfront: CCTV wall feeds, the LP office
 shift board, the front office system, the incident report and clip export screens, the fire panel,
 the LP whiteboard, harbour art prints, the exit sign, the corridor carpet, the wallpaper, the kitchen quarry tile, the
-do-not-disturb hanger, the typical guest floor evacuation plan and the
+sealed concrete of the back of house, the do-not-disturb hanger, the typical guest floor evacuation plan and the
 night skylines round the harbour.
 
 Everything is invented (Docs/FictionalNames.md); nothing on a screen hints at a case's rubric.
@@ -384,6 +384,57 @@ def wall_tile():
     return im.resize((512, 512))
 
 
+def _tile_noise(size, cells, seed):
+    """Seamless value noise: a cells x cells grid of random values, tiled 3 x 3, scaled up smoothly, middle tile kept."""
+    rnd = random.Random(seed)
+    grid = Image.new("L", (cells, cells))
+    grid.putdata([rnd.randint(0, 255) for _ in range(cells * cells)])
+    big = Image.new("L", (cells * 3, cells * 3))
+    for ty in range(3):
+        for tx in range(3):
+            big.paste(grid, (tx * cells, ty * cells))
+    big = big.resize((size * 3, size * 3), getattr(Image, "Resampling", Image).BICUBIC)
+    return big.crop((size, size, size * 2, size * 2))
+
+
+def sealed_concrete():
+    """B1 and loading-dock floor: one 3 m bay of sealed, power-floated slab (TileSize 300 in ImportAssets.py). Neutral grey
+    clouding from the float, fine aggregate, faint trowel arcs, and a saw cut along two edges, so the joints fall every 3 m.
+    (The scanned concrete read as green-grey stone, walks 14-17.)"""
+    size = 1024
+    rnd = random.Random(67)
+    clouds = [(_tile_noise(size, 5, 61), 11.0), (_tile_noise(size, 16, 62), 5.0), (_tile_noise(size, 64, 63), 3.0)]
+    # Trowel arcs and aggregate on a mid-grey canvas (128 = no change), kept inside the bay so the repeat stays seamless.
+    arcs = Image.new("L", (size, size), 128)
+    d = ImageDraw.Draw(arcs)
+    for _ in range(14):
+        r = rnd.randint(140, 340)
+        cx, cy = rnd.randint(r + 24, size - r - 24), rnd.randint(r + 24, size - r - 24)
+        a0 = rnd.randint(0, 359)
+        d.arc([cx - r, cy - r, cx + r, cy + r], a0, a0 + rnd.randint(40, 110), fill=128 + rnd.choice([-5, -4, 4, 5]), width=rnd.randint(6, 14))
+    arcs = arcs.filter(ImageFilter.GaussianBlur(4))
+    grit = Image.new("L", (size, size), 128)
+    d = ImageDraw.Draw(grit)
+    for _ in range(9000):
+        x, y, rad = rnd.uniform(3, size - 3), rnd.uniform(3, size - 3), rnd.uniform(0.6, 1.6)
+        d.ellipse([x - rad, y - rad, x + rad, y + rad], fill=128 + rnd.choice([-1, 1]) * rnd.randint(8, 18))
+    layers = [(list(im.getdata()), amp / 128.0) for im, amp in clouds]
+    arc_px, grit_px = list(arcs.getdata()), list(grit.getdata())
+    base = (138, 136, 131)
+    out = []
+    for i in range(size * size):
+        v = sum((px[i] - 128) * k for px, k in layers) + (arc_px[i] - 128) + (grit_px[i] - 128) * 0.8 + rnd.uniform(-3.0, 3.0)
+        x, y = i % size, i // size
+        if x < 3 or y < 3:
+            v -= 46  # the saw cut
+        elif x in (3, size - 1) or y in (3, size - 1):
+            v += 9   # its arrised edges catch the light
+        out.append(tuple(max(0, min(255, int(c + v))) for c in base))
+    im = Image.new("RGB", (size, size))
+    im.putdata(out)
+    return im
+
+
 def dnd_tag():
     w, h = 256, 640
     im = Image.new("RGB", (w, h), (120, 30, 40))
@@ -623,6 +674,7 @@ def main():
         "T_ArtHarbourA": harbour_art(11), "T_ArtHarbourB": harbour_art(29), "T_ArtHarbourC": harbour_art(53),
         "T_ExitSign": exit_sign(), "T_CorridorCarpet": corridor_carpet(), "T_Wallpaper": wallpaper(), "T_QuarryTile": quarry_tile(),
         "T_DndTag": dnd_tag(), "T_BallroomCarpet": ballroom_carpet(), "T_FloorPlan": floor_plan(), "T_WallTile": wall_tile(),
+        "T_SealedConcrete": sealed_concrete(),
     }
     for name, (seed, pw, ph, lo, hi, towers, lit) in SKYLINES.items():
         items[name] = skyline(seed, pw, ph, lo, hi, towers, lit, 1024 if ph > 60 else 512, 0.0 if ph > 60 else 5.0)

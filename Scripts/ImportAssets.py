@@ -6,7 +6,8 @@ Creates:
   /Game/Keycard/Materials/M_KcWorld      world-aligned PBR (architecture; tiling never stretches)
   /Game/Keycard/Materials/M_KcSurface    UV PBR (imported models)
   /Game/Keycard/Materials/M_KcGlass      translucent glass
-  /Game/Keycard/Materials/M_KcEmissive   light panels, LEDs, signs
+  /Game/Keycard/Materials/M_KcEmissive   light panels, LEDs, signs, lamp shades
+  /Game/Keycard/Materials/M_KcCeiling    painted ceilings (lit, with a faint glow of their own)
   /Game/Keycard/Materials/M_KcScreen     self-lit displays (CCTV wall, terminals, fire panel)
   /Game/Keycard/Materials/M_KcSky        HDRI sky sphere (lat-long, unlit)
   /Game/Keycard/Materials/M_KcHighlight  focus overlay (fresnel)
@@ -232,10 +233,33 @@ def build_emissive():
     link(color, "", mul, "A")
     link(inten, "", mul, "B")
     prop(mul, "", unreal.MaterialProperty.MP_EMISSIVE_COLOR)
-    black = expr(m, unreal.MaterialExpressionConstant3Vector, -400, -150, constant=unreal.LinearColor(0.02, 0.02, 0.02, 1))
+    # Black: a lamp 10-30 cm away still lit a 0.02 base past its own glow, as white hot spots on discs and ceilings (walk 17).
+    black = expr(m, unreal.MaterialExpressionConstant3Vector, -400, -150, constant=unreal.LinearColor(0.0, 0.0, 0.0, 1))
     prop(black, "", unreal.MaterialProperty.MP_BASE_COLOR)
     rough = expr(m, unreal.MaterialExpressionScalarParameter, -400, 250, parameter_name="Roughness", default_value=0.3)
     prop(rough, "", unreal.MaterialProperty.MP_ROUGHNESS)
+    # Specular 0 on shades, lenses and glowing ceilings: a highlight from the lamp beside them sat on top of the glow
+    # and blew them to white (walk 17).
+    spec = expr(m, unreal.MaterialExpressionScalarParameter, -400, 400, parameter_name="Specular", default_value=0.5)
+    prop(spec, "", unreal.MaterialProperty.MP_SPECULAR)
+    return finish(m)
+
+
+def build_ceiling():
+    """Painted ceilings: matte and lit like any surface, with a faint glow of their own in their colour. The downlights
+    are spots aimed down (round 18), so a ceiling gets only bounce light; the glow stands in for the rest of it."""
+    m = new_material("M_KcCeiling")
+    tint = expr(m, unreal.MaterialExpressionVectorParameter, -700, -150, parameter_name="Tint", default_value=unreal.LinearColor(0.86, 0.86, 0.85, 1))
+    prop(tint, "", unreal.MaterialProperty.MP_BASE_COLOR)
+    glow = expr(m, unreal.MaterialExpressionScalarParameter, -700, 50, parameter_name="Glow", default_value=1.5)
+    mul = expr(m, unreal.MaterialExpressionMultiply, -400, 0)
+    link(tint, "", mul, "A")
+    link(glow, "", mul, "B")
+    prop(mul, "", unreal.MaterialProperty.MP_EMISSIVE_COLOR)
+    rough = expr(m, unreal.MaterialExpressionConstant, -400, 200, r=1.0)
+    prop(rough, "", unreal.MaterialProperty.MP_ROUGHNESS)
+    spec = expr(m, unreal.MaterialExpressionConstant, -400, 300, r=0.0)
+    prop(spec, "", unreal.MaterialProperty.MP_SPECULAR)
     return finish(m)
 
 
@@ -461,6 +485,7 @@ WORLD = build_world(defaults)
 FOLIAGE = build_foliage(defaults)
 GLASS = build_glass()
 EMISSIVE = build_emissive()
+CEILING = build_ceiling()
 build_highlight()
 build_sky()
 if not (hdri and isinstance(hdri, unreal.TextureCube)):
@@ -487,7 +512,6 @@ for name, slot, tile, tint, rough in [
         ("MI_FloorMarble", "marble", 240, (0.95, 0.94, 0.92), 0.6),        # lobby
         ("MI_StoneCounter", "marble", 120, (0.22, 0.22, 0.24), 0.9),       # front desk and bar tops: dark stone (0.5 sparkled)
         ("MI_FloorTile", "tiles", 60, (0.93, 0.93, 0.92), 0.8),            # guest bathrooms, staff toilets
-        ("MI_FloorConcrete", "concrete_floor", 300, (0.8, 0.8, 0.8), 1.7),  # 1.3 read wet (walk 14), 2.0 read as rock (walk 16) # B1 back of house, loading dock
         ("MI_Concrete", "concrete_wall", 280, (0.75, 0.75, 0.74), 1.7),    # stair shafts, B1 walls
         ("MI_Facade", "concrete_wall", 400, (0.55, 0.56, 0.58), 1.2),      # exterior
         ("MI_Asphalt", "asphalt", 400, (0.6, 0.6, 0.6), 1.4),              # street and garage ramp
@@ -499,6 +523,9 @@ for name, slot, tile, tint, rough in [
         ("MI_FabricAccent", "wool", 30, (0.18, 0.36, 0.48), 2.0),          # harbour-blue upholstery
         ("MI_AcousticPanel", "wool", 60, (0.4, 0.46, 0.52), 1.0),         # at 0.24-0.36 the CCTV room walls read black
         ("MI_Linen", "linen", 40, (0.82, 0.81, 0.78), 1.8),  # white cloth is about 0.8 albedo: 0.95 blew beds and linen to flat white                # bed linen, towels
+        ("MI_TableLinen", "linen", 40, (0.72, 0.69, 0.6), 1.8),            # banquet cloths: ivory, a shade under the bed linen (white drums blew out, walk 17)
+        ("MI_Champagne", "linen", 40, (0.62, 0.52, 0.38), 1.2),            # banquet overlays: champagne satin
+        ("MI_Headboard", "wool", 30, (0.68, 0.62, 0.54), 2.0),             # guest-room headboards: oatmeal (taupe wool read near black, walk 17)
         ("MI_Leather", "leather", 50, (0.2, 0.12, 0.08), 0.9),             # bar stools, lobby chairs
         ("MI_WallPlaster", "plaster", 260, (0.93, 0.91, 0.88), 1.0),
         ("MI_WallPaint", "plaster", 260, (0.82, 0.83, 0.82), 1.1),         # back-of-house corridors
@@ -514,8 +541,8 @@ for name, tint, rough, metal in [
         ("MI_Graphite", (0.06, 0.065, 0.075), 0.75, 1.0), ("MI_Chrome", (0.8, 0.8, 0.82), 0.3, 1.0),
         ("MI_Steel", (0.55, 0.56, 0.58), 0.5, 1.0), ("MI_SteelDark", (0.2, 0.2, 0.21), 0.7, 1.0), ("MI_Brass", (0.75, 0.55, 0.3), 0.35, 1.0),
         ("MI_FloorVinyl", (0.34, 0.35, 0.36), 0.7, 0.0),  # sheet vinyl, plain: on the concrete texture it read as stone (walk 16)
-        ("MI_Mirror", (0.42, 0.44, 0.46), 0.05, 1.0),  # at 0.95 it read as a blank white panel (walk 14)
-        ("MI_CeilingWhite", (0.86, 0.86, 0.85), 1.6, 0.0), ("MI_Skirting", (0.12, 0.12, 0.13), 1.2, 0.0),
+        ("MI_Mirror", (0.3, 0.31, 0.33), 0.05, 1.0),  # at 0.95 (walk 14) and 0.42 (walk 17) it showed the lit tiles as a white field
+        ("MI_Skirting", (0.12, 0.12, 0.13), 1.2, 0.0),
         ("MI_DeviceBlack", (0.02, 0.02, 0.025), 0.6, 0.0), ("MI_PlasticGrey", (0.35, 0.36, 0.38), 0.8, 0.0),
         ("MI_Paper", (0.8, 0.8, 0.78), 1.7, 0.0), ("MI_Ceramic", (0.85, 0.85, 0.83), 0.35, 0.0),
         ("MI_Cardboard", (0.55, 0.42, 0.28), 1.7, 0.0), ("MI_FireRed", (0.6, 0.04, 0.03), 0.6, 0.0),
@@ -531,8 +558,11 @@ instance("MI_GlassDark", GLASS, {}, {"Opacity": 0.45, "Roughness": 0.04}, {"Tint
 instance("MI_Sheer", GLASS, {}, {"Opacity": 0.4, "Roughness": 0.7, "Specular": 0.2}, {"Tint": (0.95, 0.94, 0.9, 1)})  # guest-room sheer curtains
 instance("MI_Water", GLASS, {}, {"Opacity": 0.7, "Roughness": 0.02}, {"Tint": (0.04, 0.12, 0.18, 1)})             # harbour
 instance("MI_LightPanel", EMISSIVE, {}, {"Intensity": 60.0}, {"Color": (1, 0.97, 0.92, 1)})
-# Lamp shades and pendant drums: at 45 the shades and the ballroom drums blew out to white (walk 12).
-instance("MI_LampWarm", EMISSIVE, {}, {"Intensity": 12.0}, {"Color": (1.0, 0.78, 0.5, 1)})
+# Lamp lenses, diffusers and bulbs: at 45 the shades and the ballroom drums blew out to white (walk 12).
+instance("MI_LampWarm", EMISSIVE, {}, {"Intensity": 12.0, "Roughness": 1.0, "Specular": 0.0}, {"Color": (1.0, 0.78, 0.5, 1)})
+# Fabric shades lit from inside and heat-lamp elements: dimmer and warmer than a lens (at 12 every shade read as a white
+# drum, walk 17).
+instance("MI_LampShade", EMISSIVE, {}, {"Intensity": 7.0, "Roughness": 1.0, "Specular": 0.0}, {"Color": (1.0, 0.66, 0.34, 1)})
 instance("MI_LedStrip", EMISSIVE, {}, {"Intensity": 70.0}, {"Color": (0.95, 0.97, 1.0, 1)})
 instance("MI_SignGlow", EMISSIVE, {}, {"Intensity": 30.0}, {"Color": (0.29, 0.61, 0.77, 1)})  # hotel name and wayfinding
 instance("MI_LedGreen", EMISSIVE, {}, {"Intensity": 25.0}, {"Color": (0.1, 0.9, 0.25, 1)})
@@ -540,12 +570,15 @@ instance("MI_LedRed", EMISSIVE, {}, {"Intensity": 25.0}, {"Color": (0.95, 0.08, 
 instance("MI_LedAmber", EMISSIVE, {}, {"Intensity": 25.0}, {"Color": (1.0, 0.55, 0.05, 1)})
 # Back-of-house ceilings: faintly self-lit so they read as bounce-lit white above the down-facing panels, not black;
 # fully rough, or the downlights streak across them like a mirror.
-instance("MI_CeilingSoft", EMISSIVE, {}, {"Intensity": 6.0, "Roughness": 1.0}, {"Color": (0.88, 0.89, 0.9, 1)})
-# CCTV room: kept dark for the screens; at 6 the exposure lifted the ceiling to a glowing white slab.
-instance("MI_CeilingDim", EMISSIVE, {}, {"Intensity": 0.8, "Roughness": 1.0}, {"Color": (0.88, 0.89, 0.9, 1)})
+instance("MI_CeilingSoft", EMISSIVE, {}, {"Intensity": 6.0, "Roughness": 1.0, "Specular": 0.0}, {"Color": (0.88, 0.89, 0.9, 1)})
+# CCTV room: kept dark for the screens; at 6 the exposure lifted the ceiling to a glowing white slab. 0.8 until its
+# downlights became spots and stopped lighting it (round 18).
+instance("MI_CeilingDim", EMISSIVE, {}, {"Intensity": 1.0, "Roughness": 1.0, "Specular": 0.0}, {"Color": (0.88, 0.89, 0.9, 1)})
+# Front-of-house ceilings (lobby, corridors, guest rooms, ballroom): lit, so the lobby cove still washes its ceiling.
+instance("MI_CeilingWhite", CEILING, {}, {"Glow": 1.5}, {"Tint": (0.86, 0.86, 0.85, 1)})
 # B1 work rooms and corridor: between the two; at 0.8 the ceilings read as a black band over the walls.
-instance("MI_CeilingLow", EMISSIVE, {}, {"Intensity": 1.4, "Roughness": 1.0}, {"Color": (0.88, 0.89, 0.9, 1)})  # housekeeping, under battens
-instance("MI_CeilingMid", EMISSIVE, {}, {"Intensity": 2.5, "Roughness": 1.0}, {"Color": (0.88, 0.89, 0.9, 1)})
+instance("MI_CeilingLow", EMISSIVE, {}, {"Intensity": 1.4, "Roughness": 1.0, "Specular": 0.0}, {"Color": (0.88, 0.89, 0.9, 1)})  # housekeeping, LP office, fire command, executive offices
+instance("MI_CeilingMid", EMISSIVE, {}, {"Intensity": 2.5, "Roughness": 1.0, "Specular": 0.0}, {"Color": (0.88, 0.89, 0.9, 1)})  # B1 corridor, kitchen
 instance("MI_Highlight", unreal.load_asset(MAT + "/M_KcHighlight"))
 # People: a faint rim only. At full strength the whole body glowed blue and the open mouth and teeth lit up.
 instance("MI_HighlightPerson", unreal.load_asset(MAT + "/M_KcHighlight"), {}, {"Opacity": 0.2}, {"Color": (0.12, 0.25, 0.32, 1)})
@@ -583,6 +616,14 @@ for mi, tex, tile, rough in [("MI_CorridorCarpet", "T_CorridorCarpet", 120, 2.0)
     if tex in gen:
         instance(mi, WORLD, {"BaseColorMap": gen[tex]}, {"MetallicScale": 0.0, "RoughnessScale": rough},
                  {"Tint": (1, 1, 1, 1), "TileSize": (tile, tile, tile, 0)})
+# B1 back of house and the loading dock: a sealed, power-floated slab with saw cuts every 3 m. The scanned concrete read
+# as green-grey stone at every roughness tried (walks 14-17).
+if "T_SealedConcrete" in gen:
+    instance("MI_FloorConcrete", WORLD, {"BaseColorMap": gen["T_SealedConcrete"]}, {"MetallicScale": 0.0, "RoughnessScale": 1.45},
+             {"Tint": (1, 1, 1, 1), "TileSize": (300, 300, 300, 0)})
+else:
+    err("T_SealedConcrete missing: run python Scripts/GenerateTextures.py; MI_FloorConcrete uses the scanned concrete")
+    world_surface("MI_FloorConcrete", "concrete_floor", 300, (0.8, 0.8, 0.8), 1.7)
 instance("MI_Sky", unreal.load_asset(MAT + "/M_KcSky"), {}, {"Intensity": 1.0})
 skyline = build_skyline()
 for side in ["FarN", "FarS", "FarW", "FarE", "NearS", "NearW", "NearE"]:

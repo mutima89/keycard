@@ -97,7 +97,9 @@ private:
 	UTextRenderComponent* AddLabel(const FString& Text, const FVector& Location, float Yaw, float Size, const FColor& Color, int32 Floor);
 	void AddLight(int32 Floor, const FVector& Location, float Lumens, float Radius, const FLinearColor& Color, bool bShadows = false, bool bRect = false,
 		const FVector2D& RectSize = FVector2D::ZeroVector);
-	void CeilingLight(int32 Floor, const FVector& Location, float Lumens, const FLinearColor& Color, float Radius = 700.0f);
+	// A spot aimed straight down; Lumens is what a point light there would have had (see the body).
+	void AddDownlight(int32 Floor, const FVector& Location, float Lumens, float Radius, const FLinearColor& Color, float OuterCone = 85.0f);
+	void CeilingLight(int32 Floor, const FVector& Location, float Lumens, const FLinearColor& Color, float Radius = 700.0f, float OuterCone = 85.0f);
 	void Sconce(int32 Floor, const FVector& WallPoint, float Yaw);
 
 	// ---- architecture ----

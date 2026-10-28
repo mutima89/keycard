@@ -105,7 +105,7 @@
    "id": "concrete_floor_02",
    "slot": "concrete_floor",
    "kind": "texture",
-   "role": "B1 back of house, loading dock",
+   "role": "Fallback for the B1 and loading dock floor (the generated sealed concrete is used when present)",
    "source": "Poly Haven",
    "page": "https://polyhaven.com/a/concrete_floor_02",
    "licence": "CC0 1.0",

@@ -31,7 +31,7 @@ WANTED = [
     ("texture", "parquet", ["herringbone_parquet"], "Parquet: LP office, manager's office"),
     ("texture", "marble", ["marble_01", "white_marble_03"], "Lobby floor; dark-tinted for the front desk and bar tops"),
     ("texture", "tiles", ["white_bathroom_tiles", "bathroom_tiles", "square_tiles_02"], "Guest bathrooms, staff toilets"),
-    ("texture", "concrete_floor", ["concrete_floor_02", "smooth_concrete_floor"], "B1 back of house, loading dock"),
+    ("texture", "concrete_floor", ["concrete_floor_02", "smooth_concrete_floor"], "Fallback for the B1 and loading dock floor (the generated sealed concrete is used when present)"),
     ("texture", "concrete_wall", ["concrete_wall_008", "concrete_wall_006", "painted_concrete"], "Stair shafts, B1 walls, facade"),
     ("texture", "asphalt", ["asphalt_02", "asphalt_track"], "Street and garage ramp"),
     ("texture", "paving", ["grey_cartago_02", "patterned_paving", "cobblestone_floor_08"], "Quay Promenade paving"),

@@ -360,7 +360,10 @@ EKcCaseResult UKcCampaignSubsystem::DoAction(const FString& ActionId, const FStr
 		if (const kc::ActionDef* A = M->FindAction(ToStd(ActionId)))
 		{
 			if (!A->FindingTitle.empty()) G->Notify(FString::Printf(TEXT("%s  Notebook: %s"), *ClockText(), *ToFString(kc::FindingTitleFor(G->GetState(), *A))));
-			if (!A->Evidence.empty()) G->Notify(FString::Printf(TEXT("Chain of custody: %s"), *ToFString(A->Evidence)));
+			// Sealed only when done in time (a late step seals nothing), stamped with the case clock.
+			const kc::CampaignState& CS = G->GetState().Campaign;
+			const bool bExpired = !CS.Steps.empty() && CS.Steps.back().bExpired;
+			if (!A->Evidence.empty() && !bExpired) G->Notify(FString::Printf(TEXT("%s  Chain of custody: %s"), *ClockText(), *ToFString(A->Evidence)));
 		}
 		G->StateEdited();
 	}

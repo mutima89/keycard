@@ -3,6 +3,7 @@
 ## Status: Keycard 1.0.0 released (tag v1.0.0 at a3c46bb)
 Last update: 2026-10-23
 
+- 2026-10-24 Mission walkthrough, part 3 (PC, packaged Development, 08e9146). Rounds 4-7 rebuilt the self-test's stand/aim (grid of open floor, interaction sweep, aim at the thing itself) and fixed: Colm spawned inside Rory (M026), floor 14 card readers swinging into rooms (M001, M021), Pike blocking the 1406 doorway (M003). Round 8: KeycardEditor and Keycard "Result: Succeeded", BuildWindows "BUILD SUCCESSFUL". `-KcSelfTest=missions`: PASS, 39/39 cases, 2172 ok, 0 FAIL, 355/355 steps. `-KcSelfTest=play`: PASS, 667 ok, 0 FAIL. Since then: custody notices carry the case time and are skipped for late steps (not yet built). Visual notes left for the design pass: M003 photo camera aims at the floor, M009 dock very dark.
 - 2026-10-23 Mission walkthrough, part 2 (PC, packaged Development build, branch claude/project-thread-53fqw6).
   - Round 1 (061dff2): core 46/46; KeycardEditor and Keycard Win64 "Result: Succeeded"; voices 380 lines, ImportAudio 0 errors; RunUnrealTests 6/6; BuildWindows "BUILD SUCCESSFUL". `-KcSelfTest=missions` and `=play` crashed (exit 3): "Assertion failed: Index == 1" in SkeletalRenderGPUSkin.cpp:336 (FMorphVertexBufferPool::GetReadingIndex, render thread), at M009 and M014.
   - Round 2 (aeb17dd, people retired instead of destroyed): same crash at M014. `r.MorphTarget.ForceUpdate=1` also crashed (M019).

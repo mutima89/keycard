@@ -21,5 +21,5 @@
 {TEXT("Dining Chair 02"), TEXT("Guest-room desk chairs, LP office"), TEXT("Poly Haven"), TEXT("James Ray Cock"), TEXT("CC0 1.0")},
 {TEXT("Potted Plant 02"), TEXT("Large plants"), TEXT("Poly Haven"), TEXT("Rico Cilliers"), TEXT("CC0 1.0")},
 {TEXT("Potted Plant 04"), TEXT("Desk plants"), TEXT("Poly Haven"), TEXT("James Ray Cock"), TEXT("CC0 1.0")},
-{TEXT("Shanghai Bund"), TEXT("Night harbour city through the windows"), TEXT("Poly Haven"), TEXT("Greg Zaal"), TEXT("CC0 1.0")},
+{TEXT("Rooftop Night"), TEXT("Night city seen from a height, through the windows"), TEXT("Poly Haven"), TEXT("Greg Zaal"), TEXT("CC0 1.0")},
 {TEXT("Inter 4.1"), TEXT("UI typeface"), TEXT("rsms/inter (Rasmus Andersson)"), TEXT("Rasmus Andersson"), TEXT("SIL Open Font License 1.1")},

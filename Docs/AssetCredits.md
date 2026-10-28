@@ -17,7 +17,7 @@ Code: MIT, created by M A Almahlaki. Parts of the code come from Riskbound by th
 | Ambience beds (room tone, HVAC, servers, office, fluorescent, lobby at night, harbour, stairwell echo, music through a door) and stingers | Original, synthesised by `Scripts/BuildAudio.py` | MIT (this repo) | Hotel ambience, promotion and pass/fail cues | Deterministic (fixed seeds) |
 
 ## Original artwork
-Screen interfaces (CCTV wall, shift board, Port Avener room rack, incident report, clip export, fire panel), exit sign, evacuation plan, whiteboard, harbour prints, corridor carpet, wallpaper and the Do Not Disturb tag are drawn by `Scripts/GenerateTextures.py` (MIT, this repo). The exit sign follows the generic running-figure pictogram style; it carries no real organisation's mark.
+Screen interfaces (CCTV wall, shift board, Port Avener room rack, incident report, clip export, fire panel), exit sign, evacuation plan, whiteboard, harbour prints, corridor carpet, wallpaper, the sealed concrete floor and the Do Not Disturb tag are drawn by `Scripts/GenerateTextures.py` (MIT, this repo). The exit sign follows the generic running-figure pictogram style; it carries no real organisation's mark.
 
 ## Art assets
 <!-- generated:assets begin -->
@@ -28,7 +28,7 @@ Generated from Data/AssetManifest.json by `Scripts/FetchAssets.py --resolve`.
 | [Herringbone Parquet](https://polyhaven.com/a/herringbone_parquet) by Jenelle van Heerden, Sergej Majboroda | Poly Haven | CC0 1.0 | Parquet: LP office, manager's office | Logo check: see below |
 | [Marble 01](https://polyhaven.com/a/marble_01) by Rob Tuytel | Poly Haven | CC0 1.0 | Lobby floor; dark-tinted for the front desk and bar tops | Logo check: see below |
 | [Square Tiles 02](https://polyhaven.com/a/square_tiles_02) by Charlotte Baglioni | Poly Haven | CC0 1.0 | Guest bathrooms, staff toilets | Logo check: see below |
-| [Concrete Floor 02](https://polyhaven.com/a/concrete_floor_02) by Rob Tuytel | Poly Haven | CC0 1.0 | B1 back of house, loading dock | Logo check: see below |
+| [Concrete Floor 02](https://polyhaven.com/a/concrete_floor_02) by Rob Tuytel | Poly Haven | CC0 1.0 | Fallback for the B1 and loading dock floor (the generated sealed concrete is used when present) | Logo check: see below |
 | [Concrete Wall 008](https://polyhaven.com/a/concrete_wall_008) by Charlotte Baglioni, Dario Barresi | Poly Haven | CC0 1.0 | Stair shafts, B1 walls, facade | Logo check: see below |
 | [Asphalt 02](https://polyhaven.com/a/asphalt_02) by Rob Tuytel | Poly Haven | CC0 1.0 | Street and garage ramp | Logo check: see below |
 | [Grey Cartago 02](https://polyhaven.com/a/grey_cartago_02) by Jenelle van Heerden, Lucas Sánchez Ros | Poly Haven | CC0 1.0 | Quay Promenade paving | Logo check: see below |
@@ -46,7 +46,7 @@ Generated from Data/AssetManifest.json by `Scripts/FetchAssets.py --resolve`.
 | [Dining Chair 02](https://polyhaven.com/a/dining_chair_02) by James Ray Cock | Poly Haven | CC0 1.0 | Guest-room desk chairs, LP office | Logo check: see below |
 | [Potted Plant 02](https://polyhaven.com/a/potted_plant_02) by Rico Cilliers | Poly Haven | CC0 1.0 | Large plants | Logo check: see below |
 | [Potted Plant 04](https://polyhaven.com/a/potted_plant_04) by James Ray Cock | Poly Haven | CC0 1.0 | Desk plants | Logo check: see below |
-| [Shanghai Bund](https://polyhaven.com/a/shanghai_bund) by Greg Zaal | Poly Haven | CC0 1.0 | Night harbour city through the windows | Logo check: see below |
+| [Rooftop Night](https://polyhaven.com/a/rooftop_night) by Greg Zaal | Poly Haven | CC0 1.0 | Night city seen from a height, through the windows | Logo check: see below |
 | [Inter 4.1](https://rsms.me/inter/) by Rasmus Andersson | rsms/inter (Rasmus Andersson) | SIL Open Font License 1.1 | UI typeface | Logo check: see below |
 <!-- generated:assets end -->
 

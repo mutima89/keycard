@@ -1,7 +1,8 @@
 """Draws Keycard's own textures for the Veldane Grand Harbourfront: CCTV wall feeds, the LP office
 shift board, the front office system, the incident report and clip export screens, the fire panel,
 the LP whiteboard, harbour art prints, the exit sign, the corridor carpet, the wallpaper, the kitchen quarry tile, the
-do-not-disturb hanger and the floor 14 evacuation plan.
+sealed concrete of the back of house, the do-not-disturb hanger, the typical guest floor evacuation plan and the
+night skylines round the harbour.
 
 Everything is invented (Docs/FictionalNames.md); nothing on a screen hints at a case's rubric.
 Output: Data/Assets/generated/*.png, imported by Scripts/ImportAssets.py. Deterministic: the same
@@ -314,8 +315,37 @@ def wallpaper():
     for x in range(0, w, 4):
         c = 166 + rnd.randint(-8, 8)
         d.line([x, 0, x, h], fill=(c, c - 8, c - 20), width=2)
-    for y in range(0, h, 64):
-        d.line([0, y, w, y], fill=(186, 176, 160), width=1)
+    # Slubs: short lighter threads at random heights (a grid of lines here read as tiles in walk 12).
+    for _ in range(900):
+        x, y = rnd.randrange(w), rnd.randrange(h)
+        c = 176 + rnd.randint(0, 10)
+        d.line([x, y, x, (y + rnd.randint(6, 20)) % h], fill=(c, c - 8, c - 20), width=1)
+    return im
+
+
+def ballroom_carpet():
+    """Harbour Ballroom carpet repeat: deep claret ground, a gold and teal medallion on a scroll lattice."""
+    w = h = 512
+    im = Image.new("RGB", (w, h), (74, 18, 26))
+    d = ImageDraw.Draw(im)
+    gold, teal, dark = (168, 128, 62), (38, 82, 88), (52, 12, 18)
+    for cx, cy in [(128, 128), (384, 384)]:
+        d.ellipse([cx - 92, cy - 92, cx + 92, cy + 92], outline=gold, width=4)
+        for k in range(8):
+            a = k * math.pi / 4
+            px, py = cx + math.cos(a) * 62, cy + math.sin(a) * 62
+            d.ellipse([px - 16, py - 16, px + 16, py + 16], fill=teal, outline=gold, width=2)
+        d.ellipse([cx - 30, cy - 30, cx + 30, cy + 30], fill=dark, outline=gold, width=3)
+    for cx, cy in [(384, 128), (128, 384)]:
+        d.polygon([(cx, cy - 40), (cx + 40, cy), (cx, cy + 40), (cx - 40, cy)], fill=dark, outline=gold)
+        d.ellipse([cx - 8, cy - 8, cx + 8, cy + 8], fill=gold)
+    rnd = random.Random(31)
+    px = im.load()
+    for y in range(h):
+        for x in range(w):
+            n = rnd.randint(-5, 5)
+            r, g, b = px[x, y]
+            px[x, y] = (max(0, r + n), max(0, g + n), max(0, b + n))
     return im
 
 
@@ -339,6 +369,72 @@ def quarry_tile():
     return im
 
 
+def wall_tile():
+    """Bathroom walls and the kitchen's tiled walls: 6 x 6 glazed white 10 cm tiles in pale grout, each a shade apart.
+    (Poly Haven's white tile sets 404'd and the fallback, square_tiles_02, rendered near black on walls.)"""
+    w = h = 516
+    grout = (178, 178, 172)
+    im = Image.new("RGB", (w, h), grout)
+    d = ImageDraw.Draw(im)
+    rnd = random.Random(23)
+    for ty in range(6):
+        for tx in range(6):
+            c = rnd.randint(-5, 5)
+            d.rectangle([tx * 86 + 2, ty * 86 + 2, tx * 86 + 83, ty * 86 + 83], fill=(236 + c, 238 + c, 236 + c))
+    return im.resize((512, 512))
+
+
+def _tile_noise(size, cells, seed):
+    """Seamless value noise: a cells x cells grid of random values, tiled 3 x 3, scaled up smoothly, middle tile kept."""
+    rnd = random.Random(seed)
+    grid = Image.new("L", (cells, cells))
+    grid.putdata([rnd.randint(0, 255) for _ in range(cells * cells)])
+    big = Image.new("L", (cells * 3, cells * 3))
+    for ty in range(3):
+        for tx in range(3):
+            big.paste(grid, (tx * cells, ty * cells))
+    big = big.resize((size * 3, size * 3), getattr(Image, "Resampling", Image).BICUBIC)
+    return big.crop((size, size, size * 2, size * 2))
+
+
+def sealed_concrete():
+    """B1 and loading-dock floor: one 3 m bay of sealed, power-floated slab (TileSize 300 in ImportAssets.py). Neutral grey
+    clouding from the float, fine aggregate, faint trowel arcs, and a saw cut along two edges, so the joints fall every 3 m.
+    (The scanned concrete read as green-grey stone, walks 14-17.)"""
+    size = 1024
+    rnd = random.Random(67)
+    clouds = [(_tile_noise(size, 5, 61), 11.0), (_tile_noise(size, 16, 62), 5.0), (_tile_noise(size, 64, 63), 3.0)]
+    # Trowel arcs and aggregate on a mid-grey canvas (128 = no change), kept inside the bay so the repeat stays seamless.
+    arcs = Image.new("L", (size, size), 128)
+    d = ImageDraw.Draw(arcs)
+    for _ in range(14):
+        r = rnd.randint(140, 340)
+        cx, cy = rnd.randint(r + 24, size - r - 24), rnd.randint(r + 24, size - r - 24)
+        a0 = rnd.randint(0, 359)
+        d.arc([cx - r, cy - r, cx + r, cy + r], a0, a0 + rnd.randint(40, 110), fill=128 + rnd.choice([-5, -4, 4, 5]), width=rnd.randint(6, 14))
+    arcs = arcs.filter(ImageFilter.GaussianBlur(4))
+    grit = Image.new("L", (size, size), 128)
+    d = ImageDraw.Draw(grit)
+    for _ in range(9000):
+        x, y, rad = rnd.uniform(3, size - 3), rnd.uniform(3, size - 3), rnd.uniform(0.6, 1.6)
+        d.ellipse([x - rad, y - rad, x + rad, y + rad], fill=128 + rnd.choice([-1, 1]) * rnd.randint(8, 18))
+    layers = [(list(im.getdata()), amp / 128.0) for im, amp in clouds]
+    arc_px, grit_px = list(arcs.getdata()), list(grit.getdata())
+    base = (138, 136, 131)
+    out = []
+    for i in range(size * size):
+        v = sum((px[i] - 128) * k for px, k in layers) + (arc_px[i] - 128) + (grit_px[i] - 128) * 0.8 + rnd.uniform(-3.0, 3.0)
+        x, y = i % size, i // size
+        if x < 3 or y < 3:
+            v -= 46  # the saw cut
+        elif x in (3, size - 1) or y in (3, size - 1):
+            v += 9   # its arrised edges catch the light
+        out.append(tuple(max(0, min(255, int(c + v))) for c in base))
+    im = Image.new("RGB", (size, size))
+    im.putdata(out)
+    return im
+
+
 def dnd_tag():
     w, h = 256, 640
     im = Image.new("RGB", (w, h), (120, 30, 40))
@@ -353,11 +449,12 @@ def dnd_tag():
 
 
 def floor_plan():
-    """Floor 14 evacuation plan: corridor, rooms, both stairs, you-are-here, assembly point."""
+    """Typical guest floor (2-14) evacuation plan for the back offices: corridor, rooms, both stairs, lifts, assembly point.
+    It hangs on B1 and G, so it carries no you-are-here mark."""
     w, h = 1024, 512
     im = Image.new("RGB", (w, h), (248, 248, 244))
     d = ImageDraw.Draw(im)
-    d.text((24, 16), "FLOOR 14  -  EVACUATION PLAN", font=font(28, "Bold"), fill=(30, 30, 34))
+    d.text((24, 16), "TYPICAL GUEST FLOOR (2-14)  -  EVACUATION PLAN", font=font(28, "Bold"), fill=(30, 30, 34))
     d.text((24, 52), "In a fire: do not use the lifts. Go to the nearest stair. Assembly point: Quay Promenade.", font=font(16), fill=(60, 60, 64))
     x0, y0, x1, y1 = 40, 110, 984, 470
     d.rectangle([x0, y0, x1, y1], outline=(30, 30, 34), width=4)
@@ -367,8 +464,8 @@ def floor_plan():
         x = x0 + i * (x1 - x0) / 10
         d.line([x, y0, x, cy - 22], fill=(30, 30, 34), width=2)
         d.line([x, cy + 22, x, y1], fill=(30, 30, 34), width=2)
-        d.text((x + 8, y0 + 8), f"14{i + 1:02d}", font=font(14), fill=(60, 60, 64))
-        d.text((x + 8, y1 - 26), f"14{20 - i:02d}", font=font(14), fill=(60, 60, 64))
+        d.text((x + 8, y0 + 8), f"x{i + 1:02d}", font=font(14), fill=(60, 60, 64))
+        d.text((x + 8, y1 - 26), f"x{20 - i:02d}", font=font(14), fill=(60, 60, 64))
     for sx, label in [(x0 + 430, "STAIR A"), (x1 - 40, "STAIR B")]:
         d.rectangle([sx - 30, cy - 70, sx + 30, cy - 22], fill=(20, 150, 70))
         d.text((sx - 28, cy - 64), label, font=font(12, "Bold"), fill=(255, 255, 255))
@@ -380,14 +477,185 @@ def floor_plan():
         tip = ax + sgn * 46
         d.line([ax, cy, tip - sgn * 14, cy], fill=green, width=6)
         d.polygon([(tip, cy), (tip - sgn * 16, cy - 11), (tip - sgn * 16, cy + 11)], fill=green)
-    # You are here: the lift lobby notice board, labelled on a white card below the corridor.
+    # The lift lobby, marked on a white card below the corridor (room numbers: x = the floor).
     hx = x0 + 500
-    d.ellipse([hx - 10, cy - 10, hx + 10, cy + 10], fill=(210, 40, 40))
+    d.rectangle([hx - 26, cy - 20, hx + 26, cy + 20], fill=(255, 255, 255), outline=(30, 30, 34), width=3)
+    d.line([hx, cy - 20, hx, cy + 20], fill=(30, 30, 34), width=2)
     label = font(14, "Bold")
-    tw = d.textlength("YOU ARE HERE", font=label)
-    d.rectangle([hx - tw / 2 - 6, cy + 28, hx + tw / 2 + 6, cy + 50], fill=(255, 255, 255), outline=(210, 40, 40), width=2)
-    d.text((hx, cy + 39), "YOU ARE HERE", font=label, fill=(210, 40, 40), anchor="mm")
+    tw = d.textlength("LIFTS", font=label)
+    d.rectangle([hx - tw / 2 - 6, cy + 28, hx + tw / 2 + 6, cy + 50], fill=(255, 255, 255), outline=(30, 30, 34), width=2)
+    d.text((hx, cy + 39), "LIFTS", font=label, fill=(30, 30, 34), anchor="mm")
+    d.text((x0, y1 + 12), "Room numbers: x = floor (e.g. 1406). In a fire alarm the lifts return to G.", font=font(14), fill=(60, 60, 64))
     return im
+
+
+def _tower(d, rng, x0, x1, top, base, px_x, px_y, shade, share, warm, cool, dim, podium_m=0.0, glass=None):
+    """One building from x0 to x1 (px), roof at top, ground at base: its own storey height, bay, window shape
+    and lit share, so no two buildings line up their rows (walks 12: straight lit bands ran across every pane)."""
+    d.rectangle([x0, int(top), x1, base], fill=shade + (255,))
+    storey = rng.uniform(3.0, 4.4) * px_y
+    bay = rng.uniform(2.2, 4.2) * px_x
+    style = rng.random()
+    if style < 0.2:      # ribbon windows: long horizontal strips
+        ww, wh = bay * rng.uniform(0.9, 1.0), storey * rng.uniform(0.35, 0.5)
+    elif style < 0.4:    # tall narrow slots
+        ww, wh = bay * rng.uniform(0.25, 0.35), storey * rng.uniform(0.6, 0.75)
+    else:
+        ww, wh = bay * rng.uniform(0.4, 0.6), storey * rng.uniform(0.4, 0.6)
+    ww, wh = max(1, int(ww)), max(1, int(wh))
+    share *= rng.uniform(0.3, 1.8)
+    tint = warm if rng.random() < 0.6 else cool
+    # Ground storey: taller, and on the near panels a shop or lobby glow.
+    yy = base - max(podium_m * px_y, storey * rng.uniform(1.0, 1.5))
+    if podium_m > 0.0 and rng.random() < 0.7:
+        g = rng.choice([(150, 112, 70, 255), (128, 118, 98, 255), (92, 108, 136, 255), (150, 92, 56, 255)])  # dim: brighter read as pastel blocks
+        sx0 = int(x0 + rng.uniform(0.05, 0.2) * (x1 - x0))
+        sx1 = int(x1 - rng.uniform(0.05, 0.2) * (x1 - x0))
+        gy0, gy1 = int(base - podium_m * 0.75 * px_y), base - max(1, int(0.3 * px_y))
+        d.rectangle([sx0, gy0, sx1, gy1], fill=g)
+        # Inside the glass: shelves and counters as dark shapes, a lit back wall; then the mullions and the door.
+        for _ in range(rng.randint(2, 5)):
+            kx = rng.uniform(sx0, sx1)
+            kw, kh = rng.uniform(0.6, 2.0) * px_x, rng.uniform(0.25, 0.6) * (gy1 - gy0)
+            d.rectangle([int(kx), int(gy1 - kh), int(kx + kw), gy1], fill=tuple(int(c * 0.45) for c in g[:3]) + (255,))
+        mx = sx0
+        while mx < sx1:
+            d.rectangle([int(mx), gy0, int(mx) + 1, gy1], fill=(14, 13, 12, 255))
+            mx += rng.uniform(1.2, 1.8) * px_x
+        dx = rng.uniform(sx0, max(sx0 + 1, sx1 - 1.2 * px_x))
+        d.rectangle([int(dx), int(gy1 - 2.2 * px_y), int(dx + 1.0 * px_x), gy1], fill=tuple(int(c * 0.7) for c in g[:3]) + (255,))
+        d.rectangle([sx0 - 2, int(base - podium_m * 0.85 * px_y), sx1 + 2, int(base - podium_m * 0.75 * px_y)], fill=(18, 16, 14, 255))
+    xoff = rng.uniform(0.2, 0.8) * bay
+    while yy - wh > top + storey * 0.4:
+        r_floor = rng.random()
+        floor_share = share * (0.1 if r_floor < 0.3 else (2.5 if r_floor > 0.9 else 1.0))
+        xx = x0 + xoff
+        run = 0
+        while xx + ww < x1 - bay * 0.2:
+            r = rng.random()
+            # Lit windows come in runs (one office lit, the next dark).
+            if run > 0 or r < floor_share * 0.5:
+                run = run - 1 if run > 0 else rng.randint(0, 5)
+                d.rectangle([int(xx), int(yy - wh), int(xx) + ww - 1, int(yy)], fill=tint if rng.random() < 0.85 else (warm if tint is cool else cool))
+            elif r < floor_share * 0.5 + 0.05:
+                d.rectangle([int(xx), int(yy - wh), int(xx) + ww - 1, int(yy)], fill=dim)
+            elif glass:
+                d.rectangle([int(xx), int(yy - wh), int(xx) + ww - 1, int(yy)], fill=glass)
+            xx += bay
+        yy -= storey
+
+
+def skyline(seed, panel_w_m, panel_h_m, min_m, max_m, tower_chance, lit=0.2, h=1024, podium_m=0.0):
+    """The city round the harbour at night for one panel (KcHotel BuildLighting) panel_w_m by panel_h_m:
+    near-black blocks with scattered lit windows and red aviation lights, transparent above the roofs.
+    Every building has its own outline (setbacks, crowns, masts), storey height and window pattern.
+    Pixels are not square (4096 px across, h px up), so every size is converted from metres on each axis."""
+    w = 4096
+    px_x = w / float(panel_w_m)
+    px_y = h / float(panel_h_m)
+    rng = random.Random(seed)
+    im = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    warm, cool, dim = (255, 196, 128, 255), (196, 216, 255, 255), (110, 92, 74, 255)
+    for layer, share in enumerate([lit * 0.5, lit]):  # back row, then front
+        x = rng.uniform(-30, 0) * px_x
+        while x < w:
+            bw = rng.uniform(14, 55) * px_x
+            tall = rng.random() < tower_chance
+            bh_m = rng.uniform(max_m * 0.55, max_m) if tall else rng.uniform(min_m, min_m + (max_m - min_m) * 0.4)
+            if layer == 0:
+                bh_m *= rng.uniform(1.05, 1.35)
+            bh_m = min(bh_m, panel_h_m - 4.0)
+            v = rng.randint(-2, 3)
+            shade = (4 + v, 5 + v, 8 + v) if layer == 0 else (8 + v, 9 + v, 13 + v)
+            top = h - bh_m * px_y
+            x0, x1 = int(x), int(x + bw)
+            _tower(d, rng, x0, x1, top, h, px_x, px_y, shade, share, warm, cool, dim, podium_m if layer == 1 else 0.0)
+            # The roof: a setback, a stepped crown, a slanted top, a mast, or plant on a flat roof.
+            roof = rng.random()
+            cx = (x0 + x1) // 2
+            mast_top = top
+            if tall and roof < 0.3:
+                sw = (x1 - x0) * rng.uniform(0.45, 0.7)
+                sh = rng.uniform(6, 18) * px_y
+                sx0 = int(cx - sw / 2 + rng.uniform(-0.15, 0.15) * (x1 - x0))
+                _tower(d, rng, sx0, int(sx0 + sw), top - sh, int(top), px_x, px_y, shade, share, warm, cool, dim)
+                mast_top = top - sh
+            elif tall and roof < 0.5:
+                for k in range(1, 4):
+                    inset = (x1 - x0) * 0.12 * k
+                    d.rectangle([int(x0 + inset), int(top - k * 3 * px_y), int(x1 - inset), int(top)], fill=shade + (255,))
+                mast_top = top - 9 * px_y
+            elif roof < 0.65:
+                rise = min(rng.uniform(4, 12) * px_y, (x1 - x0) * 0.3)
+                if rng.random() < 0.5:
+                    d.polygon([(x0, top), (x1, top), (x1, top - rise)], fill=shade + (255,))
+                else:
+                    d.polygon([(x0, top), (x1, top), (x0, top - rise)], fill=shade + (255,))
+            elif roof < 0.85:
+                pw = (x1 - x0) * rng.uniform(0.2, 0.4)
+                px0 = int(x0 + rng.uniform(0.1, 0.5) * (x1 - x0))
+                d.rectangle([px0, int(top - rng.uniform(2, 4) * px_y), int(px0 + pw), int(top)], fill=shade + (255,))
+            if tall and roof < 0.75:
+                mh = rng.uniform(5, 15) * px_y
+                d.rectangle([cx, int(mast_top - mh), cx + 1, int(mast_top)], fill=shade + (255,))
+                d.rectangle([cx - 1, int(mast_top - mh) - 3, cx + 2, int(mast_top - mh)], fill=(255, 40, 30, 255))
+            elif tall:
+                d.rectangle([cx - 1, int(mast_top) - 3, cx + 1, int(mast_top)], fill=(255, 40, 30, 255))
+            # Gaps between buildings on the near panels; overlaps (depth) on the far ring.
+            x += bw + (rng.uniform(1, 14) if podium_m > 0.0 else rng.uniform(-6, 10)) * px_x
+    # Street or quay lights along the foot of the panel, at uneven spacing.
+    xx = 0.0
+    while xx < w:
+        d.rectangle([int(xx), h - 3, int(xx) + 1, h - 2], fill=warm)
+        xx += rng.uniform(3, 14)
+    return im
+
+
+def street_frontage(seed, panel_w_m, panel_h_m, h=1024):
+    """The buildings across the street from the hotel, seen from the lobby: three or four storeys side by side,
+    lit shopfronts and lobbies at the pavement, a dark cornice line, windows above."""
+    w = 4096
+    px_x = w / float(panel_w_m)
+    px_y = h / float(panel_h_m)
+    rng = random.Random(seed)
+    im = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    warm, cool, dim = (255, 200, 140, 255), (200, 218, 255, 255), (96, 82, 66, 255)
+    x = 0.0
+    while x < w:
+        bw = rng.uniform(9, 24) * px_x
+        storeys = rng.randint(2, 3)  # above the shop storey; 16 m panels (walk 13: 28 m walled off the floor 4 view)
+        bh_m = min(panel_h_m - 1.0, 5.0 + storeys * rng.uniform(3.1, 3.6))
+        v = rng.randint(0, 10)
+        shade = rng.choice([(22 + v, 18 + v, 16 + v), (16 + v, 17 + v, 19 + v), (26 + v, 22 + v, 18 + v)])
+        x0, x1 = int(x), int(x + bw)
+        top = h - bh_m * px_y
+        _tower(d, rng, x0, x1, top, h, px_x, px_y, shade, 0.7, warm, cool, dim, podium_m=5.0,
+               glass=(max(0, shade[0] - 12), max(0, shade[1] - 10), max(0, shade[2] - 6), 255))
+        d.rectangle([x0, int(top), x1, int(top + 0.6 * px_y)], fill=(8, 8, 10, 255))  # cornice
+        d.line([x1, int(top), x1, h], fill=(6, 6, 8, 255), width=2)                    # party wall line
+        x += bw
+    return im
+
+
+# Skyline panels (KcHotel.cpp BuildLighting): far ring 1 km out on every side, near low-rise 300 m out on the
+# street sides. Sizes in metres must match the panels there.
+SKYLINES = {
+    "T_SkylineFarN": (71, 2000, 120, 15, 90, 0.10, 0.18),   # the far shore, across the harbour
+    "T_SkylineFarS": (72, 2000, 120, 20, 115, 0.18, 0.2),
+    "T_SkylineFarW": (73, 2000, 120, 20, 115, 0.16, 0.2),
+    "T_SkylineFarE": (74, 2000, 120, 20, 115, 0.2, 0.2),
+    "T_SkylineNearS": (81, 700, 40, 9, 36, 0.08, 0.4),
+    "T_SkylineNearW": (82, 400, 40, 9, 36, 0.08, 0.4),
+    "T_SkylineNearE": (83, 400, 40, 9, 36, 0.08, 0.4),
+}
+# Across the street (KcHotel.cpp BuildOutside): name -> (seed, width m, height m).
+FRONTAGES = {
+    "T_StreetW": (91, 84, 16),
+    "T_StreetS": (92, 140, 16),
+    "T_StreetE": (93, 89, 16),
+}
 
 
 def main():
@@ -405,8 +673,13 @@ def main():
         "T_ScreenExport": export_screen(), "T_ScreenPanel": fire_panel(), "T_Whiteboard": whiteboard(),
         "T_ArtHarbourA": harbour_art(11), "T_ArtHarbourB": harbour_art(29), "T_ArtHarbourC": harbour_art(53),
         "T_ExitSign": exit_sign(), "T_CorridorCarpet": corridor_carpet(), "T_Wallpaper": wallpaper(), "T_QuarryTile": quarry_tile(),
-        "T_DndTag": dnd_tag(), "T_FloorPlan": floor_plan(),
+        "T_DndTag": dnd_tag(), "T_BallroomCarpet": ballroom_carpet(), "T_FloorPlan": floor_plan(), "T_WallTile": wall_tile(),
+        "T_SealedConcrete": sealed_concrete(),
     }
+    for name, (seed, pw, ph, lo, hi, towers, lit) in SKYLINES.items():
+        items[name] = skyline(seed, pw, ph, lo, hi, towers, lit, 1024 if ph > 60 else 512, 0.0 if ph > 60 else 5.0)
+    for name, (seed, pw, ph) in FRONTAGES.items():
+        items[name] = street_frontage(seed, pw, ph)
     for name, im in items.items():
         im.save(os.path.join(OUT, name + ".png"))
         print("wrote", name)

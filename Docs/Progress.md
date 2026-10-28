@@ -1,7 +1,130 @@
 # Progress
 
 ## Status: Keycard 1.0.0 released (tag v1.0.0 at a3c46bb)
-Last update: 2026-10-23
+Last update: 2026-10-28
+
+- 2026-10-23 Design and movement walkthrough (branch claude/project-thread-kgkgjy). New `-KcSelfTest=walk` (Source/Keycard/Private/KcWalkTest.cpp): reach maps of every floor with the player's capsule (Saved/WalkMaps), every arrival point and interactable checked reachable and usable on foot, then the character really walks (CharacterMovement, no teleports) to every place, up Stair A from B1 to 14 and back, and rides the lift to every fitted floor (Saved/KcWalk.txt). Every earlier self-test teleported the player. Run on MAP in a separate worktree C:\Downloads\Keycard-walk (Content copied), KeycardEditor `Result: Succeeded`, editor -game at 1920x1080.
+  - Round 1 at c25fca3: `FAIL`, 212 ok, 42 FAIL, 0 falls, exit 0 in 319 s. Causes: the outdoor paving slab covered the Stair A hole at street level (stuck going up from B1, walked on air coming down from G); door pairs hinged mid-opening (two 72 cm gaps for a 68 cm capsule); the kitchen doors were closed signs although cases need the cook line, the pass and the permit board.
+  - Round 2 at 982299c (fixes for the above, case doors opened while mapping, 10 cm cells): `FAIL`, 248 ok, 8 failed checks. Stair A B1 to 14 and back passes on every landing; housekeeping, dock, kitchen, luggage room, boardroom and floor 14 service area reachable. Left: banquet office and bar store (ballroom rounds sealed the service doors), the 1406/1412 entries (open leaf left 55 cm beside the wardrobe), the floor 14 sign shot spot behind the balustrade (test route).
+  - Round 3 at a9ce551 (ballroom re-laid, wardrobe past the door swing, chairs, MI_CeilingDim in B1 rooms, MI_StoneCounter roughness 0.9): 243 ok, 11 FAIL (a ballroom round blocked the doors; the 1406/1412 entries pinched).
+  - Round 4 at ecd3aaa (ballroom doors clear, room entries, case points in sight): 255 ok, 1 FAIL ("Inside 1406, by the door").
+  - Round 5 at 809336c (guest bathroom doors 82.5 cm, floor 2 stair sign, B1/CCTV/kitchen/ballroom light, pallet jack, typical-floor evacuation plan, rooftop_night HDRI): 258 ok, 8 FAIL, all from the new walks into 1412/1406 meeting their closed doors. Assets imported 0 errors.
+  - Round 6 at 5c7c7df (drawn night dome and skyline panels instead of a photographed sky; guest-room fixtures moved out of the party wall, whose room face is at U 8; walk opens case doors): 263 ok, 1 FAIL (the 1412 bedroom stop on the bed).
+  - Round 7 at dc2bb3b (skyline far ring 1 km and near low-rise 300 m; M_KcWorld without the world-aligned normal map; LP office softer): `PASS`, 264 ok, 0 FAIL. KcWalk.txt 17:53:45 after the 17:44:12 build; walk run by the owner by hand (the PC's permission check blocks the launch). Skyline reads as a city from G to 14; signs, plan, pallet jack, ballroom, 1406/1412 views good.
+  - Round 8 at 2fb6201 (generated T_WallTile for MI_Tile: the fallback Poly Haven square_tiles_02 rendered near black; MI_CeilingMid in B1; walnut tint): `PASS`, 264 ok. Kitchen and bathroom tiles light. From round 8 the owner gave standing permission for the walk launch ("all round same"), so the PC session launches it.
+  - Round 9 at 4939cf6 (CCTV room painted walls, tiled bathroom party wall, walnut room desk): `PASS`, 264 ok, run twice; the second run with `-ExecCmds="r.Lumen.ScreenProbeGather.ShortRangeAO 0,ShowFlag.AmbientOcclusion 0"` lifted the near-black band at the top of the B1 walls: ambient occlusion.
+  - Round 10 at 874064f (short-range AO off only, SSAO 0.3): `PASS`, 264 ok, no visible change.
+  - Round 11 at 76aa7c1 (every AO term off in DefaultEngine.ini [SystemSettings]: r.Lumen.ScreenProbeGather.ShortRangeAO=0, r.AmbientOcclusionLevels=0, r.DistanceFieldAO=0; post-process AO 0): `PASS`, 264 ok, 0 FAIL, KcWalk.txt 18:37:21 after the 18:32:14 build. B1 matches the no-AO run (housekeeping, dock, kitchen, CCTV room readable); lobby, guest floor, boardroom and ballroom unchanged. Walk complete.
+  - Round 12 at 4c00bfc (focused people get MI_HighlightPerson, a faint rim: the full overlay lit the whole body blue and the open mouth, seen in the mission run): import `KcImport: done: 8 meshes, 9 materials, 0 errors`, build Succeeded, walk `PASS`, 264 ok, 0 FAIL in 333 s. The rim itself is seen in mission runs, not on this route.
+  - Left for later (minor): the boardroom's long window run shows one far tower pair twice; the 1412 desk walnut reads lighter than the GM desk; the CCTV room stays the darkest room by design.
+  - 2026-10-28 polish pass 2 ("carry on to perfection"). A read-only review of all 37 round 12 shots (C:\Downloads\Keycard-walk\Review_round12.md, 85 findings ranked) drove these changes, made in the cloud and not built yet:
+    - Outside: every skyline tower has its own outline (setbacks, crowns, masts), storey height and window pattern, so lit rows no longer run straight across the panes. New street frontages across the street to the west, south and east, with lit shopfronts, pavements, kerbs and lamp heads (T_Street*, MI_Street*). Dark city ground runs out to the skylines, so the lobby no longer looks over a void.
+    - Doors: no steel kick plate on guest doors, and dark steel back of house (it read as light under the door). Room door viewers are round.
+    - Props:
+      - Beds: upholstered headboard, the duvet turned down and draped, soft pillows.
+      - Housekeeping: folded linen piece by piece; open trolleys with bags; wire linen cages; the floor 14 trolley built the same way, with its case point now the top deck.
+      - LP office: copier and in-tray.
+      - Kitchen: six-burner ranges with oven doors, a griddle, a salamander.
+      - Ballroom: tablecloths with pleats and place settings; drapes, a pelmet, sconces and a dado rail.
+      - HR room: a pedestal table. Boardroom: meeting chairs. GM office: a rug and a credenza.
+      - Fire command: the voice-alarm rack, wardens' vests and helmets, a drawings chest, a clock.
+    - Finishes:
+      - Sheet vinyl (MI_FloorVinyl) in the back-of-house rooms that had the patterned tile.
+      - A patterned ballroom carpet (T_BallroomCarpet).
+      - Plaster lining over the facade concrete inside the fitted floors.
+      - Wallpaper without the grid lines.
+    - Stair A: the sprinkler riser, clips and a floor valve with its sign on every landing; the signs framed and clear of the open door leaf.
+    - Light:
+      - CCTV room: brighter, CCTV pages at 6, a desk lamp, matte screens (the lamp flares).
+      - Lamp shades at 22.
+      - Front desk: the name as brass letters on a dark board with a halo.
+    - Walk route: shots at 1412, the floor 14 closet and 1406 step back 130 cm, with the door open, instead of facing it from 40 cm.
+  - Round 13 at 1021117:
+    - GenerateTextures.py stopped with `NameError: name 'SKYLINES' is not defined`: the edit dropped the table. The PC generated from a scratch wrapper with stand-in tables; the script was fixed in 870a647.
+    - Import: `KcImport: done: 8 meshes, 9 materials, 0 errors`. Build: `Result: Succeeded`.
+    - Walk: `PASS`, 270 ok, 0 FAIL. Game 07:08:16-07:13:46 local; KcWalk.txt 07:13:44.
+    - Review (Review_round13.md), fixed since round 12:
+      - Skyline variety.
+      - A street outside the lobby bar.
+      - No light under doors.
+      - Ballroom carpet, and the back of house no longer uses guest carpet.
+      - Kitchen ranges.
+      - The front desk sign reads.
+      - The riser is on every landing.
+      - The 1412 and 1406 door shots.
+      - The dock levellers.
+    - New faults:
+      - The 28 m street frontage walled off the floor 4 windows.
+      - The tablecloth pleats read as a sawtooth.
+      - The shopfronts were pastel blocks.
+      - The valve label sat under the sign frame.
+      - G-13 valves had no spokes.
+    - Still open:
+      - Beds read white on white.
+      - The 1412 bathroom shot shows little.
+      - Linen still reads as slabs.
+      - The west half of the kitchen is empty.
+      - The ballroom stage is boxes.
+      - The CCTV room has a flare and a leak.
+  - Round 14 changes:
+    - The frontage is 16 m with dim, detailed shopfronts (glass mullions, a door, shapes inside) at intensity 1.4.
+    - Plain cloth hems.
+    - Valve labels moved over the valves, and spokes on every floor.
+    - Dark cushions on the beds; the pillows lean back.
+    - Kitchen: dry-store shelving, a sheet-pan rack and a hand-wash basin.
+    - 1412: the sill stops at the balcony door, and the dresser is clear of the floor lamp.
+    - A wardrobe plinth.
+    - Housekeeping battens at 600.
+  - Round 14 results (PC, 11f9fd5): import `KcImport: done: 8 meshes, 9 materials, 0 errors`, build `Result: Succeeded`, walk `PASS`, 270 ok, 0 FAIL, 0 legs stuck, 0 falls.
+    - Fixed: the floor 4 skyline over a low frontage, cloth hems, valve labels, the kitchen west end, the 1412 sill, the wardrobe plinth, no pastel blocks.
+    - Still open: the bedroom shot misses the bed; the bathroom shot is all mirror; the valve wheel reads as an asterisk; the housekeeping ceiling blows out; the desk chair runs into the armchair; the street is too dim through the lobby glass.
+  - Round 15 changes:
+    - Valve wheels: a red rim round a dark centre, three red spokes and a hub, on every floor.
+    - Room armchair to U 150, side table to U 225.
+    - Housekeeping ceiling on the new MI_CeilingLow (intensity 1.4).
+    - MI_Mirror darker (0.62); street frontages at intensity 2.2.
+    - Walk: the 1412 bedroom shot faces the bed (yaw -40); the bathroom shot looks down at the vanity (pitch -20).
+  - Round 15 on the PC was cancelled by the owner at 04:46 before it reported; nothing from it is recorded.
+  - 2026-10-28 strict design pass (owner: "act as a professional game critic and designer"). Code only, not built or run:
+    - Guest rooms: headboard proud of the wall on a full-width walnut panel, rounded duvet edges, taupe runner; vessel basin, mixer, towels and tray at the vanity; bathroom door leaf to the opening's height with casings; desk drawer; safe keypad; floor lamp by the armchair; side table clear of the fan-coil; balcony door head lined.
+    - Lobby: glass transom over the street doors, door jambs, night bell push outside, far kerb and lit far pavement, bell stand with plinth, brass band and service bell, luggage cart rim and castors.
+    - Ballroom: event riser (black skirt, carpet deck, nosing, two steps), black drape with a framed screen, lectern with sloped desk and microphone, linen drum pendants with a glowing diffuser, taupe overlays and brass chargers.
+    - Back of house: rounded folds on housekeeping linen, crumpled soiled linen, full-height kitchen tile, struts under the line shelf, wooden chopping board, rust tag instead of a red LED, task chairs with a padded seat and shell back.
+    - Materials: linen 0.82, paper 0.8, ceramic 0.85 albedo (0.9-0.95 blew out); concrete and vinyl rougher (they read wet).
+  - Round 16 (PC, 8abeea9): import `KcImport: done: 8 meshes, 9 materials, 0 errors`, build `Result: Succeeded` (168.61 s), walk `FAIL`: 269 ok, 1 FAIL, 0 legs stuck, 0 falls. The FAIL: `use case point 'Banquet bar store': not usable from anywhere reachable on foot` (floor 1). Cause: the new task chair collider sat 2 cm further back and closed the 68 cm way through the banquet office.
+    - Read well: valve wheels, the 1412 window corner and balcony head, the bathroom fittings, the skirted stage, drape, lectern and drum pendants, chargers, full-height kitchen tile and board, dry-looking concrete, the lobby transom.
+    - Still wrong: the event screen showed the fire panel's display (MI_ScreenPanel); task chair backs read as balloons; beds still slab-like; the basin read as a bucket and chrome as white; laundry through the cage bars; vinyl read as stone; fryer plates floated; the hood blew out; whites under lamps; the luggage cart read as a goalpost.
+    - On the PC, a relative path briefly removed the AndroidFileServer block from Riskbound's own Config/DefaultEngine.ini; it was put back exactly and `git status` there is clean.
+  - Round 17 changes: the banquet office chair tucked in and the chair collider back where it was; navy event screens and a dark boardroom screen; upholstered task chair backs; beds with tangent rolled edges, taupe channel headboard and a charcoal runner; a shallow basin, steel mixer and framed, darker mirror; laundry inside the cages; neutral housekeeping light; fryer baskets; a softer hood light; a four-post luggage cart; plain sheet vinyl; concrete roughness 1.7; lamp shades and downlight discs at intensity 12.
+  - Round 17 (PC, 2147506): import `KcImport: done: 8 meshes, 9 materials, 0 errors`, build `Result: Succeeded` (70.59 s), walk `PASS`: 270 ok, 0 FAIL, 0 legs stuck, 0 falls (game 11:28:37 to 11:33:42); `ok use case point 'Banquet bar store': from (4565, -855) on 1`. Review: C:\Downloads\Keycard-walk\Review_round17.md.
+    - Fixed: the ballroom screen (navy, legible), plain vinyl, housekeeping light and the laundry inside the cages, the four-post luggage cart, task chair backs no longer balloons, the framed mirror and shallow basin, fryer baskets.
+    - Still wrong: beds (a stepped duvet corner, the runner cut by white, a near-black headboard, black square cushions, a white ellipse by the pillows); lamp shades and downlight discs pure white (emissive 22 to 12 changed nothing: the lights inside them were lighting them); the vanity mixer white, the bowl a plate, the mirror a white field; chair backs flat boards with tabs at the corners; the banquet overlay on a blown white drum; the kitchen hood and backsplash blown, its ceiling band black, a red square (the call point); B1 concrete still green-grey stone (the texture). Unchanged from round 16: the tile over the 1406 bathroom door, the 1412 safe plate, the housekeeping uprights, hotspots and slab linen, the bell-stand artefacts (a bollard, the key, a bare notice), the lobby doors and blank sign, the floor 14 exit sign and blank plate.
+  - Round 18 changes (code only; not built or run):
+    - Lighting at the root: recessed downlights are spot lights aimed down from just under a small lens in a dark baffle (`AddDownlight`: lumens scaled so the light straight down matches the old point light, plus a quarter for the lost ceiling bounce); lamp, sconce and pendant lights sit inside their shades; shades use the new dimmer MI_LampShade with a brighter diffuser where you look in; glowing materials have a black base and no specular. Front-of-house ceilings use the new M_KcCeiling (lit, with a faint glow of its own); the LP office, fire command and executive offices move to MI_CeilingLow, the kitchen to MI_CeilingMid; battens hang 30 cm down.
+    - B1 and dock floor: a generated sealed concrete (`T_SealedConcrete`: power-floated, saw cuts every 3 m), the scanned concrete kept as the fallback.
+    - Beds: oatmeal headboard channels under a walnut cornice with a hidden LED wash light, rounded duvet corners, a turn-down roll, runner fold rolls, harbour-blue soft cushions; 1412's slept-in duvet as a thrown-back ridge clear of the runner.
+    - Bathrooms and rooms: an oval vessel bowl with a thin rim and drain, a matte black mixer, rolled towels, a brass tray, a narrow downlight over the basin; 1406's bathroom door shut; the 1412 safe door swung wide on its hinge with keypad and handle; the desk chair tucked in; the art print above the cornice.
+    - Furniture: task chair backs as a fabric panel in a rounded grey frame raked 8 degrees, twin-wheel casters; ballroom cloths in ivory with soft folds and a draped champagne overlay; linen stacks with a dark core showing between the folds and sheet-steel shelf ends.
+    - Fixtures: a 14 cm deep extinguisher cabinet with the extinguisher inside it; the call point's white element under a red FIRE band and its own sign; kitchen heat lamps and salamander as glowing elements under steel; floor 14's STAIR A plate and an AUTOMATIC FIRE DOOR / KEEP CLEAR sign; the service closet's far wall (dilution chart, mop and broom rack, wet-floor sign).
+    - Lobby: dark bollards with caps and a yellow band; the luggage key on a brass hook with ring, key and leather fob; the store rules framed at eye level; the hotel name in brass on the inner transom; every glass door leaf framed with a frosted band.
+    - Geometry audit of KcHotel.cpp (found by reading the code, not in a shot): 14 wall plates were built edge-on and stood out of their walls as fins (the floor directories on floors 1, 4, 14 and B1, the lift position indicators, the lift card reader and fire notice, the STAIR A plate, the B1 access readers, the front office safe keypad, the time clock); they now lie flat. The STAIR A fin is the likely cause of floor 14's blank plate. Fourteen labels that hung in the air off their walls or sat inside a door (the cooler) now sit on their surfaces, and two notices narrower than their text were widened.
+  - Round 18 (PC, 3252894; walk worktree now D:\10-2026\Downloads\Keycard-walk after the owner's move to D:): GenerateTextures done (`wrote T_StreetE`), import `KcImport: done: 8 meshes, 10 materials, 0 errors`, build `Result: Succeeded`, walk `PASS`: 270 ok, 0 FAIL, 0 legs stuck, 0 falls. Review: D:\10-2026\Downloads\Keycard-walk\Review_round18.md.
+    - Fixed: the bed runner and headboard; lamp shades lit from inside and downlights without hot discs; no black ceilings; the matte black mixer and brass tray; the 1406 bathroom door; the kitchen hood and fire-sign group; sealed concrete on B1 and the dock; the extinguisher cabinet and call point; bollards; the luggage key and notice; lobby door frames; the floor 14 STAIR A plate (flat and legible) and the card readers.
+    - Improved: cushions (flat discs), the vessel basin (faceted), mirror, towels (oversized), task chairs, ballroom cloths, linen stacks, the bell stand, the frosted bands (read as a rail), the VELDANE GRAND transom (small).
+    - Still wrong: the 1412 slept-in duvet and ridge vanish in a near-white duvet; the 1412 safe door juts into the entry like a black drawer; the ballroom skirt steps from cream to white and blows out, the near cloth edge reads as a plate rim; blown dock shutter lamps and the fire command sounder; a specular hotspot on the CCTV wall; laundry pebbles, doubled uprights and a black band in housekeeping; the cart uprights read beige; the 1406 door spot near clipping; the floor 14 exit sign clips the frame head; fire command has no chair. Not covered by any shot: the floor directories, lift indicators and the time clock.
+  - Round 19 changes (code only; not built or run):
+    - 1412: the slept-in duvet's head half turned back to show a pale grey-blue underside (new MI_DuvetBack) with a rolled ridge; the white rumples are gone. MI_Linen 0.82 to 0.76. The safe door is brushed steel with a black keypad, open 55 degrees, not 80.
+    - Ballroom: one ivory cloth from the top to the hem (the champagne overlay and MI_Champagne removed; MI_TableLinen 0.72 to 0.62), the skirt folds full height, a rounded table edge.
+    - Light: the dock and housekeeping upper-wall fills move from 40 cm to 1.1 m off the walls (blown discs, black ceiling band); sconces 320 to 220 lm; the fire command's white disc becomes a red sounder-beacon; screens roughness 0.45 to 0.75 (CCTV wall hotspot).
+    - Props: housekeeping laundry in harbour-blue liner bags instead of ellipsoids; MI_Brass more saturated; bed cushions 22 cm deep, not 14; hand towels 12 cm rolls; the transom name 15 cm and the sub-line 6.5 cm; frosted bands 18 cm.
+    - Walk test: shots 38 to 40 after the numbered ones: the floor 14 directory, the lift indicators, and the ground floor time clock.
+  - Round 19 (PC, 0cf889f, D:\10-2026\Downloads\Keycard-walk): import `KcImport: done: 8 meshes, 9 materials, 0 errors`, build `Result: Succeeded` (503.83 s), walk `PASS`: 279 ok, 0 FAIL, 0 legs stuck, 0 falls, 40 shots. Review: Review_round19.md in the walk folder.
+    - Fixed: dock wall discs, the fire command sounder, one-material ballroom cloths, brass cart posts, the transom name legible, towel size; the floor 14 directory and time clock lie flat.
+    - Still wrong: the duvet band reads off-white under the lamps; the cushions are discs face-on; the safe door shows its back from the entry; the housekeeping upper wall is near black and the liner bag a rigid teal box; the CCTV wall glow and the 1406 door cone did not move (bezels, and the corridor downlight, not the sconce); the time clock display has no digits, its reader no LED; the lift indicator lamp is a bar, not an arrow; the lift call plate and fire notice tilt 3-4 degrees; the directory's arrows are ambiguous; the lobby desk clock shows no time.
+  - Round 20 changes from the owner's own playthrough (code only; not built or run):
+    - B1 "skirting over the doors": the back-of-house doors' dark kick plate sat at the foot of each leaf in line with the skirting and read as skirting running across the doorway; removed (the skirting itself already stops at every opening).
+    - Ground floor chandelier: hung from the lounge's ceiling raft (its top 3 cm under a brass ceiling rose, measured from the mesh's bounds) instead of a fixed 1.2 m down; its light moves with it.
+    - From the round 19 review: MI_DuvetBack 0.24/0.28/0.34 (cool enough to survive the warm lamps); square cushions with a puffed middle; the 1412 safe hinged at the edge nearer the entry so its keypad and empty inside face the door; housekeeping wall-washers (an LED cove line and rect lights at the top of both long walls); laundry in slumped grey-blue canvas liners (new MI_Canvas) hung from the top rail; CCTV pages 6 to 4.5 and MI_DeviceBlack roughness 0.85 (bloom glow on the bezels); floor 14 corridor downlights at a 50 degree cone (the 1406 door scallop came from them, not the sconce); the time clock with a pale face, its time and a reader with LED and card line, and a downlight on its wall; lift indicators with an arrow; call buttons in steel with black arrows, only the up call lit; one direction per line on the directory; the wall clocks show 00:30 between cases (ClockText is empty when no case is active, so the lobby and CCTV clocks were blank); HARBOURFRONT 8 cm. Walk shots 38 and 39 from 55 cm further back, 39 level and square to the lifts.
 
 - 2026-10-23 Release 1.0.0: https://github.com/mutima89/keycard/releases/tag/v1.0.0 (published 2026-10-23T00:35:59Z, not a draft or pre-release). Tag v1.0.0 at a3c46bb, created and pushed by the owner with `gh release create`. Assets checked through the GitHub API: Keycard-1.0.0-Win64-Portable.zip 530,095,089 bytes, sha256 2cdcf79a181c6e7fe03c84b3b733f3e2d997cdd7b872a0746481994802183a70; Keycard-Setup-1.0.0.exe 499,125,603 bytes, sha256 6113a7cc88334a3f144305de7b2d0cdf61dde7ca33d2876ebc43e19fcdf151d5 (both match PC round 5). Release notes are CHANGELOG.md. Hands-on playtest checklist: project files keycard/playtest-1.0.0.md.
 
@@ -125,4 +248,4 @@ Last update: 2026-10-23
   - Pushed to github.com/mutima89/keycard `main` (repo created by the owner); core tests re-run after the rebase onto the owner's initial commit: `27 test cases, 0 failed, 0 failed checks`.
 
 ### Next action
-Hands-on playtest of the 1.0.0 build (installer install/uninstall on a clean account); publish the zip and installer if the owner approves; LP office wall-top dark band.
+Hotel design and movement: round 20 on the PC (ImportAssets, build, walk, review), with the owner's go-ahead. Then: hands-on playtest of the 1.0.0 build (installer install/uninstall on a clean account); publish the zip and installer if the owner approves; LP office wall-top dark band.

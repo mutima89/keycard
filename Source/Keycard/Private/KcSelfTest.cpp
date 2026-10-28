@@ -22,6 +22,7 @@
 #include "KcLog.h"
 #include "KcPerson.h"
 #include "KcSaveSubsystem.h"
+#include "KcWalkTest.h"
 #include "Misc/CommandLine.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Parse.h"
@@ -643,6 +644,11 @@ void Run(UWorld* World)
 		RunTour(World, Hud);
 		return;
 	}
+	if (Mode == TEXT("walk"))
+	{
+		KcWalkTest::Run(World, Hud);
+		return;
+	}
 	if (Mode == TEXT("career") || Mode == TEXT("challenge"))
 	{
 		TSharedRef<FReport> R = MakeShared<FReport>();
@@ -661,7 +667,7 @@ void Run(UWorld* World)
 	FReport R;
 	R.Check(TEXT("hud"), true, Hud->GetName());
 	if (Mode == TEXT("resume")) RunResume(R, Hud);
-	else R.Check(TEXT("mode"), false, TEXT("expected play, resume, career, challenge, tour or ui"));
+	else R.Check(TEXT("mode"), false, TEXT("expected play, resume, career, challenge, tour, walk or ui"));
 	R.Write(Mode, TEXT("KcSelfTest.txt"));
 	FPlatformMisc::RequestExit(false, TEXT("KcSelfTest"));
 }

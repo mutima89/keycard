@@ -105,7 +105,7 @@
    "id": "concrete_floor_02",
    "slot": "concrete_floor",
    "kind": "texture",
-   "role": "B1 back of house, loading dock",
+   "role": "Fallback for the B1 and loading dock floor (the generated sealed concrete is used when present)",
    "source": "Poly Haven",
    "page": "https://polyhaven.com/a/concrete_floor_02",
    "licence": "CC0 1.0",
@@ -783,23 +783,23 @@
    ]
   },
   {
-   "id": "shanghai_bund",
+   "id": "rooftop_night",
    "slot": "night_sky",
    "kind": "hdri",
-   "role": "Night harbour city through the windows",
+   "role": "Night city seen from a height, through the windows",
    "source": "Poly Haven",
-   "page": "https://polyhaven.com/a/shanghai_bund",
+   "page": "https://polyhaven.com/a/rooftop_night",
    "licence": "CC0 1.0",
    "authors": [
     "Greg Zaal"
    ],
-   "name": "Shanghai Bund",
+   "name": "Rooftop Night",
    "files": [
     {
-     "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/shanghai_bund_2k.hdr",
-     "path": "polyhaven/shanghai_bund/shanghai_bund_2k.hdr",
-     "sha256": "ed4be21489e86a915bc872072e7e6d83c163a2d2fbb1c260979f7b9224a3322b",
-     "size": 6467753
+     "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/rooftop_night_2k.hdr",
+     "path": "polyhaven/rooftop_night/rooftop_night_2k.hdr",
+     "sha256": "8ace3b81da7659381998ea4423fb4c7ffc1310ac27c4baa7a32088bd093de82e",
+     "size": 6509158
     }
    ]
   },

@@ -9,6 +9,8 @@
 //   -KcSelfTest=challenge  a daily challenge: three cases, the result screen and the leaderboard (KcSelfTest_challenge.txt).
 //   -KcSelfTest=tour    visits every place without player input, renders a screenshot per place
 //                       (Saved/Screenshots/<platform>/Tour_<place>.png) and writes frame timings to Saved/KcTour.txt.
+//   -KcSelfTest=walk    the design and movement walkthrough: reach maps of every floor, then the character walks to
+//                       every place, up and down Stair A and through the lifts (Private/KcWalkTest.h, Saved/KcWalk.txt).
 //   -KcSelfTest=ui      opens every screen through the HUD and captures each with the UI (Ui_<n>_<screen>.png).
 // Uses its own save slot ("selftest") so the player's saves are never touched.
 #pragma once

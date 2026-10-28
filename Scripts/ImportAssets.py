@@ -320,7 +320,7 @@ def build_screen(defaults):
     prop(mul, "", unreal.MaterialProperty.MP_EMISSIVE_COLOR)
     black = expr(m, unreal.MaterialExpressionConstant3Vector, -400, -150, constant=unreal.LinearColor(0.01, 0.01, 0.012, 1))
     prop(black, "", unreal.MaterialProperty.MP_BASE_COLOR)
-    rough = expr(m, unreal.MaterialExpressionConstant, -400, 250, r=0.15)
+    rough = expr(m, unreal.MaterialExpressionConstant, -400, 250, r=0.45)  # at 0.15 the ceiling lamps flared on the CCTV wall
     prop(rough, "", unreal.MaterialProperty.MP_ROUGHNESS)
     return finish(m)
 
@@ -506,13 +506,14 @@ for name, slot, tile, tint, rough in [
         ("MI_WoodOak", "oak", 140, (0.8, 0.75, 0.7), 1.5),                   # less orange; satin: at 0.9 the glossy grain lines streaked white
         ("MI_WoodWalnut", "walnut", 140, (0.6, 0.48, 0.42), 0.85),          # untinted it read orange pine
         ("MI_DoorPaint", "oak", 140, (0.42, 0.33, 0.24), 0.8),             # guest-room doors: stained oak
-        ("MI_Cork", "wool", 25, (0.62, 0.46, 0.3), 1.8)]:                  # LP office notice board
+        ("MI_Cork", "wool", 25, (0.62, 0.46, 0.3), 1.8),                   # LP office notice board
+        ("MI_FloorVinyl", "concrete_floor", 120, (0.42, 0.45, 0.48), 0.7)]:  # housekeeping, fire command: sheet vinyl, not guest carpet
     world_surface(name, slot, tile, tint, rough)
 
 # Untextured surfaces: defaults are white base, ARM = (AO 1, rough 0.55, metal 0) scaled below.
 for name, tint, rough, metal in [
         ("MI_Graphite", (0.06, 0.065, 0.075), 0.75, 1.0), ("MI_Chrome", (0.8, 0.8, 0.82), 0.3, 1.0),
-        ("MI_Steel", (0.55, 0.56, 0.58), 0.5, 1.0), ("MI_Brass", (0.75, 0.55, 0.3), 0.35, 1.0),
+        ("MI_Steel", (0.55, 0.56, 0.58), 0.5, 1.0), ("MI_SteelDark", (0.2, 0.2, 0.21), 0.7, 1.0), ("MI_Brass", (0.75, 0.55, 0.3), 0.35, 1.0),
         ("MI_Mirror", (0.95, 0.95, 0.95), 0.05, 1.0),
         ("MI_CeilingWhite", (0.86, 0.86, 0.85), 1.6, 0.0), ("MI_Skirting", (0.12, 0.12, 0.13), 1.2, 0.0),
         ("MI_DeviceBlack", (0.02, 0.02, 0.025), 0.6, 0.0), ("MI_PlasticGrey", (0.35, 0.36, 0.38), 0.8, 0.0),
@@ -530,7 +531,8 @@ instance("MI_GlassDark", GLASS, {}, {"Opacity": 0.45, "Roughness": 0.04}, {"Tint
 instance("MI_Sheer", GLASS, {}, {"Opacity": 0.4, "Roughness": 0.7, "Specular": 0.2}, {"Tint": (0.95, 0.94, 0.9, 1)})  # guest-room sheer curtains
 instance("MI_Water", GLASS, {}, {"Opacity": 0.7, "Roughness": 0.02}, {"Tint": (0.04, 0.12, 0.18, 1)})             # harbour
 instance("MI_LightPanel", EMISSIVE, {}, {"Intensity": 60.0}, {"Color": (1, 0.97, 0.92, 1)})
-instance("MI_LampWarm", EMISSIVE, {}, {"Intensity": 45.0}, {"Color": (1.0, 0.78, 0.5, 1)})
+# Lamp shades and pendant drums: at 45 the shades and the ballroom drums blew out to white (walk 12).
+instance("MI_LampWarm", EMISSIVE, {}, {"Intensity": 22.0}, {"Color": (1.0, 0.78, 0.5, 1)})
 instance("MI_LedStrip", EMISSIVE, {}, {"Intensity": 70.0}, {"Color": (0.95, 0.97, 1.0, 1)})
 instance("MI_SignGlow", EMISSIVE, {}, {"Intensity": 30.0}, {"Color": (0.29, 0.61, 0.77, 1)})  # hotel name and wayfinding
 instance("MI_LedGreen", EMISSIVE, {}, {"Intensity": 25.0}, {"Color": (0.1, 0.9, 0.25, 1)})
@@ -561,9 +563,10 @@ for f in sorted(os.listdir(GEN)) if os.path.isdir(GEN) else []:
 if not gen:
     err("no generated textures: run python Scripts/GenerateTextures.py first")
 screen = build_screen(defaults)
-for mi, tex, inten in [("MI_ScreenCctv1", "T_ScreenCctv1", 10.0), ("MI_ScreenCctv2", "T_ScreenCctv2", 10.0),
-                       ("MI_ScreenCctv3", "T_ScreenCctv3", 10.0), ("MI_ScreenCctv4", "T_ScreenCctv4", 10.0),
-                       ("MI_ScreenShiftBoard", "T_ScreenShiftBoard", 12.0), ("MI_ScreenFrontOffice", "T_ScreenFrontOffice", 9.0),
+# The CCTV pages at 10 drove the exposure down until the room round the video wall went black (walk 12).
+for mi, tex, inten in [("MI_ScreenCctv1", "T_ScreenCctv1", 6.0), ("MI_ScreenCctv2", "T_ScreenCctv2", 6.0),
+                       ("MI_ScreenCctv3", "T_ScreenCctv3", 6.0), ("MI_ScreenCctv4", "T_ScreenCctv4", 6.0),
+                       ("MI_ScreenShiftBoard", "T_ScreenShiftBoard", 12.0), ("MI_ScreenFrontOffice", "T_ScreenFrontOffice", 5.0),
                        ("MI_ScreenReport", "T_ScreenReport", 9.0), ("MI_ScreenExport", "T_ScreenExport", 12.0),
                        ("MI_ScreenPanel", "T_ScreenPanel", 8.0), ("MI_ExitSign", "T_ExitSign", 20.0)]:
     if tex in gen:
@@ -574,7 +577,8 @@ for mi, tex, rough in [("MI_Whiteboard", "T_Whiteboard", 0.5), ("MI_ArtHarbourA"
         instance(mi, SURFACE, {"BaseColorMap": gen[tex]}, {"RoughnessScale": rough, "MetallicScale": 0.0})
 # Patterned guest-floor carpet, corridor wallpaper and the kitchen quarry tile: world-aligned so the repeat stays true to scale on every wall.
 for mi, tex, tile, rough in [("MI_CorridorCarpet", "T_CorridorCarpet", 120, 2.0), ("MI_Wallpaper", "T_Wallpaper", 90, 1.3),
-                             ("MI_KitchenTile", "T_QuarryTile", 60, 1.6), ("MI_Tile", "T_WallTile", 60, 0.5)]:  # MI_Tile: bathroom and kitchen walls
+                             ("MI_KitchenTile", "T_QuarryTile", 60, 1.6), ("MI_Tile", "T_WallTile", 60, 0.5),  # MI_Tile: bathroom and kitchen walls
+                             ("MI_BallroomCarpet", "T_BallroomCarpet", 180, 2.0)]:
     if tex in gen:
         instance(mi, WORLD, {"BaseColorMap": gen[tex]}, {"MetallicScale": 0.0, "RoughnessScale": rough},
                  {"Tint": (1, 1, 1, 1), "TileSize": (tile, tile, tile, 0)})
@@ -584,6 +588,13 @@ for side in ["FarN", "FarS", "FarW", "FarE", "NearS", "NearW", "NearE"]:
     tex = "T_Skyline" + side
     if tex in gen:
         instance("MI_Skyline" + side, skyline, {"SkylineTexture": gen[tex]}, {"Intensity": 3.0})
+    else:
+        err("%s missing: run python Scripts/GenerateTextures.py" % tex)
+# The buildings across the street (KcHotel BuildOutside), dimmer than the far towers: they are close.
+for side in ["W", "S", "E"]:
+    tex = "T_Street" + side
+    if tex in gen:
+        instance("MI_Street" + side, skyline, {"SkylineTexture": gen[tex]}, {"Intensity": 2.0})
     else:
         err("%s missing: run python Scripts/GenerateTextures.py" % tex)
 

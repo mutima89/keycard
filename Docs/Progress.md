@@ -1,7 +1,7 @@
 # Progress
 
 ## Status: Keycard 1.0.0 released (tag v1.0.0 at a3c46bb)
-Last update: 2026-10-23
+Last update: 2026-10-28
 
 - 2026-10-23 Design and movement walkthrough (branch claude/project-thread-kgkgjy). New `-KcSelfTest=walk` (Source/Keycard/Private/KcWalkTest.cpp): reach maps of every floor with the player's capsule (Saved/WalkMaps), every arrival point and interactable checked reachable and usable on foot, then the character really walks (CharacterMovement, no teleports) to every place, up Stair A from B1 to 14 and back, and rides the lift to every fitted floor (Saved/KcWalk.txt). Every earlier self-test teleported the player. Run on MAP in a separate worktree C:\Downloads\Keycard-walk (Content copied), KeycardEditor `Result: Succeeded`, editor -game at 1920x1080.
   - Round 1 at c25fca3: `FAIL`, 212 ok, 42 FAIL, 0 falls, exit 0 in 319 s. Causes: the outdoor paving slab covered the Stair A hole at street level (stuck going up from B1, walked on air coming down from G); door pairs hinged mid-opening (two 72 cm gaps for a 68 cm capsule); the kitchen doors were closed signs although cases need the cook line, the pass and the permit board.
@@ -17,6 +17,28 @@ Last update: 2026-10-23
   - Round 11 at 76aa7c1 (every AO term off in DefaultEngine.ini [SystemSettings]: r.Lumen.ScreenProbeGather.ShortRangeAO=0, r.AmbientOcclusionLevels=0, r.DistanceFieldAO=0; post-process AO 0): `PASS`, 264 ok, 0 FAIL, KcWalk.txt 18:37:21 after the 18:32:14 build. B1 matches the no-AO run (housekeeping, dock, kitchen, CCTV room readable); lobby, guest floor, boardroom and ballroom unchanged. Walk complete.
   - Round 12 at 4c00bfc (focused people get MI_HighlightPerson, a faint rim: the full overlay lit the whole body blue and the open mouth, seen in the mission run): import `KcImport: done: 8 meshes, 9 materials, 0 errors`, build Succeeded, walk `PASS`, 264 ok, 0 FAIL in 333 s. The rim itself is seen in mission runs, not on this route.
   - Left for later (minor): the boardroom's long window run shows one far tower pair twice; the 1412 desk walnut reads lighter than the GM desk; the CCTV room stays the darkest room by design.
+  - 2026-10-28 polish pass 2 ("carry on to perfection"). A read-only review of all 37 round 12 shots (C:\Downloads\Keycard-walk\Review_round12.md, 85 findings ranked) drove these changes, made in the cloud and not built yet:
+    - Outside: every skyline tower has its own outline (setbacks, crowns, masts), storey height and window pattern, so lit rows no longer run straight across the panes. New street frontages across the street to the west, south and east, with lit shopfronts, pavements, kerbs and lamp heads (T_Street*, MI_Street*). Dark city ground runs out to the skylines, so the lobby no longer looks over a void.
+    - Doors: no steel kick plate on guest doors, and dark steel back of house (it read as light under the door). Room door viewers are round.
+    - Props:
+      - Beds: upholstered headboard, the duvet turned down and draped, soft pillows.
+      - Housekeeping: folded linen piece by piece; open trolleys with bags; wire linen cages; the floor 14 trolley built the same way, with its case point now the top deck.
+      - LP office: copier and in-tray.
+      - Kitchen: six-burner ranges with oven doors, a griddle, a salamander.
+      - Ballroom: tablecloths with pleats and place settings; drapes, a pelmet, sconces and a dado rail.
+      - HR room: a pedestal table. Boardroom: meeting chairs. GM office: a rug and a credenza.
+      - Fire command: the voice-alarm rack, wardens' vests and helmets, a drawings chest, a clock.
+    - Finishes:
+      - Sheet vinyl (MI_FloorVinyl) in the back-of-house rooms that had the patterned tile.
+      - A patterned ballroom carpet (T_BallroomCarpet).
+      - Plaster lining over the facade concrete inside the fitted floors.
+      - Wallpaper without the grid lines.
+    - Stair A: the sprinkler riser, clips and a floor valve with its sign on every landing; the signs framed and clear of the open door leaf.
+    - Light:
+      - CCTV room: brighter, CCTV pages at 6, a desk lamp, matte screens (the lamp flares).
+      - Lamp shades at 22.
+      - Front desk: the name as brass letters on a dark board with a halo.
+    - Walk route: shots at 1412, the floor 14 closet and 1406 step back 130 cm, with the door open, instead of facing it from 40 cm.
 
 - 2026-10-23 Release 1.0.0: https://github.com/mutima89/keycard/releases/tag/v1.0.0 (published 2026-10-23T00:35:59Z, not a draft or pre-release). Tag v1.0.0 at a3c46bb, created and pushed by the owner with `gh release create`. Assets checked through the GitHub API: Keycard-1.0.0-Win64-Portable.zip 530,095,089 bytes, sha256 2cdcf79a181c6e7fe03c84b3b733f3e2d997cdd7b872a0746481994802183a70; Keycard-Setup-1.0.0.exe 499,125,603 bytes, sha256 6113a7cc88334a3f144305de7b2d0cdf61dde7ca33d2876ebc43e19fcdf151d5 (both match PC round 5). Release notes are CHANGELOG.md. Hands-on playtest checklist: project files keycard/playtest-1.0.0.md.
 

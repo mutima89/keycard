@@ -507,11 +507,18 @@ FString FileSafe(const FString& Name)
 
 void BuildRoute(FState& S, AKcHotel* Hotel)
 {
-	auto Visit = [&S, Hotel](const FString& Location)
+	// BackOff: after reaching the arrival, step back this far before the shot. The corridor arrivals stand at
+	// a door, and from there the shot was all door (walk 12).
+	auto Visit = [&S, Hotel](const FString& Location, float BackOff = 0.0f)
 	{
 		const FTransform T = Hotel->GetArrival(Location);
 		const int32 Floor = AKcHotel::FloorAt(T.GetLocation().Z - 100.0f);
 		S.Steps.Add(PathTo(Floor, FVector2D(T.GetLocation()), Location));
+		if (BackOff > 0.0f)
+		{
+			const FVector2D Back = FVector2D(T.GetLocation()) - FVector2D(T.Rotator().Vector()) * BackOff;
+			S.Steps.Add(PathTo(Floor, Back, Location + TEXT(", stepped back")));
+		}
 		S.Steps.Add(Shot(T.Rotator().Yaw, Location));
 	};
 	const FTransform Start = Hotel->GetPlayerStart();
@@ -541,15 +548,19 @@ void BuildRoute(FState& S, AKcHotel* Hotel)
 		S.Steps.Add(Walk(StairDoorIn, Z(F + 1, 0.0f)));
 	}
 	S.Steps.Add(Walk(StairDoorOut, Z(AKcHotel::TopFloor, 0.0f), TEXT("out of Stair A at 14")));
-	for (const TCHAR* L : {TEXT("f14_corridor"), TEXT("room_1412")}) Visit(L);
-	// Into 1412 past the wardrobe (open, as in the missions that send you in): the bedroom towards the window,
-	// then the bathroom from its door.
+	Visit(TEXT("f14_corridor"));
+	// 1412 from the corridor with its door open (as in the missions that send you in), then in past the
+	// wardrobe: the bedroom towards the window, then the bathroom from its door.
 	S.Steps.Add(Door(TEXT("1412"), true));
+	Visit(TEXT("room_1412"), 130.0f);
 	S.Steps.Add(PathTo(AKcHotel::TopFloor, FVector2D(880.0f, -540.0f), TEXT("1412 bedroom")));
 	S.Steps.Add(Shot(-90.0f, TEXT("1412 bedroom")));
 	S.Steps.Add(PathTo(AKcHotel::TopFloor, FVector2D(970.0f, -330.0f), TEXT("1412 bathroom")));
 	S.Steps.Add(Shot(0.0f, TEXT("1412 bathroom")));
-	for (const TCHAR* L : {TEXT("f14_service"), TEXT("guest_room")}) Visit(L);
+	S.Steps.Add(Door(TEXT("closet"), true));
+	Visit(TEXT("f14_service"), 130.0f);
+	S.Steps.Add(Door(TEXT("closet"), false));
+	Visit(TEXT("guest_room"), 130.0f);
 	S.Steps.Add(Door(TEXT("1406"), true)); // the guest opens it when you knock; the threshold is where you stand
 	S.Steps.Add(PathTo(AKcHotel::TopFloor, FVector2D(2775.0f, 185.0f), TEXT("1406 threshold")));
 	S.Steps.Add(Shot(90.0f, TEXT("1406 from the doorway")));

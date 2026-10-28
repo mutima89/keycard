@@ -315,8 +315,37 @@ def wallpaper():
     for x in range(0, w, 4):
         c = 166 + rnd.randint(-8, 8)
         d.line([x, 0, x, h], fill=(c, c - 8, c - 20), width=2)
-    for y in range(0, h, 64):
-        d.line([0, y, w, y], fill=(186, 176, 160), width=1)
+    # Slubs: short lighter threads at random heights (a grid of lines here read as tiles in walk 12).
+    for _ in range(900):
+        x, y = rnd.randrange(w), rnd.randrange(h)
+        c = 176 + rnd.randint(0, 10)
+        d.line([x, y, x, (y + rnd.randint(6, 20)) % h], fill=(c, c - 8, c - 20), width=1)
+    return im
+
+
+def ballroom_carpet():
+    """Harbour Ballroom carpet repeat: deep claret ground, a gold and teal medallion on a scroll lattice."""
+    w = h = 512
+    im = Image.new("RGB", (w, h), (74, 18, 26))
+    d = ImageDraw.Draw(im)
+    gold, teal, dark = (168, 128, 62), (38, 82, 88), (52, 12, 18)
+    for cx, cy in [(128, 128), (384, 384)]:
+        d.ellipse([cx - 92, cy - 92, cx + 92, cy + 92], outline=gold, width=4)
+        for k in range(8):
+            a = k * math.pi / 4
+            px, py = cx + math.cos(a) * 62, cy + math.sin(a) * 62
+            d.ellipse([px - 16, py - 16, px + 16, py + 16], fill=teal, outline=gold, width=2)
+        d.ellipse([cx - 30, cy - 30, cx + 30, cy + 30], fill=dark, outline=gold, width=3)
+    for cx, cy in [(384, 128), (128, 384)]:
+        d.polygon([(cx, cy - 40), (cx + 40, cy), (cx, cy + 40), (cx - 40, cy)], fill=dark, outline=gold)
+        d.ellipse([cx - 8, cy - 8, cx + 8, cy + 8], fill=gold)
+    rnd = random.Random(31)
+    px = im.load()
+    for y in range(h):
+        for x in range(w):
+            n = rnd.randint(-5, 5)
+            r, g, b = px[x, y]
+            px[x, y] = (max(0, r + n), max(0, g + n), max(0, b + n))
     return im
 
 
@@ -409,9 +438,54 @@ def floor_plan():
     return im
 
 
-def skyline(seed, panel_w_m, panel_h_m, min_m, max_m, tower_chance, lit=0.2, h=1024):
+def _tower(d, rng, x0, x1, top, base, px_x, px_y, shade, share, warm, cool, dim, podium_m=0.0, glass=None):
+    """One building from x0 to x1 (px), roof at top, ground at base: its own storey height, bay, window shape
+    and lit share, so no two buildings line up their rows (walks 12: straight lit bands ran across every pane)."""
+    d.rectangle([x0, int(top), x1, base], fill=shade + (255,))
+    storey = rng.uniform(3.0, 4.4) * px_y
+    bay = rng.uniform(2.2, 4.2) * px_x
+    style = rng.random()
+    if style < 0.2:      # ribbon windows: long horizontal strips
+        ww, wh = bay * rng.uniform(0.9, 1.0), storey * rng.uniform(0.35, 0.5)
+    elif style < 0.4:    # tall narrow slots
+        ww, wh = bay * rng.uniform(0.25, 0.35), storey * rng.uniform(0.6, 0.75)
+    else:
+        ww, wh = bay * rng.uniform(0.4, 0.6), storey * rng.uniform(0.4, 0.6)
+    ww, wh = max(1, int(ww)), max(1, int(wh))
+    share *= rng.uniform(0.3, 1.8)
+    tint = warm if rng.random() < 0.6 else cool
+    # Ground storey: taller, and on the near panels a shop or lobby glow.
+    yy = base - max(podium_m * px_y, storey * rng.uniform(1.0, 1.5))
+    if podium_m > 0.0 and rng.random() < 0.7:
+        g = rng.choice([(210, 164, 108, 255), (190, 180, 156, 255), (150, 172, 210, 255), (214, 136, 86, 255)])
+        sx0 = int(x0 + rng.uniform(0.05, 0.2) * (x1 - x0))
+        sx1 = int(x1 - rng.uniform(0.05, 0.2) * (x1 - x0))
+        d.rectangle([sx0, int(base - podium_m * 0.75 * px_y), sx1, base - max(1, int(0.3 * px_y))], fill=g)
+        d.rectangle([sx0 - 2, int(base - podium_m * 0.85 * px_y), sx1 + 2, int(base - podium_m * 0.75 * px_y)], fill=(18, 16, 14, 255))
+    xoff = rng.uniform(0.2, 0.8) * bay
+    while yy - wh > top + storey * 0.4:
+        r_floor = rng.random()
+        floor_share = share * (0.1 if r_floor < 0.3 else (2.5 if r_floor > 0.9 else 1.0))
+        xx = x0 + xoff
+        run = 0
+        while xx + ww < x1 - bay * 0.2:
+            r = rng.random()
+            # Lit windows come in runs (one office lit, the next dark).
+            if run > 0 or r < floor_share * 0.5:
+                run = run - 1 if run > 0 else rng.randint(0, 5)
+                d.rectangle([int(xx), int(yy - wh), int(xx) + ww - 1, int(yy)], fill=tint if rng.random() < 0.85 else (warm if tint is cool else cool))
+            elif r < floor_share * 0.5 + 0.05:
+                d.rectangle([int(xx), int(yy - wh), int(xx) + ww - 1, int(yy)], fill=dim)
+            elif glass:
+                d.rectangle([int(xx), int(yy - wh), int(xx) + ww - 1, int(yy)], fill=glass)
+            xx += bay
+        yy -= storey
+
+
+def skyline(seed, panel_w_m, panel_h_m, min_m, max_m, tower_chance, lit=0.2, h=1024, podium_m=0.0):
     """The city round the harbour at night for one panel (KcHotel BuildLighting) panel_w_m by panel_h_m:
     near-black blocks with scattered lit windows and red aviation lights, transparent above the roofs.
+    Every building has its own outline (setbacks, crowns, masts), storey height and window pattern.
     Pixels are not square (4096 px across, h px up), so every size is converted from metres on each axis."""
     w = 4096
     px_x = w / float(panel_w_m)
@@ -420,56 +494,86 @@ def skyline(seed, panel_w_m, panel_h_m, min_m, max_m, tower_chance, lit=0.2, h=1
     im = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     d = ImageDraw.Draw(im)
     warm, cool, dim = (255, 196, 128, 255), (196, 216, 255, 255), (110, 92, 74, 255)
-    for layer, (shade, share) in enumerate([((5, 6, 9), lit * 0.6), ((8, 9, 13), lit)]):  # back row, then front
+    for layer, share in enumerate([lit * 0.5, lit]):  # back row, then front
         x = rng.uniform(-30, 0) * px_x
         while x < w:
-            bw = rng.uniform(16, 50) * px_x
+            bw = rng.uniform(14, 55) * px_x
             tall = rng.random() < tower_chance
-            bh_m = rng.uniform(max_m * 0.6, max_m) if tall else rng.uniform(min_m, min_m + (max_m - min_m) * 0.35)
+            bh_m = rng.uniform(max_m * 0.55, max_m) if tall else rng.uniform(min_m, min_m + (max_m - min_m) * 0.4)
             if layer == 0:
-                bh_m *= 1.2
-            bh_m = min(bh_m, panel_h_m - 1.0)
+                bh_m *= rng.uniform(1.05, 1.35)
+            bh_m = min(bh_m, panel_h_m - 4.0)
+            v = rng.randint(-2, 3)
+            shade = (4 + v, 5 + v, 8 + v) if layer == 0 else (8 + v, 9 + v, 13 + v)
             top = h - bh_m * px_y
             x0, x1 = int(x), int(x + bw)
-            d.rectangle([x0, int(top), x1, h], fill=shade + (255,))
-            # Windows: 3 m bays, 3.5 m storeys; a share lit, warm or cool, a few dim; whole dark floors here and there.
-            fy = 3.5 * px_y
-            bay = 3.0 * px_x
-            ww, wh = max(1, int(1.4 * px_x)), max(1, int(1.6 * px_y))
-            yy = h - fy
-            while yy - wh > top + fy * 0.5:
-                floor_share = share * (0.2 if rng.random() < 0.25 else 1.0)
-                xx = x0 + bay * 0.5
-                while xx + ww < x1 - bay * 0.3:
-                    r = rng.random()
-                    if r < floor_share:
-                        d.rectangle([int(xx), int(yy - wh), int(xx) + ww - 1, int(yy)], fill=warm if rng.random() < 0.65 else cool)
-                    elif r < floor_share + 0.04:
-                        d.rectangle([int(xx), int(yy - wh), int(xx) + ww - 1, int(yy)], fill=dim)
-                    xx += bay
-                yy -= fy
-            if tall:
-                cx = int((x0 + x1) / 2)
-                d.rectangle([cx - 1, int(top) - 3, cx + 1, int(top)], fill=(255, 40, 30, 255))
-            x += bw + rng.uniform(-5, 12) * px_x
-    # Street or quay lights along the foot of the panel.
-    for xx in range(0, w, 6):
-        if rng.random() < 0.45:
-            d.rectangle([xx, h - 3, xx + 1, h - 2], fill=warm)
+            _tower(d, rng, x0, x1, top, h, px_x, px_y, shade, share, warm, cool, dim, podium_m if layer == 1 else 0.0)
+            # The roof: a setback, a stepped crown, a slanted top, a mast, or plant on a flat roof.
+            roof = rng.random()
+            cx = (x0 + x1) // 2
+            mast_top = top
+            if tall and roof < 0.3:
+                sw = (x1 - x0) * rng.uniform(0.45, 0.7)
+                sh = rng.uniform(6, 18) * px_y
+                sx0 = int(cx - sw / 2 + rng.uniform(-0.15, 0.15) * (x1 - x0))
+                _tower(d, rng, sx0, int(sx0 + sw), top - sh, int(top), px_x, px_y, shade, share, warm, cool, dim)
+                mast_top = top - sh
+            elif tall and roof < 0.5:
+                for k in range(1, 4):
+                    inset = (x1 - x0) * 0.12 * k
+                    d.rectangle([int(x0 + inset), int(top - k * 3 * px_y), int(x1 - inset), int(top)], fill=shade + (255,))
+                mast_top = top - 9 * px_y
+            elif roof < 0.65:
+                rise = min(rng.uniform(4, 12) * px_y, (x1 - x0) * 0.3)
+                if rng.random() < 0.5:
+                    d.polygon([(x0, top), (x1, top), (x1, top - rise)], fill=shade + (255,))
+                else:
+                    d.polygon([(x0, top), (x1, top), (x0, top - rise)], fill=shade + (255,))
+            elif roof < 0.85:
+                pw = (x1 - x0) * rng.uniform(0.2, 0.4)
+                px0 = int(x0 + rng.uniform(0.1, 0.5) * (x1 - x0))
+                d.rectangle([px0, int(top - rng.uniform(2, 4) * px_y), int(px0 + pw), int(top)], fill=shade + (255,))
+            if tall and roof < 0.75:
+                mh = rng.uniform(5, 15) * px_y
+                d.rectangle([cx, int(mast_top - mh), cx + 1, int(mast_top)], fill=shade + (255,))
+                d.rectangle([cx - 1, int(mast_top - mh) - 3, cx + 2, int(mast_top - mh)], fill=(255, 40, 30, 255))
+            elif tall:
+                d.rectangle([cx - 1, int(mast_top) - 3, cx + 1, int(mast_top)], fill=(255, 40, 30, 255))
+            # Gaps between buildings on the near panels; overlaps (depth) on the far ring.
+            x += bw + (rng.uniform(1, 14) if podium_m > 0.0 else rng.uniform(-6, 10)) * px_x
+    # Street or quay lights along the foot of the panel, at uneven spacing.
+    xx = 0.0
+    while xx < w:
+        d.rectangle([int(xx), h - 3, int(xx) + 1, h - 2], fill=warm)
+        xx += rng.uniform(3, 14)
     return im
 
 
-# Skyline panels (KcHotel.cpp BuildLighting): far ring 1 km out on every side, near low-rise 300 m out on the
-# street sides. Sizes in metres must match the panels there.
-SKYLINES = {
-    "T_SkylineFarN": (71, 2000, 120, 15, 90, 0.10, 0.18),   # the far shore, across the harbour
-    "T_SkylineFarS": (72, 2000, 120, 20, 115, 0.18, 0.2),
-    "T_SkylineFarW": (73, 2000, 120, 20, 115, 0.16, 0.2),
-    "T_SkylineFarE": (74, 2000, 120, 20, 115, 0.2, 0.2),
-    "T_SkylineNearS": (81, 700, 40, 9, 36, 0.08, 0.4),
-    "T_SkylineNearW": (82, 400, 40, 9, 36, 0.08, 0.4),
-    "T_SkylineNearE": (83, 400, 40, 9, 36, 0.08, 0.4),
-}
+def street_frontage(seed, panel_w_m, panel_h_m, h=1024):
+    """The buildings across the street from the hotel, seen from the lobby: four to seven storeys side by side,
+    lit shopfronts and lobbies at the pavement, a dark cornice line, windows above."""
+    w = 4096
+    px_x = w / float(panel_w_m)
+    px_y = h / float(panel_h_m)
+    rng = random.Random(seed)
+    im = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    warm, cool, dim = (255, 200, 140, 255), (200, 218, 255, 255), (96, 82, 66, 255)
+    x = 0.0
+    while x < w:
+        bw = rng.uniform(9, 24) * px_x
+        storeys = rng.randint(4, 7)
+        bh_m = min(panel_h_m - 1.0, 5.0 + storeys * rng.uniform(3.1, 3.6))
+        v = rng.randint(0, 10)
+        shade = rng.choice([(22 + v, 18 + v, 16 + v), (16 + v, 17 + v, 19 + v), (26 + v, 22 + v, 18 + v)])
+        x0, x1 = int(x), int(x + bw)
+        top = h - bh_m * px_y
+        _tower(d, rng, x0, x1, top, h, px_x, px_y, shade, 0.7, warm, cool, dim, podium_m=5.0,
+               glass=(max(0, shade[0] - 12), max(0, shade[1] - 10), max(0, shade[2] - 6), 255))
+        d.rectangle([x0, int(top), x1, int(top + 0.6 * px_y)], fill=(8, 8, 10, 255))  # cornice
+        d.line([x1, int(top), x1, h], fill=(6, 6, 8, 255), width=2)                    # party wall line
+        x += bw
+    return im
 
 
 def main():
@@ -487,10 +591,12 @@ def main():
         "T_ScreenExport": export_screen(), "T_ScreenPanel": fire_panel(), "T_Whiteboard": whiteboard(),
         "T_ArtHarbourA": harbour_art(11), "T_ArtHarbourB": harbour_art(29), "T_ArtHarbourC": harbour_art(53),
         "T_ExitSign": exit_sign(), "T_CorridorCarpet": corridor_carpet(), "T_Wallpaper": wallpaper(), "T_QuarryTile": quarry_tile(),
-        "T_DndTag": dnd_tag(), "T_FloorPlan": floor_plan(), "T_WallTile": wall_tile(),
+        "T_DndTag": dnd_tag(), "T_BallroomCarpet": ballroom_carpet(), "T_FloorPlan": floor_plan(), "T_WallTile": wall_tile(),
     }
     for name, (seed, pw, ph, lo, hi, towers, lit) in SKYLINES.items():
-        items[name] = skyline(seed, pw, ph, lo, hi, towers, lit, 1024 if ph > 60 else 512)
+        items[name] = skyline(seed, pw, ph, lo, hi, towers, lit, 1024 if ph > 60 else 512, 0.0 if ph > 60 else 5.0)
+    for name, (seed, pw, ph) in FRONTAGES.items():
+        items[name] = street_frontage(seed, pw, ph)
     for name, im in items.items():
         im.save(os.path.join(OUT, name + ".png"))
         print("wrote", name)

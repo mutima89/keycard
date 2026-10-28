@@ -434,6 +434,18 @@ void AddCase(TSharedRef<FScript> S, TSharedRef<FReport> R, UWorld* World, AKcHUD
 				const AKcInteractable* Seen = Focused(H.Get());
 				R->Check(Name + TEXT("_focus"), Seen == Target->Get(), TEXT("looking at ") + NameOf(Seen) + (Seen == Target->Get() ? FString() : TEXT(", sweep hits ") + LookHit(H.Get())));
 			}
+			// Using a thing turns the view to its focus (the covered detector, not the rug it is shot from),
+			// as the game's own use does; the screenshot then shows what the step is about.
+			if (Target->IsValid() && !Cast<AKcPersonActor>(Target->Get()))
+			{
+				if (APlayerController* PC = H->GetOwningPlayerController())
+				{
+					FVector View;
+					FRotator Rot;
+					PC->GetPlayerViewPoint(View, Rot);
+					PC->SetControlRotation((Target->Get()->GetFocusPoint() - View).Rotation());
+				}
+			}
 			const EKcCaseResult Done = H->DoAction(*A);
 			R->Check(Name + TEXT("_do"), Done == EKcCaseResult::Ok, Done == EKcCaseResult::Ok ? H->Campaign()->ClockText() : UKcCampaignSubsystem::ResultText(Done));
 			return true;

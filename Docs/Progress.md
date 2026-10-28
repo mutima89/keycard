@@ -75,6 +75,15 @@ Last update: 2026-10-28
     - 1412: the sill stops at the balcony door, and the dresser is clear of the floor lamp.
     - A wardrobe plinth.
     - Housekeeping battens at 600.
+  - Round 14 results (PC, 11f9fd5): import `KcImport: done: 8 meshes, 9 materials, 0 errors`, build `Result: Succeeded`, walk `PASS`, 270 ok, 0 FAIL, 0 legs stuck, 0 falls.
+    - Fixed: the floor 4 skyline over a low frontage, cloth hems, valve labels, the kitchen west end, the 1412 sill, the wardrobe plinth, no pastel blocks.
+    - Still open: the bedroom shot misses the bed; the bathroom shot is all mirror; the valve wheel reads as an asterisk; the housekeeping ceiling blows out; the desk chair runs into the armchair; the street is too dim through the lobby glass.
+  - Round 15 changes:
+    - Valve wheels: a red rim round a dark centre, three red spokes and a hub, on every floor.
+    - Room armchair to U 150, side table to U 225.
+    - Housekeeping ceiling on the new MI_CeilingLow (intensity 1.4).
+    - MI_Mirror darker (0.62); street frontages at intensity 2.2.
+    - Walk: the 1412 bedroom shot faces the bed (yaw -40); the bathroom shot looks down at the vanity (pitch -20).
 
 - 2026-10-23 Release 1.0.0: https://github.com/mutima89/keycard/releases/tag/v1.0.0 (published 2026-10-23T00:35:59Z, not a draft or pre-release). Tag v1.0.0 at a3c46bb, created and pushed by the owner with `gh release create`. Assets checked through the GitHub API: Keycard-1.0.0-Win64-Portable.zip 530,095,089 bytes, sha256 2cdcf79a181c6e7fe03c84b3b733f3e2d997cdd7b872a0746481994802183a70; Keycard-Setup-1.0.0.exe 499,125,603 bytes, sha256 6113a7cc88334a3f144305de7b2d0cdf61dde7ca33d2876ebc43e19fcdf151d5 (both match PC round 5). Release notes are CHANGELOG.md. Hands-on playtest checklist: project files keycard/playtest-1.0.0.md.
 

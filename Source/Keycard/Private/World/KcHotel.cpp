@@ -1073,10 +1073,14 @@ void AKcHotel::BuildStairs()
 				AddBox(FVector(Vx, Vy + 16.0f, Zf(Floor, 120.0f)), FVector(12.0f, 14.0f, 16.0f), Mat(TEXT("MI_FireRed")), 0.0f, false);
 				AddInstance(Cylinder, FTransform(FRotator(0.0f, 0.0f, 90.0f), FVector(Vx, Vy + 27.0f, Zf(Floor, 120.0f)), FVector(0.03f, 0.03f, 0.1f)), Steel, false, false);
 				AddInstance(Cylinder, FTransform(FRotator(0.0f, 0.0f, 90.0f), FVector(Vx, Vy + 32.0f, Zf(Floor, 120.0f)), FVector(0.24f, 0.24f, 0.02f)), Mat(TEXT("MI_FireRed")), false, false);
-				for (int32 k = 0; k < 4; ++k) // spokes, so it reads as a wheel and not a disc (walk 13)
+				// A dark disc inside the rim leaves a red ring, with three red spokes and a hub across it: steel
+				// spokes over the whole disc read as an asterisk (walk 14).
+				AddInstance(Cylinder, FTransform(FRotator(0.0f, 0.0f, 90.0f), FVector(Vx, Vy + 33.3f, Zf(Floor, 120.0f)), FVector(0.18f, 0.18f, 0.005f)), Mat(TEXT("MI_Skirting")), false, false);
+				for (int32 k = 0; k < 3; ++k)
 				{
-					AddInstance(Cube, FTransform(FRotator(k * 45.0f, 0.0f, 0.0f), FVector(Vx, Vy + 33.6f, Zf(Floor, 120.0f)), FVector(0.015f, 0.01f, 0.2f)), Steel, false, false);
+					AddInstance(Cube, FTransform(FRotator(k * 60.0f, 0.0f, 0.0f), FVector(Vx, Vy + 33.8f, Zf(Floor, 120.0f)), FVector(0.022f, 0.01f, 0.19f)), Mat(TEXT("MI_FireRed")), false, false);
 				}
+				AddInstance(Cylinder, FTransform(FRotator(0.0f, 0.0f, 90.0f), FVector(Vx, Vy + 34.2f, Zf(Floor, 120.0f)), FVector(0.05f, 0.05f, 0.01f)), Steel, false, false);
 			}
 			// The label over the valve, clear of the floor sign's frame (beside it, the frame cut its edge, walk 13).
 			AddBox(FVector(StairIn0 + 1.0f, Vy + 16.0f, Zf(Floor, 205.0f)), FVector(1.0f, 40.0f, 14.0f), Mat(TEXT("MI_Paper")), 0.0f, false);
@@ -1600,7 +1604,7 @@ void AKcHotel::BuildHousekeeping()
 	UMaterialInterface* Paint = Mat(TEXT("MI_WallPaint"));
 	UMaterialInterface* Steel = Mat(TEXT("MI_Steel"));
 	FloorFinish(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), Mat(TEXT("MI_FloorVinyl"))); // sheet vinyl: the tile read as guest carpet (walk 12)
-	Ceiling(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), CeilB1, Mat(TEXT("MI_CeilingMid"))); // Soft glowed white over the room
+	Ceiling(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), CeilB1, Mat(TEXT("MI_CeilingLow"))); // lower glow: MI_CeilingMid blew out white under the battens (walk 14)
 	AddBox(FVector(X1 - 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilB1 * 0.5f)), FVector(1.0f, Y1 - Y0, CeilB1), Paint, 0.0f, false);
 	AddBox(FVector((X0 + X1) * 0.5f, Y0 + 0.5f, Zf(F, CeilB1 * 0.5f)), FVector(X1 - X0, 1.0f, CeilB1), Paint, 0.0f, false);
 	AddBox(FVector(X0 + 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilB1 * 0.5f)), FVector(1.0f, Y1 - Y0, CeilB1), Paint, 0.0f, false);
@@ -3051,9 +3055,9 @@ void AKcHotel::FurnishRoom(const FString& Number, const FBox2D& Area, bool bNort
 	for (float U : {42.0f, W - 42.0f}) LBox(U, VOut - 16.0f, 130.0f, 58.0f, 10.0f, 252.0f, TEXT("MI_FabricAccent"));
 	const float SheerEnd = b1412 ? 280.0f : W - 72.0f; // 1412's sheer is drawn back off the balcony door
 	LBox((72.0f + SheerEnd) * 0.5f, VOut - 22.0f, 130.0f, SheerEnd - 72.0f, 1.0f, 250.0f, TEXT("MI_Sheer"));
-	Chair(R.P(95.0f, VOut - 75.0f, 0.0f), R.Yaw(-45.0f));
+	Chair(R.P(150.0f, VOut - 75.0f, 0.0f), R.Yaw(-45.0f)); // at U 95 the desk chair ran into it (walk 14)
 	Lamp(F, R.P(30.0f, VOut - 30.0f, 0.0f), true);
-	AddInstance(Cylinder, R.P(170.0f, VOut - 45.0f, 25.0f), 0.0f, FVector(0.45f, 0.45f, 0.5f), Mat(TEXT("MI_WoodWalnut")), true);
+	AddInstance(Cylinder, R.P(225.0f, VOut - 45.0f, 25.0f), 0.0f, FVector(0.45f, 0.45f, 0.5f), Mat(TEXT("MI_WoodWalnut")), true);
 	// Luggage rack by the bathroom wall.
 	LBox(250.0f, 290.0f, 45.0f, 80.0f, 45.0f, 4.0f, TEXT("MI_WoodWalnut"));
 	for (float Du : {-36.0f, 36.0f}) LBox(250.0f + Du, 290.0f, 22.0f, 3.0f, 45.0f, 44.0f, TEXT("MI_WoodWalnut"), true);
@@ -3411,10 +3415,14 @@ void AKcHotel::PlaceFixedInteractables()
 		AddInstance(Cylinder, FTransform(FRotator(0.0f, 0.0f, 90.0f), FVector(Vx, Vy + 27.0f, Zf(F, 120.0f)), FVector(0.03f, 0.03f, 0.12f)), Mat(TEXT("MI_Steel")), false, false); // stem
 		AddInstance(Cylinder, FVector(Vx + 7.0f, Vy, Zf(F, 160.0f)), 0.0f, FVector(0.06f, 0.06f, 0.02f), Mat(TEXT("MI_Ceramic")), false);
 		AddBox(FVector(Vx - 1.0f, Vy - 9.0f, Zf(F, 120.0f)), FVector(6.0f, 8.0f, 10.0f), Mat(TEXT("MI_PlasticGrey")), 0.0f, false); // tamper switch on the riser, opposite the wheel
-		for (int32 k = 0; k < 4; ++k) // the wheel's spokes, in front of the case point's rim
+		// In front of the case point's red disc: a dark centre that leaves a red rim, three red spokes and a hub
+		// (as on the other landings, BuildStairs).
+		AddInstance(Cylinder, FTransform(FRotator(0.0f, 0.0f, 90.0f), FVector(Vx, Vy + 35.7f, Zf(F, 120.0f)), FVector(0.165f, 0.165f, 0.005f)), Mat(TEXT("MI_Skirting")), false, false);
+		for (int32 k = 0; k < 3; ++k)
 		{
-			AddInstance(Cube, FTransform(FRotator(k * 45.0f, 0.0f, 0.0f), FVector(Vx, Vy + 35.6f, Zf(F, 120.0f)), FVector(0.015f, 0.01f, 0.2f)), Mat(TEXT("MI_Steel")), false, false);
+			AddInstance(Cube, FTransform(FRotator(k * 60.0f, 0.0f, 0.0f), FVector(Vx, Vy + 36.2f, Zf(F, 120.0f)), FVector(0.022f, 0.01f, 0.18f)), Mat(TEXT("MI_FireRed")), false, false);
 		}
+		AddInstance(Cylinder, FTransform(FRotator(0.0f, 0.0f, 90.0f), FVector(Vx, Vy + 36.6f, Zf(F, 120.0f)), FVector(0.05f, 0.05f, 0.01f)), Mat(TEXT("MI_Steel")), false, false);
 		ValvePoint = SpawnCasePoint(TEXT("f14_corridor"), TEXT("valve_14"), FString(), FVector(Vx, Vy + 34.0f, Zf(F, 120.0f)), 90.0f, Cylinder, FVector(0.22f, 0.22f, 0.03f),
 			Mat(TEXT("MI_FireRed")), EKcUseStyle::Screen, FVector(Vx + 120.0f, Vy + 60.0f, Zf(F, 150.0f)));
 		if (ValvePoint) ValvePoint->SetActorRotation(FRotator(0.0f, 0.0f, 90.0f));

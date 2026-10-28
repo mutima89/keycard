@@ -514,7 +514,7 @@ for name, slot, tile, tint, rough in [
 for name, tint, rough, metal in [
         ("MI_Graphite", (0.06, 0.065, 0.075), 0.75, 1.0), ("MI_Chrome", (0.8, 0.8, 0.82), 0.3, 1.0),
         ("MI_Steel", (0.55, 0.56, 0.58), 0.5, 1.0), ("MI_SteelDark", (0.2, 0.2, 0.21), 0.7, 1.0), ("MI_Brass", (0.75, 0.55, 0.3), 0.35, 1.0),
-        ("MI_Mirror", (0.95, 0.95, 0.95), 0.05, 1.0),
+        ("MI_Mirror", (0.62, 0.64, 0.66), 0.05, 1.0),  # at 0.95 it read as a blank white panel (walk 14)
         ("MI_CeilingWhite", (0.86, 0.86, 0.85), 1.6, 0.0), ("MI_Skirting", (0.12, 0.12, 0.13), 1.2, 0.0),
         ("MI_DeviceBlack", (0.02, 0.02, 0.025), 0.6, 0.0), ("MI_PlasticGrey", (0.35, 0.36, 0.38), 0.8, 0.0),
         ("MI_Paper", (0.9, 0.9, 0.88), 1.7, 0.0), ("MI_Ceramic", (0.92, 0.92, 0.9), 0.35, 0.0),
@@ -544,6 +544,7 @@ instance("MI_CeilingSoft", EMISSIVE, {}, {"Intensity": 6.0, "Roughness": 1.0}, {
 # CCTV room: kept dark for the screens; at 6 the exposure lifted the ceiling to a glowing white slab.
 instance("MI_CeilingDim", EMISSIVE, {}, {"Intensity": 0.8, "Roughness": 1.0}, {"Color": (0.88, 0.89, 0.9, 1)})
 # B1 work rooms and corridor: between the two; at 0.8 the ceilings read as a black band over the walls.
+instance("MI_CeilingLow", EMISSIVE, {}, {"Intensity": 1.4, "Roughness": 1.0}, {"Color": (0.88, 0.89, 0.9, 1)})  # housekeeping, under battens
 instance("MI_CeilingMid", EMISSIVE, {}, {"Intensity": 2.5, "Roughness": 1.0}, {"Color": (0.88, 0.89, 0.9, 1)})
 instance("MI_Highlight", unreal.load_asset(MAT + "/M_KcHighlight"))
 # People: a faint rim only. At full strength the whole body glowed blue and the open mouth and teeth lit up.
@@ -594,7 +595,7 @@ for side in ["FarN", "FarS", "FarW", "FarE", "NearS", "NearW", "NearE"]:
 for side in ["W", "S", "E"]:
     tex = "T_Street" + side
     if tex in gen:
-        instance("MI_Street" + side, skyline, {"SkylineTexture": gen[tex]}, {"Intensity": 1.4})
+        instance("MI_Street" + side, skyline, {"SkylineTexture": gen[tex]}, {"Intensity": 2.2})  # at 1.4 the street was too dim to read through the lobby glass (walk 14)
     else:
         err("%s missing: run python Scripts/GenerateTextures.py" % tex)
 

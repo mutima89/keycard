@@ -594,9 +594,9 @@ void BuildRoute(FState& S, AKcHotel* Hotel)
 	S.Steps.Add(Lift(14));
 	// Shots 38 to 40, after the ones the reviews compare by number: the floor 14 directory and the lift indicators (no
 	// shot showed them, walk 18), then the staff time clock on the ground floor.
-	S.Steps.Add(PathTo(AKcHotel::TopFloor, FVector2D(2470.0f, -40.0f), TEXT("lift lobby 14")));
+	S.Steps.Add(PathTo(AKcHotel::TopFloor, FVector2D(2470.0f, 15.0f), TEXT("lift lobby 14"))); // at -40 the lamp filled a corner (walk 19)
 	S.Steps.Add(Shot(-90.0f, TEXT("lift lobby 14 directory")));
-	S.Steps.Add(Shot(80.0f, TEXT("lift lobby 14 lifts")));
+	S.Steps.Add(Shot(90.0f, TEXT("lift lobby 14 lifts"), 2.0f)); // level and square: at 80 and -6 the indicator was cut off and the plates looked tilted
 	S.Steps.Add(PathTo(AKcHotel::TopFloor, LiftLobby, TEXT("lift lobby 14, back")));
 	S.Steps.Add(Lift(0));
 	S.Steps.Add(PathTo(0, FVector2D(4600.0f, -30.0f), TEXT("time clock")));

@@ -523,7 +523,8 @@ for name, slot, tile, tint, rough in [
         ("MI_FabricAccent", "wool", 30, (0.18, 0.36, 0.48), 2.0),          # harbour-blue upholstery
         ("MI_AcousticPanel", "wool", 60, (0.4, 0.46, 0.52), 1.0),         # at 0.24-0.36 the CCTV room walls read black
         ("MI_Linen", "linen", 40, (0.76, 0.75, 0.72), 1.8),  # bed linen, towels: 0.95 blew to flat white, 0.82 still showed no fold shading under the bedside lamps (walk 18)
-        ("MI_DuvetBack", "linen", 40, (0.5, 0.52, 0.55), 1.8),             # the turned-back underside of the slept-in duvet: pale grey-blue, or the ridge vanished in white (walk 18)
+        ("MI_DuvetBack", "linen", 40, (0.24, 0.28, 0.34), 1.8),           # the turned-back underside of the slept-in duvet: grey-blue (0.5 read off-white under the warm lamps, walk 19)
+        ("MI_Canvas", "linen", 60, (0.4, 0.46, 0.52), 1.9),               # laundry liner bags: canvas grey-blue (the harbour blue read black, walk 19)
         ("MI_TableLinen", "linen", 40, (0.62, 0.6, 0.53), 1.8),            # banquet cloths: ivory, one material top to hem (0.72 skirts blew out under the drums, walk 18)
         ("MI_Headboard", "wool", 30, (0.68, 0.62, 0.54), 2.0),             # guest-room headboards: oatmeal (taupe wool read near black, walk 17)
         ("MI_Leather", "leather", 50, (0.2, 0.12, 0.08), 0.9),             # bar stools, lobby chairs
@@ -543,7 +544,7 @@ for name, tint, rough, metal in [
         ("MI_FloorVinyl", (0.34, 0.35, 0.36), 0.7, 0.0),  # sheet vinyl, plain: on the concrete texture it read as stone (walk 16)
         ("MI_Mirror", (0.3, 0.31, 0.33), 0.05, 1.0),  # at 0.95 (walk 14) and 0.42 (walk 17) it showed the lit tiles as a white field
         ("MI_Skirting", (0.12, 0.12, 0.13), 1.2, 0.0),
-        ("MI_DeviceBlack", (0.02, 0.02, 0.025), 0.6, 0.0), ("MI_PlasticGrey", (0.35, 0.36, 0.38), 0.8, 0.0),
+        ("MI_DeviceBlack", (0.02, 0.02, 0.025), 0.85, 0.0), ("MI_PlasticGrey", (0.35, 0.36, 0.38), 0.8, 0.0),
         ("MI_Paper", (0.8, 0.8, 0.78), 1.7, 0.0), ("MI_Ceramic", (0.85, 0.85, 0.83), 0.35, 0.0),
         ("MI_Cardboard", (0.55, 0.42, 0.28), 1.7, 0.0), ("MI_FireRed", (0.6, 0.04, 0.03), 0.6, 0.0),
         ("MI_SafetyYellow", (0.85, 0.65, 0.05), 0.8, 0.0), ("MI_Leaf", (0.12, 0.28, 0.1), 1.2, 0.0),
@@ -597,9 +598,10 @@ for f in sorted(os.listdir(GEN)) if os.path.isdir(GEN) else []:
 if not gen:
     err("no generated textures: run python Scripts/GenerateTextures.py first")
 screen = build_screen(defaults)
-# The CCTV pages at 10 drove the exposure down until the room round the video wall went black (walk 12).
-for mi, tex, inten in [("MI_ScreenCctv1", "T_ScreenCctv1", 6.0), ("MI_ScreenCctv2", "T_ScreenCctv2", 6.0),
-                       ("MI_ScreenCctv3", "T_ScreenCctv3", 6.0), ("MI_ScreenCctv4", "T_ScreenCctv4", 6.0),
+# The CCTV pages at 10 drove the exposure down until the room round the video wall went black (walk 12); at 6 their
+# bloom left a glow on the bezels between the middle screens (walk 19).
+for mi, tex, inten in [("MI_ScreenCctv1", "T_ScreenCctv1", 4.5), ("MI_ScreenCctv2", "T_ScreenCctv2", 4.5),
+                       ("MI_ScreenCctv3", "T_ScreenCctv3", 4.5), ("MI_ScreenCctv4", "T_ScreenCctv4", 4.5),
                        ("MI_ScreenShiftBoard", "T_ScreenShiftBoard", 12.0), ("MI_ScreenFrontOffice", "T_ScreenFrontOffice", 5.0),
                        ("MI_ScreenReport", "T_ScreenReport", 9.0), ("MI_ScreenExport", "T_ScreenExport", 12.0),
                        ("MI_ScreenPanel", "T_ScreenPanel", 8.0), ("MI_ExitSign", "T_ExitSign", 20.0)]:

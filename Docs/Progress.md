@@ -39,6 +39,42 @@ Last update: 2026-10-28
       - Lamp shades at 22.
       - Front desk: the name as brass letters on a dark board with a halo.
     - Walk route: shots at 1412, the floor 14 closet and 1406 step back 130 cm, with the door open, instead of facing it from 40 cm.
+  - Round 13 at 1021117:
+    - GenerateTextures.py stopped with `NameError: name 'SKYLINES' is not defined`: the edit dropped the table. The PC generated from a scratch wrapper with stand-in tables; the script was fixed in 870a647.
+    - Import: `KcImport: done: 8 meshes, 9 materials, 0 errors`. Build: `Result: Succeeded`.
+    - Walk: `PASS`, 270 ok, 0 FAIL. Game 07:08:16-07:13:46 local; KcWalk.txt 07:13:44.
+    - Review (Review_round13.md), fixed since round 12:
+      - Skyline variety.
+      - A street outside the lobby bar.
+      - No light under doors.
+      - Ballroom carpet, and the back of house no longer uses guest carpet.
+      - Kitchen ranges.
+      - The front desk sign reads.
+      - The riser is on every landing.
+      - The 1412 and 1406 door shots.
+      - The dock levellers.
+    - New faults:
+      - The 28 m street frontage walled off the floor 4 windows.
+      - The tablecloth pleats read as a sawtooth.
+      - The shopfronts were pastel blocks.
+      - The valve label sat under the sign frame.
+      - G-13 valves had no spokes.
+    - Still open:
+      - Beds read white on white.
+      - The 1412 bathroom shot shows little.
+      - Linen still reads as slabs.
+      - The west half of the kitchen is empty.
+      - The ballroom stage is boxes.
+      - The CCTV room has a flare and a leak.
+  - Round 14 changes:
+    - The frontage is 16 m with dim, detailed shopfronts (glass mullions, a door, shapes inside) at intensity 1.4.
+    - Plain cloth hems.
+    - Valve labels moved over the valves, and spokes on every floor.
+    - Dark cushions on the beds; the pillows lean back.
+    - Kitchen: dry-store shelving, a sheet-pan rack and a hand-wash basin.
+    - 1412: the sill stops at the balcony door, and the dresser is clear of the floor lamp.
+    - A wardrobe plinth.
+    - Housekeeping battens at 600.
 
 - 2026-10-23 Release 1.0.0: https://github.com/mutima89/keycard/releases/tag/v1.0.0 (published 2026-10-23T00:35:59Z, not a draft or pre-release). Tag v1.0.0 at a3c46bb, created and pushed by the owner with `gh release create`. Assets checked through the GitHub API: Keycard-1.0.0-Win64-Portable.zip 530,095,089 bytes, sha256 2cdcf79a181c6e7fe03c84b3b733f3e2d997cdd7b872a0746481994802183a70; Keycard-Setup-1.0.0.exe 499,125,603 bytes, sha256 6113a7cc88334a3f144305de7b2d0cdf61dde7ca33d2876ebc43e19fcdf151d5 (both match PC round 5). Release notes are CHANGELOG.md. Hands-on playtest checklist: project files keycard/playtest-1.0.0.md.
 

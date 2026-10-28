@@ -457,10 +457,22 @@ def _tower(d, rng, x0, x1, top, base, px_x, px_y, shade, share, warm, cool, dim,
     # Ground storey: taller, and on the near panels a shop or lobby glow.
     yy = base - max(podium_m * px_y, storey * rng.uniform(1.0, 1.5))
     if podium_m > 0.0 and rng.random() < 0.7:
-        g = rng.choice([(210, 164, 108, 255), (190, 180, 156, 255), (150, 172, 210, 255), (214, 136, 86, 255)])
+        g = rng.choice([(150, 112, 70, 255), (128, 118, 98, 255), (92, 108, 136, 255), (150, 92, 56, 255)])  # dim: brighter read as pastel blocks
         sx0 = int(x0 + rng.uniform(0.05, 0.2) * (x1 - x0))
         sx1 = int(x1 - rng.uniform(0.05, 0.2) * (x1 - x0))
-        d.rectangle([sx0, int(base - podium_m * 0.75 * px_y), sx1, base - max(1, int(0.3 * px_y))], fill=g)
+        gy0, gy1 = int(base - podium_m * 0.75 * px_y), base - max(1, int(0.3 * px_y))
+        d.rectangle([sx0, gy0, sx1, gy1], fill=g)
+        # Inside the glass: shelves and counters as dark shapes, a lit back wall; then the mullions and the door.
+        for _ in range(rng.randint(2, 5)):
+            kx = rng.uniform(sx0, sx1)
+            kw, kh = rng.uniform(0.6, 2.0) * px_x, rng.uniform(0.25, 0.6) * (gy1 - gy0)
+            d.rectangle([int(kx), int(gy1 - kh), int(kx + kw), gy1], fill=tuple(int(c * 0.45) for c in g[:3]) + (255,))
+        mx = sx0
+        while mx < sx1:
+            d.rectangle([int(mx), gy0, int(mx) + 1, gy1], fill=(14, 13, 12, 255))
+            mx += rng.uniform(1.2, 1.8) * px_x
+        dx = rng.uniform(sx0, max(sx0 + 1, sx1 - 1.2 * px_x))
+        d.rectangle([int(dx), int(gy1 - 2.2 * px_y), int(dx + 1.0 * px_x), gy1], fill=tuple(int(c * 0.7) for c in g[:3]) + (255,))
         d.rectangle([sx0 - 2, int(base - podium_m * 0.85 * px_y), sx1 + 2, int(base - podium_m * 0.75 * px_y)], fill=(18, 16, 14, 255))
     xoff = rng.uniform(0.2, 0.8) * bay
     while yy - wh > top + storey * 0.4:
@@ -550,7 +562,7 @@ def skyline(seed, panel_w_m, panel_h_m, min_m, max_m, tower_chance, lit=0.2, h=1
 
 
 def street_frontage(seed, panel_w_m, panel_h_m, h=1024):
-    """The buildings across the street from the hotel, seen from the lobby: four to seven storeys side by side,
+    """The buildings across the street from the hotel, seen from the lobby: three or four storeys side by side,
     lit shopfronts and lobbies at the pavement, a dark cornice line, windows above."""
     w = 4096
     px_x = w / float(panel_w_m)
@@ -562,7 +574,7 @@ def street_frontage(seed, panel_w_m, panel_h_m, h=1024):
     x = 0.0
     while x < w:
         bw = rng.uniform(9, 24) * px_x
-        storeys = rng.randint(4, 7)
+        storeys = rng.randint(2, 3)  # above the shop storey; 16 m panels (walk 13: 28 m walled off the floor 4 view)
         bh_m = min(panel_h_m - 1.0, 5.0 + storeys * rng.uniform(3.1, 3.6))
         v = rng.randint(0, 10)
         shade = rng.choice([(22 + v, 18 + v, 16 + v), (16 + v, 17 + v, 19 + v), (26 + v, 22 + v, 18 + v)])
@@ -589,9 +601,9 @@ SKYLINES = {
 }
 # Across the street (KcHotel.cpp BuildOutside): name -> (seed, width m, height m).
 FRONTAGES = {
-    "T_StreetW": (91, 84, 28),
-    "T_StreetS": (92, 140, 28),
-    "T_StreetE": (93, 89, 28),
+    "T_StreetW": (91, 84, 16),
+    "T_StreetS": (92, 140, 16),
+    "T_StreetE": (93, 89, 16),
 }
 
 

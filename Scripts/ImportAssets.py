@@ -594,7 +594,7 @@ for side in ["FarN", "FarS", "FarW", "FarE", "NearS", "NearW", "NearE"]:
 for side in ["W", "S", "E"]:
     tex = "T_Street" + side
     if tex in gen:
-        instance("MI_Street" + side, skyline, {"SkylineTexture": gen[tex]}, {"Intensity": 2.0})
+        instance("MI_Street" + side, skyline, {"SkylineTexture": gen[tex]}, {"Intensity": 1.4})
     else:
         err("%s missing: run python Scripts/GenerateTextures.py" % tex)
 

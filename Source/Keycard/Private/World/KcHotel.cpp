@@ -1195,7 +1195,9 @@ void AKcHotel::BuildFacade(int32 Floor, float Height)
 		// Street side: full-height glass with the entrance (Y -130..130, built with the lobby).
 		Glazed(false, 0.0f, -HalfY, -130.0f, 0.0f, 330.0f);
 		Glazed(false, 0.0f, 130.0f, HalfY, 0.0f, 330.0f);
-		AddBox(FVector(0.0f, 0.0f, Zf(Floor, (330.0f + Height) * 0.5f)), FVector(30.0f, 260.0f, Height - 330.0f), Panel);
+		// A glass transom up to the lobby ceiling, so the lit canopy shows over the doors (a blank panel, walk 14).
+		AddBox(FVector(0.0f, 0.0f, Zf(Floor, (330.0f + CeilLobby) * 0.5f)), FVector(3.0f, 260.0f, CeilLobby - 330.0f), Glass);
+		AddBox(FVector(0.0f, 0.0f, Zf(Floor, (CeilLobby + Height) * 0.5f)), FVector(30.0f, 260.0f, Height - CeilLobby), Panel);
 		// City side: the lobby bar's windows.
 		Glazed(true, -HalfY, 0.0f, CoreX0, 40.0f, 330.0f);
 		Solid(true, -HalfY, CoreX0, MaxX);
@@ -1211,6 +1213,7 @@ void AKcHotel::BuildFacade(int32 Floor, float Height)
 		Solid(true, -HalfY, 0.0f, 300.0f);
 		Glazed(true, -HalfY, 300.0f, 1040.0f, 60.0f, 250.0f);
 		AddBox(FVector(1085.0f, -HalfY, Zf(Floor, (DoorH + Height) * 0.5f)), FVector(90.0f, 30.0f, Height - DoorH), Panel);
+		Lining(true, -HalfY, 1040.0f, 1130.0f, DoorH, Height); // bare concrete showed over the balcony door (walk 14)
 		Glazed(true, -HalfY, 1130.0f, CoreX0, 60.0f, 250.0f);
 		Solid(true, -HalfY, CoreX0, CoreX1);
 		Glazed(true, -HalfY, CoreX1, MaxX, 60.0f, 250.0f);
@@ -1286,6 +1289,10 @@ void AKcHotel::BuildOutside()
 			}
 		}
 		AddBox(FVector(2400.0f, -3800.0f, -8.0f), FVector(14000.0f, 600.0f, 6.0f), Mat(TEXT("MI_Asphalt")), 0.0f, false);
+		// The far kerb on the street the lobby faces, and light on that pavement: through the doors the street had no
+		// edge and no ground (walk 14). The shopfronts are self-lit; these light the paving in front of them.
+		AddBox(FVector(-2500.0f, -1800.0f, -3.0f), FVector(14.0f, 8400.0f, 12.0f), Mat(TEXT("MI_Concrete")), 0.0f, false);
+		for (float Y : {-1500.0f, 0.0f, 1500.0f}) AddLight(0, FVector(-2700.0f, Y, 500.0f), 2500.0f, 1300.0f, Warm);
 		AddBox(FVector(7500.0f, -2050.0f, -8.0f), FVector(600.0f, 8900.0f, 6.0f), Mat(TEXT("MI_Asphalt")), 0.0f, false);
 	}
 	AddBox(FVector(-1700.0f, 0.0f, -8.0f), FVector(1600.0f, 9000.0f, 6.0f), Mat(TEXT("MI_Asphalt")));
@@ -1634,6 +1641,9 @@ void AKcHotel::BuildHousekeeping()
 			const float T = LinenRand.FRandRange(4.5f, 7.5f);
 			const FVector Off(LinenRand.FRandRange(-1.5f, 1.5f), LinenRand.FRandRange(-1.5f, 1.5f), Z + T * 0.5f);
 			AddBox(Base + Off, FVector(SX, SY, T - 0.6f), Mat(Material), LinenRand.FRandRange(-2.0f, 2.0f), false);
+			// The rounded fold along the front edge: square edges read as slabs (walk 14).
+			const float Rad = (T - 0.6f) * 0.5f;
+			AddInstance(Cylinder, FTransform(FRotator(90.0f, 0.0f, 0.0f), Base + Off + FVector(0, SY * 0.5f - Rad * 0.5f, 0), FVector(Rad / 50.0f, Rad / 50.0f, SX / 100.0f)), Mat(Material), false, false);
 			Z += T;
 		}
 	};
@@ -1676,11 +1686,14 @@ void AKcHotel::BuildHousekeeping()
 		}
 		for (int32 i = 1; i < 8; ++i) for (float Dy : {-33.0f, 33.0f}) AddBox(FVector(X - 53.0f + i * 13.25f, -560.0f + Dy, Zf(F, 80.0f)), FVector(0.8f, 0.8f, 148.0f), Steel, 0.0f, false);
 		AddBox(FVector(X, -560.0f, Zf(F, 11.0f)), FVector(104.0f, 64.0f, 2.0f), Steel, 0.0f, false);
-		// Soiled linen heaped in the cage, lumpy, not a block.
-		for (int32 i = 0; i < 7; ++i)
+		// Soiled linen heaped in the cage: many small crumpled pieces at odd angles, sheets, towels and a bath mat (seven
+		// big ovals read as blobs, walk 14).
+		for (int32 i = 0; i < 16; ++i)
 		{
-			AddInstance(Sphere, FVector(X + LinenRand.FRandRange(-30.0f, 30.0f), -560.0f + LinenRand.FRandRange(-15.0f, 15.0f), Zf(F, 30.0f + i * 9.0f)), LinenRand.FRandRange(0.0f, 180.0f),
-				FVector(LinenRand.FRandRange(0.45f, 0.6f), LinenRand.FRandRange(0.35f, 0.5f), 0.3f), Mat(TEXT("MI_Linen")), false);
+			const FRotator Rot(LinenRand.FRandRange(-30.0f, 30.0f), LinenRand.FRandRange(0.0f, 180.0f), LinenRand.FRandRange(-30.0f, 30.0f));
+			const FVector P(X + LinenRand.FRandRange(-36.0f, 36.0f), -560.0f + LinenRand.FRandRange(-20.0f, 20.0f), Zf(F, 22.0f + i * 4.5f));
+			AddInstance(Sphere, FTransform(Rot, P, FVector(LinenRand.FRandRange(0.24f, 0.4f), LinenRand.FRandRange(0.18f, 0.3f), LinenRand.FRandRange(0.08f, 0.16f))),
+				Mat(i % 5 == 4 ? TEXT("MI_Rug") : (i % 3 ? TEXT("MI_Linen") : TEXT("MI_Paper"))), false, false);
 		}
 	}
 	// Trolleys parked for the night, each loaded for the morning: open shelves of linen, the amenity caddy on top,
@@ -1988,7 +2001,9 @@ void AKcHotel::BuildGround()
 	AddBox(FVector(0.0f, 0.0f, Zf(F, 290.0f)), FVector(14.0f, 260.0f, 80.0f), Mat(TEXT("MI_Graphite")));
 	AddBox(FVector(300.0f, 0.0f, Zf(F, 275.0f)), FVector(14.0f, 260.0f, 50.0f), Mat(TEXT("MI_Graphite")));
 	AddBox(FVector(150.0f, 0.0f, Zf(F, 0.8f)), FVector(260.0f, 200.0f, 1.6f), Mat(TEXT("MI_Rug")), 0.0f, false);
-	AddBox(FVector(12.0f, 122.0f, Zf(F, 135.0f)), FVector(2.0f, 8.0f, 8.0f), Mat(TEXT("MI_Brass")), 0.0f, false);
+	// Jambs at both sides of the outer pair, and the night bell push outside on one (inside, it floated in the glass, walk 14).
+	for (float Side : {-1.0f, 1.0f}) AddBox(FVector(0.0f, Side * 122.0f, Zf(F, 125.0f)), FVector(14.0f, 6.0f, 250.0f), Mat(TEXT("MI_Graphite")), 0.0f, false);
+	AddBox(FVector(-7.6f, 122.0f, Zf(F, 135.0f)), FVector(1.2f, 4.0f, 7.0f), Mat(TEXT("MI_Brass")), 0.0f, false);
 	AddLabel(TEXT("NIGHT BELL"), FVector(-2.0f, 160.0f, Zf(F, 150.0f)), 180.0f, 2.4f, BrassText, F);
 	CctvDome(F, FVector(200.0f, 0.0f, Zf(F, 300.0f)), TEXT("L-01"));
 	// Rain walked in past the mat: the wet patch where Mrs Ashcombe fell (M014).
@@ -2052,9 +2067,25 @@ void AKcHotel::BuildGround()
 	BagPoint = SpawnCasePoint(TEXT("lobby"), TEXT("unattended_bag"), FString(), FVector(1250.0f, -175.0f, Zf(F, 18.0f)), 14.0f, Cube, FVector(0.55f, 0.28f, 0.34f),
 		Mat(TEXT("MI_FabricDark")), EKcUseStyle::Screen, FVector(1250.0f, -175.0f, Zf(F, 30.0f)));
 	// Bell stand, the brass luggage cart, and the luggage room behind its partition.
-	AddBox(FVector(320.0f, 520.0f, Zf(F, 52.0f)), FVector(60.0f, 46.0f, 104.0f), Mat(TEXT("MI_WoodWalnut")), -40.0f);
+	// The stand: a dark plinth, the walnut body, a brass band under the stone top and a service bell (a box with a slab
+	// on it read as a placeholder, walk 14).
+	AddBox(FVector(320.0f, 520.0f, Zf(F, 4.0f)), FVector(64.0f, 50.0f, 8.0f), Mat(TEXT("MI_Skirting")), -40.0f);
+	AddBox(FVector(320.0f, 520.0f, Zf(F, 54.0f)), FVector(56.0f, 42.0f, 92.0f), Mat(TEXT("MI_WoodWalnut")), -40.0f);
+	AddBox(FVector(320.0f, 520.0f, Zf(F, 101.0f)), FVector(58.0f, 44.0f, 2.0f), Mat(TEXT("MI_Brass")), -40.0f, false);
+	{
+		const FVector Bell = FVector(320.0f, 520.0f, Zf(F, 108.0f)) + FRotator(0.0f, -40.0f, 0.0f).RotateVector(FVector(-18.0f, 14.0f, 0.0f));
+		AddInstance(Cylinder, Bell + FVector(0, 0, 0.5f), 0.0f, FVector(0.08f, 0.08f, 0.01f), Mat(TEXT("MI_DeviceBlack")), false);
+		AddInstance(Sphere, Bell + FVector(0, 0, 2.5f), 0.0f, FVector(0.07f, 0.07f, 0.05f), Mat(TEXT("MI_Brass")), false);
+		AddInstance(Cylinder, Bell + FVector(0, 0, 5.0f), 0.0f, FVector(0.008f, 0.008f, 0.02f), Mat(TEXT("MI_Brass")), false);
+	}
 	AddBox(FVector(320.0f, 520.0f, Zf(F, 106.0f)), FVector(66.0f, 52.0f, 4.0f), Mat(TEXT("MI_StoneCounter")), -40.0f, false);
 	AddBox(FVector(150.0f, 640.0f, Zf(F, 12.0f)), FVector(110.0f, 60.0f, 6.0f), Mat(TEXT("MI_Rug")), 0.0f, true);
+	AddBox(FVector(150.0f, 640.0f, Zf(F, 15.6f)), FVector(114.0f, 64.0f, 1.2f), Mat(TEXT("MI_Brass")), 0.0f, false); // brass rim and castors
+	AddBox(FVector(150.0f, 640.0f, Zf(F, 15.7f)), FVector(108.0f, 58.0f, 1.2f), Mat(TEXT("MI_Rug")), 0.0f, false);
+	for (float X : {100.0f, 200.0f}) for (float Y : {616.0f, 664.0f})
+	{
+		AddInstance(Cylinder, FTransform(FRotator(0.0f, 0.0f, 90.0f), FVector(X, Y, Zf(F, 5.0f)), FVector(0.09f, 0.09f, 0.03f)), Mat(TEXT("MI_DeviceBlack")), false, false);
+	}
 	for (float X : {98.0f, 202.0f})
 	{
 		AddInstance(Cylinder, FVector(X, 640.0f, Zf(F, 100.0f)), 0.0f, FVector(0.04f, 0.04f, 1.8f), Mat(TEXT("MI_Brass")), false);
@@ -2324,7 +2355,7 @@ void AKcHotel::BuildKitchen()
 	Ceiling(F, FBox2D(FVector2D(X0, Y0), FVector2D(X1, Y1)), CeilBack, Mat(TEXT("MI_CeilingWhite")));
 	AddBox(FVector(X0 + 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilBack * 0.5f)), FVector(1.0f, Y1 - Y0, CeilBack), Tile, 0.0f, false);
 	AddBox(FVector(X1 - 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilBack * 0.5f)), FVector(1.0f, Y1 - Y0, CeilBack), Tile, 0.0f, false);
-	AddBox(FVector((X0 + X1) * 0.5f, Y0 + 0.5f, Zf(F, 100.0f)), FVector(X1 - X0, 1.0f, 200.0f), Tile, 0.0f, false);
+	AddBox(FVector((X0 + X1) * 0.5f, Y0 + 0.5f, Zf(F, CeilBack * 0.5f)), FVector(X1 - X0, 1.0f, CeilBack), Tile, 0.0f, false); // full height: a bare band showed over 200 (walk 14)
 
 	// The cook line: two fryers at the west end, then ranges, a griddle and a salamander, all under one canopy.
 	const float LineY = Y0 + 50.0f;
@@ -2364,7 +2395,13 @@ void AKcHotel::BuildKitchen()
 		}
 	}
 	AddBox(FVector(3500.0f + 4.0f * 110.0f, LineY, Zf(F, 150.0f)), FVector(990.0f, 30.0f, 2.0f), Steel, 0.0f, false);
-	for (float X : {3460.0f, 3940.0f, 4420.0f}) AddBox(FVector(X, (Y0 + LineY + 15.0f) * 0.5f, Zf(F, 144.0f)), FVector(3.0f, LineY + 15.0f - Y0, 10.0f), Steel, 0.0f, false); // its brackets
+	for (float X : {3460.0f, 3940.0f, 4420.0f})
+	{
+		// Its brackets, each with a diagonal strut to the wall: arms alone read as a floating ledge (walk 14).
+		AddBox(FVector(X, (Y0 + LineY + 15.0f) * 0.5f, Zf(F, 144.0f)), FVector(3.0f, LineY + 15.0f - Y0, 10.0f), Steel, 0.0f, false);
+		AddInstance(Cube, FTransform(FRotator(0.0f, 0.0f, 54.0f), FVector(X, Y0 + 27.5f, Zf(F, 120.0f)), FVector(0.03f, 0.03f, 0.68f)), Steel, false, false);
+		AddBox(FVector(X, Y0 + 1.5f, Zf(F, 115.0f)), FVector(8.0f, 3.0f, 70.0f), Steel, 0.0f, false);
+	}
 	// The extract canopy: stainless box, baffle filters along its face (a scene prop: M015 takes them
 	// out), wet chemical nozzles, and four hanging rods to the slab. The rear one at the west end is cracked.
 	const float CanX0 = 3420.0f, CanX1 = 4520.0f, CanY = Y0 + 65.0f;
@@ -2375,7 +2412,7 @@ void AKcHotel::BuildKitchen()
 	{
 		for (float Y : {CanY - 50.0f, CanY + 50.0f}) AddInstance(Cylinder, FVector(X, Y, Zf(F, 270.0f)), 0.0f, FVector(0.02f, 0.02f, 0.2f), Steel, false);
 	}
-	AddBox(FVector(CanX0 + 40.0f, CanY - 50.0f, Zf(F, 262.0f)), FVector(8.0f, 8.0f, 2.0f), Mat(TEXT("MI_LedRed")), 0.0f, false);
+	AddBox(FVector(CanX0 + 40.0f, CanY - 50.0f, Zf(F, 266.0f)), FVector(3.0f, 3.0f, 1.0f), Mat(TEXT("MI_Cardboard")), 0.0f, false); // rust at the crack (a red LED square read as a marker)
 	AddBox(FVector((CanX0 + CanX1) * 0.5f, Y0 + 30.0f, Zf(F, CeilBack - 10.0f)), FVector(200.0f, 50.0f, 20.0f), Steel, 0.0f, false);
 	// Detector zone K2: the two heat detectors over the canopy front.
 	for (float X : {3700.0f, 4300.0f}) SmokeDetector(F, FVector2D(X, CanY + 120.0f), CeilBack);
@@ -2395,7 +2432,7 @@ void AKcHotel::BuildKitchen()
 	{
 		Desk(FVector(X, -560.0f, Zf(F, 0.0f)), 0.0f, FVector(260.0f, 80.0f, 90.0f), Steel);
 		AddBox(FVector(X - 60.0f, -560.0f, Zf(F, 91.0f)), FVector(50.0f, 34.0f, 2.0f), Mat(TEXT("MI_Ceramic")), 6.0f, false);
-		AddBox(FVector(X + 60.0f, -560.0f, Zf(F, 91.0f)), FVector(50.0f, 34.0f, 2.0f), Mat(TEXT("MI_Leaf")), -4.0f, false); // the green board (an LED material glowed)
+		AddBox(FVector(X + 60.0f, -560.0f, Zf(F, 91.0f)), FVector(50.0f, 34.0f, 2.0f), Mat(TEXT("MI_WoodOak")), -4.0f, false); // a wooden board (green read as a lit panel, walk 13-14)
 	}
 	// The pass by the doors: a steel shelf under heat lamps, the ticket rail, tonight's last chits.
 	AddBox(FVector(3700.0f, Y1 - 40.0f, Zf(F, 45.0f)), FVector(500.0f, 70.0f, 90.0f), Steel);
@@ -2530,9 +2567,32 @@ void AKcHotel::BuildBallroomFloor()
 	}
 	AddBox(FVector(X1 - 0.5f, (Y0 + Y1) * 0.5f, Zf(F, CeilBallroom * 0.5f)), FVector(1.0f, Y1 - Y0, CeilBallroom), Plaster, 0.0f, false);
 	FloorFinish(F, FBox2D(FVector2D(4150.0f, -350.0f), FVector2D(4550.0f, 350.0f)), Mat(TEXT("MI_FloorParquet")), 1.0f);
-	AddBox(FVector(4672.0f, 0.0f, Zf(F, 30.0f)), FVector(226.0f, 800.0f, 60.0f), Mat(TEXT("MI_WoodWalnut")));
-	AddBox(FVector(X1 - 4.0f, 0.0f, Zf(F, 200.0f)), FVector(4.0f, 820.0f, 280.0f), Mat(TEXT("MI_Sheer")), 0.0f, false);
-	AddBox(FVector(4620.0f, 260.0f, Zf(F, 60.0f + 55.0f)), FVector(40.0f, 50.0f, 110.0f), Mat(TEXT("MI_WoodWalnut")));
+	// The stage as an event riser: black skirt, a carpeted deck with a dark nosing, two steps up at the front; a black
+	// drape behind with the event screen framed on it; a lectern with a sloped desk and a microphone. (A walnut box, a
+	// sheer and a box lectern read as placeholders, walk 14.)
+	AddBox(FVector(4672.0f, 0.0f, Zf(F, 29.0f)), FVector(226.0f, 800.0f, 58.0f), Mat(TEXT("MI_FabricDark")));
+	AddBox(FVector(4672.0f, 0.0f, Zf(F, 59.0f)), FVector(226.0f, 800.0f, 2.0f), Mat(TEXT("MI_Carpet")), 0.0f, false);
+	AddBox(FVector(4560.0f, 0.0f, Zf(F, 59.0f)), FVector(4.0f, 804.0f, 3.0f), Mat(TEXT("MI_Graphite")), 0.0f, false);
+	AddBox(FVector(4529.0f, -250.0f, Zf(F, 10.0f)), FVector(60.0f, 120.0f, 20.0f), Mat(TEXT("MI_FabricDark")));
+	AddBox(FVector(4544.0f, -250.0f, Zf(F, 20.0f)), FVector(30.0f, 120.0f, 40.0f), Mat(TEXT("MI_FabricDark")));
+	for (const FVector2D& T : {FVector2D(4514.0f, 20.5f), FVector2D(4544.0f, 40.5f)})
+	{
+		AddBox(FVector(T.X, -250.0f, Zf(F, T.Y)), FVector(30.0f, 120.0f, 1.0f), Mat(TEXT("MI_Carpet")), 0.0f, false);
+	}
+	AddBox(FVector(X1 - 4.0f, 0.0f, Zf(F, 210.0f)), FVector(4.0f, 820.0f, 300.0f), Mat(TEXT("MI_FabricDark")), 0.0f, false);
+	AddBox(FVector(X1 - 8.0f, 0.0f, Zf(F, 215.0f)), FVector(3.0f, 424.0f, 244.0f), Mat(TEXT("MI_Graphite")), 0.0f, false);
+	AddBox(FVector(X1 - 9.8f, 0.0f, Zf(F, 215.0f)), FVector(0.6f, 404.0f, 228.0f), Mat(TEXT("MI_ScreenPanel")), 0.0f, false);
+	AddLabel(TEXT("HARBOUR BALLROOM"), FVector(X1 - 10.4f, 0.0f, Zf(F, 236.0f)), 180.0f, 20.0f, Cream, F);
+	AddLabel(TEXT("Private event"), FVector(X1 - 10.4f, 0.0f, Zf(F, 204.0f)), 180.0f, 9.0f, Cream, F);
+	{
+		const FVector L(4620.0f, 260.0f, Zf(F, 60.0f));
+		AddBox(L + FVector(0, 0, 2.0f), FVector(44.0f, 52.0f, 4.0f), Mat(TEXT("MI_Graphite")));
+		AddBox(L + FVector(0, 0, 55.0f), FVector(34.0f, 44.0f, 102.0f), Mat(TEXT("MI_WoodWalnut")));
+		AddInstance(Cube, FTransform(FRotator(-15.0f, 0.0f, 0.0f), L + FVector(0, 0, 110.0f), FVector(0.48f, 0.56f, 0.04f)), Mat(TEXT("MI_WoodWalnut")), false, false);
+		AddBox(L + FVector(-17.4f, 0, 80.0f), FVector(0.6f, 28.0f, 12.0f), Mat(TEXT("MI_Brass")), 0.0f, false);
+		AddInstance(Cylinder, FTransform(FRotator(-35.0f, 0.0f, 0.0f), L + FVector(-14.0f, -14.0f, 124.0f), FVector(0.006f, 0.006f, 0.3f)), Mat(TEXT("MI_Graphite")), false, false);
+		AddInstance(Sphere, L + FVector(-22.0f, -14.0f, 136.0f), 0.0f, FVector(0.025f, 0.025f, 0.04f), Mat(TEXT("MI_DeviceBlack")), false);
+	}
 	struct FRound { float X, Y; };
 	TArray<FRound> Rounds;
 	// Aisles of 1.1 m or more between the chair backs of neighbouring rounds, and 1.8 m clear of the service
@@ -2544,7 +2604,8 @@ void AKcHotel::BuildBallroomFloor()
 	{
 		// A floor-length cloth: the top with its overhang, the skirt, the hem on the carpet (box pleats read as a sawtooth, walk 13).
 		AddInstance(Cylinder, FVector(R.X, R.Y, Zf(F, 37.0f)), 0.0f, FVector(1.8f, 1.8f, 0.74f), Mat(TEXT("MI_Linen")), true);
-		AddInstance(Cylinder, FVector(R.X, R.Y, Zf(F, 74.5f)), 0.0f, FVector(1.84f, 1.84f, 0.02f), Mat(TEXT("MI_Linen")), false);
+		// A taupe overlay with a 25 cm drop over the white cloth: white drums alone read as plain cylinders (walk 14).
+		AddInstance(Cylinder, FVector(R.X, R.Y, Zf(F, 63.0f)), 0.0f, FVector(1.86f, 1.86f, 0.25f), Mat(TEXT("MI_Rug")), false);
 		AddInstance(Cylinder, FVector(R.X, R.Y, Zf(F, 1.0f)), 0.0f, FVector(1.86f, 1.86f, 0.02f), Mat(TEXT("MI_Linen")), false); // the hem pooling on the carpet
 		if (!AddInstance(Model(TEXT("potted_plant_04")), FVector(R.X, R.Y, Zf(F, 75.0f)), R.X + R.Y, FVector(1.35f)))
 		{
@@ -2558,6 +2619,7 @@ void AKcHotel::BuildBallroomFloor()
 			Chair(FVector(R.X, R.Y, Zf(F, 0.0f)) + Dir * 126.0f, A + 180.0f, TEXT("dining_chair_02")); // at 115-120 the seats pushed into the cloth
 			// The place: a plate, a folded napkin on it, a glass to the right.
 			const FVector Place = FVector(R.X, R.Y, Zf(F, 75.6f)) + Dir * 66.0f;
+			AddInstance(Cylinder, Place - FVector(0, 0, 0.2f), 0.0f, FVector(0.32f, 0.32f, 0.008f), Mat(TEXT("MI_Brass")), false); // charger
 			AddInstance(Cylinder, Place, 0.0f, FVector(0.27f, 0.27f, 0.01f), Mat(TEXT("MI_Ceramic")), false);
 			AddBox(Place + FVector(0, 0, 1.2f), FVector(10.0f, 16.0f, 1.6f), Mat(TEXT("MI_FabricAccent")), A, false);
 			AddInstance(Cylinder, Place + FRotator(0.0f, A + 90.0f, 0.0f).Vector() * 18.0f - Dir * 12.0f + FVector(0, 0, 7.0f), 0.0f, FVector(0.06f, 0.06f, 0.14f), Mat(TEXT("MI_Glass")), false);
@@ -2590,7 +2652,10 @@ void AKcHotel::BuildBallroomFloor()
 		for (float Y : {-400.0f, 400.0f})
 		{
 			AddInstance(Cylinder, FVector(X, Y, Zf(F, CeilBallroom - 25.0f)), 0.0f, FVector(0.02f, 0.02f, 0.5f), Mat(TEXT("MI_Brass")), false);
-			AddInstance(Cylinder, FVector(X, Y, Zf(F, CeilBallroom - 70.0f)), 0.0f, FVector(1.1f, 1.1f, 0.4f), Mat(TEXT("MI_LampWarm")), false);
+			// A linen drum with brass bands and a glowing diffuser underneath (fully glowing drums blew out, walk 14).
+			AddInstance(Cylinder, FVector(X, Y, Zf(F, CeilBallroom - 70.0f)), 0.0f, FVector(1.1f, 1.1f, 0.4f), Mat(TEXT("MI_Linen")), false);
+			for (float Z : {-51.0f, -89.0f}) AddInstance(Cylinder, FVector(X, Y, Zf(F, CeilBallroom + Z)), 0.0f, FVector(1.12f, 1.12f, 0.02f), Mat(TEXT("MI_Brass")), false);
+			AddInstance(Cylinder, FVector(X, Y, Zf(F, CeilBallroom - 90.3f)), 0.0f, FVector(1.04f, 1.04f, 0.004f), Mat(TEXT("MI_LampWarm")), false);
 			AddLight(F, FVector(X, Y, Zf(F, CeilBallroom - 100.0f)), 3000.0f, 1100.0f, Warm);
 		}
 	}
@@ -2968,12 +3033,24 @@ void AKcHotel::FurnishRoom(const FString& Number, const FBox2D& Area, bool bNort
 	{
 		LBox(150.0f + Wall * 0.5f + 0.5f, (Seg.X + Seg.Y) * 0.5f, Ceil14 * 0.5f, 1.0f, Seg.Y - Seg.X, Ceil14, TEXT("MI_Tile")); // bathroom face
 	}
-	LBox(192.0f, 216.0f, 106.0f, 80.0f, 4.0f, 210.0f, TEXT("MI_DoorPaint"), true); // the bathroom door, open past the jamb
+	// The bathroom door, open past the jamb, as tall as its opening (a 210 leaf left a band of tile above it, walk 14),
+	// and casings round the opening on the entry side.
+	LBox(192.0f, 216.0f, 108.0f, 80.0f, 4.0f, 213.0f, TEXT("MI_DoorPaint"), true);
+	for (float V : {127.0f, 215.5f}) LBox(141.4f, V, 109.0f, 1.2f, 6.0f, 218.0f, TEXT("MI_DoorPaint"));
+	LBox(141.4f, 171.25f, 218.0f, 1.2f, 94.5f, 6.0f, TEXT("MI_DoorPaint"));
 	LBox(W - 8.5f, (VIn + 250.0f) * 0.5f, Ceil14 * 0.5f, 1.0f, 250.0f - VIn, Ceil14, TEXT("MI_Tile")); // tile on the party wall too
 	LBox(230.0f, VIn + 27.0f, 42.0f, 120.0f, 50.0f, 84.0f, TEXT("MI_WoodWalnut"), true);
 	LBox(230.0f, VIn + 27.0f, 86.0f, 124.0f, 54.0f, 4.0f, TEXT("MI_StoneCounter"));
-	AddInstance(Cylinder, R.P(230.0f, VIn + 30.0f, 86.5f), 0.0f, FVector(0.38f, 0.32f, 0.02f), Mat(TEXT("MI_Ceramic")), false);
-	LBox(230.0f, VIn + 6.0f, 96.0f, 2.0f, 4.0f, 18.0f, TEXT("MI_Chrome"));
+	// A vessel basin on the counter with a tall mixer, folded hand towels and an amenity tray: a flat disc and a post
+	// did not read as a basin at all (walk 14).
+	AddInstance(Cylinder, R.P(230.0f, VIn + 30.0f, 94.0f), 0.0f, FVector(0.42f, 0.34f, 0.12f), Mat(TEXT("MI_Ceramic")), false);
+	AddInstance(Cylinder, R.P(230.0f, VIn + 30.0f, 100.05f), 0.0f, FVector(0.36f, 0.28f, 0.001f), Mat(TEXT("MI_PlasticGrey")), false);
+	LBox(230.0f, VIn + 8.0f, 103.0f, 2.4f, 2.4f, 30.0f, TEXT("MI_Chrome"));
+	LBox(230.0f, VIn + 15.0f, 117.0f, 2.0f, 14.0f, 2.0f, TEXT("MI_Chrome"));
+	LBox(230.0f, VIn + 5.0f, 113.0f, 1.2f, 6.0f, 1.2f, TEXT("MI_Chrome"));
+	for (int32 k = 0; k < 2; ++k) LBox(272.0f, VIn + 30.0f, 89.5f + k * 4.0f, 26.0f, 30.0f, 3.6f, TEXT("MI_Linen"));
+	LBox(186.0f, VIn + 26.0f, 88.6f, 22.0f, 12.0f, 1.2f, TEXT("MI_StoneCounter"));
+	for (int32 k = 0; k < 3; ++k) AddInstance(Cylinder, R.P(180.0f + k * 6.0f, VIn + 26.0f, 95.0f), 0.0f, FVector(0.025f, 0.025f, 0.11f), Mat(k == 1 ? TEXT("MI_BottleAmber") : TEXT("MI_Ceramic")), false);
 	LBox(230.0f, VIn + 1.0f, 160.0f, 120.0f, 1.0f, 90.0f, TEXT("MI_Mirror"));
 	LBox(230.0f, VIn + 2.0f, 210.0f, 100.0f, 3.0f, 3.0f, TEXT("MI_LedStrip"));
 	AddInstance(Cylinder, R.P(W - 150.0f, 225.0f, 20.0f), 0.0f, FVector(0.36f, 0.44f, 0.4f), Mat(TEXT("MI_Ceramic")), true);
@@ -3011,6 +3088,9 @@ void AKcHotel::FurnishRoom(const FString& Number, const FBox2D& Area, bool bNort
 	else
 	{
 		AddBox(SafeC, FVector(36.0f, 40.0f, 28.0f), Mat(TEXT("MI_DeviceBlack")));
+		LBox(44.3f, 180.0f, 96.0f, 0.6f, 12.0f, 9.0f, TEXT("MI_Graphite")); // keypad and handle, or it read as a black box
+		LBox(44.6f, 180.0f, 98.0f, 0.3f, 8.0f, 2.0f, TEXT("MI_LedGreen"));
+		LBox(44.6f, 160.0f, 92.0f, 1.2f, 2.0f, 10.0f, TEXT("MI_Chrome"));
 		LBox(48.5f, 110.0f, 98.0f, 0.4f, 8.0f, 3.0f, TEXT("MI_LedRed"));
 	}
 	// Power slot and thermostat on the latch-side wall (the open leaf hides the hinge side).
@@ -3036,6 +3116,8 @@ void AKcHotel::FurnishRoom(const FString& Number, const FBox2D& Area, bool bNort
 	// Desk on the west wall, the TV and dresser beside it, a chair.
 	Desk(R.P(28.0f, 510.0f, 0.0f), 90.0f, FVector(160.0f, 55.0f, DeskH), Mat(TEXT("MI_WoodWalnut"))); // oak read as orange pine at this size // modesty panel to the wall
 	Chair(R.P(100.0f, 510.0f, 0.0f), R.Yaw(180.0f), TEXT("dining_chair_02"));
+	LBox(30.0f, 455.0f, 63.0f, 50.0f, 40.0f, 16.0f, TEXT("MI_WoodWalnut")); // a drawer under the top: it read as a plank on legs (walk 14)
+	LBox(55.6f, 455.0f, 63.0f, 1.2f, 14.0f, 1.2f, TEXT("MI_Brass"));
 	Lamp(F, R.P(22.0f, 448.0f, DeskH), false);
 	LBox(28.0f, 545.0f, DeskH + 0.8f, 22.0f, 30.0f, 1.6f, TEXT("MI_SuitNavy"));  // compendium
 	LBox(28.0f, 470.0f, DeskH + 6.0f, 2.0f, 10.0f, 12.0f, TEXT("MI_Paper"));     // menu tent
@@ -3056,8 +3138,12 @@ void AKcHotel::FurnishRoom(const FString& Number, const FBox2D& Area, bool bNort
 	const float SheerEnd = b1412 ? 280.0f : W - 72.0f; // 1412's sheer is drawn back off the balcony door
 	LBox((72.0f + SheerEnd) * 0.5f, VOut - 22.0f, 130.0f, SheerEnd - 72.0f, 1.0f, 250.0f, TEXT("MI_Sheer"));
 	Chair(R.P(150.0f, VOut - 75.0f, 0.0f), R.Yaw(-45.0f)); // at U 95 the desk chair ran into it (walk 14)
-	Lamp(F, R.P(30.0f, VOut - 30.0f, 0.0f), true);
-	AddInstance(Cylinder, R.P(225.0f, VOut - 45.0f, 25.0f), 0.0f, FVector(0.45f, 0.45f, 0.5f), Mat(TEXT("MI_WoodWalnut")), true);
+	// The floor lamp beside the armchair (in the corner, its pole seemed to end in the dresser top, walk 14) and the side
+	// table clear of the fan-coil unit.
+	Lamp(F, R.P(268.0f, VOut - 50.0f, 0.0f), true);
+	AddInstance(Cylinder, R.P(225.0f, VOut - 60.0f, 52.0f), 0.0f, FVector(0.45f, 0.45f, 0.03f), Mat(TEXT("MI_WoodWalnut")), true);
+	AddInstance(Cylinder, R.P(225.0f, VOut - 60.0f, 26.0f), 0.0f, FVector(0.05f, 0.05f, 0.5f), Mat(TEXT("MI_Brass")), true);
+	AddInstance(Cylinder, R.P(225.0f, VOut - 60.0f, 1.0f), 0.0f, FVector(0.3f, 0.3f, 0.02f), Mat(TEXT("MI_Brass")), false);
 	// Luggage rack by the bathroom wall.
 	LBox(250.0f, 290.0f, 45.0f, 80.0f, 45.0f, 4.0f, TEXT("MI_WoodWalnut"));
 	for (float Du : {-36.0f, 36.0f}) LBox(250.0f + Du, 290.0f, 22.0f, 3.0f, 45.0f, 44.0f, TEXT("MI_WoodWalnut"), true);
@@ -3243,8 +3329,12 @@ void AKcHotel::TaskChair(const FVector& Location, float Yaw)
 		AddBox(Location + Dir * 29.0f + FVector(0, 0, 2.5f), FVector(5.0f, 5.0f, 5.0f), Mat(TEXT("MI_DeviceBlack")), A, false);
 	}
 	AddInstance(Cylinder, At(0, 0, 23.0f), 0.0f, FVector(0.05f, 0.05f, 0.34f), Mat(TEXT("MI_Chrome")), false);
-	AddBox(At(0, 0, 44.0f), FVector(48.0f, 48.0f, 8.0f), Mat(TEXT("MI_FabricDark")), Yaw);
-	AddBox(At(-22.0f, 0, 72.0f), FVector(5.0f, 44.0f, 48.0f), Mat(TEXT("MI_FabricDark")), Yaw);
+	// A padded seat and an oval shell back on a spine (boxes read as blocky placeholders, walk 14).
+	AddBox(At(0, 0, 43.0f), FVector(46.0f, 46.0f, 5.0f), Mat(TEXT("MI_Graphite")), Yaw);
+	AddInstance(Sphere, FTransform(FRotator(0.0f, Yaw, 0.0f), At(1.0f, 0, 46.5f), FVector(0.48f, 0.48f, 0.1f)), Mat(TEXT("MI_FabricDark")), false, false);
+	AddBox(At(-22.0f, 0, 54.0f), FVector(3.0f, 5.0f, 20.0f), Mat(TEXT("MI_Graphite")), Yaw, false);
+	AddInstance(Sphere, FTransform(FRotator(10.0f, Yaw, 0.0f), At(-25.0f, 0, 80.0f), FVector(0.07f, 0.46f, 0.5f)), Mat(TEXT("MI_FabricDark")), false, false);
+	AddCollider(At(-24.0f, 0, 80.0f), FVector(6.0f, 44.0f, 46.0f), FRotator(0.0f, Yaw, 0.0f));
 	for (float Side : {-1.0f, 1.0f})
 	{
 		AddBox(At(0, Side * 25.0f, 58.0f), FVector(26.0f, 4.0f, 3.0f), Mat(TEXT("MI_Graphite")), Yaw, false);
@@ -3282,8 +3372,11 @@ void AKcHotel::Bed(const FVector& HeadCenter, float Yaw)
 	// the duvet turned down and falling over the sides, a runner across the foot, soft pillows and a cushion.
 	const FRotator R(0.0f, Yaw, 0.0f);
 	auto At = [&](float X, float Y, float Z) { return HeadCenter + R.RotateVector(FVector(X, Y, 0.0f)) + FVector(0.0f, 0.0f, Z); };
-	AddBox(At(-4.0f, 0, 70.0f), FVector(6.0f, 210.0f, 140.0f), Mat(TEXT("MI_WoodWalnut")), Yaw);
-	for (int32 i = -2; i <= 2; ++i) AddBox(At(0.5f, i * 40.0f, 82.0f), FVector(4.0f, 38.0f, 100.0f), Mat(TEXT("MI_FabricDark")), Yaw, false);
+	// A walnut panel across the wall behind the bed and both nightstands, and the upholstered headboard standing proud of
+	// it in five channels: the old headboard sat mostly inside the party wall and the bed read as a white box (walk 14).
+	AddBox(At(1.0f, 0, 78.0f), FVector(2.0f, 330.0f, 116.0f), Mat(TEXT("MI_WoodWalnut")), Yaw, false);
+	AddBox(At(6.0f, 0, 84.0f), FVector(8.0f, 176.0f, 108.0f), Mat(TEXT("MI_WoodWalnut")), Yaw);
+	for (int32 i = -2; i <= 2; ++i) AddBox(At(10.5f, i * 34.0f, 88.0f), FVector(3.0f, 32.5f, 96.0f), Mat(TEXT("MI_FabricDark")), Yaw, false);
 	AddBox(At(102.5f, 0, 15.0f), FVector(205.0f, 162.0f, 30.0f), Mat(TEXT("MI_WoodWalnut")), Yaw);
 	AddBox(At(102.0f, 0, 42.0f), FVector(200.0f, 156.0f, 24.0f), Mat(TEXT("MI_Linen")), Yaw);
 	// The duvet from the turn-down to the foot, its sides and foot hanging to the plinth, and the folded edge.
@@ -3291,9 +3384,13 @@ void AKcHotel::Bed(const FVector& HeadCenter, float Yaw)
 	for (float Side : {-1.0f, 1.0f}) AddBox(At(138.0f, Side * 82.0f, 44.0f), FVector(134.0f, 2.0f, 27.0f), Mat(TEXT("MI_Linen")), Yaw, false);
 	AddBox(At(205.5f, 0, 44.0f), FVector(2.0f, 166.0f, 27.0f), Mat(TEXT("MI_Linen")), Yaw, false);
 	AddBox(At(74.0f, 0, 62.0f), FVector(14.0f, 166.0f, 5.0f), Mat(TEXT("MI_Linen")), Yaw + 0.5f, false);
+	// Rolled edges along the duvet's sides and foot: square edges were what made it read as a box.
+	for (float Side : {-1.0f, 1.0f}) AddInstance(Cylinder, FTransform(FRotator(90.0f, Yaw, 0.0f), At(138.0f, Side * 80.5f, 57.5f), FVector(0.07f, 0.07f, 1.34f)), Mat(TEXT("MI_Linen")), false, false);
+	AddInstance(Cylinder, FTransform(FRotator(0.0f, Yaw, 90.0f), At(202.5f, 0, 57.5f), FVector(0.07f, 0.07f, 1.62f)), Mat(TEXT("MI_Linen")), false, false);
 	// Runner over the foot, draped down both sides.
-	AddBox(At(175.0f, 0, 61.6f), FVector(40.0f, 170.0f, 1.2f), Mat(TEXT("MI_FabricAccent")), Yaw, false);
-	for (float Side : {-1.0f, 1.0f}) AddBox(At(175.0f, Side * 84.5f, 50.0f), FVector(40.0f, 1.2f, 24.0f), Mat(TEXT("MI_FabricAccent")), Yaw, false);
+	// Taupe, not the harbour blue: blue on white read as a teal wedge (walk 14).
+	AddBox(At(175.0f, 0, 61.6f), FVector(40.0f, 172.0f, 1.2f), Mat(TEXT("MI_Rug")), Yaw, false);
+	for (float Side : {-1.0f, 1.0f}) AddBox(At(175.0f, Side * 85.5f, 50.0f), FVector(40.0f, 1.2f, 24.0f), Mat(TEXT("MI_Rug")), Yaw, false);
 	// Pillows: two sleeping pillows against the headboard, two in front, a bolster cushion.
 	for (float Side : {-1.0f, 1.0f})
 	{

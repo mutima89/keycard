@@ -84,6 +84,13 @@ Last update: 2026-10-28
     - Housekeeping ceiling on the new MI_CeilingLow (intensity 1.4).
     - MI_Mirror darker (0.62); street frontages at intensity 2.2.
     - Walk: the 1412 bedroom shot faces the bed (yaw -40); the bathroom shot looks down at the vanity (pitch -20).
+  - Round 15 on the PC was cancelled by the owner at 04:46 before it reported; nothing from it is recorded.
+  - 2026-10-28 strict design pass (owner: "act as a professional game critic and designer"). Code only, not built or run:
+    - Guest rooms: headboard proud of the wall on a full-width walnut panel, rounded duvet edges, taupe runner; vessel basin, mixer, towels and tray at the vanity; bathroom door leaf to the opening's height with casings; desk drawer; safe keypad; floor lamp by the armchair; side table clear of the fan-coil; balcony door head lined.
+    - Lobby: glass transom over the street doors, door jambs, night bell push outside, far kerb and lit far pavement, bell stand with plinth, brass band and service bell, luggage cart rim and castors.
+    - Ballroom: event riser (black skirt, carpet deck, nosing, two steps), black drape with a framed screen, lectern with sloped desk and microphone, linen drum pendants with a glowing diffuser, taupe overlays and brass chargers.
+    - Back of house: rounded folds on housekeeping linen, crumpled soiled linen, full-height kitchen tile, struts under the line shelf, wooden chopping board, rust tag instead of a red LED, task chairs with a padded seat and shell back.
+    - Materials: linen 0.82, paper 0.8, ceramic 0.85 albedo (0.9-0.95 blew out); concrete and vinyl rougher (they read wet).
 
 - 2026-10-23 Release 1.0.0: https://github.com/mutima89/keycard/releases/tag/v1.0.0 (published 2026-10-23T00:35:59Z, not a draft or pre-release). Tag v1.0.0 at a3c46bb, created and pushed by the owner with `gh release create`. Assets checked through the GitHub API: Keycard-1.0.0-Win64-Portable.zip 530,095,089 bytes, sha256 2cdcf79a181c6e7fe03c84b3b733f3e2d997cdd7b872a0746481994802183a70; Keycard-Setup-1.0.0.exe 499,125,603 bytes, sha256 6113a7cc88334a3f144305de7b2d0cdf61dde7ca33d2876ebc43e19fcdf151d5 (both match PC round 5). Release notes are CHANGELOG.md. Hands-on playtest checklist: project files keycard/playtest-1.0.0.md.
 

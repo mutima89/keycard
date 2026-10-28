@@ -793,15 +793,15 @@ void AKcHotel::DoorLeaf(int32 Floor, const FVector& Center, float Yaw, float Wid
 		{
 			AddBox(LeafC, FVector(4.5f, LW, LH), LeafMat, Yaw);
 		}
-		// Levers on both faces at the latch side, and a stainless kick plate on the plate side.
+		// Levers on both faces at the latch side.
 		for (float Face : {-1.0f, 1.0f})
 		{
 			const FVector L = Base + Right * (LW * 0.5f - 9.0f) + Out * Face * 4.2f + FVector(0, 0, 104.0f);
 			AddBox(L, FVector(2.0f, 3.0f, 3.0f), Lever, Yaw, false);
 			AddBox(L + Out * Face * 1.5f - Right * 6.0f, FVector(1.6f, 14.0f, 2.0f), Lever, Yaw, false);
 		}
-		// Back-of-house only, in dark brushed steel: bright steel read as a slot of light under the door (walk 12).
-		if (!bGuestRoom) AddBox(Base + Out * 2.5f + FVector(0, 0, 13.0f), FVector(0.4f, LW - 8.0f, 24.0f), Mat(TEXT("MI_SteelDark")), Yaw, false);
+		// No kick plate: in dark steel at the foot of the leaf it read as the skirting running across the doorway (owner's
+		// playthrough, B1), and bright steel as a slot of light under the door (walk 12).
 		if (bGuestRoom)
 		{
 			// Keycard reader above the lever (red LED: locked), viewer at eye height, door closer arm.
@@ -2133,8 +2133,14 @@ void AKcHotel::BuildGround()
 	AddBox(FVector(1030.0f, 50.0f, Zf(F, 43.0f)), FVector(30.0f, 24.0f, 3.0f), Mat(TEXT("MI_Paper")), 12.0f, false);
 	for (const FVector2D& P : {FVector2D(800.0f, -120.0f), FVector2D(1300.0f, 240.0f)}) Lamp(F, FVector(P.X, P.Y, Zf(F, 0.0f)), true);
 	for (const FVector2D& P : {FVector2D(360.0f, -300.0f), FVector2D(360.0f, 300.0f), FVector2D(1960.0f, -330.0f), FVector2D(1960.0f, 330.0f)}) Plant(FVector(P.X, P.Y, Zf(F, 0.0f)), true);
-	// Pendant cluster over the lounge.
-	if (!AddInstance(Model(TEXT("Chandelier_03")), FVector(1050.0f, 60.0f, Zf(F, CeilLobby - 120.0f)), 0.0f, FVector(1.2f), nullptr, false))
+	// The chandelier over the lounge, hung from the ceiling: its top against a brass ceiling rose, measured from the mesh's
+	// own bounds (at a fixed 1.2 m down it hung low over the lounge, owner's playthrough).
+	UStaticMesh* Chandelier = Model(TEXT("Chandelier_03"));
+	const float ChandelierScale = 1.2f;
+	const float ChandelierTop = Chandelier ? (Chandelier->GetBounds().Origin.Z + Chandelier->GetBounds().BoxExtent.Z) * ChandelierScale : 0.0f;
+	const float RaftUnder = CeilLobby - 24.0f; // the underside of the lounge's ceiling raft
+	if (Chandelier) AddInstance(Cylinder, FVector(1050.0f, 60.0f, Zf(F, RaftUnder - 1.5f)), 0.0f, FVector(0.22f, 0.22f, 0.03f), Mat(TEXT("MI_Brass")), false);
+	if (!AddInstance(Chandelier, FVector(1050.0f, 60.0f, Zf(F, RaftUnder - 3.0f) - ChandelierTop), 0.0f, FVector(ChandelierScale), nullptr, false))
 	{
 		for (int32 i = 0; i < 7; ++i)
 		{
@@ -2144,7 +2150,7 @@ void AKcHotel::BuildGround()
 		}
 	}
 	// No shadows: from inside the fixture its crown and arms threw large black shapes onto the ceiling.
-	AddLight(F, FVector(1050.0f, 60.0f, Zf(F, CeilLobby - 140.0f)), 2600.0f, 900.0f, Warm, false);
+	AddLight(F, FVector(1050.0f, 60.0f, Chandelier ? Zf(F, RaftUnder - 3.0f) - ChandelierTop * 0.5f : Zf(F, CeilLobby - 140.0f)), 2600.0f, 900.0f, Warm, false); // inside the fixture
 	for (const FVector2D& P : {FVector2D(400.0f, -250.0f), FVector2D(400.0f, 250.0f), FVector2D(1700.0f, -250.0f), FVector2D(1700.0f, 250.0f),
 			FVector2D(1100.0f, 450.0f), FVector2D(1850.0f, 0.0f)})
 	{

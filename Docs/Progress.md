@@ -118,6 +118,9 @@ Last update: 2026-10-28
     - Light: the dock and housekeeping upper-wall fills move from 40 cm to 1.1 m off the walls (blown discs, black ceiling band); sconces 320 to 220 lm; the fire command's white disc becomes a red sounder-beacon; screens roughness 0.45 to 0.75 (CCTV wall hotspot).
     - Props: housekeeping laundry in harbour-blue liner bags instead of ellipsoids; MI_Brass more saturated; bed cushions 22 cm deep, not 14; hand towels 12 cm rolls; the transom name 15 cm and the sub-line 6.5 cm; frosted bands 18 cm.
     - Walk test: shots 38 to 40 after the numbered ones: the floor 14 directory, the lift indicators, and the ground floor time clock.
+  - Round 20 changes from the owner's own playthrough (code only; not built or run):
+    - B1 "skirting over the doors": the back-of-house doors' dark kick plate sat at the foot of each leaf in line with the skirting and read as skirting running across the doorway; removed (the skirting itself already stops at every opening).
+    - Ground floor chandelier: hung from the lounge's ceiling raft (its top 3 cm under a brass ceiling rose, measured from the mesh's bounds) instead of a fixed 1.2 m down; its light moves with it.
 
 - 2026-10-23 Release 1.0.0: https://github.com/mutima89/keycard/releases/tag/v1.0.0 (published 2026-10-23T00:35:59Z, not a draft or pre-release). Tag v1.0.0 at a3c46bb, created and pushed by the owner with `gh release create`. Assets checked through the GitHub API: Keycard-1.0.0-Win64-Portable.zip 530,095,089 bytes, sha256 2cdcf79a181c6e7fe03c84b3b733f3e2d997cdd7b872a0746481994802183a70; Keycard-Setup-1.0.0.exe 499,125,603 bytes, sha256 6113a7cc88334a3f144305de7b2d0cdf61dde7ca33d2876ebc43e19fcdf151d5 (both match PC round 5). Release notes are CHANGELOG.md. Hands-on playtest checklist: project files keycard/playtest-1.0.0.md.
 

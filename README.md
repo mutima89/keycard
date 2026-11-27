@@ -7,7 +7,7 @@
 *From the night shift to Vice President, Global Safety & Security.*
 
 [![Release](https://img.shields.io/github/v/release/mutima89/keycard?style=for-the-badge&color=4B9CC4)](https://github.com/mutima89/keycard/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/mutima89/keycard/total?style=for-the-badge&color=2E3A46)](https://github.com/mutima89/keycard/releases)
+[![Downloads]](https://github.com/mutima89/keycard/releases)
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-2E3A46?style=for-the-badge)](#system-requirements)
 [![Engine](https://img.shields.io/badge/Unreal%20Engine-5.8-2E3A46?style=for-the-badge&logo=unrealengine)](https://www.unrealengine.com)
 [![License](https://img.shields.io/badge/license-MIT-2E3A46?style=for-the-badge)](LICENSE)

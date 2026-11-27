@@ -91,6 +91,22 @@ void AKcPersonActor::SetBody(const KcCast::FLook& Look, UMaterialInterface* Outf
 	}
 }
 
+void AKcPersonActor::Retire()
+{
+	// A skinned body with live face shapes is not destroyed in the frame it was last updated: the
+	// render thread may still be reading its morph buffers (engine assert in SkeletalRenderGPUSkin).
+	bRetired = true;
+	SetActorHiddenInGame(true);
+	SetActorEnableCollision(false);
+	SetActorTickEnabled(false);
+	if (Body)
+	{
+		Body->StopTalking();
+		Body->SetComponentTickEnabled(false);
+	}
+	SetLifeSpan(0.5f);
+}
+
 FVector AKcPersonActor::GetFocusPoint() const
 {
 	return Body && Body->GetSkinnedAsset() ? Body->GetEyeLocation() : GetActorLocation() + FVector(0.0f, 0.0f, 70.0f);

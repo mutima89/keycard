@@ -40,7 +40,7 @@ M = {
    "relations": {"night_manager": 5}},
   {"id": "bag_card", "label": "Keep the keycard as evidence", "kind": "bagEvidence", "at": "lobby", "person": "visitor_haskett", "minutes": 3, "requires": ["test_card"],
    "findingTitle": "Keycard retained", "finding": "You explain that keycards are hotel property and this one no longer works. He hands it over. Bagged and labelled KC-1418-C.",
-   "evidence": "KC-1418-C", "custody": "Keycard presented by L. Haskett retained by you at 03:4x, sealed in bag KC-1418-C."},
+   "evidence": "KC-1418-C", "custody": "Keycard presented by L. Haskett retained by you at {time}, sealed in bag KC-1418-C."},
   {"id": "secure_floor", "label": "Check floor 14 and speak to Ms Achterberg", "kind": "secure", "at": "f14_corridor", "spot": "door_1418", "minutes": 6, "requires": ["call_guest"],
    "findingTitle": "Floor 14",
    "finding": "Stairwell doors closed and alarmed. You speak to Ms Achterberg through the door with the chain on, then walk her to a room on floor 9 with new keys. 1418's locks are re-encoded so every old card is void."},

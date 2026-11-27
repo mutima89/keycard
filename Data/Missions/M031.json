@@ -51,7 +51,7 @@
       ],
       "required": true,
       "findingTitle": "What the old locks can't do",
-      "finding": "Magnetic stripe cards copy with a cheap reader; the locks keep only the last 100 entries and need a handheld to read; the encoders log to a local PC; there is no way to cancel a lost master key at the door without visiting every lock. The audit trail failed the prosecution in the Vessey case."
+      "finding": "Magnetic stripe cards copy with a cheap reader; the locks keep only the last 100 entries and need a handheld to read; the encoders log to a local PC; there is no way to cancel a lost master key at the door without visiting every lock. The audit trail is too thin to rely on in court, as the Vessey case."
     },
     {
       "id": "engineering",
@@ -225,7 +225,7 @@
           "id": "a",
           "label": "A: keep the old locks and rekey when needed.",
           "score": 15,
-          "feedback": "75,400 a year in expected losses, a system that can be cloned and an audit trail that failed in court."
+          "feedback": "75,400 a year in expected losses, a system that can be cloned and an audit trail that won't stand up in court."
         }
       ]
     },

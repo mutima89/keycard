@@ -291,7 +291,7 @@ TArray<const kc::ActionDef*> UKcCampaignSubsystem::ActionsAt(const FString& Wher
 	const std::string P = ToStd(PersonId);
 	for (const kc::ActionDef* A : kc::ActionsAt(G->GetState(), *M, ToStd(Where)))
 	{
-		if (bAll || (IsFaceToFace(*A) && A->Person == P)) Out.Add(A);
+		if (bAll || (IsFaceToFace(*A) && !IsGone(*A) && A->Person == P)) Out.Add(A);
 	}
 	return Out;
 }
@@ -299,6 +299,12 @@ TArray<const kc::ActionDef*> UKcCampaignSubsystem::ActionsAt(const FString& Wher
 bool UKcCampaignSubsystem::IsFaceToFace(const kc::ActionDef& A)
 {
 	return !A.Person.empty() && A.Kind != kc::EActionKind::Call;
+}
+
+bool UKcCampaignSubsystem::IsGone(const kc::ActionDef& A) const
+{
+	const UKcGameSubsystem* G = Game();
+	return A.ExpiresAt > 0 && G && G->HasGame() && G->GetState().Campaign.Clock > A.ExpiresAt;
 }
 
 TArray<const kc::ActionDef*> UKcCampaignSubsystem::ActionsAtSpot(const FString& Where, const FString& Spot) const
@@ -310,7 +316,7 @@ TArray<const kc::ActionDef*> UKcCampaignSubsystem::ActionsAtSpot(const FString& 
 	const std::string S = ToStd(Spot);
 	for (const kc::ActionDef* A : kc::ActionsAt(G->GetState(), *M, ToStd(Where)))
 	{
-		if (IsFaceToFace(*A)) continue;
+		if (IsFaceToFace(*A) && !IsGone(*A)) continue;
 		if (A->Spot == S) Out.Add(A);
 	}
 	return Out;
@@ -353,8 +359,11 @@ EKcCaseResult UKcCampaignSubsystem::DoAction(const FString& ActionId, const FStr
 	{
 		if (const kc::ActionDef* A = M->FindAction(ToStd(ActionId)))
 		{
-			if (!A->FindingTitle.empty()) G->Notify(FString::Printf(TEXT("%s  Notebook: %s"), *ClockText(), *ToFString(A->FindingTitle)));
-			if (!A->Evidence.empty()) G->Notify(FString::Printf(TEXT("Chain of custody: %s"), *ToFString(A->Evidence)));
+			if (!A->FindingTitle.empty()) G->Notify(FString::Printf(TEXT("%s  Notebook: %s"), *ClockText(), *ToFString(kc::FindingTitleFor(G->GetState(), *A))));
+			// Sealed only when done in time (a late step seals nothing), stamped with the case clock.
+			const kc::CampaignState& CS = G->GetState().Campaign;
+			const bool bExpired = !CS.Steps.empty() && CS.Steps.back().bExpired;
+			if (!A->Evidence.empty() && !bExpired) G->Notify(FString::Printf(TEXT("%s  Chain of custody: %s"), *ClockText(), *ToFString(A->Evidence)));
 		}
 		G->StateEdited();
 	}
@@ -392,6 +401,24 @@ FString UKcCampaignSubsystem::FindingFor(const kc::ActionDef& A) const
 {
 	const UKcGameSubsystem* G = Game();
 	return G ? ToFString(kc::FindingFor(G->GetState(), A)) : FString();
+}
+
+kc::ActionDef UKcCampaignSubsystem::ForView(const kc::ActionDef& A) const
+{
+	kc::ActionDef Out = A;
+	const UKcGameSubsystem* G = Game();
+	if (!G || !G->HasGame()) return Out;
+	const kc::GameState& S = G->GetState();
+	Out.FindingTitle = kc::FindingTitleFor(S, A);
+	Out.Rows = kc::RowsFor(S, A);
+	Out.Custody = kc::ExpandTimes(S, A.Custody, A.Id);
+	return Out;
+}
+
+FString UKcCampaignSubsystem::Expand(const std::string& Text) const
+{
+	const UKcGameSubsystem* G = Game();
+	return ToFString(G && G->HasGame() ? kc::ExpandTimes(G->GetState(), Text) : Text);
 }
 
 bool UKcCampaignSubsystem::IsDone(const FString& ActionId) const

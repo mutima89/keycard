@@ -100,7 +100,7 @@
       ],
       "required": true,
       "findingTitle": "Permit HW-0418",
-      "finding": "Permit HW-0418 issued for 23:45 to 00:30: welding one bracket plate on the main canopy. Precautions listed and initialled, detector zone K2 only to be isolated, fire watch named, and the post-work watch until at least 01:30. One copy on the permit board, one in the LP office."
+      "finding": "Permit HW-0418 issued for welding from when the fire watch is in place, finishing by 00:40: welding one bracket plate on the main canopy. Precautions listed and initialled, detector zone K2 only to be isolated, fire watch named, and the post-work watch for at least 60 minutes after the welding stops. One copy on the permit board, one in the LP office."
     },
     {
       "id": "front_office",
@@ -126,7 +126,7 @@
         "issue_permit"
       ],
       "required": true,
-      "findingTitle": "Zone K2 isolated, 23:4x",
+      "findingTitle": "Zone K2 isolated, {time}",
       "finding": "Only the two heat detectors over the canopy (zone K2) are isolated, logged against HW-0418 with your name and the time. Every other detector in the kitchen and on the ground floor stays live, and the manual call points still work."
     },
     {
@@ -182,17 +182,17 @@
     },
     {
       "id": "after_watch",
-      "label": "Check the post-work fire watch at 00:50",
+      "label": "Check the post-work fire watch",
       "kind": "check",
       "at": "kitchen",
       "spot": "kitchen_line",
-      "minutes": 3,
+      "minutes": 45,
       "requires": [
         "brief_watch"
       ],
       "required": true,
       "findingTitle": "What the watch found",
-      "finding": "Welding finished 00:22. At 00:47, behind the canopy, Ines smelled hot grease and found a strip of duct wrap smouldering where spatter had landed. She put it out with the CO2, called you and stayed on it. No flame, no smoke detector involved.",
+      "finding": "Welding ran from 00:08 to 00:28. At 00:53, behind the canopy, Ines smelled hot grease and found a strip of duct wrap smouldering where spatter had landed. She put it out with the CO2, called you and stayed on it. No flame, no smoke detector involved.",
       "columns": [
         "Time",
         "Check",
@@ -200,22 +200,22 @@
       ],
       "rows": [
         [
-          "00:22",
+          "00:28",
           "Work ends",
           "Area checked, warm"
         ],
         [
-          "00:37",
+          "00:43",
           "Round",
           "-"
         ],
         [
-          "00:47",
+          "00:53",
           "Round",
           "Duct wrap smouldering behind canopy: CO2, out"
         ],
         [
-          "00:50",
+          "{time}",
           "LP attends",
           "Cold, photographed"
         ]
@@ -227,13 +227,13 @@
       "kind": "secure",
       "at": "fire_command",
       "spot": "fire_panel",
-      "minutes": 3,
+      "minutes": 35,
       "requires": [
         "after_watch"
       ],
       "required": true,
       "findingTitle": "Zone K2 restored",
-      "finding": "At 01:35, after a final check of the canopy, zone K2 is de-isolated. Both heat detectors are tested and report to the panel; the restoration is logged against HW-0418."
+      "finding": "At {time}, an hour after the welding stopped and after a final check of the canopy, zone K2 is de-isolated. Both heat detectors are tested and report to the panel; the restoration is logged against HW-0418."
     },
     {
       "id": "close_permit",
@@ -315,7 +315,7 @@
     },
     {
       "id": "d_watch",
-      "prompt": "Declan stops welding at 00:22. When can the fire watch stand down?",
+      "prompt": "Declan stops welding at 00:28. When can the fire watch stand down?",
       "dimension": "Care",
       "competency": "FireLifeSafety",
       "weight": 8,
@@ -350,7 +350,7 @@
       "options": [
         {
           "id": "facts",
-          "label": "Hot work under HW-0418 23:45-00:22 on the main canopy; zone K2 isolated only; fire watch found and extinguished smouldering duct wrap at 00:47; K2 restored and tested 01:35.",
+          "label": "Hot work under HW-0418 00:08-00:28 on the main canopy; zone K2 isolated only; fire watch found and extinguished smouldering duct wrap at 00:53; K2 restored and tested {time:restore_zone}.",
           "score": 100,
           "feedback": "The permit, what was isolated, what the watch found and the restoration: everything an inspector or an insurer will look for."
         },
@@ -384,12 +384,12 @@
         },
         {
           "id": "f_iso",
-          "label": "Zone K2 isolated 23:4x and restored and tested 01:35; all other zones live.",
+          "label": "Zone K2 isolated {time:isolate_zone} and restored and tested {time:restore_zone}; all other zones live.",
           "correct": true
         },
         {
           "id": "f_watch",
-          "label": "Fire watch rounds every 15 minutes to 01:30; duct wrap smouldering at 00:47, put out with CO2.",
+          "label": "Fire watch rounds every 15 minutes to 01:28; duct wrap smouldering at 00:53, put out with CO2.",
           "correct": true
         },
         {

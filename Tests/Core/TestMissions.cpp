@@ -330,6 +330,42 @@ TEST(Mission_LateInterviewGetsTheExpiredFinding)
 	CHECK(FindingFor(S, *A) == A->ExpiredFinding);
 }
 
+TEST(Mission_CaseTimesComeFromTheClock)
+{
+	const MissionDef& M = Mission("M003");
+	GameState S = Fresh();
+	REQUIRE(StartMission(S, M) == EMissionError::None);
+	const ActionDef* A = M.FindAction("listen_door");
+	REQUIRE(A != nullptr);
+	CHECK(FindingTitleFor(S, *A) == "At the door, --:--");
+	REQUIRE(DoAction(S, M, "radio_partner", "lp_office") == EMissionError::None);
+	REQUIRE(DoAction(S, M, "listen_door", "f14_corridor") == EMissionError::None);
+	const std::string Clock = ClockText(S.Campaign.Clock);
+	CHECK(FindingTitleFor(S, *A) == "At the door, " + Clock);
+	CHECK(ExpandTimes(S, "Heard at {time:listen_door}, recheck {time:recheck}.") == "Heard at " + Clock + ", recheck --:--.");
+	CHECK(ExpandTimes(S, "No tokens {time") == "No tokens {time");
+}
+
+TEST(Mission_LateExportSealsNothingAndDropsItsFollowUps)
+{
+	const MissionDef& M = Mission("M007");
+	GameState S = Fresh();
+	S.Career.Level = M.MinLevel;
+	REQUIRE(StartMission(S, M) == EMissionError::None);
+	const ActionDef* Export = M.FindAction("export_footage");
+	REQUIRE(Export != nullptr && Export->ExpiresAt > 0);
+	S.Campaign.Clock = Export->ExpiresAt + 10; // the night got away from you
+	const ActionDef* Read = M.FindAction("read_request");
+	REQUIRE(Read != nullptr);
+	REQUIRE(DoAction(S, M, "read_request", Read->At) == EMissionError::None);
+	REQUIRE(DoAction(S, M, "review_footage", "cctv_room") == EMissionError::None);
+	REQUIRE(DoAction(S, M, "export_footage", "cctv_room") == EMissionError::None);
+	CHECK(S.Campaign.Steps.back().bExpired);
+	CHECK(S.Campaign.Custody.empty());
+	for (const ActionDef* A : ActionsAt(S, M, "cctv_room")) CHECK(A->Id != "log_export");
+	CHECK(DoAction(S, M, "log_export", "cctv_room") == EMissionError::NeedsEarlierStep);
+}
+
 TEST(Mission_TravelBetweenFloorsCostsTime)
 {
 	CHECK_EQ(TravelMinutes("lp_office", "lp_office"), 0);

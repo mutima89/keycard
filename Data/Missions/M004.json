@@ -98,7 +98,7 @@
         "talk_guest"
       ],
       "required": true,
-      "findingTitle": "Welfare check, 00:4x",
+      "findingTitle": "Welfare check, {time}",
       "finding": [
         "Responds to his name and to questions; knows where he is. Breathing normal. Skin colour normal. No vomiting, no head injury. Cannot walk unaided in a straight line.",
         "Red flags to watch: alcohol mixed with medication, getting harder to wake, vomiting while drowsy, slow or irregular breathing. None present now; reassess every few minutes."
@@ -228,7 +228,7 @@
       "requires": [
         "escort"
       ],
-      "findingTitle": "Recheck, 01:3x",
+      "findingTitle": "Recheck, {time}",
       "finding": "You knock and he answers the door, sleepy but clear: \"Still alive, thank you.\" Breathing normal. You log the check."
     },
     {
@@ -371,7 +371,7 @@
       "options": [
         {
           "id": "facts",
-          "label": "A registered guest (1409) was refused further service at the Lobby Bar at 00:20, could not find his key, was identity-checked, issued a replacement and escorted to his room by two officers; welfare checks at 00:4x and 01:3x.",
+          "label": "A registered guest (1409) was refused further service at the Lobby Bar at 00:20, could not find his key, was identity-checked, issued a replacement and escorted to his room by two officers; welfare checks at {time:welfare_check} and {time:welfare_recheck}.",
           "score": 100,
           "feedback": "Who, what, when and the welfare actions, without judgement."
         },
@@ -415,7 +415,7 @@
         },
         {
           "id": "f_checks",
-          "label": "Welfare checks at 00:4x (responsive, breathing normal) and 01:3x (answered the door).",
+          "label": "Welfare checks at {time:welfare_check} (responsive, breathing normal) and {time:welfare_recheck} (answered the door).",
           "correct": true
         },
         {

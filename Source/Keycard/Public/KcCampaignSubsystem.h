@@ -74,6 +74,8 @@ public:
 	TArray<const kc::ActionDef*> ActionsAtSpot(const FString& Where, const FString& Spot) const;
 	// True when the action is done by talking to its person in the world.
 	static bool IsFaceToFace(const kc::ActionDef& A);
+	// Past its expiry the person has gone (off shift): the step is offered at the place, not by them.
+	bool IsGone(const kc::ActionDef& A) const;
 	TArray<const kc::QuestionDef*> QuestionsAt(const FString& Where, const FString& PersonId) const;
 	// Every place where the active case has something left to do (objective markers).
 	TArray<FString> PlacesWithWork() const;
@@ -83,6 +85,10 @@ public:
 	// Options in their seeded display order (position never reveals the answer).
 	TArray<const kc::OptionDef*> OptionsInOrder(const kc::QuestionDef& Q) const;
 	FString FindingFor(const kc::ActionDef& A) const;
+	// The action as the player sees it now: case times ({time} tokens) filled in from the clock.
+	kc::ActionDef ForView(const kc::ActionDef& A) const;
+	// Mission text with its case times filled in (report options name the times of earlier steps).
+	FString Expand(const std::string& Text) const;
 	bool IsDone(const FString& ActionId) const;
 
 	// The incident report: questions on the form, the draft kept for the session, and filing it.

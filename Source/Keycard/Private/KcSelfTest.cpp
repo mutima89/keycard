@@ -16,7 +16,9 @@
 #include "KcConvert.h"
 #include "KcGameSubsystem.h"
 #include "KcHUD.h"
+#include "KcCharacter.h"
 #include "KcHotel.h"
+#include "KcInteractionComponent.h"
 #include "KcInteractable.h"
 #include "KcLearning.h"
 #include "KcLog.h"
@@ -83,18 +85,41 @@ struct FReport
 {
 	TArray<FString> Lines;
 	bool bPass = true;
+	// One line per case played: PASS, or FAIL with the checks that failed.
+	TArray<FString> Cases;
+	int32 CaseFails = 0;
+	TArray<FString> CaseFailNames;
 
 	void Check(const FString& Name, bool bOk, const FString& Detail)
 	{
 		bPass &= bOk;
 		Lines.Add(FString::Printf(TEXT("%s %s: %s"), bOk ? TEXT("ok  ") : TEXT("FAIL"), *Name, *Detail));
+		if (!bOk)
+		{
+			++CaseFails;
+			CaseFailNames.Add(Name);
+		}
 	}
 
 	void Note(const FString& Line) { Lines.Add(TEXT("     ") + Line); }
 
+	void BeginCase()
+	{
+		CaseFails = 0;
+		CaseFailNames.Reset();
+	}
+
+	void EndCase(const FString& MissionId)
+	{
+		Cases.Add(CaseFails == 0 ? FString::Printf(TEXT("PASS %s"), *MissionId)
+			: FString::Printf(TEXT("FAIL %s (%d): %s"), *MissionId, CaseFails, *FString::Join(CaseFailNames, TEXT(", "))));
+	}
+
 	void Write(const FString& Mode, const FString& FileName) const
 	{
 		FString Text = FString::Printf(TEXT("%s\nmode=%s\n"), bPass ? TEXT("PASS") : TEXT("FAIL"), *Mode);
+		for (const FString& L : Cases) Text += L + TEXT("\n");
+		if (!Cases.IsEmpty()) Text += TEXT("\n");
 		for (const FString& L : Lines) Text += L + TEXT("\n");
 		const FString Path = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir() / FileName);
 		FFileHelper::SaveStringToFile(Text, *Path, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
@@ -102,26 +127,162 @@ struct FReport
 	}
 };
 
-// Who or what in the hotel offers this action right now (a person, a door, a case point), or "".
-FString OfferedBy(UWorld* World, AKcHUD* Hud, const kc::ActionDef& A)
+// Who or what in the hotel offers this action right now (a person, a door, a case point), or null.
+AKcInteractable* OfferedBy(UWorld* World, AKcHUD* Hud, const kc::ActionDef& A, FString& By)
 {
 	UKcCampaignSubsystem* C = Hud->Campaign();
 	for (TActorIterator<AKcPersonActor> It(World); It; ++It)
 	{
-		if (C && C->ActionsAt(It->Location, It->PersonId).Contains(&A)) return FString::Printf(TEXT("person %s at %s"), *It->PersonId, *It->Location);
+		if (!It->IsRetired() && C && C->ActionsAt(It->Location, It->PersonId).Contains(&A))
+		{
+			By = FString::Printf(TEXT("person %s at %s"), *It->PersonId, *It->Location);
+			return *It;
+		}
 	}
 	for (TActorIterator<AKcCasePoint> It(World); It; ++It)
 	{
-		if (It->Work().Contains(&A)) return FString::Printf(TEXT("case point '%s' at %s"), *It->Title, *It->Location);
+		if (It->Work().Contains(&A))
+		{
+			By = FString::Printf(TEXT("case point '%s' at %s"), *It->Title, *It->Location);
+			return *It;
+		}
 	}
-	return FString();
+	By.Reset();
+	return nullptr;
+}
+
+// Where the thing physically is in the hotel (the zone it stands in), or "" outside every zone.
+FString WhereIs(AKcHUD* Hud, const AActor* Target)
+{
+	const AKcHotel* Hotel = Hud->Hotel();
+	return Hotel && Target ? Hotel->LocationAt(Target->GetActorLocation()) : FString();
+}
+
+// Where a player aims to pick Target: a person's face, a thing's own body (a case point's focus is
+// where the camera looks while it is used, which can sit behind the thing, e.g. inside the fire panel).
+FVector AimPoint(const AKcInteractable* Target)
+{
+	if (Cast<AKcPersonActor>(Target)) return Target->GetFocusPoint();
+	const USceneComponent* Root = Target->GetRootComponent();
+	return Root ? Root->Bounds.Origin : Target->GetActorLocation();
+}
+
+// Stands the player where they could use Target, as a player would: on its floor, on open floor
+// within reach, looking at it, with the interaction sweep (a 9 cm sphere from the camera, 3 m)
+// reaching it first. Spots are searched on a 20 cm grid, nearest to a comfortable 1.3 m first.
+// False when no spot can see it.
+bool StandAt(AKcHUD* Hud, AKcInteractable* Target, FString* Why = nullptr, const FString& Prefer = FString())
+{
+	APlayerController* PC = Hud->GetOwningPlayerController();
+	APawn* Pawn = PC ? PC->GetPawn() : nullptr;
+	UWorld* World = Hud->GetWorld();
+	if (!Pawn || !Target || !World) return false;
+	const FVector Focus = AimPoint(Target);
+	const int32 Floor = AKcHotel::FloorAt(Target->GetActorLocation().Z);
+	if (AKcHotel* Hotel = Hud->Hotel()) Hotel->SetActiveFloor(Floor);
+	const float Slab = AKcHotel::FloorZ(Floor);
+	const float Z = Slab + 92.0f; // the capsule's centre above the slab
+	TArray<FVector> Spots;
+	for (float X = -280.0f; X <= 280.0f; X += 20.0f)
+	{
+		for (float Y = -280.0f; Y <= 280.0f; Y += 20.0f)
+		{
+			const float D = FMath::Sqrt(X * X + Y * Y);
+			if (D >= 60.0f && D <= 280.0f) Spots.Add(FVector(Focus.X + X, Focus.Y + Y, Z));
+		}
+	}
+	// Spots in the place the case names come first (the dock door from the dock, not the yard).
+	const AKcHotel* Hotel = Hud->Hotel();
+	auto InPlace = [&](const FVector& V) { return !Prefer.IsEmpty() && Hotel && Hotel->LocationAt(V) == Prefer; };
+	Spots.Sort([&](const FVector& L, const FVector& R)
+	{
+		const bool bL = InPlace(L), bR = InPlace(R);
+		if (bL != bR) return bL;
+		return FMath::Abs(FVector::Dist2D(L, Focus) - 130.0f) < FMath::Abs(FVector::Dist2D(R, Focus) - 130.0f);
+	});
+	FCollisionQueryParams Params(SCENE_QUERY_STAT(KcSelfTestStand), false, Pawn);
+	const FCollisionShape Body = FCollisionShape::MakeCapsule(34.0f, 88.0f);
+	int32 NoFloor = 0, NoRoom = 0, Blocked = 0;
+	TMap<FString, int32> Blockers;
+	for (FVector Stand : Spots)
+	{
+		// Open floor: walkable ground near the slab (a stair tread or landing counts), and room for the body.
+		FHitResult Ground;
+		if (!World->LineTraceSingleByChannel(Ground, Stand + FVector(0.0f, 0.0f, 60.0f), Stand - FVector(0.0f, 0.0f, 200.0f), ECC_Visibility, Params)
+			|| Ground.ImpactNormal.Z < 0.7f || FMath::Abs(Ground.ImpactPoint.Z - Slab) > 130.0f) { ++NoFloor; continue; }
+		Stand.Z = Ground.ImpactPoint.Z + 92.0f;
+		if (World->OverlapBlockingTestByChannel(Stand + FVector(0.0f, 0.0f, 4.0f), FQuat::Identity, ECC_Pawn, Body, Params)) { ++NoRoom; continue; }
+		const FVector Eye = Stand + FVector(0.0f, 0.0f, 70.0f); // the character's camera
+		const FVector Aim = (Focus - Eye).GetSafeNormal();
+		FHitResult Hit;
+		const bool bHit = World->SweepSingleByChannel(Hit, Eye, Eye + Aim * 300.0f, FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(9.0f), Params);
+		if (!bHit || Hit.GetActor() != Target)
+		{
+			++Blocked;
+			const FString By = !bHit ? FString(TEXT("nothing")) : (Hit.GetActor() ? Hit.GetActor()->GetName() : FString(TEXT("?"))) + TEXT("/") + (Hit.GetComponent() ? Hit.GetComponent()->GetName() : FString(TEXT("?")));
+			++Blockers.FindOrAdd(By);
+			continue;
+		}
+		if (!Pawn->TeleportTo(Stand, Aim.Rotation(), false, true)) continue;
+		PC->SetControlRotation(Aim.Rotation());
+		if (PC->PlayerCameraManager) PC->PlayerCameraManager->SetGameCameraCutThisFrame();
+		return true;
+	}
+	if (Why)
+	{
+		Blockers.ValueSort([](int32 L, int32 R) { return L > R; });
+		FString Top;
+		int32 n = 0;
+		for (const TPair<FString, int32>& B : Blockers)
+		{
+			if (n++ == 3) break;
+			Top += FString::Printf(TEXT("%s%s x%d"), Top.IsEmpty() ? TEXT("") : TEXT(", "), *B.Key, B.Value);
+		}
+		*Why = FString::Printf(TEXT("%d spots: %d no floor (slab %.0f), %d no room, %d blocked by %s; focus at %s"), Spots.Num(), NoFloor, Slab, NoRoom, Blocked, *Top, *Focus.ToCompactString());
+	}
+	return false;
+}
+
+// What the player's look trace has in focus now (the interaction prompt they would see).
+AKcInteractable* Focused(AKcHUD* Hud)
+{
+	APlayerController* PC = Hud->GetOwningPlayerController();
+	const AKcCharacter* Character = PC ? Cast<AKcCharacter>(PC->GetPawn()) : nullptr;
+	const UKcInteractionComponent* Interaction = Character ? Character->GetInteraction() : nullptr;
+	return Interaction ? Interaction->GetFocused() : nullptr;
+}
+
+// What the player's look sweep (the interaction component's) actually hits, for a focus failure.
+FString LookHit(AKcHUD* Hud)
+{
+	APlayerController* PC = Hud->GetOwningPlayerController();
+	UWorld* World = Hud->GetWorld();
+	if (!PC || !World) return FString(TEXT("no view"));
+	FVector From;
+	FRotator Rot;
+	PC->GetPlayerViewPoint(From, Rot);
+	FCollisionQueryParams Params(SCENE_QUERY_STAT(KcSelfTestLook), false, PC->GetPawn());
+	FHitResult Hit;
+	if (!World->SweepSingleByChannel(Hit, From, From + Rot.Vector() * 300.0f, FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(9.0f), Params))
+	{
+		return FString(TEXT("nothing within 3 m"));
+	}
+	return FString::Printf(TEXT("%s/%s at %.0f cm"), Hit.GetActor() ? *Hit.GetActor()->GetName() : TEXT("?"),
+		Hit.GetComponent() ? *Hit.GetComponent()->GetName() : TEXT("?"), Hit.Distance);
+}
+
+FString NameOf(const AActor* Actor)
+{
+	if (const AKcPersonActor* P = Cast<AKcPersonActor>(Actor)) return TEXT("person ") + P->PersonId;
+	if (const AKcCasePoint* P = Cast<AKcCasePoint>(Actor)) return TEXT("case point '") + P->Title + TEXT("'");
+	return Actor ? Actor->GetName() : FString(TEXT("nothing"));
 }
 
 bool PersonPresent(UWorld* World, const std::string& PersonId, const std::string& Location)
 {
 	for (TActorIterator<AKcPersonActor> It(World); It; ++It)
 	{
-		if (It->PersonId == ToFString(PersonId) && It->Location == ToFString(Location)) return true;
+		if (!It->IsRetired() && It->PersonId == ToFString(PersonId) && It->Location == ToFString(Location)) return true;
 	}
 	for (TActorIterator<AKcCasePoint> It(World); It; ++It)
 	{
@@ -163,7 +324,11 @@ void RunScript(TSharedRef<FScript> Script, float Interval)
 	}), Interval);
 }
 
-void AddCase(TSharedRef<FScript> S, TSharedRef<FReport> R, UWorld* World, AKcHUD* Hud, const FString& MissionId)
+// Plays one case the way a player does: sign on at the terminal, go to whoever or whatever offers each
+// step of the expert's route (on the right floor, in the right place, in sight), put questions to people
+// who are there, and file at the report terminal where the case says. bShots saves a screenshot of every
+// step's result (Saved/Screenshots/<platform>/Case_<id>_<nn>_<step>.png).
+void AddCase(TSharedRef<FScript> S, TSharedRef<FReport> R, UWorld* World, AKcHUD* Hud, const FString& MissionId, bool bShots = false)
 {
 	TWeakObjectPtr<UWorld> W(World);
 	TWeakObjectPtr<AKcHUD> H(Hud);
@@ -171,10 +336,15 @@ void AddCase(TSharedRef<FScript> S, TSharedRef<FReport> R, UWorld* World, AKcHUD
 	S->Steps.Add([R, W, H, MissionId]()
 	{
 		if (!H.IsValid()) return true;
+		R->BeginCase();
 		AKcReportTerminal* Terminal = nullptr;
 		for (TActorIterator<AKcReportTerminal> It(W.Get()); It; ++It) Terminal = *It;
 		R->Check(MissionId + TEXT("_terminal"), Terminal != nullptr, Terminal ? Terminal->Location : FString(TEXT("missing")));
-		if (Terminal) Terminal->Interact(H.Get()); // the shift board
+		if (Terminal)
+		{
+			StandAt(H.Get(), Terminal);
+			Terminal->Interact(H.Get()); // the shift board
+		}
 		const kc::MissionDef* Next = H->Campaign()->NextCase();
 		R->Check(MissionId + TEXT("_next"), Next && ToFString(Next->Id) == MissionId, Next ? ToFString(Next->Id) : FString(TEXT("none")));
 		const EKcCaseResult Start = H->StartCase(MissionId); // the shift board's Sign on button
@@ -192,18 +362,43 @@ void AddCase(TSharedRef<FScript> S, TSharedRef<FReport> R, UWorld* World, AKcHUD
 	});
 	// The expert's fieldwork, each step taken where the hotel offers it.
 	const kc::MissionDef* M = Hud->Campaign()->Find(MissionId);
+	int32 Number = 0;
 	for (const std::string& ActionId : M ? M->BestOrder : std::vector<std::string>())
 	{
 		const kc::ActionDef* A = M->FindAction(ActionId);
 		if (!A) continue;
+		const int32 Step = ++Number;
 		TSharedRef<int32> Tries = MakeShared<int32>(0);
-		S->Steps.Add([R, W, H, A, MissionId, Tries]()
+		TSharedRef<TWeakObjectPtr<AKcInteractable>> Target = MakeShared<TWeakObjectPtr<AKcInteractable>>();
+		// Find who or what offers it, check it is where the case says, and walk up to it.
+		S->Steps.Add([R, W, H, A, MissionId, Tries, Target]()
 		{
 			if (!H.IsValid()) return true;
 			UKcCampaignSubsystem* C = H->Campaign();
 			// The hotel refreshes people and doors twice a second: give it a moment before calling it missing.
-			const FString By = OfferedBy(W.Get(), H.Get(), *A);
-			if (By.IsEmpty() && ++*Tries < 4) return false;
+			FString By;
+			AKcInteractable* Offer = OfferedBy(W.Get(), H.Get(), *A, By);
+			if (!Offer && ++*Tries < 4) return false;
+			const FString Name = MissionId + TEXT("_") + ToFString(A->Id);
+			R->Check(Name + TEXT("_world"), Offer != nullptr, Offer ? By : FString(TEXT("nothing in the hotel offers it")));
+			if (Offer)
+			{
+				// A guest behind a closed door is reached through the door, in the corridor outside.
+				const AKcCasePoint* Door = Cast<AKcCasePoint>(Offer);
+				const bool bThroughDoor = Door && !Door->DoorPersonId.IsEmpty() && Door->DoorPersonId == ToFString(A->Person);
+				const FString Where = WhereIs(H.Get(), Offer);
+				FString Why;
+				const bool bStand = StandAt(H.Get(), Offer, &Why, bThroughDoor ? FString() : ToFString(A->At));
+				// Used from where the case says: the thing itself stands there, or the player does to use it
+				// (a door lock in the corridor, the dock door from the dock).
+				const APawn* Pawn = H->GetOwningPlayerController() ? H->GetOwningPlayerController()->GetPawn() : nullptr;
+				const FString From = bStand ? WhereIs(H.Get(), Pawn) : FString();
+				R->Check(Name + TEXT("_place"), bThroughDoor || Where == ToFString(A->At) || From == ToFString(A->At),
+					FString::Printf(TEXT("stands in %s, used from %s, case says %s"), Where.IsEmpty() ? TEXT("no zone") : *Where,
+						From.IsEmpty() ? TEXT("no zone") : *From, *ToFString(A->At)));
+				R->Check(Name + TEXT("_stand"), bStand, TEXT("somewhere to stand in sight of it: ") + Why);
+				*Target = Offer;
+			}
 			// Questions open now are put to people the player can reach.
 			for (const kc::LocationDef& L : kc::KnownLocations())
 			{
@@ -213,21 +408,92 @@ void AddCase(TSharedRef<FScript> S, TSharedRef<FReport> R, UWorld* World, AKcHUD
 				}
 			}
 			AnswerOpenQuestions(H.Get());
-			R->Check(MissionId + TEXT("_world_") + ToFString(A->Id), !By.IsEmpty(), By.IsEmpty() ? FString(TEXT("nothing in the hotel offers it")) : By);
+			return true;
+		});
+		// A few frames later: the look trace sees it (the prompt a player gets), then the step is done. The
+		// script ticks before the world, so the look trace catches up with a new view a frame or two late.
+		TSharedRef<int32> Looks = MakeShared<int32>(0);
+		S->Steps.Add([R, H, A, MissionId, Target, Looks]()
+		{
+			if (!H.IsValid()) return true;
+			const FString Name = MissionId + TEXT("_") + ToFString(A->Id);
+			if (Target->IsValid() && *Looks == 0)
+			{
+				// Aim from where the camera really is (capsule height and lean differ from the stand test).
+				if (APlayerController* PC = H->GetOwningPlayerController())
+				{
+					FVector View;
+					FRotator Rot;
+					PC->GetPlayerViewPoint(View, Rot);
+					PC->SetControlRotation((AimPoint(Target->Get()) - View).Rotation());
+				}
+			}
+			if (Target->IsValid() && Focused(H.Get()) != Target->Get() && ++*Looks < 60) return false;
+			if (Target->IsValid())
+			{
+				const AKcInteractable* Seen = Focused(H.Get());
+				R->Check(Name + TEXT("_focus"), Seen == Target->Get(), TEXT("looking at ") + NameOf(Seen) + (Seen == Target->Get() ? FString() : TEXT(", sweep hits ") + LookHit(H.Get())));
+			}
+			// Using a thing turns the view to its focus (the covered detector, not the rug it is shot from),
+			// as the game's own use does; the screenshot then shows what the step is about.
+			if (Target->IsValid() && !Cast<AKcPersonActor>(Target->Get()))
+			{
+				if (APlayerController* PC = H->GetOwningPlayerController())
+				{
+					FVector View;
+					FRotator Rot;
+					PC->GetPlayerViewPoint(View, Rot);
+					PC->SetControlRotation((Target->Get()->GetFocusPoint() - View).Rotation());
+				}
+			}
 			const EKcCaseResult Done = H->DoAction(*A);
-			R->Check(MissionId + TEXT("_do_") + ToFString(A->Id), Done == EKcCaseResult::Ok, UKcCampaignSubsystem::ResultText(Done));
-			H->CloseScreen();
+			R->Check(Name + TEXT("_do"), Done == EKcCaseResult::Ok, Done == EKcCaseResult::Ok ? H->Campaign()->ClockText() : UKcCampaignSubsystem::ResultText(Done));
+			return true;
+		});
+		// The result screen (spoken lines first, then the finding): screenshot it, then close it.
+		TSharedRef<int32> Waits = MakeShared<int32>(0);
+		S->Steps.Add([H, A, MissionId, Step, bShots, Waits]()
+		{
+			if (!H.IsValid()) return true;
+			if (bShots && !H->IsScreenOpen() && ++*Waits < 20) return false;
+			if (bShots) FScreenshotRequest::RequestScreenshot(FString::Printf(TEXT("Case_%s_%02d_%s"), *MissionId, Step, *ToFString(A->Id)), true, false);
+			return true;
+		});
+		S->Steps.Add([H]()
+		{
+			if (H.IsValid()) H->CloseScreen();
 			return true;
 		});
 	}
-	// The report, filed at the terminal.
-	S->Steps.Add([R, H, MissionId]()
+	// The report, filed at the report terminal in the place the case names.
+	TSharedRef<TWeakObjectPtr<AKcReportTerminal>> Desk = MakeShared<TWeakObjectPtr<AKcReportTerminal>>();
+	S->Steps.Add([R, W, H, MissionId, Desk]()
 	{
 		if (!H.IsValid()) return true;
 		AnswerOpenQuestions(H.Get());
 		UKcCampaignSubsystem* C = H->Campaign();
-		const FString Where = ToFString(C->Active() ? C->Active()->ReportAt : std::string("lp_office"));
-		H->OpenTerminal(Where);
+		const FString ReportAt = ToFString(C->Active() ? C->Active()->ReportAt : std::string("lp_office"));
+		for (TActorIterator<AKcReportTerminal> It(W.Get()); It; ++It)
+		{
+			if (It->Location == ReportAt) *Desk = *It;
+		}
+		R->Check(MissionId + TEXT("_report_terminal"), Desk->IsValid(), TEXT("a report terminal at ") + ReportAt);
+		if (Desk->IsValid()) R->Check(MissionId + TEXT("_report_stand"), StandAt(H.Get(), Desk->Get()), TEXT("somewhere to stand at the terminal"));
+		return true;
+	});
+	TSharedRef<int32> Looks = MakeShared<int32>(0);
+	S->Steps.Add([R, H, MissionId, Desk, Looks]()
+	{
+		if (!H.IsValid()) return true;
+		UKcCampaignSubsystem* C = H->Campaign();
+		AKcReportTerminal* Terminal = Desk->Get();
+		if (Terminal && Focused(H.Get()) != Terminal && ++*Looks < 60) return false;
+		if (Terminal)
+		{
+			R->Check(MissionId + TEXT("_report_focus"), Focused(H.Get()) == Terminal, TEXT("looking at ") + NameOf(Focused(H.Get())));
+			Terminal->Interact(H.Get()); // the terminal's menu
+		}
+		const FString Where = Terminal ? Terminal->Location : FString(TEXT("nowhere"));
 		H->OpenReport(Where);
 		FillBestReport(H.Get());
 		const EKcCaseResult Filed = H->FileReport(Where); // the form's File button
@@ -236,6 +502,7 @@ void AddCase(TSharedRef<FScript> S, TSharedRef<FReport> R, UWorld* World, AKcHUD
 		R->Check(MissionId + TEXT("_debrief"), D && D->bPassed && D->Score >= 90 && H->IsScreenOpen(),
 			D ? FString::Printf(TEXT("score %d, passed %d, cards %d, promoted %d"), D->Score, D->bPassed ? 1 : 0, static_cast<int32>(D->CardsEarned.size()), D->bPromoted ? 1 : 0)
 			  : FString(TEXT("none")));
+		R->EndCase(MissionId);
 		H->AfterDebrief(MissionId); // the debrief's Close button
 		return true;
 	});
@@ -306,8 +573,10 @@ void RunPlay(TSharedRef<FReport> R, AKcHUD* Hud, UWorld* World)
 
 // The whole career, level 1 to the capstone, each case played the expert's way through the hotel, each
 // promotion with its ceremony; then the ending screen and the certificate (Saved/KcSelfTest_career.txt).
-void RunCareer(TSharedRef<FReport> R, AKcHUD* Hud, UWorld* World)
+// "missions" mode is the same run with a screenshot of every step (Saved/KcSelfTest_missions.txt).
+void RunCareer(TSharedRef<FReport> R, AKcHUD* Hud, UWorld* World, const FString& Mode)
 {
+	const bool bShots = Mode == TEXT("missions");
 	TSharedRef<FScript> S = MakeShared<FScript>();
 	TWeakObjectPtr<AKcHUD> H(Hud);
 	S->Steps.Add([R, H]()
@@ -340,10 +609,10 @@ void RunCareer(TSharedRef<FReport> R, AKcHUD* Hud, UWorld* World)
 	};
 	for (const FGroup& G : Groups)
 	{
-		for (const TCHAR* Id : G.Cases) AddCase(S, R, World, Hud, Id);
+		for (const TCHAR* Id : G.Cases) AddCase(S, R, World, Hud, Id, bShots);
 		AddCeremony(S, R, Hud, G.Level);
 	}
-	AddCase(S, R, World, Hud, TEXT("X001"));
+	AddCase(S, R, World, Hud, TEXT("X001"), bShots);
 	// Closing the capstone's debrief opens the ending.
 	S->Steps.Add([R, H]()
 	{
@@ -368,9 +637,9 @@ void RunCareer(TSharedRef<FReport> R, AKcHUD* Hud, UWorld* World)
 		R->Check(TEXT("save"), H->SaveNow(Message), H->Saves()->GetSlotPath());
 		return true;
 	});
-	S->OnEnd = [R]()
+	S->OnEnd = [R, Mode]()
 	{
-		R->Write(TEXT("career"), TEXT("KcSelfTest_career.txt"));
+		R->Write(Mode, FString::Printf(TEXT("KcSelfTest_%s.txt"), *Mode));
 		FPlatformMisc::RequestExit(false, TEXT("KcSelfTest"));
 	};
 	RunScript(S, 0.5f);
@@ -643,11 +912,11 @@ void Run(UWorld* World)
 		RunTour(World, Hud);
 		return;
 	}
-	if (Mode == TEXT("career") || Mode == TEXT("challenge"))
+	if (Mode == TEXT("career") || Mode == TEXT("missions") || Mode == TEXT("challenge"))
 	{
 		TSharedRef<FReport> R = MakeShared<FReport>();
 		R->Check(TEXT("hud"), true, Hud->GetName());
-		if (Mode == TEXT("career")) RunCareer(R, Hud, World);
+		if (Mode != TEXT("challenge")) RunCareer(R, Hud, World, Mode);
 		else RunChallenge(R, Hud, World);
 		return;
 	}
@@ -661,7 +930,7 @@ void Run(UWorld* World)
 	FReport R;
 	R.Check(TEXT("hud"), true, Hud->GetName());
 	if (Mode == TEXT("resume")) RunResume(R, Hud);
-	else R.Check(TEXT("mode"), false, TEXT("expected play, resume, career, challenge, tour or ui"));
+	else R.Check(TEXT("mode"), false, TEXT("expected play, resume, career, missions, challenge, tour or ui"));
 	R.Write(Mode, TEXT("KcSelfTest.txt"));
 	FPlatformMisc::RequestExit(false, TEXT("KcSelfTest"));
 }

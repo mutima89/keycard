@@ -121,7 +121,7 @@ const FPost Posts[] = {
 	{TEXT("attendant_duarte"), TEXT("f14_service"), 14, FVector2D(205.0f, -470.0f), 110.0f},
 	{TEXT("guest_morrow"), TEXT("f14_corridor"), 14, FVector2D(3195.0f, 95.0f), -130.0f},
 	{TEXT("guest_achterberg"), TEXT("f14_corridor"), 14, FVector2D(3825.0f, -95.0f), 60.0f},
-	{TEXT("guest_pike"), TEXT("guest_room"), 14, FVector2D(2775.0f, 205.0f), -90.0f},
+	{TEXT("guest_pike"), TEXT("guest_room"), 14, FVector2D(2900.0f, 300.0f), -135.0f}, // inside, clear of the doorway
 	{TEXT("partner"), TEXT("cctv_room"), -1, FVector2D(4520.0f, 560.0f), 160.0f},
 	{TEXT("bell_captain"), TEXT("bell_stand"), 0, FVector2D(270.0f, 560.0f), -45.0f},
 	{TEXT("guest_lindgren"), TEXT("bell_stand"), 0, FVector2D(440.0f, 420.0f), 140.0f},
@@ -2998,7 +2998,8 @@ AKcCasePoint* AKcHotel::SpawnCasePoint(const FString& Location, const FString& S
 void AKcHotel::PlaceFixedInteractables()
 {
 	const int32 F = TopFloor;
-	// The door spots on 14 sit on each door's keycard reader; on 1406 and 1412 they swing with the leaf.
+	// The door spots on 14 sit on each door's keycard reader, on the corridor wall beside the latch side:
+	// on the leaf they swung into the room once the door was open, out of reach from the corridor (M001, M021).
 	struct FDoorSpot { const TCHAR* Spot; const TCHAR* Room; float X0; bool bNorth; };
 	const FDoorSpot DoorSpots[] = {
 		{TEXT("door_1406"), TEXT("1406"), 2700.0f, true},
@@ -3013,13 +3014,9 @@ void AKcHotel::PlaceFixedInteractables()
 		const FVector Out = FRotator(0.0f, Yaw, 0.0f).Vector();
 		const FVector Right = FRotator(0.0f, Yaw + (D.bNorth ? -90.0f : 90.0f), 0.0f).Vector();
 		const FVector Base(RoomDoorX(D.X0), D.bNorth ? CorrY : -CorrY, Zf(F, 0.0f));
-		const FVector Reader = Base + Right * ((GuestDoorW - 6.0f) * 0.5f - 9.0f) + Out * 3.2f + FVector(0, 0, 128.0f);
+		const FVector Reader = Base + Right * (GuestDoorW * 0.5f + 14.0f) + Out * (Wall * 0.5f + 1.0f) + FVector(0, 0, 128.0f);
 		AKcCasePoint* P = SpawnCasePoint(TEXT("f14_corridor"), D.Spot, FString(), Reader, Yaw, Cube, FVector(0.016f, 0.074f, 0.134f), Mat(TEXT("MI_DeviceBlack")),
 			EKcUseStyle::Screen, Base + Out * 2.0f + FVector(0, 0, 150.0f));
-		if (const FDynDoor* Dyn = Doors.Find(D.Room))
-		{
-			if (P && Dyn->Pivot.IsValid()) P->AttachToComponent(Dyn->Pivot.Get(), FAttachmentTransformRules::KeepWorldTransform);
-		}
 	}
 	// The floor's sprinkler control valve on the Stair A landing: the red riser, a gauge, the valve
 	// wheel with its supervisory switch, and the chained padlock that holds it open (M013).
@@ -3098,15 +3095,22 @@ void AKcHotel::RefreshPeople()
 		const TPair<FString, FString> Key(Person, Location);
 		if (!Want.Contains(Key)) Want.Add(Key);
 	};
-	WantPerson(TEXT("night_auditor"), TEXT("front_desk"));
-	WantPerson(TEXT("desk_agent"), TEXT("front_desk"));
 	bool bPartnerOut = false;
+	// People met earlier in the case, with nothing left to do there: they stay where you met them
+	// unless the case now needs them somewhere else.
+	TArray<TPair<FString, FString>> Met;
 	if (M)
 	{
 		const kc::CampaignState& CS = G->GetState().Campaign;
 		auto Answered = [&](const std::string& QId)
 		{
 			for (const kc::MissionAnswer& A : CS.FieldAnswers) if (A.QuestionId == QId) return true;
+			return false;
+		};
+		// Done face to face (not too late, when they had already gone home).
+		auto MetFor = [&](const std::string& ActionId)
+		{
+			for (const kc::FieldStep& S : CS.Steps) if (S.ActionId == ActionId) return !S.bExpired;
 			return false;
 		};
 		auto Consider = [&](const std::string& P, const std::string& At)
@@ -3117,16 +3121,22 @@ void AKcHotel::RefreshPeople()
 			{
 				if (Person == B.PersonId && Location == B.PersonLocation && M->FindAction(KcConvert::ToStd(B.OpensWith)) && !C->IsDone(B.OpensWith)) return;
 			}
+			if (!C->ActionsAt(Location, Person).IsEmpty() || !C->QuestionsAt(Location, Person).IsEmpty())
+			{
+				WantPerson(Person, Location);
+				return;
+			}
 			bool bMet = false;
 			for (const kc::ActionDef& A : M->Actions)
 			{
-				if (A.Person == P && A.At == At && UKcCampaignSubsystem::IsFaceToFace(A) && C->IsDone(KcConvert::ToFString(A.Id))) bMet = true;
+				if (A.Person == P && A.At == At && UKcCampaignSubsystem::IsFaceToFace(A) && MetFor(A.Id)) bMet = true;
 			}
 			for (const kc::QuestionDef& Q : M->Questions)
 			{
 				if (Q.Person == P && Q.At == At && Answered(Q.Id)) bMet = true;
 			}
-			if (bMet || !C->ActionsAt(Location, Person).IsEmpty() || !C->QuestionsAt(Location, Person).IsEmpty()) WantPerson(Person, Location);
+			const TPair<FString, FString> Key(Person, Location);
+			if (bMet && !Met.Contains(Key)) Met.Add(Key);
 		};
 		for (const kc::ActionDef& A : M->Actions)
 		{
@@ -3139,6 +3149,19 @@ void AKcHotel::RefreshPeople()
 			if (!Q.Person.empty() && !Q.At.empty()) Consider(Q.Person, Q.At);
 		}
 	}
+	auto WantedSomewhere = [&](const FString& Person)
+	{
+		return Want.ContainsByPredicate([&](const TPair<FString, FString>& W) { return W.Key == Person; });
+	};
+	for (const TPair<FString, FString>& W : Met)
+	{
+		if (!WantedSomewhere(W.Key)) WantPerson(W.Key, W.Value);
+	}
+	// The night staff at their posts, unless the case has them somewhere else (one person, one place).
+	for (const TCHAR* Desk : {TEXT("night_auditor"), TEXT("desk_agent")})
+	{
+		if (!WantedSomewhere(Desk)) WantPerson(Desk, TEXT("front_desk"));
+	}
 	bool bCaseOn14 = false;
 	if (M)
 	{
@@ -3148,7 +3171,7 @@ void AKcHotel::RefreshPeople()
 			if (L && L->Floor == TopFloor) bCaseOn14 = true;
 		}
 	}
-	WantPerson(TEXT("partner"), bPartnerOut && bCaseOn14 ? TEXT("f14_corridor") : TEXT("cctv_room"));
+	if (!WantedSomewhere(TEXT("partner"))) WantPerson(TEXT("partner"), bPartnerOut && bCaseOn14 ? TEXT("f14_corridor") : TEXT("cctv_room"));
 
 	FString Key = M ? KcConvert::ToFString(M->Id) : FString();
 	for (const TPair<FString, FString>& W : Want) Key += TEXT("|") + W.Key + TEXT("@") + W.Value;
@@ -3162,7 +3185,7 @@ void AKcHotel::RefreshPeople()
 		const bool bKeep = IsValid(P) && Want.Contains(TPair<FString, FString>(P->PersonId, P->Location));
 		if (!bKeep)
 		{
-			if (IsValid(P)) P->Destroy();
+			if (IsValid(P)) P->Retire();
 			People.RemoveAt(i);
 		}
 	}
@@ -3171,9 +3194,15 @@ void AKcHotel::RefreshPeople()
 	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	for (const TPair<FString, FString>& W : Want)
 	{
-		const int32 Index = PerPlace.FindOrAdd(W.Value)++;
 		if (People.ContainsByPredicate([&](const AKcPersonActor* P) { return P->PersonId == W.Key && P->Location == W.Value; })) continue;
-		const FPersonSpot S = SpotFor(W.Value, W.Key, Index);
+		// The next free spot at the place: people kept from earlier hold theirs (no two in one body).
+		auto Taken = [&](const FPersonSpot& Spot)
+		{
+			return People.ContainsByPredicate([&](const AKcPersonActor* P) { return IsValid(P) && FVector::Dist2D(P->GetActorLocation(), Spot.At) < 60.0f; });
+		};
+		int32& Index = PerPlace.FindOrAdd(W.Value);
+		FPersonSpot S = SpotFor(W.Value, W.Key, Index++);
+		for (int32 Tries = 0; Tries < 8 && Taken(S); ++Tries) S = SpotFor(W.Value, W.Key, Index++);
 		AKcPersonActor* P = GetWorld()->SpawnActor<AKcPersonActor>(S.At, FRotator(0.0f, S.Yaw, 0.0f), Params);
 		if (!P) continue;
 		P->SetAppearance(Cylinder, FVector(0.5f, 0.5f, 1.8f), nullptr);

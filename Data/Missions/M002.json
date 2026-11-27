@@ -183,7 +183,7 @@
       "findingTitle": "Keycard retained",
       "finding": "You explain that keycards are hotel property and this one no longer works. He hands it over. Bagged and labelled KC-1418-C.",
       "evidence": "KC-1418-C",
-      "custody": "Keycard presented by L. Haskett retained by you at 03:4x, sealed in bag KC-1418-C."
+      "custody": "Keycard presented by L. Haskett retained by you at {time}, sealed in bag KC-1418-C."
     },
     {
       "id": "secure_floor",

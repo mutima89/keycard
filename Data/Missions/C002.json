@@ -61,7 +61,7 @@
         "checklist"
       ],
       "required": true,
-      "findingTitle": "Police on the way, 11:2x",
+      "findingTitle": "Police on the way, {time}",
       "finding": "The police control room takes the exact words, the time and the background. A specific place and time: they advise clearing the ballroom and the floor 1 foyer, searching with staff, and keeping the rest of the hotel in place unless something is found. Officers in ten minutes, a search adviser with them. DS Calloway is told."
     },
     {
@@ -122,7 +122,7 @@
         "search_route"
       ],
       "required": true,
-      "findingTitle": "Floor 1 clear, 11:4x",
+      "findingTitle": "Floor 1 clear, {time}",
       "finding": "Celia's team clears the fair in nine minutes: \"As a precaution we're asking everyone to leave the ballroom by the stairs. Please take all your belongings with you.\" Belongings taken mean fewer bags left to search. Two exhibitors in wheelchairs go down with staff by the service lift before it is held."
     },
     {
@@ -241,13 +241,13 @@
       "kind": "call",
       "at": "fire_command",
       "person": "gm",
-      "minutes": 3,
+      "minutes": 55,
       "requires": [
         "handover"
       ],
       "required": true,
-      "findingTitle": "All clear, 13:1x",
-      "finding": "The bomb disposal team finds a hoax: a clock radio taped to a box of brochures. The police give the all-clear at 13:12. Floor 1 reopens; the fair resumes at 13:45 with an apology and a free drink. Guests in the rest of the hotel get a short update."
+      "findingTitle": "All clear, {time}",
+      "finding": "The bomb disposal team finds a hoax: a clock radio taped to a box of brochures. The police give the all-clear at {time}. Floor 1 reopens; the fair resumes at 13:45 with an apology and a free drink. Guests in the rest of the hotel get a short update."
     },
     {
       "id": "after_action",
@@ -260,7 +260,7 @@
         "all_clear"
       ],
       "findingTitle": "After action",
-      "finding": "The log becomes the review: checklist used well (keep the line open next time); police at 11:2x; targeted clearance in nine minutes; route searched first; radio rule held; nobody touched the item. Actions: checklist cards at every phone, search plans by area with named searchers, and a recorded threat line on the switchboard."
+      "finding": "The log becomes the review: checklist used well (keep the line open next time); police at {time:call_police}; targeted clearance in nine minutes; route searched first; radio rule held; nobody touched the item. Actions: checklist cards at every phone, search plans by area with named searchers, and a recorded threat line on the switchboard."
     }
   ],
   "questions": [
@@ -364,7 +364,7 @@
       "options": [
         {
           "id": "facts",
-          "label": "Threat call 11:18 recorded on the checklist; police 11:2x; floor 1 cleared by Stair B after route search; holdall found under stage table, not touched, cordoned; handed to police; hoax confirmed, all-clear 13:12; footage KC-2701.",
+          "label": "Threat call 11:18 recorded on the checklist; police {time:call_police}; floor 1 cleared by Stair B after route search; holdall found under stage table, not touched, cordoned; handed to police; hoax confirmed, all-clear {time:all_clear}; footage KC-2701.",
           "score": 100,
           "feedback": "The times, the decisions, the item and who has the evidence."
         },
@@ -372,7 +372,7 @@
           "id": "hoax",
           "label": "Hoax bomb call, no action needed.",
           "score": 15,
-          "feedback": "It was only known to be a hoax at 13:12. Everything before that is the record."
+          "feedback": "It was only known to be a hoax at the all-clear. Everything before that is the record."
         },
         {
           "id": "sister",

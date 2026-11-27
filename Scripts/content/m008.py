@@ -12,13 +12,13 @@ M = {
  "actions": [
   {"id": "void_card", "label": "Void the master card in the lock system", "kind": "secure", "at": "front_desk", "spot": "front_office_pc", "minutes": 3, "required": True,
    "findingTitle": "Master card voided",
-   "finding": "Card HK-M12-14-03 voided at 23:2x; every lock on floors 12 to 14 will refuse it from its next use. A new master is encoded and held at the desk for the housekeeping supervisor."},
+   "finding": "Card HK-M12-14-03 voided at {time}; every lock on floors 12 to 14 will refuse it from its next use. A new master is encoded and held at the desk for the housekeeping supervisor."},
   {"id": "lock_audit", "label": "Pull the lock audit for card HK-M12-14-03", "kind": "lockAudit", "at": "front_desk", "spot": "front_office_pc", "minutes": 5, "required": True,
    "findingTitle": "Lock audit, card HK-M12-14-03",
    "finding": ["The card opened 1411 at 22:31 (Marisol's last room). At 22:52 it opened 1415, which is vacant and ready. At 22:54 it was used at 1417 and refused: the guest's deadbolt was on.",
-     "Nothing after 22:58. Marisol says she noticed it missing at about 23:10."],
+     "Nothing after 22:54. Marisol says she noticed it missing at about 23:10."],
    "columns": ["Time", "Door", "Result"],
-   "rows": [["22:31", "1411", "Opened (attendant)"], ["22:52", "1415 (vacant)", "Opened"], ["22:54", "1417 (occupied)", "Refused: deadbolt"], ["23:2x", "-", "Card voided"]]},
+   "rows": [["22:31", "1411", "Opened (attendant)"], ["22:52", "1415 (vacant)", "Opened"], ["22:54", "1417 (occupied)", "Refused: deadbolt"]]},
   {"id": "talk_attendant", "label": "Talk to Marisol", "kind": "interview", "at": "f14_service", "person": "attendant_duarte", "minutes": 4, "required": True,
    "findingTitle": "Marisol Duarte",
    "finding": "She clipped the card and the closet key to the top tray of her trolley while she turned down 1411, \"because the coil hurts my wrist\". The trolley was outside the door for about eight minutes. She noticed at 23:10, searched, then called. She is frightened of losing her job.",
@@ -76,7 +76,7 @@ M = {
     {"id": "now", "label": "Knock now and tell her.", "score": 40, "feedback": "Well meant, but the danger has passed and the card is voided. Frightening her at midnight helps nobody."}]},
   {"id": "r_what", "prompt": "Incident report, what happened (one line)", "dimension": "Report", "competency": "EvidenceReporting", "weight": 8, "section": "what",
    "options": [
-    {"id": "facts", "label": "A floor master card and closet key were taken from an unattended trolley on 14 at 22:38; the card opened vacant 1415 and was refused at 1417; voided at 23:2x; police informed.", "score": 100,
+    {"id": "facts", "label": "A floor master card and closet key were taken from an unattended trolley on 14 at 22:38; the card opened vacant 1415 and was refused at 1417; voided at {time:void_card}; police informed.", "score": 100,
      "feedback": "The key facts in order, including the attempted entry."},
     {"id": "lost", "label": "Room attendant lost her master key.", "score": 25, "feedback": "The camera shows it was taken. \"Lost\" also puts the blame on her and hides the attempted entry."},
     {"id": "careless", "label": "Master key stolen due to staff carelessness.", "score": 20, "feedback": "A judgement, not a fact. Report what happened; the cause analysis comes later."}]},
@@ -85,7 +85,7 @@ M = {
     {"id": "f_audit", "label": "Lock audit: 1411 22:31 (attendant), 1415 22:52 opened, 1417 22:54 refused (deadbolt).", "correct": True},
     {"id": "f_cctv", "label": "14-02: a man in a grey cap takes an item from the trolley tray at 22:38 and leaves by Stair A at 22:55.", "correct": True},
     {"id": "f_log", "label": "Key log: both items signed out to M. Duarte at 15:00, not returned.", "correct": True},
-    {"id": "f_void", "label": "Card voided at 23:2x; closet locks re-cored; police reference obtained.", "correct": True},
+    {"id": "f_void", "label": "Card voided at {time:void_card}; closet locks re-cored; police reference obtained.", "correct": True},
     {"id": "o_inside", "label": "It was probably an inside job.", "feedback": "Nothing you have shows that. Speculation in a report can damage people who did nothing."}]}
  ],
  "checks": [

@@ -50,7 +50,7 @@
         "talk_mother"
       ],
       "required": true,
-      "findingTitle": "Code Beacon, 21:0x",
+      "findingTitle": "Code Beacon, {time}",
       "finding": "\"Code Beacon, Code Beacon. Boy, seven, Theo, fair hair, blue waistcoat, white shirt, light-up red trainers. Last seen 20:58, Harbour Ballroom doors, floor 1.\" Every department acknowledges. Ines starts on the cameras from the ballroom foyer.",
       "lines": [
         {
@@ -69,7 +69,7 @@
       "requires": [
         "call_code"
       ],
-      "findingTitle": "Police called, 21:1x",
+      "findingTitle": "Police called, {time}",
       "finding": "Theo has been missing more than ten minutes since 20:58. The police log a missing child at the hotel, take the description and send a unit; DS Calloway asks to be told the moment he is found."
     },
     {
@@ -151,7 +151,7 @@
         "cctv_check"
       ],
       "required": true,
-      "findingTitle": "Found, 21:2x",
+      "findingTitle": "Found, {time}",
       "finding": "On the floor 2 landing, sitting against the locked stair door with his trainers flashing: Theo, crying but unhurt. He went up to hide, then could not get out: the doors on unfitted floors don't open from the stair side, and he was too scared to go back down past the floor 1 door, which had swung shut."
     },
     {
@@ -185,7 +185,7 @@
         "reunite"
       ],
       "findingTitle": "Stood down",
-      "finding": "\"Code Beacon stand down, child found safe at 21:2x.\" Exits released; Ines tells the police control room and DS Calloway that Theo is found and with his mother."
+      "finding": "\"Code Beacon stand down, child found safe at {time:search_stairs}.\" Exits released; Ines tells the police control room and DS Calloway that Theo is found and with his mother."
     },
     {
       "id": "stair_reentry",
@@ -329,7 +329,7 @@
       "options": [
         {
           "id": "facts",
-          "label": "Theo Dunmore (7) reported missing 21:05, last seen 20:58; Code Beacon 21:0x, police 21:1x, exits covered; found unhurt on Stair A floor 2 landing 21:2x; stood down; stair re-entry finding raised.",
+          "label": "Theo Dunmore (7) reported missing 21:05, last seen 20:58; Code Beacon {time:call_code}, police {time:call_police}, exits covered; found unhurt on Stair A floor 2 landing {time:search_stairs}; stood down; stair re-entry finding raised.",
           "score": 100,
           "feedback": "The times, the actions, where he was found and the lesson for the building."
         },

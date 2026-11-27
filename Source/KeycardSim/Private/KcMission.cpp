@@ -522,6 +522,33 @@ static bool ValidId(const std::string& Id)
 	return true;
 }
 
+// Calls F(Start, Length, ActionId) for every "{time}" ("" id) and "{time:id}" token in Text.
+template <typename FnType>
+static void ForEachTimeToken(const std::string& Text, FnType F)
+{
+	size_t Pos = 0;
+	while ((Pos = Text.find("{time", Pos)) != std::string::npos)
+	{
+		const size_t End = Text.find('}', Pos);
+		if (End == std::string::npos) return;
+		const std::string Inner = Text.substr(Pos + 5, End - Pos - 5);
+		if (Inner.empty()) F(Pos, End - Pos + 1, std::string());
+		else if (Inner[0] == ':') F(Pos, End - Pos + 1, Inner.substr(1));
+		Pos = End + 1;
+	}
+}
+
+// "03:4x": a time someone meant to fill in by hand. Case times come from tokens.
+static bool HasPlaceholderTime(const std::string& Text)
+{
+	auto Digit = [](char C) { return C >= '0' && C <= '9'; };
+	for (size_t i = 0; i + 5 <= Text.size(); ++i)
+	{
+		if (Digit(Text[i]) && Digit(Text[i + 1]) && Text[i + 2] == ':' && Digit(Text[i + 3]) && Text[i + 4] == 'x') return true;
+	}
+	return false;
+}
+
 std::vector<std::string> ValidateMission(const MissionDef& M)
 {
 	std::vector<std::string> Out;
@@ -542,6 +569,8 @@ std::vector<std::string> ValidateMission(const MissionDef& M)
 	if (M.Opening.Text.empty() || M.Opening.From.empty()) Err("the opening needs a sender and words");
 	if (!FindLocation(M.Opening.At)) Err("the opening is at an unknown location '" + M.Opening.At + "'");
 	if (!M.ReportAt.empty() && !FindLocation(M.ReportAt)) Err("reportAt is an unknown location '" + M.ReportAt + "'");
+	// The only report terminal in the hotel is in the LP office: a report filed anywhere else can never be filed.
+	if (!M.ReportAt.empty() && M.ReportAt != "lp_office") Err("reportAt must be lp_office, where the report terminal is");
 	if (M.LearningObjectives.empty() || M.LearningObjectives.size() > 3) Err("needs one to three learning objectives");
 	for (const std::string& L : M.LearningObjectives)
 	{
@@ -700,6 +729,30 @@ std::vector<std::string> ValidateMission(const MissionDef& M)
 	if (M.Checks.empty()) Err("no fieldwork checks: the rubric must look at what was done on foot");
 	if (WeightSum != 100) Err("question and check weights sum to " + std::to_string(WeightSum) + ", not 100");
 	if (Dimensions.size() < 4) Err("the rubric must assess at least four dimensions");
+
+	// Case times: tokens name real actions; "{time}" only where there is an action of its own.
+	auto CheckTimes = [&](const std::string& Text, const std::string& Where, bool bHasSelf) {
+		if (HasPlaceholderTime(Text)) Err(Where + ": placeholder time (use {time} or {time:action_id})");
+		ForEachTimeToken(Text, [&](size_t, size_t, const std::string& Id) {
+			if (Id.empty() && !bHasSelf) Err(Where + ": {time} needs an action; use {time:action_id}");
+			if (!Id.empty() && !ActionIds.count(Id)) Err(Where + ": {time:" + Id + "} names an unknown action");
+		});
+	};
+	for (const ActionDef& A : M.Actions)
+	{
+		const std::string AP = "action '" + A.Id + "'";
+		for (const std::string* T : {&A.Label, &A.FindingTitle, &A.Finding, &A.ExpiredFinding, &A.Custody}) CheckTimes(*T, AP, true);
+		for (const auto& Row : A.Rows)
+		{
+			for (const std::string& Cell : Row) CheckTimes(Cell, AP, true);
+		}
+		for (const DialogueLine& L : A.Lines) CheckTimes(L.Text, AP + " (spoken)", false);
+	}
+	for (const QuestionDef& Q : M.Questions)
+	{
+		CheckTimes(Q.Prompt, "question '" + Q.Id + "'", false);
+		for (const OptionDef& O : Q.Options) CheckTimes(O.Label, "question '" + Q.Id + "'", false);
+	}
 
 	// The expert's walk: possible, complete and perfect.
 	std::vector<FieldStep> Steps;
@@ -1001,7 +1054,10 @@ std::vector<const ActionDef*> ActionsAt(const GameState& State, const MissionDef
 	if (State.Campaign.ActiveMissionId != M.Id) return Out;
 	for (const ActionDef& A : M.Actions)
 	{
-		if (A.At == Where && !IsActionDone(State, A.Id) && RequiresMet(State, A.Requires)) Out.push_back(&A);
+		if (A.At != Where || IsActionDone(State, A.Id) || !RequiresMet(State, A.Requires)) continue;
+		// Optional follow-ups of a step done too late (logging footage that had already gone) are gone too.
+		if (!A.bRequired && RequiresExpired(State, A.Requires)) continue;
+		Out.push_back(&A);
 	}
 	return Out;
 }
@@ -1015,22 +1071,53 @@ EMissionError DoAction(GameState& State, const MissionDef& M, const std::string&
 	if (IsActionDone(State, ActionId)) return EMissionError::AlreadyDone;
 	if (A->At != Where) return EMissionError::WrongPlace;
 	if (!RequiresMet(State, A->Requires)) return EMissionError::NeedsEarlierStep;
+	if (!A->bRequired && RequiresExpired(State, A->Requires)) return EMissionError::NeedsEarlierStep;
 	C.Clock += TravelMinutes(C.Location, A->At) + std::max(0, A->Minutes);
 	C.Location = A->At;
 	FieldStep S{A->Id, C.Clock, A->ExpiresAt > 0 && C.Clock > A->ExpiresAt};
 	C.Steps.push_back(S);
-	if (!A->Evidence.empty() && !A->Custody.empty()) C.Custody.push_back({A->Evidence, C.Clock, A->Custody});
+	// Too late, nothing was sealed: the footage had gone.
+	if (!S.bExpired && !A->Evidence.empty() && !A->Custody.empty()) C.Custody.push_back({A->Evidence, C.Clock, ExpandTimes(State, A->Custody, A->Id)});
 	State.Checkpoint = M.Id + ":" + A->Id;
 	return EMissionError::None;
+}
+
+std::string ExpandTimes(const GameState& State, const std::string& Text, const std::string& SelfActionId)
+{
+	if (Text.find("{time") == std::string::npos) return Text;
+	std::string Out;
+	size_t Last = 0;
+	ForEachTimeToken(Text, [&](size_t Start, size_t Length, const std::string& Id) {
+		const int i = StepIndex(State.Campaign.Steps, Id.empty() ? SelfActionId : Id);
+		Out += Text.substr(Last, Start - Last);
+		Out += i >= 0 ? ClockText(State.Campaign.Steps[static_cast<size_t>(i)].Minute) : std::string("--:--");
+		Last = Start + Length;
+	});
+	return Out + Text.substr(Last);
 }
 
 std::string FindingFor(const GameState& State, const ActionDef& A)
 {
 	for (const FieldStep& S : State.Campaign.Steps)
 	{
-		if (S.ActionId == A.Id) return S.bExpired ? A.ExpiredFinding : A.Finding;
+		if (S.ActionId == A.Id) return ExpandTimes(State, S.bExpired ? A.ExpiredFinding : A.Finding, A.Id);
 	}
 	return std::string();
+}
+
+std::string FindingTitleFor(const GameState& State, const ActionDef& A)
+{
+	return ExpandTimes(State, A.FindingTitle, A.Id);
+}
+
+std::vector<std::vector<std::string>> RowsFor(const GameState& State, const ActionDef& A)
+{
+	std::vector<std::vector<std::string>> Out = A.Rows;
+	for (auto& Row : Out)
+	{
+		for (std::string& Cell : Row) Cell = ExpandTimes(State, Cell, A.Id);
+	}
+	return Out;
 }
 
 std::vector<const QuestionDef*> QuestionsAt(const GameState& State, const MissionDef& M, const std::string& Where)

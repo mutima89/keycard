@@ -58,7 +58,7 @@
         "read_panel"
       ],
       "required": true,
-      "findingTitle": "Called, 02:16",
+      "findingTitle": "Called, {time}",
       "finding": "The fire authority control room takes it: confirmed fire, room 1409, floor 14 of 14, sprinkler operating, hotel 92% occupied, evacuation of 14 and 13 under way. Idris Kellaway's watch is four minutes out with an aerial ladder."
     },
     {
@@ -175,7 +175,7 @@
         "refuge"
       ],
       "required": true,
-      "findingTitle": "Handed over, 02:2x",
+      "findingTitle": "Handed over, {time}",
       "finding": "At the front doors, the premises information box open: Station Officer Kellaway gets the panel printout, the fire in 1409 with the sprinkler running, the evacuation of 14 and 13, two people in the Stair A refuge on 14, the 1409 guest not yet accounted for, the master keys and the floor plans. He takes command; you stay with him as the hotel's liaison.",
       "lines": [
         {
@@ -196,7 +196,7 @@
       ],
       "required": true,
       "findingTitle": "All accounted for",
-      "finding": "The roll call against the in-house list at the quay assembly point: 58 of 61 from 13 and 14, plus the two in the refuge brought down by the crew. The 1409 guest walks in from the street: he had gone out at midnight leaving a phone charger and a hair dryer plugged in on the bed. Everyone accounted for at 02:51; the fire authority is told at once."
+      "finding": "The roll call against the in-house list at the quay assembly point: 58 of 61 from 13 and 14, plus the two in the refuge brought down by the crew. The 1409 guest walks in from the street: he had gone out at midnight leaving a phone charger and a hair dryer plugged in on the bed. Everyone accounted for at {time}; the fire authority is told at once."
     },
     {
       "id": "casualty",
@@ -254,7 +254,7 @@
       ],
       "required": true,
       "findingTitle": "Scene held",
-      "finding": "1409 and the corridor sealed for the fire authority's investigator; CCTV from 14-01 and 14-02 and the panel event log exported; Tarrowby's out-of-hours line notified at 03:40 and a loss adjuster appointed. Nothing in 1409 is touched until the investigator releases it."
+      "finding": "1409 and the corridor sealed for the fire authority's investigator; CCTV from 14-01 and 14-02 and the panel event log exported; Tarrowby's out-of-hours line notified at {time} and a loss adjuster appointed. Nothing in 1409 is touched until the investigator releases it."
     },
     {
       "id": "after_action",
@@ -268,7 +268,7 @@
         "preserve"
       ],
       "findingTitle": "After action",
-      "finding": "The log becomes the review: call at 02:16, phased evacuation, refuge reported, handover in six minutes, everyone accounted for in 37. The sprinkler held the fire to one room. Actions: chargers and appliances on beds in the guest safety card, refuge intercoms checked monthly, and a drill with the fire authority on the tower floors."
+      "finding": "The log becomes the review: call at {time:call_fire}, phased evacuation, refuge reported, handover at {time:handover}, everyone accounted for at {time:account}. The sprinkler held the fire to one room. Actions: chargers and appliances on beds in the guest safety card, refuge intercoms checked monthly, and a drill with the fire authority on the tower floors."
     }
   ],
   "questions": [
@@ -371,7 +371,7 @@
       "options": [
         {
           "id": "facts",
-          "label": "Fire in 1409 02:14 (charger on bed, guest out), held by the sprinkler; fire authority 02:16; 14 and 13 evacuated, rest alerted; refuge on 14 reported; command handed over 02:2x; all accounted 02:51; one guest to hospital, discharged; scene held; 34 rooms out of use.",
+          "label": "Fire in 1409 02:14 (charger on bed, guest out), held by the sprinkler; fire authority {time:call_fire}; 14 and 13 evacuated, rest alerted; refuge on 14 reported; command handed over {time:handover}; all accounted {time:account}; one guest to hospital, discharged; scene held; 34 rooms out of use.",
           "score": 100,
           "feedback": "The times, the decisions, the people and the state of the building."
         },

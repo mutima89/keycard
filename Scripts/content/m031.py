@@ -18,7 +18,7 @@ M = {
    "finding": "Room entries with a valid key and no forced entry, lost master keys and rekeys, guest property claims where the lock audit was inconclusive: about 26 a year across the Harbourfront, at an average cost of 2,900 each (claims, rekeys, staff time, goodwill). The blank-card case was the largest single loss, and an outlier."},
   {"id": "lock_test", "label": "See how the current system fails", "kind": "lockAudit", "at": "front_desk", "spot": "key_encoder", "minutes": 4, "requires": ["loss_data"], "required": True,
    "findingTitle": "What the old locks can't do",
-   "finding": "Magnetic stripe cards copy with a cheap reader; the locks keep only the last 100 entries and need a handheld to read; the encoders log to a local PC; there is no way to cancel a lost master key at the door without visiting every lock. The audit trail failed the prosecution in the Vessey case."},
+   "finding": "Magnetic stripe cards copy with a cheap reader; the locks keep only the last 100 entries and need a handheld to read; the encoders log to a local PC; there is no way to cancel a lost master key at the door without visiting every lock. The audit trail is too thin to rely on in court, as the Vessey case."},
   {"id": "engineering", "label": "Get Tomasz's view on installation and upkeep", "kind": "call", "at": "lp_office", "spot": "lp_desk", "person": "chief_engineer", "minutes": 3, "requires": ["loss_data"], "required": True,
    "findingTitle": "Batteries and doors",
    "finding": "Encrypted card locks fit the existing door preparations on 640 of 685 doors; 45 fire-rated doors need new hardware certified for them. Batteries every 18 months: about 20 minutes per lock, done floor by floor. He wants online locks on the back-of-house doors so he isn't walking the building for every audit."},
@@ -55,7 +55,7 @@ M = {
     {"id": "c", "label": "C, phased: online master-key and back-of-house doors first, guest floors over twelve months.", "score": 100,
      "feedback": "The doors whose keys open everything get a live audit first; the rest follows within the year. The highest risk falls soonest."},
     {"id": "b", "label": "B: card locks everywhere, offline.", "score": 60, "feedback": "A real improvement, and cheaper, but master-key and back-of-house audits still mean walking to each lock."},
-    {"id": "a", "label": "A: keep the old locks and rekey when needed.", "score": 15, "feedback": "75,400 a year in expected losses, a system that can be cloned and an audit trail that failed in court."}]},
+    {"id": "a", "label": "A: keep the old locks and rekey when needed.", "score": 15, "feedback": "75,400 a year in expected losses, a system that can be cloned and an audit trail that won't stand up in court."}]},
   {"id": "d_costs", "kind": "multi", "prompt": "Which belong in the whole-life cost?", "dimension": "Cost", "competency": "FinancialAcumen", "weight": 13,
    "options": [
     {"id": "hardware", "label": "Locks, encoders and certified hardware for fire-rated doors", "correct": True},

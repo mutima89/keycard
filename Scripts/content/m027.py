@@ -25,7 +25,7 @@ M = {
   {"id": "improvements", "label": "Pull the evidence of the risk improvements", "kind": "check", "at": "fire_command", "spot": "fire_panel", "minutes": 4, "requires": ["loss_history"], "required": True,
    "findingTitle": "Evidence pack",
    "finding": "Impairment log with every notice to the insurer within the hour; hot work permits with fire watches signed off; the kitchen hood service records; drill and emergency lighting test logs; 30-day CCTV at both sites; the cluster standard audits. Each item has a date and a document."},
-  {"id": "hide_circumstance", "label": "Leave the threatened claim from the couple turned away at the desk out of the submission", "kind": "other", "at": "boardroom", "minutes": 1, "requires": ["loss_history"],
+  {"id": "hide_circumstance", "label": "Leave the stage-step trip in the ballroom out of the submission", "kind": "other", "at": "boardroom", "minutes": 1, "requires": ["loss_history"],
    "findingTitle": "Not disclosed",
    "finding": "A known circumstance is left out of the renewal submission to keep the figures down. If it becomes a claim, Tarrowby can argue the risk was misrepresented.",
    "effects": {"InsurerConfidence": -3},
@@ -57,7 +57,7 @@ M = {
    "mistakes": [{"value": 15300, "feedback": "That is the reserve: what is still to pay. Incurred adds what has been paid already."},
      {"value": 32100, "feedback": "That counts the 8,400 paid twice. Incurred is paid plus the remaining reserve."},
      {"value": 8400, "feedback": "That is only what has been paid so far."}]},
-  {"id": "d_disclose", "prompt": "A couple threatened legal action after being turned away at the desk. Do you disclose it at renewal?", "dimension": "Compliance", "competency": "ComplianceAudit", "weight": 9,
+  {"id": "d_disclose", "prompt": "A guest who tripped on the ballroom stage step last month has written that she is 'considering her options'. Do you disclose it at renewal?", "dimension": "Compliance", "competency": "ComplianceAudit", "weight": 9,
    "options": [
     {"id": "yes", "label": "Yes: every known claim and circumstance goes in the submission.", "score": 100,
      "feedback": "Disclosure protects the cover. A circumstance left out is the insurer's best argument when that claim arrives."},

@@ -3,7 +3,7 @@ import json, os
 M = {
  "schema": 1, "id": "M033", "title": "Viral Video of a Security Incident", "kind": "mission", "topic": "viral_incident", "minLevel": 9,
  "opening": {"channel": "phone", "from": "gm", "at": "boardroom",
-   "text": "Have you seen it? Forty seconds of a guard dragging a man across our lobby floor. Two million views since midnight, and the owners are asking me what we're going to say. Boardroom, now."},
+   "text": "Have you seen it? Forty seconds of a guard dragging a man across our lobby floor. Two million views overnight, and the owners are asking me what we're going to say. Boardroom, now."},
  "briefing": [
    "08:10, Saturday. A guest's phone video shows a Tessmore contract guard pulling a man across the Harbourfront lobby by his collar at 01:30. It has two million views. The man is not named.",
    "Veldane incident communications method: the full facts before any judgement (all the footage, the reports, the people); a short holding statement within the hour that shows care and says what you're doing, without blaming anyone or prejudging; reach out to the man directly and privately; stand the officer down from duty pending the investigation, without announcing an outcome; preserve everything; involve the police if a crime may have been committed; let communications lead the public words and LP lead the facts; publish what changes once the investigation is done. Your authority is 3,000,000."],
@@ -23,7 +23,7 @@ M = {
    "finding": "Tariq's statement, written at 02:00: frightened, and grateful the guard came. He also says the guard 'kept going after he'd stopped fighting'. The guard's own report says 'guest escorted from premises' and nothing more.",
    "lines": [{"speaker": "desk_agent", "text": "He saved me from getting hit. And then he didn't stop. Both of those are true."}]},
   {"id": "holding", "label": "Agree a holding statement with the GM", "kind": "interview", "at": "boardroom", "person": "gm", "minutes": 3, "requires": ["all_footage"], "required": True,
-   "findingTitle": "Out at 08:5x",
+   "findingTitle": "Out at {time}",
    "finding": "\"We've seen the video of an incident in our lobby early this morning and we are concerned by it. We are reviewing all our footage and speaking to everyone involved, and the officer is not on duty while we do. We are trying to contact the guest to make sure he's all right. We will share what we find.\" No blame, no defence, no outcome.",
    "lines": [{"speaker": "gm", "text": "Short, true, and nothing we'll have to take back. Send it."}]},
   {"id": "blame_guest", "label": "Put out a statement that the guest was violent first", "kind": "other", "at": "boardroom", "minutes": 1, "requires": ["all_footage"],

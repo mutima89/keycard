@@ -60,7 +60,7 @@
       "minutes": 3,
       "required": true,
       "findingTitle": "Preserved",
-      "finding": "Hold notice to all twelve properties at 04:22: lock audit trails, encoder logs, CCTV (no overwrite), front desk key issue records, staff rosters. The airport and the Harbourfront confirm by 04:40, the Convention Centre by 04:45."
+      "finding": "Hold notice to all twelve properties at {time}: lock audit trails, encoder logs, CCTV (no overwrite), front desk key issue records, staff rosters. The airport and the Harbourfront confirm by 04:40, the Convention Centre by 04:45."
     },
     {
       "id": "lock_audit",
@@ -583,7 +583,7 @@
   "procedureCards": [
     "post_incident_review"
   ],
-  "reportAt": "boardroom",
+  "reportAt": "lp_office",
   "passMark": 65,
   "xp": 1000,
   "weeks": 4,

@@ -64,7 +64,7 @@ M = {
   {"id": "d_cameras", "prompt": "The airport needs 18,000 to repair cameras and keep 30 days. What do you do?", "dimension": "Cost", "competency": "FinancialAcumen", "weight": 11,
    "options": [
     {"id": "fund", "label": "Fund it from the cluster line now: two claims this year were lost for want of footage.", "score": 100, "cost": 18000,
-     "feedback": "The standard is only real if the money to meet it comes with it. The repair pays for itself in about one and a half lost claims."},
+     "feedback": "The standard is only real if the money to meet it comes with it. Three more lost claims like this year's would cost more than the repair."},
     {"id": "own", "label": "Tell the airport to find it in its own LP budget.", "score": 40, "feedback": "Its whole LP budget is 140,000. A standard set by the cluster and paid for by the smallest site won't be met."},
     {"id": "defer", "label": "Put it in next year's capital plan.", "score": 30, "feedback": "Another year of 14-day footage and dark cameras on the aircrew door."}]},
   {"id": "d_own", "kind": "multi", "prompt": "The Harbourfront issued nine night keys without ID. What do you do?", "dimension": "Compliance", "competency": "KeyAccessControl", "weight": 7,

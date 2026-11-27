@@ -15,7 +15,7 @@ M = {
    "finding": "He noticed it at about 03:50 on his round of the lobby. It has no Veldane luggage tag, so it was never checked in to the luggage room. He has not touched it. Three early departures went through the lobby between 03:15 and 03:40.",
    "lines": [{"speaker": "bell_captain", "text": "Spotted it at ten to four. No tag of ours on it. I haven't laid a finger on it, but I can carry it over if you like."}]},
   {"id": "observe_bag", "label": "Look at the bag from a few metres away", "kind": "look", "at": "lobby", "spot": "unattended_bag", "minutes": 2, "requires": ["talk_bell_captain"], "required": True,
-   "findingTitle": "The holdall, 04:1x",
+   "findingTitle": "The holdall, {time}",
    "finding": ["A black sports holdall, zip closed, on the floor beside the sofa in full view. A trade fair lanyard is looped round the handle and an airline tag hangs from it. No wires, liquid, smell or sound. It sags like soft clothing.",
      "Not hidden, nothing obviously suspicious, and typical of a hotel lobby at the hour the airport departures leave."],
    "columns": ["Question", "Answer"], "rows": [["Hidden?", "No: in full view by the sofa"], ["Obviously suspicious?", "No wires, liquid, smell, sound"], ["Typical for the place?", "Yes: early departures, airline tag"]]},
@@ -23,7 +23,7 @@ M = {
    "findingTitle": "Opening the bag", "finding": "You unzip it in the middle of the lobby. Clothes and a phone charger. It was harmless; you could not have known that when you opened it.",
    "effects": {"SafetyCompliance": -6}},
   {"id": "cctv_review", "label": "Find who left it on the lobby cameras", "kind": "cctvReview", "at": "cctv_room", "spot": "cctv_console", "minutes": 6, "required": True,
-   "findingTitle": "L-04 Lobby, 03:2x",
+   "findingTitle": "L-04 Lobby, 03:21-03:27",
    "finding": "03:21 a man with a trade fair lanyard checks out at the desk, sits on the sofa with a wheeled case and the holdall, stands at 03:27 when his taxi arrives, and leaves with the wheeled case only. Nobody goes near the holdall after that.",
    "columns": ["Camera", "Time", "What it shows"],
    "rows": [["L-02 Front desk", "03:21", "Man with lanyard checks out"], ["L-04 Lobby", "03:23-03:27", "Sits on the sofa, holdall at his feet"], ["L-01 Entrance", "03:27", "Leaves for a taxi with the wheeled case only"]]},
@@ -37,7 +37,7 @@ M = {
    "findingTitle": "Bag moved", "finding": "Lifted by the handles with Owen as witness and carried to the front office. Tagged LP-0412 with the time, place found and who moved it."},
   {"id": "log_property", "label": "Log it in the lost property register and lock it away", "kind": "logEvidence", "at": "front_desk", "spot": "lost_property", "minutes": 3, "requires": ["secure_bag"],
    "findingTitle": "Lost property register", "finding": "LP-0412 entered: description, found 03:50 by O. Tremlett by the lobby sofa, owner identified (room 1108), contents described by the owner, not opened, collection arranged for Friday. Locked in the front office safe.",
-   "evidence": "LP-0412", "custody": "Holdall LP-0412 moved from the lobby by you with O. Tremlett at 04:3x and locked in the front office safe."},
+   "evidence": "LP-0412", "custody": "Holdall LP-0412 moved from the lobby by you with O. Tremlett at {time} and locked in the front office safe."},
   {"id": "brief_night_manager", "label": "Brief the night manager", "kind": "interview", "at": "front_desk", "person": "night_manager", "minutes": 2,
    "findingTitle": "Night manager briefed", "finding": "Felix Amadi notes it for the morning handover and asks the bell team to add a lobby sweep after the airport departures.", "relations": {"night_manager": 3}}
  ],
@@ -69,7 +69,7 @@ M = {
   {"id": "r_facts", "kind": "multi", "prompt": "Incident report, which of these belong in the findings?", "dimension": "Report", "competency": "IncidentResponse", "weight": 9, "section": "facts",
    "options": [
     {"id": "f_found", "label": "Found 03:50 by O. Tremlett beside the lobby sofa; no Veldane luggage tag.", "correct": True},
-    {"id": "f_assess", "label": "Assessed at 04:1x: in view, no wires, liquid, smell or sound; typical of early departures.", "correct": True},
+    {"id": "f_assess", "label": "Assessed at {time:observe_bag}: in view, no wires, liquid, smell or sound; typical of early departures.", "correct": True},
     {"id": "f_cctv", "label": "CCTV L-04: left by the 03:21 departure (room 1108) at 03:27.", "correct": True},
     {"id": "f_owner", "label": "Owner confirmed the bag and contents by phone; not opened.", "correct": True},
     {"id": "o_careless", "label": "The guest was careless.", "feedback": "An opinion. Facts only."}]}

@@ -5,7 +5,7 @@ M = {
  "opening": {"channel": "email", "from": "adjuster", "at": "exec_offices",
    "text": "A solicitor's letter for a Mr Garrick Tamsett: says he fell at the lobby bar step on 14 September at about 22:40 and broke his right wrist. He's claiming 48,000. I'd like your evidence before I set the reserve. He's also asked to come in and 'see the step' this afternoon. Odile."},
  "briefing": [
-   "11:00, Tuesday. A claim arrives five weeks after the date of a fall nobody reported at the time. The claimant asks to visit the hotel today.",
+   "11:00, Tuesday. A claim arrives four weeks after the date of a fall nobody reported at the time. The claimant asks to visit the hotel today.",
    "Veldane claims method: gather and preserve the hotel's own evidence before anyone reaches a view; compare it with the claim, fact by fact; give it all to the insurer, who decides whether a claim is genuine or not; treat the claimant courteously, discuss nothing about liability or the evidence with him, and refer him to the insurer; never accuse anyone of fraud yourself. Your authority is 1,000,000."],
  "context": [
   {"ifFlag": "guests_accused", "text": "After the couple accused of fraud at the desk, counsel has reminded every manager: the hotel never calls anyone a fraudster."}
@@ -15,7 +15,7 @@ M = {
  "actions": [
   {"id": "incident_log", "label": "Check the incident log for 14 September", "kind": "check", "at": "lp_office", "spot": "report_terminal", "minutes": 3, "required": True,
    "findingTitle": "Nothing reported",
-   "finding": "No incident, first aid or guest complaint on 14 September or the days after. The night LP officer's daily report for the lobby bar shows a quiet night. The first the hotel heard of a fall is the solicitor's letter, five weeks later."},
+   "finding": "No incident, first aid or guest complaint on 14 September or the days after. The night LP officer's daily report for the lobby bar shows a quiet night. The first the hotel heard of a fall is the solicitor's letter, four weeks later."},
   {"id": "cctv_bar", "label": "Review the lobby bar cameras for the time of the fall", "kind": "cctvReview", "at": "cctv_room", "spot": "cctv_console", "minutes": 6, "requires": ["incident_log"], "required": True,
    "evidence": "KC-3001",
    "findingTitle": "L-07, 22:20 to 23:10",

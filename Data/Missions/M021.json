@@ -30,14 +30,15 @@
       "spot": "room_1406_threshold",
       "minutes": 3,
       "required": true,
-      "findingTitle": "1406, 10:4x",
+      "findingTitle": "1406, {time}",
       "finding": "From the doorway with the supervisor: a man in the bed on his back, the covers to his chest, skin cold and discoloured, stiff; the bedside lamp still on. Death is obvious; CPR would not help. Nothing appears disturbed. Marisol is in the corridor, shaking."
     },
     {
       "id": "call_ambulance",
       "label": "Call the emergency services",
       "kind": "call",
-      "at": "guest_room",
+      "at": "f14_corridor",
+      "spot": "corridor_14",
       "person": "paramedic_sethna",
       "minutes": 2,
       "requires": [
@@ -45,7 +46,7 @@
       ],
       "required": true,
       "findingTitle": "Emergency services",
-      "finding": "Ambulance and police called. At 11:0x the paramedics confirm death and leave the room as they found it; the police take charge of the scene."
+      "finding": "Ambulance and police called from the corridor. When they arrive the paramedics confirm death and leave the room as they found it; the police take charge of the scene."
     },
     {
       "id": "secure_scene",
@@ -59,7 +60,7 @@
       ],
       "required": true,
       "findingTitle": "Scene secured",
-      "finding": "Door closed and the room blocked on the lock system. Ines on the door with an entry log: who, when, why. Logged so far: Marisol and her supervisor (10:38, welfare check), you (10:4x, doorway only). Housekeeping's trolley stays where it is."
+      "finding": "Door closed and the room blocked on the lock system. Ines on the door with an entry log: who, when, why. Logged so far: Marisol and her supervisor (10:38, welfare check), you ({time:attend_room}, doorway only). Housekeeping's trolley stays where it is."
     },
     {
       "id": "tidy_room",

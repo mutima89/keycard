@@ -76,6 +76,9 @@ public:
 
 	// Cast body and an outfit material for the stand-in (Outfit may be null). Idle 1: listening.
 	void SetBody(const KcCast::FLook& Look, UMaterialInterface* Outfit);
+	// No longer wanted here: hidden and still at once, destroyed a moment later.
+	void Retire();
+	bool IsRetired() const { return bRetired; }
 
 	virtual FText GetPrompt() const override;
 	virtual void Interact(AKcHUD* Hud) override;
@@ -86,6 +89,8 @@ public:
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Keycard")
 	TObjectPtr<UKcPersonComponent> Body;
+
+	bool bRetired = false;
 };
 
 // A place where work is done: a named spot (the CCTV console, the lock on 1412), or a location's own

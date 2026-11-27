@@ -35,34 +35,12 @@ Every case teaches a real, widely published procedure. When you file your report
 
 ## Features
 
-<table>
-<tr>
-<td width="50%" valign="top">
-
-### 🏨 One living building
-A single multi-floor hotel linked by lifts and stairs: back-of-house B1, the lobby, kitchen and front desk, the Harbour Ballroom, executive floor and boardroom, and the guest floors. Every case is played on foot, against a running case clock.
-
-### 🔍 Real investigative tools
-Lock audit trails, CCTV review and export with hashes, evidence bags and custody logs, fire panels, claim reserves and incident costing. Every formula lives in one place and is documented.
-
-### 📋 A hidden rubric
-Each case is scored across seven dimensions (procedure, evidence, compliance, care, communication, cost and report), and only after you file. You never see what's being measured while you work.
-
-</td>
-<td width="50%" valign="top">
-
-### ⏳ Decisions come back
-Weak calls schedule seeded later events, such as claims, grievances, fire authority findings, insurer letters and press coverage, each naming the decision behind it.
-
-### 📈 Promotion on evidence
-Promotion depends on competence, passed cases and, from level 6, a career crisis. XP and relationships never decide it.
-
-### 🎓 Built to teach
-47 Field Manual cards, a 47-term glossary, and a debrief after every case covering best practice, the reasons behind it and the common mistakes.
-
-</td>
-</tr>
-</table>
+- **One living building:** Explore a multi-floor hotel linked by lifts and stairs, from back-of-house B1 and the lobby to the Harbour Ballroom, executive floor, and guest floors. Every case is played on foot against a running case clock.
+- **Real investigative tools:** Use lock audit trails, CCTV review and export with hashes, evidence bags and custody logs, fire panels, claim reserves, and incident costing. Formulas are centralized and documented.
+- **A hidden rubric:** Each case is scored across procedure, evidence, compliance, care, communication, cost, and report—only after you file.
+- **Decisions come back:** Weak calls can schedule seeded later events, including claims, grievances, fire authority findings, insurer letters, and press coverage, each naming the decision behind it.
+- **Promotion on evidence:** Promotion depends on competence and passed cases, and from level 6 on a career crisis—not XP or relationships.
+- **Built to teach:** 47 Field Manual cards, a 47-term glossary, and a debrief after every case covering best practice, the reasons behind it, and common mistakes.
 
 ### Content in 1.0.0
 
@@ -79,70 +57,95 @@ Promotion depends on competence, passed cases and, from level 6, a career crisis
 
 ## Screenshots
 
-<table>
-<tr>
-<td width="50%"><img src="Docs/Screenshots/lp_office.png" alt="LP office"><br><sub><b>The LP office.</b> Sign on, take the call, and the case clock starts.</sub></td>
-<td width="50%"><img src="Docs/Screenshots/cctv.png" alt="CCTV control room"><br><sub><b>CCTV control room.</b> Review the footage before it overwrites.</sub></td>
-</tr>
-<tr>
-<td width="50%"><img src="Docs/Screenshots/floor14.png" alt="Floor 14 corridor"><br><sub><b>Floor 14.</b> Guest rooms, door alarms and a lock to audit.</sub></td>
-<td width="50%"><img src="Docs/Screenshots/fire_command.png" alt="Fire command centre"><br><sub><b>Fire command centre.</b> Read the panel, investigate the zone, decide.</sub></td>
-</tr>
-<tr>
-<td width="50%"><img src="Docs/Screenshots/ballroom.png" alt="Harbour Ballroom"><br><sub><b>The Harbour Ballroom.</b> Banquets, occupant load and a bomb threat.</sub></td>
-<td width="50%"><img src="Docs/Screenshots/report.png" alt="Incident report"><br><sub><b>The incident report.</b> Your rubric is hidden until you file.</sub></td>
-</tr>
-<tr>
-<td width="50%"><img src="Docs/Screenshots/challenges.png" alt="Challenges"><br><sub><b>Challenges.</b> Survival, daily and classroom modes.</sub></td>
-<td width="50%"><img src="Docs/Screenshots/ending.png" alt="Career ending"><br><sub><b>The ending.</b> The career you earned, and a certificate.</sub></td>
-</tr>
-</table>
+![The LP office. Sign on, take the call, and the case clock starts.](Docs/Screenshots/lp_office.png)
+
+*The LP office. Sign on, take the call, and the case clock starts.*
+
+![CCTV control room. Review the footage before it overwrites.](Docs/Screenshots/cctv.png)
+
+*CCTV control room. Review the footage before it overwrites.*
+
+![Floor 14 corridor. Guest rooms, door alarms and a lock to audit.](Docs/Screenshots/floor14.png)
+
+*Floor 14. Guest rooms, door alarms and a lock to audit.*
+
+![Fire command centre. Read the panel, investigate the zone, decide.](Docs/Screenshots/fire_command.png)
+
+*Fire command centre. Read the panel, investigate the zone, decide.*
+
+![The Harbour Ballroom. Banquets, occupant load and a bomb threat.](Docs/Screenshots/ballroom.png)
+
+*The Harbour Ballroom. Banquets, occupant load and a bomb threat.*
+
+![The incident report. Your rubric is hidden until you file.](Docs/Screenshots/report.png)
+
+*The incident report. Your rubric is hidden until you file.*
+
+![Challenges. Survival, daily and classroom modes.](Docs/Screenshots/challenges.png)
+
+*Challenges. Survival, daily and classroom modes.*
+
+![The career ending. The career you earned, and a certificate.](Docs/Screenshots/ending.png)
+
+*The ending. The career you earned, and a certificate.*
 
 <br>
 
 ## Getting started
 
-1. Download **`Keycard-Setup-1.0.0.exe`** (installer) or **`Keycard-1.0.0-Win64-Portable.zip`** from the [latest release](https://github.com/mutima89/keycard/releases/latest).
-2. Run the installer, or unzip the portable build anywhere and launch `Keycard.exe`.
-3. Choose **New career**, then pick a difficulty and a background, and sign on at the LP office terminal.
+Download the latest release from the [GitHub Releases page](https://github.com/mutima89/keycard/releases/latest):
 
-> [!NOTE]
-> The build is not code-signed, so Windows SmartScreen may warn you on first launch. Select **More info**, then **Run anyway**. You can compare each download's SHA-256 with the value on the release page.
+- **Installer — `Keycard-Setup-1.0.0.exe`:** Choose this for a guided Windows installation and Start menu entry.
+- **Portable — `Keycard-1.0.0-Win64-Portable.zip`:** Choose this if you prefer not to install; extract the ZIP to a folder you can write to, then run `Keycard.exe`.
+
+Both downloads run locally and work offline. After launching, choose **New career**, pick a difficulty and background, then sign on at the LP office terminal.
+
+### Troubleshooting
+
+- **Windows SmartScreen warns at launch:** The release is not code-signed. If you downloaded it from the official release page and choose to proceed, select **More info**, then **Run anyway**. Check the download's SHA-256 against the value published on the release page.
+- **The game will not start or runs poorly:** Confirm you are on 64-bit Windows 10/11 and meet the published target below. Update your graphics driver, try the default graphics settings, and make sure the game files were fully extracted. If it still fails, report it in [GitHub Issues](https://github.com/mutima89/keycard/issues) with your Windows version, GPU, steps to reproduce, and any relevant log from `%LOCALAPPDATA%\Keycard\Saved\Logs`.
+- **A save will not load:** Keycard first tries the primary save, then attempts recovery from its backup. If it reports that both are damaged, preserve the files in `%LOCALAPPDATA%\Keycard\Saved\SaveGames` before troubleshooting or reinstalling, and attach the message and steps that led to the problem to an issue. Do not post personal data from a save publicly.
+- **Found a bug or have a suggestion?** Search existing [issues](https://github.com/mutima89/keycard/issues) first, then open a new issue with the game version and reproducible details. Keycard is offline, so include no expectation of telemetry or an in-game report upload.
 
 ## System requirements
 
-| | Minimum (target) |
+The project documents a tested/target configuration, but does not publish a separately validated minimum specification. Treat the GPU and performance row below as the target, not a guarantee of minimum hardware support.
+
+| | Published target |
 |---|---|
 | **OS** | Windows 10 / 11, 64-bit |
 | **GPU** | NVIDIA GTX 1650 4 GB or equivalent (DirectX 11 / SM5) |
-| **Performance** | 1920×1080, High preset, 60 fps |
-| **Storage** | About 0.7 GB |
+| **Performance target** | 1920×1080, High preset, 60 fps |
+| **Storage** | About 0.7 GB installed |
 | **Network** | None. Keycard runs fully offline. |
 
 <br>
 
 ## Build from source
 
-**Prerequisites:** Unreal Engine 5.8, Visual Studio 2022 (MSVC 14.4x), CMake 3.20+, Python 3.10+. Inno Setup 6 is needed only for the installer.
+**Prerequisites:** Unreal Engine 5.8, Visual Studio 2022 (MSVC 14.4x), CMake 3.20+, and Python 3.10+. Inno Setup 6 is needed only to build the installer. Run the commands below from the repository root. The standalone simulation-core test does not require Unreal Engine.
 
 ```powershell
 # Simulation core tests (no Unreal needed)
-Scripts\RunCoreTests.bat                              # Windows
-Scripts/run_core_tests.sh                             # Linux / macOS (ASan + UBSan)
+Scripts\RunCoreTests.bat
+# Linux / macOS (requires CMake and a C++ compiler; enables ASan + UBSan)
+Scripts/run_core_tests.sh
 
-# Unreal automation tests
+# Unreal automation tests (replace this with your UE 5.8 install directory)
 Scripts\RunUnrealTests.bat "C:\Program Files\Epic Games\UE_5.8"
+# Report: Saved\TestReport; log: Saved\Logs\KcTests.log
 
-# Package
+# Package a Windows Shipping build
 Scripts\BuildWindows.bat "C:\Program Files\Epic Games\UE_5.8" Shipping
+# Output: Release\Shipping\Windows\Keycard.exe (plus staged package files)
 
-# Full, input-free walkthrough: the whole career to the capstone, then a daily challenge
+# Full input-free walkthrough: career through the capstone, then a daily challenge
 powershell -ExecutionPolicy Bypass -File Scripts\RunWalkthrough.ps1 -Exe Release\Shipping\Windows\Keycard.exe
 ```
 
 ### Project layout
 
-```
+```text
 Source/KeycardSim/   Engine-independent C++17 simulation core (career, LP formulas, scoring, saves)
 Source/Keycard/      Unreal gameplay and presentation (hotel, people, interaction, Slate UI)
 Tests/Core/          Core unit tests, built with CMake
@@ -151,7 +154,7 @@ Scripts/             Build, test, content, voice and asset pipelines
 Docs/                Design, methodology, data formats and progress
 ```
 
-The simulation core is deterministic: random events use a seeded RNG only, and every LP formula lives in `KcLpMath` and is documented in [LpMethodology.md](Docs/LpMethodology.md). Content in `Data/` is validated on load and by the test suite, and broken content fails the build.
+The simulation core is deterministic: random events use a seeded RNG only, and every LP formula lives in `KcLpMath` and is documented in [LpMethodology.md](Docs/LpMethodology.md). Content in `Data/` is validated on load and by the test suite; invalid content fails validation.
 
 <br>
 
@@ -178,4 +181,4 @@ Veldane Hotels & Resorts and every property, company, product and person in Keyc
 
 Created by **M A Almahlaki**. Sister project to [Riskbound](https://github.com/mutima89/riskbound).
 
-The source code is released under the [MIT License](LICENSE). Third-party assets (characters, textures, music, fonts and the voice model) are used under their own free licences and credited in [AssetCredits.md](Docs/AssetCredits.md).
+The **source code** is released under the [MIT License](LICENSE). That permission applies to the code, not automatically to every asset shipped with the game. Third-party characters, textures, models, music, fonts, and voice-model materials have their own licences and attribution or redistribution terms; check [AssetCredits.md](Docs/AssetCredits.md) before reusing or redistributing any of them. The asset credits list sources and licences, including CC0, CC BY, MIT, Apache 2.0, and SIL Open Font License material.
